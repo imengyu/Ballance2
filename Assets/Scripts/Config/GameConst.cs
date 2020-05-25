@@ -1,7 +1,8 @@
-﻿using System;
-
-namespace Ballance2.Config
+﻿namespace Ballance2.Config
 {
+    /// <summary>
+    /// 静态常量配置
+    /// </summary>
     [SLua.CustomLuaClass]
     public static class GameConst
     {
@@ -90,6 +91,7 @@ namespace Ballance2.Config
         public const bool GameLoggerOn = true;
         public const bool GameLoggerLogToFile = false;
         public const string GameLoggerLogFile = "./BallanceOutput.log";
+        public const int GameLoggerBufferMax = 1000;
 
         #endregion
     }

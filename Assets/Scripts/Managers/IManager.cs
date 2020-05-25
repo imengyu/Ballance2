@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Ballance2.Managers
 {
@@ -26,33 +27,87 @@ namespace Ballance2.Managers
         /// </summary>
         void ReloadData();
 
-        /// <summary>
-        /// 获取名字
-        /// </summary>
-        /// <returns></returns>
         string GetName();
+        string GetSubName();
+        bool GetIsSingleton();
     }
 
     /// <summary>
-    /// 管理器基类
+    /// 管理器基类（单例）
     /// </summary>
-    public class BaseManager : IManager
+    public class BaseManagerSingleton : IManager
     {
         /// <summary>
         /// 创建管理器
         /// </summary>
         /// <param name="name">标识符名称</param>
-        public BaseManager(string name)
+        public BaseManagerSingleton(string name)
         {
             this.name = name;
         }
 
+        private static IManager instance = null;
         private string name = "";
 
+        public bool GetIsSingleton() { return true; }
         public string GetName()
         {
             return name;
         }
+        public string GetSubName()
+        {
+            return "Singleton";
+        }
+
+        public virtual bool InitManager()
+        {
+            return false;
+        }
+        public virtual bool ReleaseManager()
+        {
+            return false;
+        }
+        public virtual void ReloadData()
+        {
+        }
+    }
+
+    /// <summary>
+    /// 管理器基类（可绑定）
+    /// </summary>
+    public class BaseManagerBindable : MonoBehaviour, IManager
+    {
+        /// <summary>
+        /// 创建管理器
+        /// </summary>
+        /// <param name="name">标识符名称</param>
+        /// <param name="subName">二级名称，用于区分多个管理器</param>
+        public BaseManagerBindable(string name, string subName)
+        {
+            this.name = name;
+            this.subName = subName;
+        }
+
+        private string subName = "";
+
+        /// <summary>
+        /// 二级名称，用于区分多个管理器
+        /// </summary>
+        public string SubName {
+            get  { return subName; }
+            set { subName = value; }
+        }
+
+        public bool GetIsSingleton() { return true; }
+        public string GetName()
+        {
+            return name;
+        }
+        public string GetSubName()
+        {
+            return subName;
+        }
+
         public virtual bool InitManager()
         {
             return false;

@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Ballance2
@@ -40,6 +37,7 @@ namespace Ballance2
 
         public void InitLogger()
         {
+            logDatas = new List<LogData>();
             on = GameConst.GameLoggerOn;
             if (on)
             {
@@ -69,42 +67,55 @@ namespace Ballance2
             logDatas = null;
         }
 
-        public void Log(object message)
+        public void Log(string tag, object message)
         {
-            Debug.Log(message);
+            UnityEngine.Debug.Log(string.Format("[{0}] {1}", tag, message));
+            WriteLog(LogType.Text, tag, message);
         }
-        public void Warning(object message)
+        public void Warning(string tag, object message)
         {
-            Debug.LogWarning(message);
+            UnityEngine.Debug.LogWarning(string.Format("[{0}] {1}", tag, message));
+            WriteLog(LogType.Warning, tag, message);
         }
-        public void Error(object message)
+        public void Error(string tag, object message)
         {
-            Debug.LogError(message);
+            UnityEngine.Debug.LogError(string.Format("[{0}] {1}", tag, message));
+            WriteLog(LogType.Error, tag, message);
         }
         public void Exception(Exception e)
         {
-            Debug.LogException(e);
+            UnityEngine.Debug.LogException(e);
+            WriteLog(LogType.Assert, "", e.ToString());
         }
-        public void Info(object e)
+        public void Info(string tag, object message)
         {
-            Debug.Log(e);
+            UnityEngine.Debug.Log(string.Format("[{0}] {1}", tag, message));
+            WriteLog(LogType.Info, tag, message);
         }
 
-        public void Log(string message, params object []param)
+        public void Log(string tag, string message, params object []param)
         {
-            Debug.LogFormat(message, param);
+            string format = string.Format("[{0}] {1}", tag, message);
+            UnityEngine.Debug.LogFormat(format, param);
+            WriteLog(LogType.Text, tag, format, param);
         }
-        public void Warning(string message, params object[] param)
+        public void Warning(string tag, string message, params object[] param)
         {
-            Debug.LogWarningFormat(message, param);
+            string format = string.Format("[{0}] {1}", tag, message);
+            UnityEngine.Debug.LogWarningFormat(format, param);
+            WriteLog(LogType.Warning, tag, format, param);
         }
-        public void Error(string message, params object[] param)
+        public void Error(string tag, string message, params object[] param)
         {
-            Debug.LogErrorFormat(message, param);
+            string format = string.Format("[{0}] {1}", tag, message);
+            UnityEngine.Debug.LogErrorFormat(format, param);
+            WriteLog(LogType.Error, tag, format, param);
         }
-        public void Info(string message, params object[] param)
+        public void Info(string tag, string message, params object[] param)
         {
-            Debug.LogFormat(message, param);
+            string format = string.Format("[{0}] {1}", tag, message);
+            UnityEngine.Debug.LogFormat(format, param);
+            WriteLog(LogType.Info, tag, format, param);
         }
 
         /// <summary>
@@ -119,34 +130,39 @@ namespace Ballance2
             Assert
         }
 
-        private struct LogData
+        internal struct LogData
         {
             public LogType Type;
             public string Data;
         }
-        private string GetNowDateString()
+        internal string GetNowDateString()
         {
             return DateTime.Now.ToString("o");
         }
-        private List<LogData> logDatas = new List<LogData>();
+        private List<LogData> logDatas = null;
 
-        public void LoggerGUI()
-        {
-
-        }
+        internal List<LogData> GetLogData()  { return logDatas;  }
 
         /// <summary>
         /// 写入日志
         /// </summary>
         /// <param name="type">类型</param>
         /// <param name="message">内容</param>
-        public void WriteLog(LogType type, object message)
+        public void WriteLog(LogType type, string tag, object message)
         {
-            LogData data = new LogData();
-            data.Type = type;
-            data.Data = string.Format("[{0}/{1}] {2}", GetNowDateString(), type, message.ToString());
-            logDatas.Add(data);
-            logFile.WriteLine(data.Data);
+            if (on)
+            {
+                LogData data = new LogData();
+                data.Type = type;
+                data.Data = string.Format("[{0}/{1}] [{2}] {3}", GetNowDateString(), type, tag, message.ToString());
+                logDatas.Add(data);
+
+                if(logToFile)
+                    logFile.WriteLine(data.Data);
+
+                if(logDatas.Count > GameConst.GameLoggerBufferMax)
+                    logDatas.RemoveAt(0);
+            }
         }
         /// <summary>
         /// 格式化写入日志
@@ -154,9 +170,9 @@ namespace Ballance2
         /// <param name="type">类型</param>
         /// <param name="message">内容</param>
         /// <param name="param">可变参数</param>
-        public void WriteLog(LogType type, string message, params object[] param)
+        public void WriteLog(LogType type, string tag, string message, params object[] param)
         {
-            WriteLog(type, string.Format(message, param));
+            WriteLog(type, tag, string.Format(message, param));
         }
     }
 }
