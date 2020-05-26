@@ -65,7 +65,7 @@ namespace SLua
             {
                 EditorApplication.update += Update;
                 // use this delegation to ensure dispose luavm at last
-                EditorApplication.playmodeStateChanged += () =>
+                EditorApplication.playModeStateChanged += (m) =>
                 {
 
                     if (isPlaying == true && EditorApplication.isPlaying == false)

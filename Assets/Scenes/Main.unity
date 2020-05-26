@@ -202,8 +202,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 855028597}
   m_HandleRect: {fileID: 855028596}
   m_Direction: 0
-  m_Value: -0.001337686
-  m_Size: 0.99034446
+  m_Value: 1
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -384,6 +384,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 66358176}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &117521957 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7915248459636193607, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+    type: 3}
+  m_PrefabInstance: {fileID: 66358176}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &202051303
 GameObject:
   m_ObjectHideFlags: 0
@@ -835,12 +847,29 @@ MonoBehaviour:
   GameMode: 2
   GameRoot: {fileID: 1368830292}
   GameCanvas: {fileID: 1928318315}
+  BreakAtStart: 0
   GamePrefab:
   - Object: {fileID: 730401858883282320, guid: c00cb89e507c3c84e82463508143638e, type: 3}
     Name: PrefabEmpty
   - Object: {fileID: 493137468655556670, guid: fc9c271469baf5349a09b656e45d5fff, type: 3}
     Name: PrefabUIEmpty
-  BreakAtStart: 0
+  - Object: {fileID: 1953235002799851516, guid: 8884140c80a43a4479b60b1d28067253,
+      type: 3}
+    Name: UIAlertWindow
+  - Object: {fileID: 5201288512610855020, guid: c129967611dab884e95feb51221921a5,
+      type: 3}
+    Name: UIConfirmWindow
+  - Object: {fileID: 7795733834177401997, guid: 4211aeed85e699d4ba0a6aa5a131b090,
+      type: 3}
+    Name: UIWindow
+  - Object: {fileID: 301038999698601659, guid: b9c2561802b1f1547a7246cbe936606c, type: 3}
+    Name: UIDebugWindow
+  - Object: {fileID: 6989919991561276472, guid: 70451ea6b0df68c44ac10ebb360b2eff,
+      type: 3}
+    Name: UIDebugTextItem
+  - Object: {fileID: 9213095750277210233, guid: b09b63a9aa15da848a1f87425e9867b5,
+      type: 3}
+    Name: UIDebugToolBar
 --- !u!4 &1202931503
 Transform:
   m_ObjectHideFlags: 0
@@ -866,6 +895,7 @@ GameObject:
   - component: {fileID: 1294148664}
   - component: {fileID: 1294148666}
   - component: {fileID: 1294148665}
+  - component: {fileID: 1294148667}
   m_Layer: 5
   m_Name: GlobalGameErrorContent
   m_TagString: Untagged
@@ -889,8 +919,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 1.8699951, y: -122.97552}
-  m_SizeDelta: {x: 386.31, y: 18.79}
+  m_AnchoredPosition: {x: -0.000030517578, y: -120.32944}
+  m_SizeDelta: {x: 362, y: 14.994488}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1294148665
 MonoBehaviour:
@@ -932,6 +962,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1294148663}
   m_CullTransparentMesh: 0
+--- !u!114 &1294148667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1294148663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 0
+  m_VerticalFit: 2
 --- !u!1 &1344668824
 GameObject:
   m_ObjectHideFlags: 0
@@ -1125,8 +1169,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8168bda45fdeef548aecbf68627eb1be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalGameErrorButtonQuitGame: {fileID: 0}
-  GlobalGameErrorContent: {fileID: 0}
+  GlobalGameErrorButtonQuitGame: {fileID: 117521957}
+  GlobalGameErrorContent: {fileID: 1294148665}
 --- !u!1 &1481071169
 GameObject:
   m_ObjectHideFlags: 0
@@ -1145,7 +1189,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1481071170
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1351,7 +1395,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 229182654}
   m_HandleRect: {fileID: 229182653}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1475,6 +1519,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1802348768}
+  - component: {fileID: 1802348769}
   m_Layer: 0
   m_Name: Debug
   m_TagString: Untagged
@@ -1496,6 +1541,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1802348769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1802348767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 024686e34a341ed4795f123706f1d6ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1928318315
 GameObject:
   m_ObjectHideFlags: 0

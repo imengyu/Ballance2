@@ -46,7 +46,6 @@ namespace Ballance2.Managers
             this.name = name;
         }
 
-        private static IManager instance = null;
         private string name = "";
 
         public bool GetIsSingleton() { return true; }
@@ -88,6 +87,7 @@ namespace Ballance2.Managers
             this.subName = subName;
         }
 
+        private new string name = "";
         private string subName = "";
 
         /// <summary>

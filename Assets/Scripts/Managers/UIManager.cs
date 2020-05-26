@@ -29,8 +29,8 @@ namespace Ballance2.Managers
             UIRoot = GameManager.GameCanvas;
             UIFadeManager = UIRoot.AddComponent<UIFadeManager>();
 
-            GlobalFadeMaskWhite = GameObject.Find("GlobalFadeMaskWhite").GetComponent<Image>();
-            GlobalFadeMaskBlack = GameObject.Find("GlobalFadeMaskBlack").GetComponent<Image>();
+            GlobalFadeMaskWhite = UIRoot.transform.Find("GlobalFadeMaskWhite").gameObject.GetComponent<Image>();
+            GlobalFadeMaskBlack = UIRoot.transform.Find("GlobalFadeMaskBlack").gameObject.GetComponent<Image>();
 
             InitAllObects();
             InitWindowManagement();
@@ -69,15 +69,11 @@ namespace Ballance2.Managers
 
         private void InitAllObects()
         {
-            TemporarilyRectTransform = GameCloneUtils.CloneNewObjectWithParent(
-                GameManager.PrefabUIEmpty, UIRoot.transform, "GameUITemporarily").GetComponent<RectTransform>();
-            GlobalWindowRectTransform = GameCloneUtils.CloneNewObjectWithParent(
-               GameManager.PrefabUIEmpty, UIRoot.transform, "GameUIGlobalWindow").GetComponent<RectTransform>();
-            PagesRectTransform = GameCloneUtils.CloneNewObjectWithParent(
-                GameManager.PrefabUIEmpty, UIRoot.transform, "GameUIPages").GetComponent<RectTransform>();
-            WindowsRectTransform = GameCloneUtils.CloneNewObjectWithParent(
-                GameManager.PrefabUIEmpty, UIRoot.transform, "GameUIWindow").GetComponent<RectTransform>();
-
+            TemporarilyRectTransform = GameCloneUtils.CreateEmptyUIObjectWithParent(UIRoot.transform, "GameUITemporarily").GetComponent<RectTransform>();
+            TemporarilyRectTransform.gameObject.SetActive(false);
+            GlobalWindowRectTransform = GameCloneUtils.CreateEmptyUIObjectWithParent(UIRoot.transform, "GameUIGlobalWindow").GetComponent<RectTransform>();
+            PagesRectTransform = GameCloneUtils.CreateEmptyUIObjectWithParent(UIRoot.transform, "GameUIPages").GetComponent<RectTransform>();
+            WindowsRectTransform = GameCloneUtils.CreateEmptyUIObjectWithParent(UIRoot.transform, "GameUIWindow").GetComponent<RectTransform>();
         }
 
         #region 全局渐变遮罩
@@ -122,8 +118,49 @@ namespace Ballance2.Managers
 
         #region 全局对话框
 
-
-
+        /// <summary>
+        /// 显示全局 Alert 对话框
+        /// </summary>
+        /// <param name="text">内容</param>
+        /// <param name="title">标题</param>
+        /// <param name="okText">OK 按钮文字</param>
+        /// <returns></returns>
+        public int GlobalAlert(string text, string title, string okText = "确定" )
+        {
+            GameObject windowGo = GameCloneUtils.CloneNewObjectWithParent(PrefabUIAlertWindow, WindowsRectTransform.transform, "");
+            UIAlertWindow window = windowGo.GetComponent<UIAlertWindow>();
+            window.Show(text, title, okText);
+            window.onClose = (id) =>
+            {
+                PagesRectTransform.gameObject.SetActive(true);
+                WindowsRectTransform.gameObject.SetActive(true);
+                GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, "*",
+                    id, false);
+            };
+            return window.GetWindowId();
+        }
+        /// <summary>
+        /// 显示全局 Confirm 对话框
+        /// </summary>
+        /// <param name="text">内容</param>
+        /// <param name="title">标题</param>
+        /// <param name="okText">OK 按钮文字</param>
+        /// <param name="cancelText">Cancel 按钮文字</param>
+        /// <returns></returns>
+        public int GlobalConfirm(string text, string title, string okText = "确定", string cancelText = "取消")
+        {
+            GameObject windowGo = GameCloneUtils.CloneNewObjectWithParent(PrefabUIConfirmWindow, WindowsRectTransform.transform, "");
+            UIConfirmWindow window = windowGo.GetComponent<UIConfirmWindow>();
+            window.Show(text, title, okText, cancelText);
+            window.onClose = (id) =>
+            {
+                PagesRectTransform.gameObject.SetActive(true);
+                WindowsRectTransform.gameObject.SetActive(true);
+                GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, "*",
+                    id, window.IsConfirmed);
+            };
+            return window.GetWindowId();
+        }
 
         #endregion
 
@@ -137,9 +174,11 @@ namespace Ballance2.Managers
         {
             managedWindows = new List<IWindow>();
 
-            PrefabUIAlertWindow = (GameObject)Resources.Load("Prefabs/UI/UIAlertWindow.prefab");
-            PrefabUIConfirmWindow = (GameObject)Resources.Load("Prefabs/UI/UIConfirmWindow.prefab");
-            PrefabUIWindow = (GameObject)Resources.Load("Prefabs/UI/UIWindow.prefab");
+            PrefabUIAlertWindow = GameManager.FindStaticPrefabs("UIAlertWindow");
+            PrefabUIConfirmWindow = GameManager.FindStaticPrefabs("UIConfirmWindow");
+            PrefabUIWindow = GameManager.FindStaticPrefabs("UIWindow");
+
+            GameLogger.Instance.Log(TAG, "Init resources prefab, test PrefabUIAlertWindow  : {0}", PrefabUIAlertWindow);
 
             GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE);
         }
@@ -156,6 +195,7 @@ namespace Ballance2.Managers
             }
         }
 
+        //窗口
         private List<IWindow> managedWindows = null;
 
         /// <summary>
@@ -192,14 +232,24 @@ namespace Ballance2.Managers
         /// <returns></returns>
         public UIWindow CreateWindow(string title, RectTransform customView, bool show, float x, float y, float w, float h)
         {
-            GameObject windowGo = GameCloneUtils.CloneNewObjectWithParent(PrefabUIWindow, WindowsRectTransform.transform, "UIWindow:" + title);
+            GameObject windowGo = GameCloneUtils.CloneNewObjectWithParent(PrefabUIWindow, WindowsRectTransform.transform, "UIWindow_" + title);
             UIWindow window = windowGo.GetComponent<UIWindow>();
-            window.windowId = GenWindowId();
             window.Title = title;
             window.SetPos(x, y);
             window.SetView(customView);
             if (w != 0 && h != 0) window.SetSize(w, h);
             if (show) window.Show();
+            RegisterWindow(window);
+            return window;
+        }
+        /// <summary>
+        /// 注册窗口到管理器中
+        /// </summary>
+        /// <param name="window">窗口</param>
+        /// <returns></returns>
+        public IWindow RegisterWindow(IWindow  window)
+        {
+            managedWindows.Add(window);
             return window;
         }
 
@@ -210,25 +260,27 @@ namespace Ballance2.Managers
             switch(window.GetWindowType())
             {
                 case WindowType.GlobalAlert:
+                    window.GetRectTransform().transform.SetParent(GlobalWindowRectTransform.transform);
+                    if (currentVisibleWindowAlert != null)
+                        currentVisibleWindowAlert.Hide();
+                    PagesRectTransform.gameObject.SetActive(false);
+                    WindowsRectTransform.gameObject.SetActive(false);
+                    currentVisibleWindowAlert = window;
                     break;
                 case WindowType.Normal:
+                    window.GetRectTransform().transform.SetParent(WindowsRectTransform.transform);
                     break;
                 case WindowType.Page:
+                    window.GetRectTransform().transform.SetParent(PagesRectTransform.transform);
                     break;
             }
             window.SetVisible(true);
         }
-        public void HideWindow(IWindow window)
-        {
-            window.SetVisible(false);
-        }
-        public void CloseWindow(IWindow window)
-        {
-
-        }
+        public void HideWindow(IWindow window) { window.SetVisible(false);  }
+        public void CloseWindow(IWindow window)  { window.Destroy(); managedWindows.Remove(window);  }
 
         private int windowId = 0;
-        private int GenWindowId()
+        public int GenWindowId()
         {
             if (windowId < 2048) windowId++;
             return windowId;
@@ -236,9 +288,17 @@ namespace Ballance2.Managers
 
         #endregion
 
+        #region 通用管理
+
         public void SetViewToTemporarily(RectTransform view)
         {
             view.SetParent(TemporarilyRectTransform.gameObject.transform);
         }
+        public void AttatchViewToCanvas(RectTransform view)
+        {
+            view.SetParent(UIRoot.gameObject.transform);
+        }
+
+        #endregion
     }
 }

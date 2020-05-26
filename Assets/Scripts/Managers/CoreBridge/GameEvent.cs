@@ -44,5 +44,13 @@ namespace Ballance2.Managers.CoreBridge
         /// 【1】用户是否选择了 Confirm（对于 Alert 永远是false）
         /// </remarks>
         public const string EVENT_GLOBAL_ALERT_CLOSE = "e:ui:global_Alert_close";
+
+        /// <summary>
+        /// 游戏即将退出时触发该事件
+        /// </summary>
+        /// <remarks>
+        /// 事件参数：无
+        /// </remarks>
+        public const string EVENT_BEFORE_GAME_QUIT = "e:before_game_quit";
     }
 }

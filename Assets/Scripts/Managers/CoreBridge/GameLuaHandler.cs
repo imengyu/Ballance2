@@ -14,9 +14,16 @@ namespace Ballance2.Managers.CoreBridge
         }
 
 
+
+        public bool RunCommandHandler(string keyword, int argCount, string[] args)
+        {
+            return false;
+        }
         public bool RunEventHandler(string evtName, params object[] pararms)
         {
             return false;
         }
+
+
     }
 }

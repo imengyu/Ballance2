@@ -122,12 +122,14 @@ namespace Ballance2.Managers
             {
                 foreach (GameHandler gameHandler in gameEvent.EventHandlers)
                 {
-                    if (Regex.IsMatch(gameHandler.Name, handlerFilter))
+                    if (handlerFilter == "*" || Regex.IsMatch(gameHandler.Name, handlerFilter))
+                    {
                         if (gameHandler.Call(evtName, pararms))
                         {
                             GameLogger.Instance.Log(TAG, "Event {0} was interrupted by : {1}", evtName, gameHandler.Name);
                             break;
                         }
+                    }
                 }
             }
             else
@@ -154,6 +156,7 @@ namespace Ballance2.Managers
 
             //注册基础事件
             RegisterGlobalEvent(GameEventNames.EVENT_BASE_INIT_FINISHED);
+            RegisterGlobalEvent(GameEventNames.EVENT_BEFORE_GAME_QUIT);
         }
 
         /// <summary>

@@ -4,21 +4,29 @@ using UnityEngine;
 
 namespace Ballance2
 {
-    // 主入口 （一生二，二生三，...）
+    // 主入口
     class Main : MonoBehaviour
     {
         /// <summary>
         /// 游戏模式
         /// </summary>
-        public GameManager.GameMode GameMode;
+        public GameManager.GameMode GameMode = GameManager.GameMode.None;
         /// <summary>
         /// 游戏根，所有游戏部件在这里托管
         /// </summary>
-        public GameObject GameRoot;
+        public GameObject GameRoot = null;
         /// <summary>
         /// 游戏UI根
         /// </summary>
-        public GameObject GameCanvas;
+        public GameObject GameCanvas = null;
+        /// <summary>
+        /// 启动时暂停游戏，在控制台中继续
+        /// </summary>
+        public bool BreakAtStart = false;
+        /// <summary>
+        /// 静态资源引入
+        /// </summary>
+        public List<GameManager.GameObjectInfo> GamePrefab = null;
 
         void Start()
         {
@@ -30,18 +38,5 @@ namespace Ballance2
             GameManager.Destroy();
             GameLogger.Destroy();
         }
-
-        #region 静态资源引入
-
-        /// <summary>
-        /// 静态资源
-        /// </summary>
-        public List<GameManager.GameObjectInfo> GamePrefab;
-        /// <summary>
-        /// 启动时暂停游戏，在控制台中继续
-        /// </summary>
-        public bool BreakAtStart;
-
-        #endregion
     }
 }

@@ -16,7 +16,7 @@ namespace Ballance2.UI.BallanceUI
     [SLua.CustomLuaClass]
     public class UIWindow : MonoBehaviour, IWindow
     {
-        internal int windowId = 0;
+        private int windowId = 0;
 
         /// <summary>
         /// 获取窗口是否显示
@@ -33,6 +33,8 @@ namespace Ballance2.UI.BallanceUI
         public void SetVisible(bool visible)
         {
             gameObject.SetActive(visible);
+            if (visible) OnShow();
+            else OnHide();
         }
         /// <summary>
         /// 销毁窗口
@@ -40,6 +42,7 @@ namespace Ballance2.UI.BallanceUI
         public void Destroy()
         {
             Destroy(gameObject);
+            OnClose();
         }
         /// <summary>
         /// 获取窗口ID
@@ -56,12 +59,20 @@ namespace Ballance2.UI.BallanceUI
 
         private UIManager UIManager;
 
-        void Start()
+        void Awake()
         {
             UIManager = (UIManager)GameManager.GetManager(UIManager.TAG);
+            windowId = UIManager.GenWindowId();
+            name = "UIWindow_" + windowId;
             UIWindowRectTransform = GetComponent<RectTransform>();
             UIWindowTitleDragger = UIWindowTitle.gameObject.GetComponent<UIDragControl>();
-            EventTriggerListener.Get(UIWindowButtonClose.gameObject).onClick = (g) => { Close(); };
+            EventTriggerListener.Get(UIWindowButtonClose.gameObject).onClick = (g) => {
+                if (CloseAsHide) Hide();
+                else Close();
+            };
+            EventTriggerListener.Get(UIWindowTitleDragger.gameObject).onClick = (g) => {
+                UIWindowRectTransform.transform.SetAsFirstSibling();
+            };
         }
 
         /// <summary>
@@ -151,6 +162,10 @@ namespace Ballance2.UI.BallanceUI
             set { UIWindowButtonClose.gameObject.SetActive(value);  }
         }
         /// <summary>
+        /// 点击窗口关闭按钮是否替换为隐藏窗口
+        /// </summary>
+        public bool CloseAsHide { get; set; }
+        /// <summary>
         /// 窗口标题
         /// </summary>
         public string Title
@@ -164,21 +179,21 @@ namespace Ballance2.UI.BallanceUI
         /// </summary>
         public void Close()
         {
-            
+            UIManager.CloseWindow(this);
         }
         /// <summary>
         /// 显示窗口
         /// </summary>
         public void Show()
         {
-
+            UIManager.ShowWindow(this);
         }
         /// <summary>
         /// 隐藏窗口
         /// </summary>
         public void Hide()
         {
-
+            UIManager.HideWindow(this);
         }
 
         private WindowType windowType = WindowType.Normal;
