@@ -30,7 +30,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5201288512418608203}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -312,6 +312,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 6032785724859300040}
+  - {fileID: 5422789195395763361}
   - {fileID: 4418844508507949840}
   m_Father: {fileID: 5201288512610855021}
   m_RootOrder: 1
@@ -481,3 +483,273 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: "\u786E\u5B9A"
+--- !u!1001 &133328323785317426
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 5201288512418608203}
+    m_Modifications:
+    - target: {fileID: 2595230907910818197, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_Text
+      value: "\u786E\u5B9A"
+      objectReference: {fileID: 0}
+    - target: {fileID: 4225527903062610045, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_Name
+      value: UIButtonConfirmText
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 96.52
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 18.599998
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 183.77
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 26.82
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5608425261421624918, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_Name
+      value: UIButtonConfirm
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 92e8bc12fafb6ec4fbb85274c6af32f3, type: 3}
+--- !u!224 &5422789195395763361 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+    type: 3}
+  m_PrefabInstance: {fileID: 133328323785317426}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1810712904024320091
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 5201288512418608203}
+    m_Modifications:
+    - target: {fileID: 2595230907910818197, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_Text
+      value: "\u53D6\u6D88"
+      objectReference: {fileID: 0}
+    - target: {fileID: 4225527903062610045, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_Name
+      value: UIButtonCancelText
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -97.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 18.599998
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 182.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 26.82
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5608425261421624918, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+        type: 3}
+      propertyPath: m_Name
+      value: UIButtonCancel
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 92e8bc12fafb6ec4fbb85274c6af32f3, type: 3}
+--- !u!224 &6032785724859300040 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5375102701511954579, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+    type: 3}
+  m_PrefabInstance: {fileID: 1810712904024320091}
+  m_PrefabAsset: {fileID: 0}

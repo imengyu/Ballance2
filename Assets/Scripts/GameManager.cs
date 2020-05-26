@@ -1,4 +1,5 @@
 ﻿using Ballance2.Managers;
+using Ballance2.Managers.CoreBridge;
 using Ballance2.Utils;
 using System;
 using System.Collections.Generic;
@@ -14,9 +15,7 @@ namespace Ballance2
     {
         private const string TAG = "GameManager";
 
-        //============================
-        // 管理器控制
-        //============================
+        #region 管理器控制
 
         /// <summary>
         /// 全局管理器单例数组
@@ -85,9 +84,9 @@ namespace Ballance2
             return false;
         }
 
-        //============================
-        // 游戏总体初始化例程
-        //============================
+        #endregion
+
+        #region  游戏总体初始化例程
 
         /// <summary>
         /// 指定游戏状态模式
@@ -132,22 +131,41 @@ namespace Ballance2
         /// 根相机
         /// </summary>
         public static Camera GameBaseCamera { get; private set; }
+        /// <summary>
+        /// 静态引入资源
+        /// </summary>
+        public static List<GameObjectInfo> GamePrefab { get; private set; }
+
+        [Serializable]
+        public class GameObjectInfo
+        {
+            public GameObject Object;
+            public string Name;
+        }
 
         private static bool gameBaseInitFinished = false;
+        private static bool gameBreakAtStart = false;
+
         public static bool IsGameBaseInitFinished()
         {
             return gameBaseInitFinished;
         }
 
-        internal static bool Init(GameMode mode, GameObject gameRoot, GameObject gameCanvas)
+        internal static bool Init(GameMode mode, GameObject gameRoot, 
+            GameObject gameCanvas, List<GameObjectInfo> gamePrefab, bool breakAtStart)
         {
             bool result = false;
 
             Mode = mode;
             GameRoot = gameRoot;
             GameCanvas = gameCanvas;
+            GamePrefab = gamePrefab;
+
+            InitStaticPrefab();
             GameBaseCamera = GameObject.Find("GameBaseCamera").GetComponent<Camera>();
+            gameBreakAtStart = breakAtStart;
             managers = new List<IManager>();
+            
 
             //错误提示
             GameObject GlobalGameErrorPanel = GameObject.Find("GlobalGameErrorPanel");
@@ -157,21 +175,30 @@ namespace Ballance2
 
             if (Mode != GameMode.None)
             {
-                //初始化各个管理器
                 try
                 {
-                    RegisterManager(UIManager.TAG, new UIManager());
+                    //初始化各个管理器
+                    GameMediator = (GameMediator)RegisterManager(GameMediator.TAG, new GameMediator());
+                    UIManager =  (UIManager)RegisterManager(UIManager.TAG, new UIManager());
+                    
 
-
+                    //初始化完成
                     gameBaseInitFinished = true;
                     GameLogger.Instance.Log(TAG, "All manager initialization complete");
+                    GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_BASE_INIT_FINISHED, "*", null);
+
+                    //启动时暂停
+                    if (gameBreakAtStart)
+                    {
+
+                    }
                 }
                 catch(Exception e)
                 {
-                    GameErrorManager.LastError = GameError.GlobalException;
-                    GameErrorManager.ThrowGameError(GameError.BadMode, "初始化失败：\n" + e.ToString());
                     GameLogger.Instance.Error(TAG, "Global Exception was captured in initialization. ");
                     GameLogger.Instance.Exception(e);
+                    GameErrorManager.LastError = GameError.GlobalException;
+                    GameErrorManager.ThrowGameError(GameError.BadMode, "初始化失败：\n" + e.ToString());
                 }
             }
             else
@@ -230,6 +257,43 @@ namespace Ballance2
             GameBaseCamera.gameObject.SetActive(true);
         }
 
+        #endregion
+
+        #region  静态资源管理
+
+        public static GameObject PrefabEmpty { get; private set; }
+        public static GameObject PrefabUIEmpty { get; private set; }
+
+        /// <summary>
+        /// 在静态引入资源中查找
+        /// </summary>
+        /// <param name="name">资源名称</param>
+        /// <returns></returns>
+        public static GameObject FindStaticPrefabs(string name)
+        {
+            foreach (GameObjectInfo gameObjectInfo in GamePrefab)
+            {
+                if (gameObjectInfo.Name == name)
+                    return gameObjectInfo.Object;
+            }
+            return null;
+        }
+
+        private static void InitStaticPrefab()
+        {
+            GameLogger.Instance.Log(TAG, "Init static prefab, count : {0}", GamePrefab.Count);
+            PrefabEmpty = FindStaticPrefabs("PrefabEmpty");
+            PrefabUIEmpty = FindStaticPrefabs("PrefabUIEmpty");
+        }
+
+        #endregion
+
+        #region  游戏基础管理器快速索引
+
+        public static UIManager UIManager { get; private set; }
+        public static GameMediator GameMediator { get; private set; }
+
+        #endregion
 
     }
 }
