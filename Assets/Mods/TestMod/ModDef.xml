@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mod>
+  <!---模组基础信息-->
+  <BaseInfo>
+    <Name>Test Mod</Name>
+    <Author>mengyu</Author>
+    <Introduction>一个测试 MOD</Introduction>
+    <Logo>Assets/Mods/TestMod/Textures/logo.jpg</Logo>
+    <Version>1.0</Version>
+  </BaseInfo>
+  <!---模组兼容性信息-->
+  <Compatibility>
+    <MinVersion>1</MinVersion>
+    <TargetVersion>1</TargetVersion>
+  </Compatibility>
+  <!---模组入口LUA代码-->
+  <EntryCode>Assets/Mods/TestMod/Entry.lua.txt</EntryCode>
+  <!---模组类型 GameModType -->
+  <ModType>ModPack</ModType>
+  
+</Mod>

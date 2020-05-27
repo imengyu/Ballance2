@@ -1,10 +1,10 @@
-﻿using Ballance2.Utils;
+﻿using Ballance2.Config;
+using Ballance2.Utils;
 using SLua;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Xml;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -13,19 +13,31 @@ namespace Ballance2.Managers.CoreBridge
     /// <summary>
     /// 模组结构
     /// </summary>
-    [SLua.CustomLuaClass]
+    [CustomLuaClass]
     public class GameMod
     {
+        private string TAG = "";
+
         public GameMod(string packagePath, ModManager modManager)
         {
             ModManager = modManager;
             Uid = CommonUtils.GenNonDuplicateID();
             PackagePath = packagePath;
             PackageName = GamePathManager.GetFileNameWithoutExt(packagePath);
+            TAG = ModManager.TAG + ":" + Uid;
         }
 
+        /// <summary>
+        /// 模组 UID
+        /// </summary>
         public int Uid { get; private set; }
+        /// <summary>
+        /// 名字路径
+        /// </summary>
         public string PackagePath { get; private set; }
+        /// <summary>
+        /// 模组名称
+        /// </summary>
         public string PackageName { get; private set; }
 
         private ModManager ModManager;
@@ -45,7 +57,10 @@ namespace Ballance2.Managers.CoreBridge
         public void Destroy()
         {
             GameLogger.Log(ModManager.TAG, "Destroy mod package {0} uid: {1}", PackageName, Uid);
-
+            if (modDefXmlDoc != null)
+                modDefXmlDoc = null;
+            if (mainLuaCodeLoaded)
+                CallLuaFun("ModBeforeUnLoad", this);
             if (AssetBundle != null)
             {
                 AssetBundle.Unload(true);
@@ -116,6 +131,8 @@ namespace Ballance2.Managers.CoreBridge
             }
         }
 
+        #region 公共属性
+
         /// <summary>
         /// 加载失败的友好错误信息
         /// </summary>
@@ -134,27 +151,106 @@ namespace Ballance2.Managers.CoreBridge
         public AssetBundle AssetBundle { get; private set; }
 
         /// <summary>
+        /// 模组基础信息
+        /// </summary>
+        public GameModInfo ModInfo { get { return modInfo; } }
+        /// <summary>
         /// 模组是否有定义文件
         /// </summary>
         public bool ModHasDefFile { get; private set; } = false;
         /// <summary>
+        /// 模组定义文件
+        /// </summary>
+        public XmlDocument ModDefFile { get { return modDefXmlDoc; } }
+        /// <summary>
         /// 模组类型
         /// </summary>
         public GameModType ModType { get; private set; } = GameModType.NotSet;
-
         /// <summary>
-        /// 模组 LUA 虚拟机壳
+        /// 模组适配信息
         /// </summary>
+        public GameCompatibilityInfo ModCompatibilityInfo { get { return modCompatibilityInfo; } }
+
+        public string ModEntryCode { get; private set; }
         public LuaServer ModLuaServer { get; private set; }
         /// <summary>
         /// 模组 LUA 虚拟机
         /// </summary>
         public LuaServer.ModState ModLuaState { get; private set; }
 
+        #endregion
+
+        #region 模组信息读取
+
+        private GameModInfo modInfo = new GameModInfo();
+        private GameCompatibilityInfo modCompatibilityInfo = 
+            new GameCompatibilityInfo(GameConst.GameBulidVersion, GameConst.GameBulidVersion);
+        private XmlDocument modDefXmlDoc = new XmlDocument();
+
+        //读取模组定义文件
         private void ReadModDef(TextAsset ModDef)
         {
+            modDefXmlDoc = new XmlDocument();
+            modDefXmlDoc.LoadXml(ModDef.text);
 
+            XmlNode nodeMod = modDefXmlDoc.SelectSingleNode("Mod");
+            foreach(XmlNode node in nodeMod.ChildNodes)
+            {
+                switch (node.Name)
+                {
+                    case "BaseInfo": ReadModDefBaseInfo(node);  break;
+                    case "Compatibility": ReadModDefCompatibility(node); break;
+                    case "ModType":
+                        GameModType type = GameModType.NotSet;
+                        if (Enum.TryParse(node.InnerText, true, out type)) ModType = type;
+                        else GameLogger.Warning(TAG, "Bad ModType : {0}", node.InnerText);
+                        break;
+                    case "EntryCode": ModEntryCode = node.InnerText; break;
+                    case "Define": break;
+                    case "Data": break;
+                }
+            }
         }
+        private void ReadModDefCompatibility(XmlNode nodeCompatibility)
+        {
+            foreach (XmlNode node in nodeCompatibility.ChildNodes)
+            {
+                switch (node.Name)
+                {
+                    case "MinVersion":
+                        if (!int.TryParse(node.InnerText, out modCompatibilityInfo.MinVersion))
+                            GameLogger.Warning(TAG, "Bad MinVersion : {0}", node.InnerText);
+                        break;
+                    case "TargetVersion":
+                        if (!int.TryParse(node.InnerText, out modCompatibilityInfo.TargetVersion))
+                            GameLogger.Warning(TAG, "Bad TargetVersion : {0}", node.InnerText);
+                        break;
+                }
+            }
+        }
+        private void ReadModDefBaseInfo(XmlNode nodeBaseInfo)
+        {
+            foreach (XmlNode node in nodeBaseInfo.ChildNodes)
+            {
+                switch (node.Name)
+                {
+                    case "Name":
+                        modInfo.Name = node.InnerText;
+                        if(!string.IsNullOrWhiteSpace(modInfo.Name))
+                            PackageName = modInfo.Name;
+                        break;
+                    case "Author": modInfo.Author = node.InnerText; break;
+                    case "Introduction": modInfo.Introduction = node.InnerText; break;
+                    case "Logo": modInfo.Logo = node.InnerText; break;
+                    case "Version": modInfo.Version = node.InnerText; break;
+                }
+            }
+        }
+
+        #endregion
+
+        #region 模组操作
+
         //修复 模块透明材质 Shader
         private void FixBundleShader()
         {
@@ -187,6 +283,8 @@ namespace Ballance2.Managers.CoreBridge
                 }
             }
         }
+
+        #endregion
 
         #region LUA 虚拟机操作
 
@@ -234,6 +332,8 @@ namespace Ballance2.Managers.CoreBridge
             luaObjects.Remove(o);
         }
 
+        private bool mainLuaCodeLoaded = false;
+
         //初始化LUA虚拟机
         private void InitLuaState()
         {
@@ -243,7 +343,17 @@ namespace Ballance2.Managers.CoreBridge
         }
         private void RunModExecutionCode()
         {
-
+            if(!string.IsNullOrWhiteSpace(ModEntryCode))
+            {
+                TextAsset lua = GetTextAsset(ModEntryCode);
+                if (lua == null) GameLogger.Warning(TAG, "未找到模组启动代码 {0} ", ModEntryCode);
+                else
+                {
+                    mainLuaCodeLoaded = true;
+                    ModLuaState.doString(lua.text);
+                    CallLuaFun("ModulEntry", this);
+                }
+            }
         }
         private void DestroyLuaState()
         {
@@ -253,6 +363,62 @@ namespace Ballance2.Managers.CoreBridge
                 ModLuaState = null;
             }
         }
+
+        #region LUA 函数调用
+
+        /// <summary>
+        /// 获取当前 模块主代码 的指定函数
+        /// </summary>
+        /// <param name="funName">函数名</param>
+        /// <returns>返回函数，未找到返回null</returns>
+        public LuaFunction GetLuaFun(string funName)
+        {
+            return ModLuaState.getFunction(funName);
+        }
+        /// <summary>
+        /// 调用模块主代码的lua无参函数
+        /// </summary>
+        /// <param name="funName">lua函数名称</param>
+        public void CallLuaFun(string funName)
+        {
+            LuaFunction f = GetLuaFun(funName);
+            if (f != null) f.call();
+        }
+        /// <summary>
+        /// 调用模块主代码的lua函数
+        /// </summary>
+        /// <param name="funName">lua函数名称</param>
+        /// <param name="pararms">参数</param>
+        public void CallLuaFun(string funName, params object[] pararms)
+        {
+            LuaFunction f = GetLuaFun(funName);
+            if (f != null) f.call(pararms);
+        }
+        /// <summary>
+        /// 调用指定的lua虚拟脚本中的lua无参函数
+        /// </summary>
+        /// <param name="luaObjectName">lua虚拟脚本名称</param>
+        /// <param name="funName">lua函数名称</param>
+        public void CallLuaFun(string luaObjectName, string funName)
+        {
+            GameLuaObjectHost targetObject = null;
+            if (FindLuaObject(luaObjectName, out targetObject))
+                targetObject.CallLuaFun(funName);
+        }
+        /// <summary>
+        /// 调用指定的lua虚拟脚本中的lua函数
+        /// </summary>
+        /// <param name="luaObjectName">lua虚拟脚本名称</param>
+        /// <param name="funName">lua函数名称</param>
+        /// <param name="pararms">参数</param>
+        public void CallLuaFun(string luaObjectName, string funName, params object[] pararms)
+        {
+            GameLuaObjectHost targetObject = null;
+            if (FindLuaObject(luaObjectName, out targetObject))
+                targetObject.CallLuaFun(funName, pararms);
+        }
+
+        #endregion
 
         #endregion
 
@@ -303,7 +469,9 @@ namespace Ballance2.Managers.CoreBridge
         }
 
         #endregion
+
     }
+
     /// <summary>
     /// 模组加载状态
     /// </summary>
@@ -342,4 +510,29 @@ namespace Ballance2.Managers.CoreBridge
         Level,
     }
 
+    /// <summary>
+    /// 模组信息
+    /// </summary>
+    public struct GameModInfo
+    {
+        public string Name;
+        public string Author;
+        public string Introduction;
+        public string Logo;
+        public string Version;
+    }
+    /// <summary>
+    /// 模组适配信息
+    /// </summary>
+    public struct GameCompatibilityInfo
+    {
+        public GameCompatibilityInfo(int m, int t)
+        {
+            MinVersion = m;
+            TargetVersion = t;
+        }
+
+        public int MinVersion;
+        public int TargetVersion;
+    }
 }

@@ -1,0 +1,27 @@
+--- TestMod
+--- Entry
+--- Lua 模组测试
+
+GameManager = Ballance2.GameManager
+GameLogger = Ballance2.GameLogger
+
+local GameModul = nil
+local TAG = "TestMod:Main"
+
+-- 模块入口函数
+function ModEntry(thisGameModul)
+	GameModul = thisGameModul
+  
+  GameLogger:Log(TAG, "ModEntry !")
+
+
+  return true
+end
+
+-- 模块卸载前函数
+function ModBeforeUnLoad(thisGameModul)
+	GameModul = thisGameModul
+  
+  GameLogger:Log(TAG, "ModBeforeUnLoad !")
+  return true
+end

@@ -30,7 +30,7 @@ namespace Ballance2
             GameManager.GameMediator.RegisterEventKernalHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE,
                 "Debug", (evtName, param) =>
                 {
-                    GameLogger.Log(TAG, "{0} Alert closed : {1} isc : {2}", evtName, param[0], param[1]);
+                    GameLogger.Log(TAG, "{0} Alert closed : {1} => {2}", evtName, param[0], param[1]);
                     return false;
                 });
 

@@ -9,11 +9,15 @@
         /// <summary>
         /// 游戏版本
         /// </summary>
-        public const string GameVersion = "1.0.0.0";
+        public const string GameVersion = "1.0";
         /// <summary>
         /// 游戏编译版本
         /// </summary>
-        public const string GameBulidVersion = "2020.06.25";
+        public const int GameBulidVersion = 1;
+        /// <summary>
+        /// 游戏编译版本
+        /// </summary>
+        public const string GameBulidDate = "2020.06.25";
 
         #region Unity 环境静态常量
 
