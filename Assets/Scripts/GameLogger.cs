@@ -1,6 +1,7 @@
 ﻿using Ballance2.Config;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using UnityEngine;
 
@@ -19,7 +20,6 @@ namespace Ballance2
         public static void InitLogger()
         {
             logDatas = new List<LogData>();
-            logDatasNotSend = new List<LogData>();
             on = GameConst.GameLoggerOn;
             if (on)
             {
@@ -45,9 +45,6 @@ namespace Ballance2
                 logFile = null;
                 logFile.Close();
             }
-            if (logDatasNotSend != null)
-                logDatasNotSend.Clear();
-            logDatasNotSend = null;
             if (logDatas != null)
                 logDatas.Clear();
             logDatas = null;
@@ -105,20 +102,20 @@ namespace Ballance2
             Warning = 2,
             Error = 0,
             Assert = 1,
+            Max = 6,
         }
 
         internal struct LogData
         {
             public LogType Type;
             public string Data;
-            public bool Received;
+            public string StackTrace;
         }
         internal static string GetNowDateString()
         {
             return DateTime.Now.ToString("HH:mm:ss");
         }
         private static List<LogData> logDatas = null;
-        private static List<LogData> logDatasNotSend = null;
         private static LogCallback logCallback = null;
         private static int countError = 0;
         private static int countWarning = 0;
@@ -137,18 +134,9 @@ namespace Ballance2
             return 0;
         }
 
-        internal delegate void LogCallback(LogType type, string content);
+        internal delegate void LogCallback(LogData data);
         internal static List<LogData> GetLogData()  { return logDatas;  }
 
-        internal static void ReSendNotReceivedLogs()
-        {
-            if(logCallback != null)
-            {
-                for (int i = 0; i < logDatasNotSend.Count; i++)
-                    logCallback(logDatasNotSend[i].Type, logDatasNotSend[i].Data);
-                logDatasNotSend.Clear();
-            }
-        }
         internal static void RegisterLogCallback(LogCallback logCallback)
         {
             GameLogger.logCallback = logCallback;
@@ -176,19 +164,15 @@ namespace Ballance2
             {
                 LogData data = new LogData();
                 data.Type = type;
-                data.Received = false;
                 data.Data = string.Format("[{0}] {1}", GetNowDateString(), message);
-               
-                if(logToFile)
+                data.StackTrace = new StackTrace().ToString();
+
+                if (logToFile)
                     logFile.WriteLine(data.Data);
                 if (logCallback != null)
-                {
-                    logCallback(type, data.Data);
-                    logDatas.Add(data);
-                    DeleteExcessLogs();
-                }
-                else if(logDatasNotSend.Count < GameConst.GameLoggerBufferMax)
-                    logDatasNotSend.Add(data);
+                    logCallback(data);
+                logDatas.Add(data);
+                DeleteExcessLogs();
                 if (logDatas.Count > GameConst.GameLoggerBufferMax)
                     logDatas.RemoveAt(0);
 

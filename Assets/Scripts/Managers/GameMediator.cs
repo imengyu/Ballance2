@@ -226,7 +226,45 @@ namespace Ballance2.Managers
 
         #region 全局操作控制器
 
+        private DebugManager DebugManager;
 
+        private void InitModDebug()
+        {
+            RegisterEventKernalHandler(GameEventNames.EVENT_BASE_MANAGER_INIT_FINISHED, TAG, (evtName, param) =>
+            {
+                if(param[1].ToString() == DebugManager.TAG)
+                {
+                    DebugManager = (DebugManager)GameManager.GetManager(DebugManager.TAG);
+                    DebugManager.RegisterCommand("events", OnCommandShowEvents, 0, "[showHandlers:true/false] 显示全局事件 [是否显示事件接收器]");
+                }
+                return false;
+            });
+        }
+
+        private bool OnCommandShowEvents(string keyword, string fullCmd, string[] args)
+        {
+            bool showHandlers = args.Length > 0 && args[0] == "true";
+
+            StringBuilder s = new StringBuilder();
+            foreach (GameEvent e in events)
+            {
+                s.Append('\n');
+                s.Append(e.EventName);
+                s.Append("   Handler count:  ");
+                s.Append(e.EventHandlers.Count);
+                if (showHandlers)
+                {
+                    s.Append("\nHandlers : ");
+                    foreach(GameHandler h in  e.EventHandlers)
+                    {
+                        s.Append("\n  ");
+                        s.Append(h.ToString());
+                    }
+                }
+            }
+            GameLogger.Log(TAG, "GameEvents count {0} : \n{1}", events.Count, s.ToString());
+            return true;
+        }
 
         #endregion
     }

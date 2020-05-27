@@ -67,6 +67,11 @@ namespace Ballance2
                 GameErrorManager.LastError = GameError.InitializationFailed;
                 return null;
             }
+            else
+            {
+                if (GameMediator != null)
+                    GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_BASE_MANAGER_INIT_FINISHED, "*", classInstance.GetName(), classInstance.GetSubName());
+            }
             return classInstance;
         }
         
@@ -144,11 +149,21 @@ namespace Ballance2
         /// 游戏全局 Lua 虚拟机
         /// </summary>
         public static LuaSvr.MainState GameMainLuaState { get; set; }
+        /// <summary>
+        /// 静态资源引入
+        /// </summary>
+        public static List<GameAssetsInfo> GameAssets { get; private set; }
 
         [Serializable]
         public class GameObjectInfo
         {
             public GameObject Object;
+            public string Name;
+        }
+        [Serializable]
+        public class GameAssetsInfo
+        {
+            public UnityEngine.Object Object;
             public string Name;
         }
 
@@ -174,7 +189,7 @@ namespace Ballance2
             return gameMediatorInitFinished;
         }
 
-        internal static bool Init(GameMode mode, GameObject gameRoot, GameObject gameCanvas, List<GameObjectInfo> gamePrefab, bool breakAtStart)
+        internal static bool Init(GameMode mode, GameObject gameRoot, GameObject gameCanvas,  List<GameObjectInfo> gamePrefab, List<GameAssetsInfo> gameAssets, bool breakAtStart)
         {
             bool result = false;
 
@@ -182,13 +197,13 @@ namespace Ballance2
             GameRoot = gameRoot;
             GameCanvas = gameCanvas;
             GamePrefab = gamePrefab;
+            GameAssets = gameAssets;
 
             InitStaticPrefab();
             GameBaseCamera = GameObject.Find("GameBaseCamera").GetComponent<Camera>();
             gameBreakAtStart = breakAtStart;
             managers = new List<IManager>();
             
-
             //错误提示
             GameObject GlobalGameErrorPanel = GameCanvas.transform.Find("GlobalGameErrorPanel").gameObject;
             GameErrorManager.SetGameErrorUI(GlobalGameErrorPanel.GetComponent<GameGlobalErrorUI>());
@@ -202,6 +217,7 @@ namespace Ballance2
                     //初始化各个管理器
                     GameMediator = (GameMediator)RegisterManager(new GameMediator());
                     gameMediatorInitFinished = true;
+                    GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_BASE_MANAGER_INIT_FINISHED);
 
                     UIManager =  (UIManager)RegisterManager(new UIManager());
 
@@ -255,8 +271,6 @@ namespace Ballance2
         {
             UnityEngine.Debug.Log("[" + TAG + " ] Destroy game");
             bool result = DestryAllManagers();
-            managers.Clear();
-            managers = null;
             return result;
         }
 
@@ -271,6 +285,7 @@ namespace Ballance2
                     if (!b) UnityEngine.Debug.LogWarningFormat("[" + TAG + " ] Failed to release manager {0}:{1} . ",
                          managers[i].GetName(), managers[i].GetSubName());
                 }
+                managers.Clear();
                 managers = null;
             }
             return b;
@@ -322,6 +337,34 @@ namespace Ballance2
             {
                 if (gameObjectInfo.Name == name)
                     return gameObjectInfo.Object;
+            }
+            return null;
+        }
+        /// <summary>
+        /// 在静态引入资源中查找
+        /// </summary>
+        /// <param name="name">资源名称</param>
+        /// <returns></returns>
+        public static T FindStaticAssets<T>(string name) where T : UnityEngine.Object
+        {
+            foreach (GameAssetsInfo gameAssetsInfo in GameAssets)
+            {
+                if (gameAssetsInfo.Name == name)
+                    return (T)gameAssetsInfo.Object;
+            }
+            return null;
+        }
+        /// <summary>
+        /// 在静态引入资源中查找
+        /// </summary>
+        /// <param name="name">资源名称</param>
+        /// <returns></returns>
+        public static UnityEngine.Object FindStaticAssets(string name)
+        {
+            foreach (GameAssetsInfo gameAssetsInfo in GameAssets)
+            {
+                if (gameAssetsInfo.Name == name)
+                    return gameAssetsInfo.Object;
             }
             return null;
         }

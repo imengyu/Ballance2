@@ -35,6 +35,9 @@ namespace Ballance2
                 });
 
             GameLogger.Log(TAG, "IsGameBaseInitFinished");
+            GameLogger.Warning(TAG, "Test warning log");
+            GameLogger.Error(TAG, "Test Error log");
+            GameLogger.Error(TAG, "Test Error log2");
             //GameManager.UIManager.GlobalAlert("测试对话框内容", "测试对话框");
 
             GameLogger.Log(TAG, "Run End");

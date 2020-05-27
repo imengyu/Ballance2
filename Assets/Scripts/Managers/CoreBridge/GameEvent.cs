@@ -36,6 +36,16 @@ namespace Ballance2.Managers.CoreBridge
         public const string EVENT_BASE_INIT_FINISHED = "e:base_init_finished";
 
         /// <summary>
+        /// 基础管理器初始化完成时触发该事件
+        /// </summary>
+        /// <remarks>
+        /// 事件参数：
+        /// 【0】管理器名称
+        /// 【1】管理器二级名称
+        /// </remarks>
+        public const string EVENT_BASE_MANAGER_INIT_FINISHED = "e:base_manager_init_finished";
+
+        /// <summary>
         /// 全局对话框（Alert，Confirm）关闭时触发该事件
         /// </summary>
         /// <remarks>

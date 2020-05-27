@@ -24,14 +24,18 @@ namespace Ballance2
         /// </summary>
         public bool BreakAtStart = false;
         /// <summary>
-        /// 静态资源引入
+        /// 静态 Prefab 资源引入
         /// </summary>
         public List<GameManager.GameObjectInfo> GamePrefab = null;
+        /// <summary>
+        /// 静态资源引入
+        /// </summary>
+        public List<GameManager.GameAssetsInfo> GameAssets = null;
 
         void Start()
         {
             GameLogger.InitLogger();
-            GameManager.Init(GameMode, GameRoot, GameCanvas, GamePrefab, BreakAtStart);
+            GameManager.Init(GameMode, GameRoot, GameCanvas, GamePrefab, GameAssets, BreakAtStart);
         }
         private void OnDestroy()
         {

@@ -870,6 +870,23 @@ MonoBehaviour:
   - Object: {fileID: 9213095750277210233, guid: b09b63a9aa15da848a1f87425e9867b5,
       type: 3}
     Name: UIDebugToolBar
+  GameAssets:
+  - Object: {fileID: 21300000, guid: 35a064e582e3c20499db1bb71232b48d, type: 3}
+    Name: ico_error
+  - Object: {fileID: 2800000, guid: de87dab5ee4eae24f9d36449de35dabe, type: 3}
+    Name: ico_help
+  - Object: {fileID: 21300000, guid: aaee61e0e507ac84d84b5c5b4d032109, type: 3}
+    Name: ico_info
+  - Object: {fileID: 21300000, guid: e481ff3cdf3dc9a4381dd7bfcb63b2bb, type: 3}
+    Name: ico_success
+  - Object: {fileID: 21300000, guid: 8d3716c6e31e183479e10fe0bab68aac, type: 3}
+    Name: ico_warning
+  - Object: {fileID: 21300000, guid: 5cce3491e9dde544e9576bb121b155ab, type: 3}
+    Name: box_round_light
+  - Object: {fileID: 21300000, guid: b064b6d543af0db428e530091dff62ca, type: 3}
+    Name: box_round_grey
+  - Object: {fileID: 21300000, guid: 2d122f45ef24cfa4a986e71d0eafe34a, type: 3}
+    Name: box_round_grey
 --- !u!4 &1202931503
 Transform:
   m_ObjectHideFlags: 0
@@ -878,7 +895,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1202931501}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 410.53156, y: 262.4493, z: 700.97815}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1535,7 +1552,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1802348767}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 410.53156, y: 262.4493, z: 700.97815}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

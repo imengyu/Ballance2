@@ -144,15 +144,15 @@ namespace Ballance2.Managers
         private void InitModDebug()
         {
             DebugManager = (DebugManager)GameManager.GetManager(DebugManager.TAG);
-            DebugManager.RegisterCommand("loadmod", OnCommandLoadMod, 1, "[packagePath] [initialize:true/false] 加载模组");
-            DebugManager.RegisterCommand("unloadmod", OnCommandUnLoadMod, 1, "[packageUid]  加载模组");
-            DebugManager.RegisterCommand("initmod", OnCommandInitializeMod, 1, "[packageUid]  初始化模组");
+            DebugManager.RegisterCommand("loadmod", OnCommandLoadMod, 1, "[packagePath:string] [initialize:true/false] 加载模组 [模组完整路径] [是否立即初始化]");
+            DebugManager.RegisterCommand("unloadmod", OnCommandUnLoadMod, 1, "[packageUid:int]  加载模组 [模组UID]");
+            DebugManager.RegisterCommand("initmod", OnCommandInitializeMod, 1, "[packageUid:int]  初始化模组 [模组UID]");
         }
 
         private bool OnCommandLoadMod(string keyword, string fullCmd, string[] args)
         {
             int newId = LoadGameMod(args[0], args.Length >= 2 ? args[1] == "true" : false);
-            GameLogger.Log(TAG, newId.ToString());
+            GameLogger.Log(TAG, "模组 UID : {0}", newId.ToString());
             return true;
         }
         private bool OnCommandUnLoadMod(string keyword, string fullCmd, string[] args)

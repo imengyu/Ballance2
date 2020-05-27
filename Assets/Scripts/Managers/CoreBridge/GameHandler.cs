@@ -75,6 +75,11 @@
         /// LUA Handler 执行体接收器
         /// </summary>
         public GameLuaHandler LuaModulHandlerFunc { get; private set; }
+
+        public override string ToString()
+        {
+            return "[" + Type + "] " + Name + (string.IsNullOrEmpty(LuaModulHandler) ?  "" :  (":" + LuaModulHandler));
+        }
     }
 
     /// <summary>
