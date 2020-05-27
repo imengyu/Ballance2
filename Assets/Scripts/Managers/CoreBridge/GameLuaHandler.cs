@@ -15,7 +15,7 @@ namespace Ballance2.Managers.CoreBridge
 
 
 
-        public bool RunCommandHandler(string keyword, int argCount, string[] args)
+        public bool RunCommandHandler(string keyword, int argCount, string fullCmd, string[] args)
         {
             return false;
         }

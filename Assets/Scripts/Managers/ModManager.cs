@@ -19,6 +19,7 @@ namespace Ballance2.Managers
         public override bool InitManager()
         {
             gameMods = new List<GameMod>();
+            InitModDebug();
             return true;
         }
         public override bool ReleaseManager()
@@ -106,6 +107,25 @@ namespace Ballance2.Managers
             gameMods.Remove(m);
             return true;
         }
+        /// <summary>
+        /// 初始化模组包
+        /// </summary>
+        /// <param name="modUid">模组包UID</param>
+        /// <returns>返回操作是否成功</returns>
+        public bool InitializeLoadGameMod(int modUid)
+        {
+            GameMod m = FindGameMod(modUid);
+            if (m == null)
+            {
+                GameLogger.Warning(TAG, "无法初始化模组包 (UID: {0}) ，因为没有加载", modUid);
+                GameErrorManager.LastError = GameError.Unregistered;
+                return false;
+            }
+
+            if (m.LoadStatus != GameModStatus.InitializeSuccess)
+                m.Load(this);
+            return true;
+        }
 
         internal void OnModLoadFinished(GameMod m)
         {
@@ -119,7 +139,42 @@ namespace Ballance2.Managers
 
         #region 模组包管理调试
 
+        private DebugManager DebugManager;
 
+        private void InitModDebug()
+        {
+            DebugManager = (DebugManager)GameManager.GetManager(DebugManager.TAG);
+            DebugManager.RegisterCommand("loadmod", OnCommandLoadMod, 1, "[packagePath] [initialize:true/false] 加载模组");
+            DebugManager.RegisterCommand("unloadmod", OnCommandUnLoadMod, 1, "[packageUid]  加载模组");
+            DebugManager.RegisterCommand("initmod", OnCommandInitializeMod, 1, "[packageUid]  初始化模组");
+        }
+
+        private bool OnCommandLoadMod(string keyword, string fullCmd, string[] args)
+        {
+            int newId = LoadGameMod(args[0], args.Length >= 2 ? args[1] == "true" : false);
+            GameLogger.Log(TAG, newId.ToString());
+            return true;
+        }
+        private bool OnCommandUnLoadMod(string keyword, string fullCmd, string[] args)
+        {
+            int id = 0;
+            if (!int.TryParse(args[0], out id))
+            {
+                GameLogger.Error(TAG, "Bad param 0 : {0}", args[0]);
+                return false;
+            }
+            return UnLoadGameMod(id);
+        }
+        private bool OnCommandInitializeMod(string keyword, string fullCmd, string[] args)
+        {
+            int id = 0;
+            if(!int.TryParse(args[0], out id))
+            {
+                GameLogger.Error(TAG, "Bad param 0 : {0}", args[0]);
+                return false;
+            }
+            return InitializeLoadGameMod(id);
+        }
 
         #endregion
     }

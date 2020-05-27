@@ -203,7 +203,7 @@ namespace Ballance2.Managers
 
         #region 调试命令控制
 
-        public delegate bool CommandDelegate(string keyword, string[] args);
+        public delegate bool CommandDelegate(string keyword, string fullCmd, string[] args);
 
         private List<CmdItem> commands = null;
         private class CmdItem
@@ -219,6 +219,24 @@ namespace Ballance2.Managers
         private void InitCommands()
         {
             commands = new List<CmdItem>();
+
+            //注册基础内置命令
+            RegisterCommand("quit", (keyword, fullCmd, args) =>
+            {
+                GameManager.QuitGame();
+                return true;
+            }, 0, "退出游戏");
+            RegisterCommand("echo", (keyword, fullCmd, args) =>
+            {
+                GameLogger.Log(TAG, "[echo] " + fullCmd.Substring(3));
+                return true;
+            }, 1, "测试");
+            RegisterCommand("lua", (keyword, fullCmd, args) =>
+            {
+                LuaSvr.mainState.doString(fullCmd.Substring(3));
+                return true;
+            }, 1, "运行 LUA 命令");
+            RegisterCommand("help", OnCommandHelp, 1, "显示命令帮助");
         }
         private void DestroyCommands()
         {
@@ -233,6 +251,14 @@ namespace Ballance2.Managers
                 commands = null;
             }
         }
+        private bool OnCommandHelp(string keyword, string fullCmd, string[] args)
+        {
+            string helpText = "命令帮助：\n";
+            foreach (CmdItem cmdItem in commands)
+                helpText += cmdItem.Keyword + " <color=#adadad>" + cmdItem.HelpText + "</color>\n";
+            GameLogger.Log(TAG, helpText);
+            return true;
+        }
 
         /// <summary>
         /// 运行命令
@@ -241,71 +267,48 @@ namespace Ballance2.Managers
         /// <returns>返回是否成功</returns>
         public bool RunCommand(string cmd)
         {
-            if(string.IsNullOrEmpty(cmd))
+            if (string.IsNullOrEmpty(cmd))
             {
                 GameLogger.Warning(TAG, "请输入命令！");
                 return false;
             }
-            if (cmd.StartsWith("say "))
+            StringSpliter sp = new StringSpliter(cmd, ' ', true);
+            if (sp.Count >= 1)
             {
-                GameLogger.Log(TAG, "[say] " + cmd.Substring(3));
-                return true;
-            }
-            if (cmd.StartsWith("lua "))
-            {
-                LuaSvr.mainState.doString(cmd.Substring(3));
-                return true;
-            }
-            if (cmd.StartsWith("help"))
-            {
-                string helpText = "命令帮助：\n";
-                helpText += "help <color=#adadad>显示本帮助</color>\n";
-                helpText += "lua <color=#adadad>运行较短的lua脚本</color>\n";
                 foreach (CmdItem cmdItem in commands)
-                    helpText += cmdItem.Keyword + " <color=#adadad>" + cmdItem.HelpText + "</color>\n";
-                GameLogger.Log(TAG, helpText);
-                return true;
-            }
-            else
-            {
-                StringSpliter sp = new StringSpliter(cmd, ' ', true);
-                if (sp.Count >= 1)
                 {
-                    foreach (CmdItem cmdItem in commands)
+                    if (cmdItem.Keyword == sp.Result[0])
                     {
-                        if (cmdItem.Keyword == sp.Result[0])
+                        //arg
+                        if (cmdItem.LimitArgCount > 0 && sp.Count < cmdItem.LimitArgCount - 1)
                         {
-                            //arg
-                            if (cmdItem.LimitArgCount > 0 && sp.Count < cmdItem.LimitArgCount - 1)
+                            GameLogger.Log(TAG, "命令 {0} 至少需要 {1} 个参数", sp.Result[0], cmdItem.LimitArgCount);
+                            return false;
+                        }
+                        //Kernel hander
+                        if (cmdItem.KernelCallback != null)
+                        {
+                            if (sp.Count > 1)
                             {
-                                GameLogger.Log(TAG, "命令 {0} 至少需要 {1} 个参数", sp.Result[0] , cmdItem.LimitArgCount);
-                                return false;
+                                string[] newsp = new string[sp.Count - 1];
+                                for (int i = 1; i < sp.Count - 1; i++)
+                                    newsp[i - 1] = sp.Result[i];
+                                return cmdItem.KernelCallback(sp.Result[0], cmd, newsp);
                             }
-                            //Kernel hander
-                            if (cmdItem.KernelCallback != null)
-                            {
-                                if (sp.Count > 1)
-                                {
-                                    string[] newsp = new string[sp.Count - 1];
-                                    for (int i = 1; i < sp.Count - 1; i++)
-                                        newsp[i - 1] = sp.Result[i];
-                                    return cmdItem.KernelCallback(sp.Result[0], newsp);
-                                }
-                                else return cmdItem.KernelCallback(sp.Result[0], null);
-                            }
-                            //Modul handler
-                            if (!string.IsNullOrEmpty(cmdItem.Handler) && cmdItem.HandlerInternal != null)
-                            {
-                                List<string> arglist = new List<string>(sp.Result);
-                                arglist.RemoveAt(0);
-                                cmdItem.HandlerInternal.RunCommandHandler(sp.Result[0], sp.Count, arglist.ToArray());
-                            }
+                            else return cmdItem.KernelCallback(sp.Result[0], cmd, null);
+                        }
+                        //Modul handler
+                        if (!string.IsNullOrEmpty(cmdItem.Handler) && cmdItem.HandlerInternal != null)
+                        {
+                            List<string> arglist = new List<string>(sp.Result);
+                            arglist.RemoveAt(0);
+                            cmdItem.HandlerInternal.RunCommandHandler(sp.Result[0], sp.Count, cmd, arglist.ToArray());
                         }
                     }
-                    GameLogger.Warning(TAG, "未找到命令 {0}", sp.Result[0]);
                 }
-                return false;
+                GameLogger.Warning(TAG, "未找到命令 {0}", sp.Result[0]);
             }
+            return false;
         }
 
         /*
