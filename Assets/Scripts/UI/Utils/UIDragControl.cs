@@ -21,13 +21,14 @@ namespace Ballance2.UI.Utils
 
 
         private Vector2 mouseOffest = Vector2.zero;
+        private Image image = null;
 
         protected override void Awake()
         {
             base.Awake();
 
             if (dragTransform == null) dragTransform = GetComponent<Transform>();
-
+            image = GetComponent<Image>();
 
             EventTrigger trigger = gameObject.AddComponent<EventTrigger>();
 
@@ -52,12 +53,12 @@ namespace Ballance2.UI.Utils
 
         public void OnPointerDown(BaseEventData data)
         {
-            GetComponent<Image>().color = Color.gray;
+            image.color = new Color(image.color.r, image.color.g, image.color.b, 0.7f);
             mouseOffest = new Vector2(Input.mousePosition.x - dragTransform.position.x, Input.mousePosition.y - dragTransform.position.y);
         }
         public void OnPointerUp(BaseEventData data)
         {
-            GetComponent<Image>().color = Color.white;
+            image.color = new Color(image.color.r, image.color.g, image.color.b, 1);
             mouseOffest = Vector2.zero;
         }
         public void OnDrag(BaseEventData data)

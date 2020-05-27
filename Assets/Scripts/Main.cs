@@ -30,13 +30,13 @@ namespace Ballance2
 
         void Start()
         {
-            GameLogger.Init();
+            GameLogger.InitLogger();
             GameManager.Init(GameMode, GameRoot, GameCanvas, GamePrefab, BreakAtStart);
         }
         private void OnDestroy()
         {
             GameManager.Destroy();
-            GameLogger.Destroy();
+            GameLogger.DestroyLogger();
         }
     }
 }

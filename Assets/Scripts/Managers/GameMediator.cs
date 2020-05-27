@@ -55,7 +55,7 @@ namespace Ballance2.Managers
             }
             else
             {
-                GameLogger.Instance.Warning(TAG, "事件 {0} 已注册", evtName);
+                GameLogger.Warning(TAG, "事件 {0} 已注册", evtName);
                 GameErrorManager.LastError = GameError.AlredayRegistered;
             }
             return false;
@@ -74,7 +74,7 @@ namespace Ballance2.Managers
             }
             else
             {
-                GameLogger.Instance.Warning(TAG, "事件 {0} 未注册", evtName);
+                GameLogger.Warning(TAG, "事件 {0} 未注册", evtName);
                 GameErrorManager.LastError = GameError.Unregistered;
             }
         }
@@ -126,7 +126,7 @@ namespace Ballance2.Managers
                     {
                         if (gameHandler.Call(evtName, pararms))
                         {
-                            GameLogger.Instance.Log(TAG, "Event {0} was interrupted by : {1}", evtName, gameHandler.Name);
+                            GameLogger.Log(TAG, "Event {0} was interrupted by : {1}", evtName, gameHandler.Name);
                             break;
                         }
                     }
@@ -134,7 +134,7 @@ namespace Ballance2.Managers
             }
             else
             {
-                GameLogger.Instance.Warning(TAG, "事件 {0} 未注册", evtName);
+                GameLogger.Warning(TAG, "事件 {0} 未注册", evtName);
                 GameErrorManager.LastError = GameError.Unregistered;
             }
         }
@@ -177,7 +177,7 @@ namespace Ballance2.Managers
             }
             else
             {
-                GameLogger.Instance.Warning(TAG, "事件 {0} 未注册", evtName);
+                GameLogger.Warning(TAG, "事件 {0} 未注册", evtName);
                 GameErrorManager.LastError = GameError.Unregistered;
             }
             return null;
@@ -200,7 +200,7 @@ namespace Ballance2.Managers
             }
             else
             {
-                GameLogger.Instance.Warning(TAG, "事件 {0} 未注册", evtName);
+                GameLogger.Warning(TAG, "事件 {0} 未注册", evtName);
                 GameErrorManager.LastError = GameError.Unregistered;
             }
             return null;
@@ -217,15 +217,17 @@ namespace Ballance2.Managers
                 gameEvent.EventHandlers.Remove(handler);
             else
             {
-                GameLogger.Instance.Warning(TAG, "事件 {0} 未注册", evtName);
+                GameLogger.Warning(TAG, "事件 {0} 未注册", evtName);
                 GameErrorManager.LastError = GameError.Unregistered;
             }
         }
 
         #endregion
 
+        #region 全局操作控制器
 
 
 
+        #endregion
     }
 }

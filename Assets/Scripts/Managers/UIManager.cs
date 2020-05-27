@@ -35,14 +35,14 @@ namespace Ballance2.Managers
             InitAllObects();
             InitWindowManagement();
 
-            GameLogger.Instance.Log(TAG, "InitManager");
+            GameLogger.Log(TAG, "InitManager");
             return true;
         }
         public override bool ReleaseManager()
         {
             DestroyWindowManagement();
 
-            GameLogger.Instance.Log(TAG, "Destroy {0} ui objects", UIRoot.transform.childCount);
+            GameLogger.Log(TAG, "Destroy {0} ui objects", UIRoot.transform.childCount);
             for (int i = 0, c = UIRoot.transform.childCount; i < c; i++)
                 UnityEngine.Object.Destroy(UIRoot.transform.GetChild(i).gameObject);
             return true;
@@ -129,6 +129,7 @@ namespace Ballance2.Managers
         {
             GameObject windowGo = GameCloneUtils.CloneNewObjectWithParent(PrefabUIAlertWindow, WindowsRectTransform.transform, "");
             UIAlertWindow window = windowGo.GetComponent<UIAlertWindow>();
+            RegisterWindow(window);
             window.Show(text, title, okText);
             window.onClose = (id) =>
             {
@@ -151,6 +152,7 @@ namespace Ballance2.Managers
         {
             GameObject windowGo = GameCloneUtils.CloneNewObjectWithParent(PrefabUIConfirmWindow, WindowsRectTransform.transform, "");
             UIConfirmWindow window = windowGo.GetComponent<UIConfirmWindow>();
+            RegisterWindow(window);
             window.Show(text, title, okText, cancelText);
             window.onClose = (id) =>
             {
@@ -177,8 +179,6 @@ namespace Ballance2.Managers
             PrefabUIAlertWindow = GameManager.FindStaticPrefabs("UIAlertWindow");
             PrefabUIConfirmWindow = GameManager.FindStaticPrefabs("UIConfirmWindow");
             PrefabUIWindow = GameManager.FindStaticPrefabs("UIWindow");
-
-            GameLogger.Instance.Log(TAG, "Init resources prefab, test PrefabUIAlertWindow  : {0}", PrefabUIAlertWindow);
 
             GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE);
         }
@@ -232,7 +232,7 @@ namespace Ballance2.Managers
         /// <returns></returns>
         public UIWindow CreateWindow(string title, RectTransform customView, bool show, float x, float y, float w, float h)
         {
-            GameObject windowGo = GameCloneUtils.CloneNewObjectWithParent(PrefabUIWindow, WindowsRectTransform.transform, "UIWindow_" + title);
+            GameObject windowGo = GameCloneUtils.CloneNewObjectWithParent(PrefabUIWindow, WindowsRectTransform.transform, "GameUIWindow_" + title);
             UIWindow window = windowGo.GetComponent<UIWindow>();
             window.Title = title;
             window.SetPos(x, y);
@@ -247,8 +247,9 @@ namespace Ballance2.Managers
         /// </summary>
         /// <param name="window">窗口</param>
         /// <returns></returns>
-        public IWindow RegisterWindow(IWindow  window)
+        public UIWindow RegisterWindow(UIWindow window)
         {
+            window.name = "GameUIWindow_" + window.Title;
             managedWindows.Add(window);
             return window;
         }

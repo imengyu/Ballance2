@@ -1,6 +1,7 @@
 ﻿using Ballance2.Managers;
 using Ballance2.Managers.CoreBridge;
 using Ballance2.Utils;
+using SLua;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -46,23 +47,23 @@ namespace Ballance2
             {
                 if (classInstance.GetIsSingleton())
                 {
-                    GameLogger.Instance.Warning(TAG, "RegisterManager 失败，管理器 {0} 已注册", name);
+                    GameLogger.Warning(TAG, "RegisterManager 失败，管理器 {0} 已注册", name);
                     GameErrorManager.LastError = GameError.AlredayRegistered;
                     return null;
                 }
                 else if(GetManager(name, classInstance.GetSubName()) != null)
                 {
-                    GameLogger.Instance.Warning(TAG, "RegisterManager 失败，管理器 {0}:{1} 已注册", name, classInstance.GetSubName());
+                    GameLogger.Warning(TAG, "RegisterManager 失败，管理器 {0}:{1} 已注册", name, classInstance.GetSubName());
                     GameErrorManager.LastError = GameError.AlredayRegistered;
                     return null;
                 }
             }
             managers.Add(classInstance);
-            GameLogger.Instance.Log(TAG, "Manager registered : {0}:{1}", classInstance.GetName(), classInstance.GetSubName());
+            GameLogger.Log(TAG, "Manager registered : {0}:{1}", classInstance.GetName(), classInstance.GetSubName());
 
             if (!classInstance.InitManager())
             {
-                GameLogger.Instance.Warning(TAG, "RegisterManager 失败，管理器 {0} 初始化失败", name);
+                GameLogger.Warning(TAG, "RegisterManager 失败，管理器 {0} 初始化失败", name);
                 GameErrorManager.LastError = GameError.InitializationFailed;
                 return null;
             }
@@ -81,10 +82,10 @@ namespace Ballance2
                 {
                     m.ReleaseManager();
                     managers.Remove(m);
-                    GameLogger.Instance.Log(TAG, "Manager destroyed : {0}:{1}", m.GetName(), m.GetSubName());
+                    GameLogger.Log(TAG, "Manager destroyed : {0}:{1}", m.GetName(), m.GetSubName());
                     return true;
                 }
-            GameLogger.Instance.Warning(TAG, "DestroyManager 失败，管理器 {0} 未注册", name);
+            GameLogger.Warning(TAG, "DestroyManager 失败，管理器 {0} 未注册", name);
             return false;
         }
 
@@ -139,6 +140,10 @@ namespace Ballance2
         /// 静态引入资源
         /// </summary>
         public static List<GameObjectInfo> GamePrefab { get; private set; }
+        /// <summary>
+        /// 游戏全局 Lua 虚拟机
+        /// </summary>
+        public static LuaSvr.MainState GameMainLuaState { get; set; }
 
         [Serializable]
         public class GameObjectInfo
@@ -151,17 +156,25 @@ namespace Ballance2
         private static bool gameBaseInitFinished = false;
         private static bool gameBreakAtStart = false;
 
+        /// <summary>
+        /// 获取底层管理器是否初始化完成
+        /// </summary>
+        /// <returns></returns>
         public static bool IsGameBaseInitFinished()
         {
             return gameBaseInitFinished;
         }
+        /// <summary>
+        /// 获取中介者是否初始化完成。
+        /// 通常中介者初始化完成后可以注册全局内核事件
+        /// </summary>
+        /// <returns></returns>
         public static bool IsGameMediatorInitFinished()
         {
             return gameMediatorInitFinished;
         }
 
-        internal static bool Init(GameMode mode, GameObject gameRoot, 
-            GameObject gameCanvas, List<GameObjectInfo> gamePrefab, bool breakAtStart)
+        internal static bool Init(GameMode mode, GameObject gameRoot, GameObject gameCanvas, List<GameObjectInfo> gamePrefab, bool breakAtStart)
         {
             bool result = false;
 
@@ -180,7 +193,7 @@ namespace Ballance2
             GameObject GlobalGameErrorPanel = GameCanvas.transform.Find("GlobalGameErrorPanel").gameObject;
             GameErrorManager.SetGameErrorUI(GlobalGameErrorPanel.GetComponent<GameGlobalErrorUI>());
 
-            GameLogger.Instance.Log(TAG, "Init game");
+            GameLogger.Log(TAG, "Init game");
 
             if (Mode != GameMode.None)
             {
@@ -191,41 +204,47 @@ namespace Ballance2
                     gameMediatorInitFinished = true;
 
                     UIManager =  (UIManager)RegisterManager(new UIManager());
-                    RegisterManager(GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, 
-                        DebugManager.TAG).AddComponent<DebugManager>());
+
+                    RegisterManager(GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, DebugManager.TAG).AddComponent<DebugManager>());
+                    RegisterManager(GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, ModManager.TAG).AddComponent<ModManager>());
+
+                    //Lua
+                    GameMainLuaState = new LuaSvr.MainState();
 
                     //初始化完成
                     gameBaseInitFinished = true;
-                    GameLogger.Instance.Log(TAG, "All manager initialization complete");
+                    GameLogger.Log(TAG, "All manager initialization complete");
                     GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_BASE_INIT_FINISHED, "*", null);
 
                     //启动时暂停
                     if (gameBreakAtStart)
                     {
-                        GameLogger.Instance.Log(TAG, "Game break at start");
+                        GameLogger.Log(TAG, "Game break at start");
                         UIManager.GlobalAlert("BreakAtStart<br/>您可以点击“继续运行”", "BreakAtStart", "继续运行");
                         GameMediator.RegisterEventKernalHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, TAG, (evtName, param) =>
                         {
-                            
+                            //通知进行下一步内核加载
+                            GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_BASE_INIT_FINISHED, "*", null);
                             return false;
                         });
                     }
                     else
                     {
-
+                        //通知进行下一步内核加载
+                        GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_ENTRY, "*", null);
                     }
                 }
                 catch(Exception e)
                 {
-                    GameLogger.Instance.Error(TAG, "Global Exception was captured in initialization. ");
-                    GameLogger.Instance.Exception(e);
+                    GameLogger.Error(TAG, "Global Exception was captured in initialization. ");
+                    GameLogger.Exception(e);
                     GameErrorManager.LastError = GameError.GlobalException;
                     GameErrorManager.ThrowGameError(GameError.GlobalException, "初始化失败：\n" + e.ToString());
                 }
             }
             else
             {
-                GameLogger.Instance.Error(TAG, "GameMode not set. ");
+                GameLogger.Error(TAG, "GameMode not set. ");
                 GameErrorManager.LastError = GameError.BadMode;
                 GameErrorManager.ThrowGameError(GameError.BadMode, "错误的模式，请确定启动模式已设置");
             }
@@ -240,14 +259,19 @@ namespace Ballance2
             managers = null;
             return result;
         }
+
         private static bool DestryAllManagers()
         {
             bool b = false;
-            for (int i = managers.Count - 1; i >= 0; i--)
+            if (managers != null)
             {
-                b = managers[i].ReleaseManager();
-                if (!b) UnityEngine.Debug.LogWarningFormat("[" + TAG +" ] Failed to release manager {0}:{1} . ",
-                     managers[i].GetName(), managers[i].GetSubName());
+                for (int i = managers.Count - 1; i >= 0; i--)
+                {
+                    b = managers[i].ReleaseManager();
+                    if (!b) UnityEngine.Debug.LogWarningFormat("[" + TAG + " ] Failed to release manager {0}:{1} . ",
+                         managers[i].GetName(), managers[i].GetSubName());
+                }
+                managers = null;
             }
             return b;
         }
@@ -257,7 +281,7 @@ namespace Ballance2
         /// </summary>
         public static void QuitGame()
         {
-            GameLogger.Instance.Log(TAG, "Quiting game");
+            GameLogger.Log(TAG, "Quiting game");
             GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_BEFORE_GAME_QUIT, "*", null);
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
@@ -270,7 +294,7 @@ namespace Ballance2
         /// </summary>
         public static void ForceInterruptGame()
         {
-            GameLogger.Instance.Log(TAG, "Force interrupt game");
+            GameLogger.Log(TAG, "Force interrupt game");
             foreach (Camera c in Camera.allCameras)
                 c.gameObject.SetActive(false);
             for (int i = 0, c = GameCanvas.transform.childCount; i < c; i++)
@@ -304,7 +328,7 @@ namespace Ballance2
 
         private static void InitStaticPrefab()
         {
-            GameLogger.Instance.Log(TAG, "Init static prefab, count : {0}", GamePrefab.Count);
+            GameLogger.Log(TAG, "Init static prefab, count : {0}", GamePrefab.Count);
             PrefabEmpty = FindStaticPrefabs("PrefabEmpty");
             PrefabUIEmpty = FindStaticPrefabs("PrefabUIEmpty");
         }

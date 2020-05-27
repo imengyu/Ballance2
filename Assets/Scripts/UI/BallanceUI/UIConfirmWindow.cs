@@ -10,11 +10,15 @@ public class UIConfirmWindow : UIWindow
     public Text UIButtonCancelText; 
     public Text UIConfirmText;
 
-    private void Start()
+    public UIConfirmWindow()
     {
         SetWindowType(WindowType.GlobalAlert);
+    }
+
+    private void Start()
+    {
         CanClose = false;
-        EventTriggerListener.Get(UIButtonConfirm.gameObject).onClick = (g) => { Close(true);  };
+        EventTriggerListener.Get(UIButtonConfirm.gameObject).onClick = (g) => { Close(true); };
         EventTriggerListener.Get(UIButtonCancel.gameObject).onClick = (g) => { Close(false); };
     }
 

@@ -85,10 +85,12 @@ namespace Ballance2.Managers
         {
             this.name = name;
             this.subName = subName;
+            this.isSingleton = subName == "Singleton";
         }
 
         private new string name = "";
         private string subName = "";
+        private bool isSingleton = false;
 
         /// <summary>
         /// 二级名称，用于区分多个管理器
@@ -98,7 +100,7 @@ namespace Ballance2.Managers
             set { subName = value; }
         }
 
-        public bool GetIsSingleton() { return true; }
+        public bool GetIsSingleton() { return isSingleton; }
         public string GetName()
         {
             return name;

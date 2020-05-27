@@ -10,32 +10,13 @@ namespace Ballance2
     /// 日志和输出
     /// </summary>
     [SLua.CustomLuaClass]
-    public class GameLogger
+    public static class GameLogger
     {
-        /// <summary>
-        /// 实例
-        /// </summary>
-        public static GameLogger Instance { get; private set; }
+        private static bool on = true;
+        private static bool logToFile = false;
+        private static StreamWriter logFile = null;
 
-        public static void Init()
-        {
-            Instance = new GameLogger();
-        }
-        public static void Destroy()
-        {
-            Instance.DestroyLogger();
-        }
-
-        public GameLogger()
-        {
-            InitLogger();
-        }
-
-        private bool on = true;
-        private bool logToFile = false;
-        private StreamWriter logFile = null;
-
-        public void InitLogger()
+        public static void InitLogger()
         {
             logDatas = new List<LogData>();
             logDatasNotSend = new List<LogData>();
@@ -57,7 +38,7 @@ namespace Ballance2
                 }
             }
         }
-        public void DestroyLogger()
+        public static void DestroyLogger()
         {
             if (logFile != null)
             {
@@ -72,54 +53,45 @@ namespace Ballance2
             logDatas = null;
         }
 
-        public void Log(string tag, object message)
+        public static void Log(string tag, object message)
         {
-            UnityEngine.Debug.Log(string.Format("[{0}] {1}", tag, message));
             WriteLog(LogType.Text, tag, message.ToString());
         }
-        public void Warning(string tag, object message)
+        public static void Warning(string tag, object message)
         {
-            UnityEngine.Debug.LogWarning(string.Format("[{0}] {1}", tag, message));
             WriteLog(LogType.Warning, tag, message.ToString());
         }
-        public void Error(string tag, object message)
+        public static void Error(string tag, object message)
         {
-            UnityEngine.Debug.LogError(string.Format("[{0}] {1}", tag, message));
             WriteLog(LogType.Error, tag, message.ToString());
         }
-        public void Exception(Exception e)
+        public static void Exception(Exception e)
         {
-            UnityEngine.Debug.LogException(e);
             WriteLog(LogType.Assert, "", e.ToString());
         }
-        public void Info(string tag, object message)
+        public static void Info(string tag, object message)
         {
-            UnityEngine.Debug.Log(string.Format("[{0}] {1}", tag, message));
             WriteLog(LogType.Info, tag, message.ToString());
         }
 
-        public void Log(string tag, string message, params object []param)
+        public static void Log(string tag, string message, params object []param)
         {
             string format = string.Format("[{0}] {1}", tag, message);
-            UnityEngine.Debug.LogFormat(format, param);
             WriteLog(LogType.Text, tag, format, param);
         }
-        public void Warning(string tag, string message, params object[] param)
+        public static void Warning(string tag, string message, params object[] param)
         {
             string format = string.Format("[{0}] {1}", tag, message);
-            UnityEngine.Debug.LogWarningFormat(format, param);
             WriteLog(LogType.Warning, tag, format, param);
         }
-        public void Error(string tag, string message, params object[] param)
+        public static void Error(string tag, string message, params object[] param)
         {
             string format = string.Format("[{0}] {1}", tag, message);
-            UnityEngine.Debug.LogErrorFormat(format, param);
             WriteLog(LogType.Error, tag, format, param);
         }
-        public void Info(string tag, string message, params object[] param)
+        public static void Info(string tag, string message, params object[] param)
         {
             string format = string.Format("[{0}] {1}", tag, message);
-            UnityEngine.Debug.LogFormat(format, param);
             WriteLog(LogType.Info, tag, format, param);
         }
 
@@ -128,11 +100,11 @@ namespace Ballance2
         /// </summary>
         public enum LogType
         {
-            Text,
-            Info,
-            Warning,
-            Error,
-            Assert
+            Text = 3,
+            Info = 5,
+            Warning = 2,
+            Error = 0,
+            Assert = 1,
         }
 
         internal struct LogData
@@ -141,18 +113,18 @@ namespace Ballance2
             public string Data;
             public bool Received;
         }
-        internal string GetNowDateString()
+        internal static string GetNowDateString()
         {
-            return DateTime.Now.ToString("H:i:s");
+            return DateTime.Now.ToString("HH:mm:ss");
         }
-        private List<LogData> logDatas = null;
-        private List<LogData> logDatasNotSend = null;
-        private LogCallback logCallback = null;
-        private int countError = 0;
-        private int countWarning = 0;
-        private int countInfo = 0;
+        private static List<LogData> logDatas = null;
+        private static List<LogData> logDatasNotSend = null;
+        private static LogCallback logCallback = null;
+        private static int countError = 0;
+        private static int countWarning = 0;
+        private static int countInfo = 0;
 
-        public int GetLogCount(LogType type)
+        public static int GetLogCount(LogType type)
         {
             switch (type)
             {
@@ -166,9 +138,9 @@ namespace Ballance2
         }
 
         internal delegate void LogCallback(LogType type, string content);
-        internal List<LogData> GetLogData()  { return logDatas;  }
+        internal static List<LogData> GetLogData()  { return logDatas;  }
 
-        internal void ReSendNotReceivedLogs()
+        internal static void ReSendNotReceivedLogs()
         {
             if(logCallback != null)
             {
@@ -177,15 +149,15 @@ namespace Ballance2
                 logDatasNotSend.Clear();
             }
         }
-        internal void RegisterLogCallback(LogCallback logCallback)
+        internal static void RegisterLogCallback(LogCallback logCallback)
         {
-            this.logCallback = logCallback;
+            GameLogger.logCallback = logCallback;
         }
-        internal void UnRegisterLogCallback()
+        internal static void UnRegisterLogCallback()
         {
-            this.logCallback = null;
+            GameLogger.logCallback = null;
         }
-        internal void ClearAllLogs()
+        internal static void ClearAllLogs()
         {
             countError = 0;
             countWarning = 0;
@@ -198,14 +170,14 @@ namespace Ballance2
         /// </summary>
         /// <param name="type">类型</param>
         /// <param name="message">内容</param>
-        public void WriteLog(LogType type, string tag, string message)
+        public static void WriteLog(LogType type, string tag, string message)
         {
             if (on)
             {
                 LogData data = new LogData();
                 data.Type = type;
                 data.Received = false;
-                data.Data = string.Format("[{0}/{1}] [{2}] {3}", GetNowDateString(), type, tag, message.ToString());
+                data.Data = string.Format("[{0}] {1}", GetNowDateString(), message);
                
                 if(logToFile)
                     logFile.WriteLine(data.Data);
@@ -237,18 +209,18 @@ namespace Ballance2
         /// <param name="type">类型</param>
         /// <param name="message">内容</param>
         /// <param name="param">可变参数</param>
-        public void WriteLog(LogType type, string tag, string message, params object[] param)
+        public static void WriteLog(LogType type, string tag, string message, params object[] param)
         {
             WriteLog(type, tag, string.Format(message, param));
         }
 
-        private void DeleteExcessLogs()
+        private static void DeleteExcessLogs()
         {
             var amountToRemove = Mathf.Max(logDatas.Count -
                 GameConst.GameLoggerBufferMax, 0);
             if (amountToRemove == 0)
                 return;
-            for (int i = amountToRemove; i >= 0; i--)
+            for (int i = amountToRemove - 1; i >= 0; i--)
             {
                 switch (logDatas[i].Type)
                 {

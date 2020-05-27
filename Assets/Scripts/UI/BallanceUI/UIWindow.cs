@@ -63,7 +63,6 @@ namespace Ballance2.UI.BallanceUI
         {
             UIManager = (UIManager)GameManager.GetManager(UIManager.TAG);
             windowId = UIManager.GenWindowId();
-            name = "UIWindow_" + windowId;
             UIWindowRectTransform = GetComponent<RectTransform>();
             UIWindowTitleDragger = UIWindowTitle.gameObject.GetComponent<UIDragControl>();
             EventTriggerListener.Get(UIWindowButtonClose.gameObject).onClick = (g) => {

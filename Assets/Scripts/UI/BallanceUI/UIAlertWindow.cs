@@ -7,9 +7,13 @@ using UnityEngine.UI;
 
 public class UIAlertWindow : UIWindow
 {
-    private void Start()
+    public UIAlertWindow()
     {
         SetWindowType(WindowType.GlobalAlert);
+    }
+
+    private void Start()
+    {
         EventTriggerListener.Get(UIButtonConfirm.gameObject).onClick = (g) => { Close(); };
     }
 

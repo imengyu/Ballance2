@@ -82,5 +82,17 @@ namespace Ballance2.Utils
         /// 初始化失败
         /// </summary>
         InitializationFailed,
+        /// <summary>
+        /// 无效资源包
+        /// </summary>
+        BadAssetBundle,
+        /// <summary>
+        /// 网络错误
+        /// </summary>
+        NetworkError,
+        /// <summary>
+        /// 未初始化
+        /// </summary>
+        NotInitialize,
     }
 }

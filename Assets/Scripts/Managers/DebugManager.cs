@@ -4,11 +4,7 @@ using Ballance2.UI.BallanceUI;
 using Ballance2.UI.Utils;
 using Ballance2.Utils;
 using SLua;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,6 +27,7 @@ namespace Ballance2.Managers
         }
         public override bool ReleaseManager()
         {
+            OnDisable();
             DestroyCommands();
             DestroyDebugWindow();
             return true;
@@ -52,22 +49,25 @@ namespace Ballance2.Managers
         private void InitDebugWindow()
         {
             debugWindow = GameCloneUtils.CloneNewObjectWithParent(GameManager.FindStaticPrefabs("UIDebugWindow"), GameManager.UIManager.UIRoot.transform).GetComponent<UIWindow>();
-            UIDebugToolBar = GameCloneUtils.CloneNewObjectWithParent(GameManager.FindStaticPrefabs("UIDebugToolBar"), GameManager.UIManager.UIRoot.transform);
+            UIDebugToolBar = GameCloneUtils.CloneNewObjectWithParent(GameManager.FindStaticPrefabs("UIDebugToolBar"), GameManager.UIManager.UIRoot.transform, "GameUIDebugToolBar");
             debugWindow.CloseAsHide = true;
 
+            GameManager.UIManager.RegisterWindow(debugWindow);
+
+            UIDebugToolBar.SetActive(true);
             DebugTextFPS = UIDebugToolBar.transform.Find("DebugTextFPS").GetComponent<Text>();
-            DebugTextErrors = UIDebugToolBar.transform.Find("DebugTool/DebugTextErrors").GetComponent<Text>();
-            DebugTextWarnings = UIDebugToolBar.transform.Find("DebugTool/DebugTextWarnings").GetComponent<Text>();
-            DebugTextInfos = UIDebugToolBar.transform.Find("DebugTool/DebugTextInfos").GetComponent<Text>();
+            DebugTextErrors = UIDebugToolBar.transform.Find("DebugToolErrors/Text").GetComponent<Text>();
+            DebugTextWarnings = UIDebugToolBar.transform.Find("DebugToolWarnings/Text").GetComponent<Text>();
+            DebugTextInfos = UIDebugToolBar.transform.Find("DebugToolInfos/Text").GetComponent<Text>();
             DebugCmdContent = debugWindow.UIWindowClientArea.transform.Find("DebugCmdScrollView/Viewport/DebugCmdContent").GetComponent<RectTransform>();
-            DebugInputCommand = debugWindow.UIWindowClientArea.transform.Find("DebugButtonRun").GetComponent<InputField>();
+            DebugInputCommand = debugWindow.UIWindowClientArea.transform.Find("DebugInputCommand").GetComponent<InputField>();
 
             UIDebugTextItem = GameManager.FindStaticPrefabs("UIDebugTextItem");
 
             fPSManager = GameCloneUtils.CreateEmptyObjectWithParent(GameManager.GameRoot.transform).AddComponent<FPSManager>();
             fPSManager.FpsText = DebugTextFPS;
 
-            EventTriggerListener.Get(UIDebugToolBar.transform.Find("DebugTool").gameObject).onClick = (g) => { debugWindow.Show();  };
+            EventTriggerListener.Get(UIDebugToolBar.gameObject).onClick = (g) => { debugWindow.Show();  };
             EventTriggerListener.Get(debugWindow.UIWindowClientArea.transform.Find("DebugButtonRun").gameObject).onClick = (g) =>
             {
                 if (RunCommand(DebugInputCommand.text))
@@ -75,8 +75,8 @@ namespace Ballance2.Managers
             };
             EventTriggerListener.Get(debugWindow.UIWindowClientArea.transform.Find("DebugButtonClear").gameObject).onClick = (g) =>  { ClearLogs(); };
 
-            GameLogger.Instance.RegisterLogCallback(HandleLog);
-            GameLogger.Instance.ReSendNotReceivedLogs();
+            GameLogger.RegisterLogCallback(HandleLog);
+            GameLogger.ReSendNotReceivedLogs();
         }
         private void DestroyDebugWindow()
         {
@@ -91,12 +91,12 @@ namespace Ballance2.Managers
 
         private void ClearLogs()
         {
-            for (int i = DebugCmdContent.transform.childCount; i >= 0; i--)
+            for (int i = DebugCmdContent.transform.childCount - 1; i >= 0; i--)
                 Destroy(DebugCmdContent.transform.GetChild(i).gameObject);
             currentLogY = 0;
             currentLogX = 0;
             DebugCmdContent.sizeDelta = new Vector2(100, 30);
-            GameLogger.Instance.ClearAllLogs();
+            GameLogger.ClearAllLogs();
             UpdateLogCount();
         }
         private void HandleLog(GameLogger.LogType type, string content)
@@ -109,6 +109,7 @@ namespace Ballance2.Managers
         {
             GameObject newT = GameCloneUtils.CloneNewObjectWithParent(UIDebugTextItem, DebugCmdContent.transform, "Text");
             Text newText = newT.GetComponent<Text>();
+
             switch (type)
             {
                 case GameLogger.LogType.Text:
@@ -127,11 +128,16 @@ namespace Ballance2.Managers
                     newText.text = "<color=#FF7F00>" + content + "</color>";
                     break;
             }
+
             RectTransform newTextRectTransform = newT.GetComponent<RectTransform>();
-            newTextRectTransform.anchoredPosition = new Vector2(newTextRectTransform.anchoredPosition.x, currentLogY);
-            currentLogY += newTextRectTransform.sizeDelta.y;
-            if (newTextRectTransform.sizeDelta.x > currentLogX)
-                currentLogX = newTextRectTransform.sizeDelta.x;
+            newTextRectTransform.anchoredPosition = new Vector2(newTextRectTransform.anchoredPosition.x, -currentLogY);
+
+            Vector2 textSize = UIContentSizeUtils.GetContentSizeFitterPreferredSize(newTextRectTransform,
+               newT.GetComponent<ContentSizeFitter>());
+
+            currentLogY += textSize.y;
+            if (textSize.x > currentLogX)
+                currentLogX = textSize.x;
             DebugCmdContent.sizeDelta = new Vector2(currentLogX, currentLogY);
         }
         private void DeleteExcessLogs()
@@ -144,14 +150,14 @@ namespace Ballance2.Managers
             float yLess = 0;
             GameObject goT = null;
             RectTransform goR = null;
-            for (int i = amountToRemove; i >= 0; i--)
+            for (int i = amountToRemove - 1; i >= 0; i--)
             {
                 goT = DebugCmdContent.transform.GetChild(i).gameObject;
                 goR = goT.GetComponent<RectTransform>();
                 yLess  +=  goR.sizeDelta.y;
                 Destroy(goT);
             }
-            for (int i = DebugCmdContent.transform.childCount; i >= 0; i--)
+            for (int i = DebugCmdContent.transform.childCount - 1; i >= 0; i--)
             {
                 goT = DebugCmdContent.transform.GetChild(i).gameObject;
                 goR = goT.GetComponent<RectTransform>();
@@ -162,9 +168,33 @@ namespace Ballance2.Managers
         }
         private void UpdateLogCount()
         {
-            DebugTextErrors.text = GameLogger.Instance.GetLogCount(GameLogger.LogType.Error).ToString();
-            DebugTextWarnings.text = GameLogger.Instance.GetLogCount(GameLogger.LogType.Warning).ToString();
-            DebugTextInfos.text = GameLogger.Instance.GetLogCount(GameLogger.LogType.Info).ToString();
+            DebugTextErrors.text = GameLogger.GetLogCount(GameLogger.LogType.Error).ToString();
+            DebugTextWarnings.text = GameLogger.GetLogCount(GameLogger.LogType.Warning).ToString();
+            DebugTextInfos.text = GameLogger.GetLogCount(GameLogger.LogType.Info).ToString();
+        }
+
+        void OnEnable()
+        {
+#if UNITY_4
+            Application.RegisterLogCallback(HandleLog);
+#else
+            Application.logMessageReceived += HandleUnityLog;
+#endif
+        }
+        void OnDisable()
+        {
+#if UNITY_4
+            Application.RegisterLogCallback(null);
+#else
+            Application.logMessageReceived -= HandleUnityLog;
+#endif
+        }
+
+        void HandleUnityLog(string message, string stackTrace, LogType type)
+        {
+            GameLogger.WriteLog(type == LogType.Exception ?
+                GameLogger.LogType.Error : (GameLogger.LogType)type, "", message + "\n" + stackTrace);
+            UpdateLogCount();
         }
 
         #endregion
@@ -213,12 +243,12 @@ namespace Ballance2.Managers
         {
             if(string.IsNullOrEmpty(cmd))
             {
-                GameLogger.Instance.Warning(TAG, "请输入命令！");
+                GameLogger.Warning(TAG, "请输入命令！");
                 return false;
             }
             if (cmd.StartsWith("say "))
             {
-                GameLogger.Instance.Log(TAG, "[say] " + cmd.Substring(3));
+                GameLogger.Log(TAG, "[say] " + cmd.Substring(3));
                 return true;
             }
             if (cmd.StartsWith("lua "))
@@ -233,7 +263,7 @@ namespace Ballance2.Managers
                 helpText += "lua <color=#adadad>运行较短的lua脚本</color>\n";
                 foreach (CmdItem cmdItem in commands)
                     helpText += cmdItem.Keyword + " <color=#adadad>" + cmdItem.HelpText + "</color>\n";
-                GameLogger.Instance.Log(TAG, helpText);
+                GameLogger.Log(TAG, helpText);
                 return true;
             }
             else
@@ -248,7 +278,7 @@ namespace Ballance2.Managers
                             //arg
                             if (cmdItem.LimitArgCount > 0 && sp.Count < cmdItem.LimitArgCount - 1)
                             {
-                                GameLogger.Instance.Log(TAG, "命令 {0} 至少需要 {1} 个参数", sp.Result[0] , cmdItem.LimitArgCount);
+                                GameLogger.Log(TAG, "命令 {0} 至少需要 {1} 个参数", sp.Result[0] , cmdItem.LimitArgCount);
                                 return false;
                             }
                             //Kernel hander
@@ -272,7 +302,7 @@ namespace Ballance2.Managers
                             }
                         }
                     }
-                    GameLogger.Instance.Warning(TAG, "未找到命令 {0}", sp.Result[0]);
+                    GameLogger.Warning(TAG, "未找到命令 {0}", sp.Result[0]);
                 }
                 return false;
             }

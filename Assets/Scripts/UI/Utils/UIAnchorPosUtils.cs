@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.UI.Utils
 {
+    [SLua.CustomLuaClass]
     /// <summary>
     /// UI 组件锚点位置工具
     /// </summary>

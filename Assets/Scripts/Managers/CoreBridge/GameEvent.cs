@@ -52,5 +52,34 @@ namespace Ballance2.Managers.CoreBridge
         /// 事件参数：无
         /// </remarks>
         public const string EVENT_BEFORE_GAME_QUIT = "e:before_game_quit";
+
+        /// <summary>
+        /// 游戏底层加载完成，现在开始加载游戏内核
+        /// </summary>
+        /// <remarks>
+        /// 事件参数：无
+        /// </remarks>
+        public const string EVENT_GAME_INIT_ENTRY = "e:base_game_init";
+
+        /// <summary>
+        /// 模组加载成功
+        /// </summary>
+        /// <remarks>
+        /// 事件参数：
+        /// 【0】对应模组 UID
+        /// 【1】对应模组对象
+        /// </remarks>
+        public const string EVENT_MOD_LOAD_SUCCESS = "e:mod:mod_load_success";
+
+        /// <summary>
+        /// 模组加载成功
+        /// </summary>
+        /// <remarks>
+        /// 事件参数：
+        /// 【0】对应模组 UID
+        /// 【1】对应模组对象
+        /// 【2】错误信息
+        /// </remarks>
+        public const string EVENT_MOD_LOAD_FAILED = "e:mod:mod_load_failed";
     }
 }
