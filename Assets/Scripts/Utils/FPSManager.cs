@@ -39,4 +39,8 @@ public class FPSManager : MonoBehaviour
         }
     }
 
+    public void ForceSetFps(int fps)
+    {
+        Application.targetFrameRate = fps;
+    }
 }

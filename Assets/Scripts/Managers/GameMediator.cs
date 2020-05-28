@@ -24,7 +24,7 @@ namespace Ballance2.Managers
         public override bool InitManager()
         {
             InitAllEvents();
-               
+            InitModDebug();
             return true;
         }
         public override bool ReleaseManager()
@@ -154,9 +154,11 @@ namespace Ballance2.Managers
         {
             events = new List<GameEvent>();
 
-            //注册基础事件
+            //注册内置事件
             RegisterGlobalEvent(GameEventNames.EVENT_BASE_INIT_FINISHED);
             RegisterGlobalEvent(GameEventNames.EVENT_BEFORE_GAME_QUIT);
+            RegisterGlobalEvent(GameEventNames.EVENT_GAME_INIT_ENTRY);
+            RegisterGlobalEvent(GameEventNames.EVENT_BASE_MANAGER_INIT_FINISHED);
         }
 
         /// <summary>
@@ -230,9 +232,10 @@ namespace Ballance2.Managers
 
         private void InitModDebug()
         {
+            
             RegisterEventKernalHandler(GameEventNames.EVENT_BASE_MANAGER_INIT_FINISHED, TAG, (evtName, param) =>
             {
-                if(param[1].ToString() == DebugManager.TAG)
+                if (param[0].ToString() == DebugManager.TAG)
                 {
                     DebugManager = (DebugManager)GameManager.GetManager(DebugManager.TAG);
                     DebugManager.RegisterCommand("events", OnCommandShowEvents, 0, "[showHandlers:true/false] 显示全局事件 [是否显示事件接收器]");
@@ -243,7 +246,7 @@ namespace Ballance2.Managers
 
         private bool OnCommandShowEvents(string keyword, string fullCmd, string[] args)
         {
-            bool showHandlers = args.Length > 0 && args[0] == "true";
+            bool showHandlers = args != null && args.Length > 0 && args[0] == "true";
 
             StringBuilder s = new StringBuilder();
             foreach (GameEvent e in events)
@@ -252,9 +255,9 @@ namespace Ballance2.Managers
                 s.Append(e.EventName);
                 s.Append("   Handler count:  ");
                 s.Append(e.EventHandlers.Count);
-                if (showHandlers)
+                if (showHandlers && e.EventHandlers.Count > 0)
                 {
-                    s.Append("\nHandlers : ");
+                    s.Append("\n    Handlers : ");
                     foreach(GameHandler h in  e.EventHandlers)
                     {
                         s.Append("\n  ");

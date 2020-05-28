@@ -141,14 +141,29 @@ namespace Ballance2.Managers
 
         private DebugManager DebugManager;
 
+
+
+
         private void InitModDebug()
         {
             DebugManager = (DebugManager)GameManager.GetManager(DebugManager.TAG);
             DebugManager.RegisterCommand("loadmod", OnCommandLoadMod, 1, "[packagePath:string] [initialize:true/false] 加载模组 [模组完整路径] [是否立即初始化]");
             DebugManager.RegisterCommand("unloadmod", OnCommandUnLoadMod, 1, "[packageUid:int]  加载模组 [模组UID]");
             DebugManager.RegisterCommand("initmod", OnCommandInitializeMod, 1, "[packageUid:int]  初始化模组 [模组UID]");
+            DebugManager.AddCustomDebugToolItem("模组管理器", new GameHandler(TAG, OnDebugToolItemClick));
+
+            InitModManagementWindow();
+        }
+        private void InitModManagementWindow()
+        {
+
         }
 
+        private bool OnDebugToolItemClick(string evn, params object [] param)
+        {
+
+            return false;
+        }
         private bool OnCommandLoadMod(string keyword, string fullCmd, string[] args)
         {
             int newId = LoadGameMod(args[0], args.Length >= 2 ? args[1] == "true" : false);

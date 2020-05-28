@@ -14,19 +14,6 @@ namespace Assets.Scripts.UI.Utils
     public static class UIAnchorPosUtils
     {
         /// <summary>
-        /// UI 组件锚点
-        /// </summary>
-        public enum UIAnchor
-        {
-            Top,
-            Center,
-            Bottom,
-            Left,
-            Right,
-            Stretch,
-        }
-
-        /// <summary>
         /// 设置 UI 组件锚点
         /// </summary>
         /// <param name="rectTransform">UI 组件</param>
@@ -112,5 +99,35 @@ namespace Assets.Scripts.UI.Utils
             rectTransform.offsetMin = new Vector2(left, bottom);
             rectTransform.offsetMax = new Vector2(-right, -top);
         }
+
+        public static float GetUIRight(RectTransform rectTransform)
+        {
+            return rectTransform.offsetMax.x;
+        }
+        public static float GetUITop(RectTransform rectTransform)
+        {
+            return rectTransform.offsetMax.y;
+        }
+        public static float GetUILeft(RectTransform rectTransform)
+        {
+            return rectTransform.offsetMin.x;
+        }
+        public static float GetUIBottom(RectTransform rectTransform)
+        {
+            return rectTransform.offsetMin.y;
+        }
+    }
+
+    /// <summary>
+    /// UI 组件锚点
+    /// </summary>
+    public enum UIAnchor
+    {
+        Top,
+        Center,
+        Bottom,
+        Left,
+        Right,
+        Stretch,
     }
 }

@@ -1,4 +1,5 @@
-﻿using Ballance2.Config;
+﻿using Assets.Scripts.UI.Utils;
+using Ballance2.Config;
 using Ballance2.Managers.CoreBridge;
 using Ballance2.UI.BallanceUI;
 using Ballance2.UI.Utils;
@@ -49,6 +50,11 @@ namespace Ballance2.Managers
         private Toggle DebugToggleWarning;
         private Toggle DebugToggleError;
 
+        private RectTransform DebugCmdScrollView;
+        private RectTransform DebugDetailsScrollView;
+        private GameObject DebugToolsItem;
+        private RectTransform DebugToolsItemHost;
+
         private FPSManager fPSManager;
 
         private Sprite ico_warning;
@@ -84,13 +90,20 @@ namespace Ballance2.Managers
             DebugToggleWarning = debugWindow.UIWindowClientArea.transform.Find("DebugToggleWarning").GetComponent<Toggle>();
             DebugToggleError = debugWindow.UIWindowClientArea.transform.Find("DebugToggleError").GetComponent<Toggle>();
             DebugItemContent = debugWindow.UIWindowClientArea.transform.Find("DebugDetailsScrollView/Viewport/DebugItemContent").GetComponent<Text>();
+            Toggle DebugToggleStackTrace = debugWindow.UIWindowClientArea.transform.Find("DebugToggleStackTrace").GetComponent<Toggle>();
+            DebugCmdScrollView = debugWindow.UIWindowClientArea.transform.Find("DebugCmdScrollView").GetComponent<RectTransform>();
+            DebugDetailsScrollView = debugWindow.UIWindowClientArea.transform.Find("DebugDetailsScrollView").GetComponent<RectTransform>();
+            DebugToolsItem = debugWindow.UIWindowClientArea.transform.Find("DebugToolsItem").gameObject;
+            DebugToolsItemHost = debugWindow.UIWindowClientArea.transform.Find("DebugToolsItem/Viewport/DebugToolsItemHost").GetComponent<RectTransform>();
 
             UIDebugTextItem = GameManager.FindStaticPrefabs("UIDebugTextItem");
 
-            fPSManager = GameCloneUtils.CreateEmptyObjectWithParent(GameManager.GameRoot.transform).AddComponent<FPSManager>();
+            fPSManager = GameCloneUtils.CreateEmptyObjectWithParent(GameManager.GameRoot.transform, "FPSManager").AddComponent<FPSManager>();
             fPSManager.FpsText = DebugTextFPS;
 
             EventTriggerListener.Get(UIDebugToolBar.transform.Find("DebugToolCmd").gameObject).onClick = (g) => { if (debugWindow.GetVisible()) debugWindow.Hide(); else debugWindow.Show();  };
+            EventTriggerListener.Get(UIDebugToolBar.transform.Find("DebugTools").gameObject).onClick = (g) => { DebugToolsItem.SetActive(!DebugToolsItem.activeSelf); };
+
             EventTriggerListener.Get(debugWindow.UIWindowClientArea.transform.Find("DebugButtonRun").gameObject).onClick = (g) =>
             {
                 if (RunCommand(DebugInputCommand.text))
@@ -120,6 +133,14 @@ namespace Ballance2.Managers
                 SetShowLogTypes(GameLogger.LogType.Info, b);
                 ForceReloadLogList();
             });
+            DebugToggleStackTrace.onValueChanged.AddListener((b) =>
+            {
+                DebugDetailsScrollView.gameObject.SetActive(b);
+                if (!b)
+                    UIAnchorPosUtils.SetUILeftBottom(DebugCmdScrollView, UIAnchorPosUtils.GetUILeft(DebugCmdScrollView), 30);
+                else
+                    UIAnchorPosUtils.SetUILeftBottom(DebugCmdScrollView, UIAnchorPosUtils.GetUILeft(DebugCmdScrollView), 100);
+            });
 
             GameLogger.RegisterLogCallback(HandleLog);
             ForceReloadLogList();
@@ -129,6 +150,36 @@ namespace Ballance2.Managers
             GameLogger.UnRegisterLogCallback();
             ClearLogs();
             debugWindow.Close();
+        }
+
+        private int customDebugToolItemY = 0;
+
+        public void AddCustomDebugToolItem(string text, GameHandler callbackHandler)
+        {
+            GameObject newGo = GameCloneUtils.CreateEmptyUIObjectWithParent(DebugToolsItemHost.transform, "DebugToolItem");
+            RectTransform rectTransform = newGo.GetComponent<RectTransform>();
+            rectTransform.pivot = new Vector2(0, 1);
+            UIAnchorPosUtils.SetUIAnchor(rectTransform, UIAnchor.Left, UIAnchor.Top);
+
+            CustomData customData = newGo.AddComponent<CustomData > ();
+            customData.customData = callbackHandler;
+            Text newText = newGo.AddComponent<Text>();
+            newText.text = text;
+            newText.color = Color.white;
+            newText.fontSize = 11;
+            ContentSizeFitter contentSizeFitter = newGo.AddComponent<ContentSizeFitter>();
+            contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            contentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            EventTriggerListener.Get(newGo).onClick = OnCustomDebugToolItemClick;
+            customDebugToolItemY += 20;
+            rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, customDebugToolItemY);
+        }
+        private void OnCustomDebugToolItemClick(GameObject go)
+        {
+            CustomData customData = go.GetComponent<CustomData>();
+            GameHandler callbackHandler = (GameHandler)customData.customData;
+            callbackHandler.Call("OnCustomDebugToolItemClick");
         }
 
         #region 日志截取
@@ -206,9 +257,9 @@ namespace Ballance2.Managers
             currentLogY += textSize.y;
             if (textSize.x + 2 > currentLogX)
                 currentLogX = textSize.x + 2;
-            DebugCmdContent.sizeDelta = new Vector2(currentLogX, currentLogY);
+            DebugCmdContent.sizeDelta = new Vector2(currentLogX, currentLogY + 6);
 
-            EventTriggerListener.Get(newGo).onClick = SetCurrentActiveLogItem;
+            EventTriggerListener.Get(newT).onClick = SetCurrentActiveLogItem;
         }
         private GameObject lastActiveLogItem = null;
         private void SetCurrentActiveLogItem(GameObject logItem)
@@ -216,16 +267,24 @@ namespace Ballance2.Managers
             Image image = null;
             if (lastActiveLogItem != null)
             {
-                image = lastActiveLogItem.GetComponent<Image>();
-                image.sprite = null;
+                image = lastActiveLogItem.transform.parent.gameObject.GetComponent<Image>();
+                image.overrideSprite = background_transparent;
             }
 
-            lastActiveLogItem = logItem;
-            image = lastActiveLogItem.GetComponent<Image>();
-            image.sprite = box_round_light;
-            CustomData customData = lastActiveLogItem.GetComponent<CustomData>();
-            GameLogger.LogData data = (GameLogger.LogData)customData.customData;
-            DebugItemContent.text = data.Data + "\nStackTrace:\n" + data.StackTrace;
+            if (lastActiveLogItem != logItem)
+            {
+                lastActiveLogItem = logItem;
+                image = lastActiveLogItem.transform.parent.gameObject.GetComponent<Image>();
+                image.overrideSprite = box_round_light;
+                CustomData customData = lastActiveLogItem.transform.parent.gameObject.GetComponent<CustomData>();
+                GameLogger.LogData data = (GameLogger.LogData)customData.customData;
+                DebugItemContent.text = data.Data + "\nStackTrace:\n" + data.StackTrace;
+            }
+            else
+            {
+                lastActiveLogItem = null;
+                DebugItemContent.text = "Click a item to show details";
+            }
         }
         private void ForceReloadLogList()
         {
@@ -340,6 +399,18 @@ namespace Ballance2.Managers
                 LuaSvr.mainState.doString(fullCmd.Substring(3));
                 return true;
             }, 1, "[any] 运行 LUA 命令");
+            RegisterCommand("fps", (keyword, fullCmd, args) =>
+            {
+                int fpsVal = 0;
+                if(args.Length >= 1)
+                {
+                    if (int.TryParse(args[0], out fpsVal) && fpsVal > 0 && fpsVal < 120)
+                        fPSManager.ForceSetFps(fpsVal);
+                    else GameLogger.Error(TAG, "错误的参数：{0}", args[0]);
+                }
+                GameLogger.Error(TAG, "Application.targetFrameRate = {0}", Application.targetFrameRate);
+                return true;
+            }, 0, "[targetFps:int] 获取或设置 targetFrameRate");
             RegisterCommand("help", OnCommandHelp, 1, "显示命令帮助");
         }
         private void DestroyCommands()
@@ -372,10 +443,8 @@ namespace Ballance2.Managers
         public bool RunCommand(string cmd)
         {
             if (string.IsNullOrEmpty(cmd))
-            {
-                GameLogger.Warning(TAG, "请输入命令！");
                 return false;
-            }
+
             StringSpliter sp = new StringSpliter(cmd, ' ', true);
             if (sp.Count >= 1)
             {
@@ -389,25 +458,16 @@ namespace Ballance2.Managers
                             GameLogger.Log(TAG, "命令 {0} 至少需要 {1} 个参数", sp.Result[0], cmdItem.LimitArgCount);
                             return false;
                         }
+
+                        List<string> arglist = new List<string>(sp.Result);
+                        arglist.RemoveAt(0);
+
                         //Kernel hander
                         if (cmdItem.KernelCallback != null)
-                        {
-                            if (sp.Count > 1)
-                            {
-                                string[] newsp = new string[sp.Count - 1];
-                                for (int i = 1; i < sp.Count - 1; i++)
-                                    newsp[i - 1] = sp.Result[i];
-                                return cmdItem.KernelCallback(sp.Result[0], cmd, newsp);
-                            }
-                            else return cmdItem.KernelCallback(sp.Result[0], cmd, null);
-                        }
+                            return cmdItem.KernelCallback(sp.Result[0], cmd, arglist.ToArray());
                         //Modul handler
                         if (!string.IsNullOrEmpty(cmdItem.Handler) && cmdItem.HandlerInternal != null)
-                        {
-                            List<string> arglist = new List<string>(sp.Result);
-                            arglist.RemoveAt(0);
-                            cmdItem.HandlerInternal.RunCommandHandler(sp.Result[0], sp.Count, cmd, arglist.ToArray());
-                        }
+                            return cmdItem.HandlerInternal.RunCommandHandler(sp.Result[0], sp.Count, cmd, arglist.ToArray());
                     }
                 }
                 GameLogger.Warning(TAG, "未找到命令 {0}", sp.Result[0]);

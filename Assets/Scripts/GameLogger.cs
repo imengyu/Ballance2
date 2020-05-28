@@ -165,7 +165,7 @@ namespace Ballance2
                 LogData data = new LogData();
                 data.Type = type;
                 data.Data = string.Format("[{0}] {1}", GetNowDateString(), message);
-                data.StackTrace = new StackTrace().ToString();
+                data.StackTrace = new StackTrace(true).ToString();
 
                 if (logToFile)
                     logFile.WriteLine(data.Data);

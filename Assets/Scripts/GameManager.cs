@@ -217,7 +217,6 @@ namespace Ballance2
                     //初始化各个管理器
                     GameMediator = (GameMediator)RegisterManager(new GameMediator());
                     gameMediatorInitFinished = true;
-                    GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_BASE_MANAGER_INIT_FINISHED);
 
                     UIManager =  (UIManager)RegisterManager(new UIManager());
 
@@ -240,7 +239,7 @@ namespace Ballance2
                         GameMediator.RegisterEventKernalHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, TAG, (evtName, param) =>
                         {
                             //通知进行下一步内核加载
-                            GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_BASE_INIT_FINISHED, "*", null);
+                            GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_ENTRY, "*", null);
                             return false;
                         });
                     }
