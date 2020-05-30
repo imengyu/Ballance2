@@ -4,6 +4,8 @@ using SLua;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
 using System.Xml;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -48,7 +50,6 @@ namespace Ballance2.Managers.CoreBridge
         /// <param name="monoBehaviour">调用脚本</param>
         public void Load(MonoBehaviour monoBehaviour)
         {
-            GameLogger.Log(ModManager.TAG, "Initialize mod package {0} , Full path : {1}", PackageName, PackagePath);
             monoBehaviour.StartCoroutine(LoadInternal());
         }
         /// <summary>
@@ -81,10 +82,19 @@ namespace Ballance2.Managers.CoreBridge
             }
         }
         //加载
-        private IEnumerator LoadInternal()
+        public IEnumerator LoadInternal()
         {
-            UnityWebRequest request = UnityWebRequest.Get(PackagePath);
+            //路径处理
+            if (!Regex.IsMatch(PackagePath, "(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]")) {
+                //不是URL，处理路径至mod文件夹路径
+                if(!PackagePath.StartsWith(Application.streamingAssetsPath) && !GamePathManager.IsAbsolutePath(PackagePath))
+                    PackagePath = GamePathManager.GetResRealPath("mod", PackagePath);
+            }
 
+            GameLogger.Log(ModManager.TAG, "Initialize mod package {0} , Full path : {1}", PackageName, PackagePath);
+
+            //请求
+            UnityWebRequest request = UnityWebRequest.Get(PackagePath);
             yield return request.SendWebRequest();
 
             if (!request.isNetworkError && string.IsNullOrEmpty(request.error))
@@ -98,16 +108,45 @@ namespace Ballance2.Managers.CoreBridge
                     LoadFriendlyErrorExplain = "无效的资源包";
                     GameLogger.Error(ModManager.TAG, "加载 AssetBundle {0} 失败", PackagePath);
                     GameErrorManager.LastError = GameError.BadAssetBundle;
+                    LoadStatus = GameModStatus.InitializeFailed;
                     ModManager.OnModLoadFinished(this);
                     yield break;
                 }
-
-                LoadStatus = GameModStatus.InitializeSuccess;
 
                 //读取定义文件
                 TextAsset ModDef = AssetBundle.LoadAsset<TextAsset>("ModDef.xml");
                 if (ModDef != null) { ReadModDef(ModDef); ModHasDefFile = true; }
                 else { ModType = GameModType.AssetPack; ModHasDefFile = false; }
+
+                //检查兼容性
+                if (modCompatibilityInfo.MinVersion > GameConst.GameBulidVersion)
+                {
+                    GameLogger.Error(ModManager.TAG, "加载模组包 {0} 失败，模组包版本不兼容", PackageName);
+                    GameErrorManager.LastError = GameError.BadMod;
+
+                    LoadStatus = GameModStatus.BadMod;
+                    LoadFriendlyErrorExplain = "模组包版本不兼";
+
+                    ModManager.OnModLoadFinished(this);
+                    yield break;
+                }
+
+                //获取图标
+                if(!string.IsNullOrEmpty(modInfo.Logo))
+                {
+                    try {
+                        ModLogo = Sprite.Create(GetAsset<Texture2D>(modInfo.Logo), Rect.zero, Vector2.zero);
+                        GameLogger.Log(TAG, "Load mod logo : {0} => {1}", modInfo.Logo, ModLogo);
+                    }
+                    catch(Exception e)
+                    {
+                        ModLogo = null;
+                        GameLogger.Error(ModManager.TAG, "在加载模组包 {0} 的 Logo {1} 失败\n错误信息：{2}", 
+                            PackageName, modInfo.Logo, e.ToString());
+                    }
+                }
+
+                LoadStatus = GameModStatus.InitializeSuccess;
 
                 //修复 模块透明材质 Shader
                 FixBundleShader();
@@ -126,6 +165,8 @@ namespace Ballance2.Managers.CoreBridge
 
                 GameLogger.Error(ModManager.TAG, "加载模组包 {0} 失败\n错误信息：{1}", PackageName, request.error);
                 GameErrorManager.LastError = GameError.NetworkError;
+                LoadStatus = GameModStatus.InitializeFailed;
+
                 ModManager.OnModLoadFinished(this);
                 yield break;
             }
@@ -150,6 +191,10 @@ namespace Ballance2.Managers.CoreBridge
         /// </summary>
         public AssetBundle AssetBundle { get; private set; }
 
+        /// <summary>
+        /// 模组图标
+        /// </summary>
+        public Sprite ModLogo { get; private set; } = null;
         /// <summary>
         /// 模组基础信息
         /// </summary>
@@ -184,7 +229,7 @@ namespace Ballance2.Managers.CoreBridge
 
         private GameModInfo modInfo = new GameModInfo();
         private GameCompatibilityInfo modCompatibilityInfo = 
-            new GameCompatibilityInfo(GameConst.GameBulidVersion, GameConst.GameBulidVersion);
+            new GameCompatibilityInfo(GameConst.GameBulidVersion, GameConst.GameBulidVersion, GameConst.GameBulidVersion);
         private XmlDocument modDefXmlDoc = new XmlDocument();
 
         //读取模组定义文件
@@ -224,6 +269,10 @@ namespace Ballance2.Managers.CoreBridge
                     case "TargetVersion":
                         if (!int.TryParse(node.InnerText, out modCompatibilityInfo.TargetVersion))
                             GameLogger.Warning(TAG, "Bad TargetVersion : {0}", node.InnerText);
+                        break;
+                    case "MaxVersion":
+                        if (!int.TryParse(node.InnerText, out modCompatibilityInfo.MaxVersion))
+                            GameLogger.Warning(TAG, "Bad MaxVersion : {0}", node.InnerText);
                         break;
                 }
             }
@@ -489,6 +538,10 @@ namespace Ballance2.Managers.CoreBridge
         /// 初始化失败
         /// </summary>
         InitializeFailed,
+        /// <summary>
+        /// 版本不兼容的模组
+        /// </summary>
+        BadMod,
     }
     /// <summary>
     /// 模组类型
@@ -526,13 +579,15 @@ namespace Ballance2.Managers.CoreBridge
     /// </summary>
     public struct GameCompatibilityInfo
     {
-        public GameCompatibilityInfo(int m, int t)
+        public GameCompatibilityInfo(int mi, int t, int ma)
         {
-            MinVersion = m;
+            MinVersion = mi;
             TargetVersion = t;
+            MaxVersion = ma;
         }
 
         public int MinVersion;
         public int TargetVersion;
+        public int MaxVersion;
     }
 }

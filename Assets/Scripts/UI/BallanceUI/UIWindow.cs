@@ -1,4 +1,5 @@
-﻿using Ballance2.Managers;
+﻿using Assets.Scripts.UI.Utils;
+using Ballance2.Managers;
 using Ballance2.UI.Utils;
 using System;
 using System.Collections.Generic;
@@ -70,7 +71,7 @@ namespace Ballance2.UI.BallanceUI
                 else Close();
             };
             EventTriggerListener.Get(UIWindowTitleDragger.gameObject).onClick = (g) => {
-                UIWindowRectTransform.transform.SetAsFirstSibling();
+                UIWindowRectTransform.transform.SetAsLastSibling();
             };
         }
 
@@ -118,7 +119,9 @@ namespace Ballance2.UI.BallanceUI
         {
             RectTransform oldView = GetView();
             view.SetParent(UIWindowClientArea.transform);
-            if(oldView != null)
+            UIAnchorPosUtils.SetUIPos(view, 0, 0, 0, 0);
+
+            if (oldView != null)
             {
                 oldView.gameObject.SetActive(false);
                 UIManager.SetViewToTemporarily(oldView);
@@ -226,6 +229,7 @@ namespace Ballance2.UI.BallanceUI
         }
         public virtual void OnShow()
         {
+            UIWindowRectTransform.SetAsLastSibling();
             if (onShow != null) onShow.Invoke(windowId);
         }
 

@@ -53,7 +53,7 @@ namespace Ballance2.Managers.CoreBridge
         /// 【0】对话框ID
         /// 【1】用户是否选择了 Confirm（对于 Alert 永远是false）
         /// </remarks>
-        public const string EVENT_GLOBAL_ALERT_CLOSE = "e:ui:global_Alert_close";
+        public const string EVENT_GLOBAL_ALERT_CLOSE = "e:ui:global_alert_close";
 
         /// <summary>
         /// 游戏即将退出时触发该事件
@@ -70,6 +70,14 @@ namespace Ballance2.Managers.CoreBridge
         /// 事件参数：无
         /// </remarks>
         public const string EVENT_GAME_INIT_ENTRY = "e:base_game_init";
+
+        /// <summary>
+        /// gameinit 完成
+        /// </summary>
+        /// <remarks>
+        /// 事件参数：无
+        /// </remarks>
+        public const string EVENT_GAME_INIT_FINISH = "e:init:gameinit_finish";
 
         /// <summary>
         /// 模组加载成功
@@ -91,5 +99,27 @@ namespace Ballance2.Managers.CoreBridge
         /// 【2】错误信息
         /// </remarks>
         public const string EVENT_MOD_LOAD_FAILED = "e:mod:mod_load_failed";
+
+        /// <summary>
+        /// 模组注册
+        /// </summary>
+        /// <remarks>
+        /// 事件参数：
+        /// 【0】对应模组 UID
+        /// 【1】对应模组对象
+        /// </remarks>
+        public const string EVENT_MOD_REGISTERED = "e:mod:mod_registered";
+
+        /// <summary>
+        /// 模组卸载
+        /// </summary>
+        /// <remarks>
+        /// 事件参数：
+        /// 【0】对应模组 UID
+        /// 【1】对应模组对象
+        /// </remarks>
+        public const string EVENT_MOD_UNLOAD = "e:mod:mod_unload";
+
+
     }
 }

@@ -1,0 +1,3 @@
+REQUIRED:CORE:assets/musics_[Platform].assetbundle
+REQUIRED:CORE:assets/skys_[Platform].assetbundle
+REQUIRED:CORE:assets/sounds_[Platform].assetbundle

@@ -69,6 +69,7 @@ namespace Ballance2.Managers
             debugWindow = GameCloneUtils.CloneNewObjectWithParent(GameManager.FindStaticPrefabs("UIDebugWindow"), GameManager.UIManager.UIRoot.transform).GetComponent<UIWindow>();
             UIDebugToolBar = GameCloneUtils.CloneNewObjectWithParent(GameManager.FindStaticPrefabs("UIDebugToolBar"), GameManager.UIManager.UIRoot.transform, "GameUIDebugToolBar");
             debugWindow.CloseAsHide = true;
+            debugWindow.Hide();
 
             ico_warning = GameManager.FindStaticAssets<Sprite>("ico_warning");
             ico_info = GameManager.FindStaticAssets<Sprite>("ico_info");
@@ -93,15 +94,23 @@ namespace Ballance2.Managers
             Toggle DebugToggleStackTrace = debugWindow.UIWindowClientArea.transform.Find("DebugToggleStackTrace").GetComponent<Toggle>();
             DebugCmdScrollView = debugWindow.UIWindowClientArea.transform.Find("DebugCmdScrollView").GetComponent<RectTransform>();
             DebugDetailsScrollView = debugWindow.UIWindowClientArea.transform.Find("DebugDetailsScrollView").GetComponent<RectTransform>();
-            DebugToolsItem = debugWindow.UIWindowClientArea.transform.Find("DebugToolsItem").gameObject;
-            DebugToolsItemHost = debugWindow.UIWindowClientArea.transform.Find("DebugToolsItem/Viewport/DebugToolsItemHost").GetComponent<RectTransform>();
+            DebugToolsItem = UIDebugToolBar.transform.Find("DebugToolsItem").gameObject;
+            DebugToolsItemHost = UIDebugToolBar.transform.Find("DebugToolsItem/Viewport/DebugToolsItemHost").GetComponent<RectTransform>();
 
             UIDebugTextItem = GameManager.FindStaticPrefabs("UIDebugTextItem");
 
             fPSManager = GameCloneUtils.CreateEmptyObjectWithParent(GameManager.GameRoot.transform, "FPSManager").AddComponent<FPSManager>();
             fPSManager.FpsText = DebugTextFPS;
 
-            EventTriggerListener.Get(UIDebugToolBar.transform.Find("DebugToolCmd").gameObject).onClick = (g) => { if (debugWindow.GetVisible()) debugWindow.Hide(); else debugWindow.Show();  };
+            EventTriggerListener.Get(UIDebugToolBar.transform.Find("DebugToolCmd").gameObject).onClick = (g) => {
+                if (debugWindow.GetVisible())
+                    debugWindow.Hide();
+                else
+                {
+                    debugWindow.Show();
+                    ForceReloadLogList();
+                }
+            };
             EventTriggerListener.Get(UIDebugToolBar.transform.Find("DebugTools").gameObject).onClick = (g) => { DebugToolsItem.SetActive(!DebugToolsItem.activeSelf); };
 
             EventTriggerListener.Get(debugWindow.UIWindowClientArea.transform.Find("DebugButtonRun").gameObject).onClick = (g) =>
@@ -147,6 +156,7 @@ namespace Ballance2.Managers
         }
         private void DestroyDebugWindow()
         {
+            OnDisable();
             GameLogger.UnRegisterLogCallback();
             ClearLogs();
             debugWindow.Close();
@@ -159,24 +169,27 @@ namespace Ballance2.Managers
             GameObject newGo = GameCloneUtils.CreateEmptyUIObjectWithParent(DebugToolsItemHost.transform, "DebugToolItem");
             RectTransform rectTransform = newGo.GetComponent<RectTransform>();
             rectTransform.pivot = new Vector2(0, 1);
-            UIAnchorPosUtils.SetUIAnchor(rectTransform, UIAnchor.Left, UIAnchor.Top);
+            UIAnchorPosUtils.SetUIAnchor(rectTransform, UIAnchor.Stretch, UIAnchor.Top);
 
             CustomData customData = newGo.AddComponent<CustomData > ();
             customData.customData = callbackHandler;
             Text newText = newGo.AddComponent<Text>();
+            newText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
             newText.text = text;
             newText.color = Color.white;
             newText.fontSize = 11;
+            newText.alignment = TextAnchor.MiddleCenter;
             ContentSizeFitter contentSizeFitter = newGo.AddComponent<ContentSizeFitter>();
             contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-            contentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
 
             EventTriggerListener.Get(newGo).onClick = OnCustomDebugToolItemClick;
+            rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -customDebugToolItemY);
             customDebugToolItemY += 20;
-            rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, customDebugToolItemY);
+            DebugToolsItemHost.sizeDelta = new Vector2(DebugToolsItemHost.sizeDelta.x, customDebugToolItemY);
         }
         private void OnCustomDebugToolItemClick(GameObject go)
         {
+            DebugToolsItem.SetActive(false);
             CustomData customData = go.GetComponent<CustomData>();
             GameHandler callbackHandler = (GameHandler)customData.customData;
             callbackHandler.Call("OnCustomDebugToolItemClick");

@@ -870,6 +870,12 @@ MonoBehaviour:
   - Object: {fileID: 9213095750277210233, guid: b09b63a9aa15da848a1f87425e9867b5,
       type: 3}
     Name: UIDebugToolBar
+  - Object: {fileID: 6564864857602101580, guid: ef480846e90551343b6bc468281f2aa5,
+      type: 3}
+    Name: UIModManagement
+  - Object: {fileID: 7145627799809064521, guid: 71af0c0c41c8b4648ae27da076df05bc,
+      type: 3}
+    Name: UIModListItem
   GameAssets:
   - Object: {fileID: 21300000, guid: 35a064e582e3c20499db1bb71232b48d, type: 3}
     Name: ico_error
@@ -887,6 +893,20 @@ MonoBehaviour:
     Name: box_round_grey
   - Object: {fileID: 21300000, guid: 2d122f45ef24cfa4a986e71d0eafe34a, type: 3}
     Name: background_transparent
+  - Object: {fileID: 21300000, guid: fde1be87eee186941b5a455356146a32, type: 3}
+    Name: mod_icon_bad
+  - Object: {fileID: 21300000, guid: bbc329ee6e22040469c1d104437bc4c5, type: 3}
+    Name: mod_icon_default
+  - Object: {fileID: 21300000, guid: 0775c54b26b97614f9e267c222a6b619, type: 3}
+    Name: mod_icon_failed
+  - Object: {fileID: 21300000, guid: edc87565691536846902e30bbe6908e8, type: 3}
+    Name: mod_icon_not_load
+  - Object: {fileID: 12800000, guid: d5a0f3e77d007344aa0b917b275232f0, type: 3}
+    Name: font_consola
+  - Object: {fileID: 12800000, guid: 18aa92448a5198c4d8f2cd72c194deef, type: 3}
+    Name: font_ballance
+  - Object: {fileID: 0}
+    Name: o
 --- !u!4 &1202931503
 Transform:
   m_ObjectHideFlags: 0

@@ -10,10 +10,11 @@ namespace Ballance2.Utils
     public class CommonUtils
     {
         private static Random random = new Random();
+        private static int idPool = 1000;
 
         public static int GenNonDuplicateID()
         {
-            return int.Parse(random.Next().ToString() + DateTime.Now.Ticks);
+            return idPool++;
         }
     }
 }

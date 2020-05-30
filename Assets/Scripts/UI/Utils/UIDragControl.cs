@@ -53,6 +53,7 @@ namespace Ballance2.UI.Utils
 
         public void OnPointerDown(BaseEventData data)
         {
+            dragTransform.SetAsLastSibling();
             image.color = new Color(image.color.r, image.color.g, image.color.b, 0.7f);
             mouseOffest = new Vector2(Input.mousePosition.x - dragTransform.position.x, Input.mousePosition.y - dragTransform.position.y);
         }

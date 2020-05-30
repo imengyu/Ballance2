@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mod>
+  <BaseInfo>
+    <Name>Ballance Sound Pack</Name>
+    <Author>mengyu</Author>
+    <Introduction>基础声音资源包</Introduction>
+    <Logo>Assets/Sounds/Sounds/ModLogo.png</Logo>
+    <Version>1.0</Version>
+  </BaseInfo>
+  <ModType>AssetPack</ModType>
+</Mod>

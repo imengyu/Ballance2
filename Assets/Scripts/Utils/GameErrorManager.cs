@@ -71,6 +71,14 @@ namespace Ballance2.Utils
         /// </summary>
         GlobalException,
         /// <summary>
+        /// GameInit 文件找不到了
+        /// </summary>
+        GameInitReadFailed,
+        /// <summary>
+        /// GameInit 中的某个模块加载失败
+        /// </summary>
+        GameInitPartLoadFailed,
+        /// <summary>
         /// 部件、模组、模块已经注册，不能重复注册
         /// </summary>
         AlredayRegistered,
@@ -86,6 +94,10 @@ namespace Ballance2.Utils
         /// 无效资源包
         /// </summary>
         BadAssetBundle,
+        /// <summary>
+        /// 模组包版本不兼容
+        /// </summary>
+        BadMod,
         /// <summary>
         /// 网络错误
         /// </summary>

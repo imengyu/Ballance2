@@ -232,7 +232,6 @@ namespace Ballance2.Managers
 
         private void InitModDebug()
         {
-            
             RegisterEventKernalHandler(GameEventNames.EVENT_BASE_MANAGER_INIT_FINISHED, TAG, (evtName, param) =>
             {
                 if (param[0].ToString() == DebugManager.TAG)

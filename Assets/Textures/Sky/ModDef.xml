@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mod>
+  <BaseInfo>
+    <Name>Ballance Sky Texture Pack</Name>
+    <Author>mengyu</Author>
+    <Introduction>Ballance 基础天空贴图资源包</Introduction>
+    <Logo>Assets/Textures/Sky/ModLogo.jpg</Logo>
+    <Version>1.0</Version>
+  </BaseInfo>
+  <ModType>AssetPack</ModType>
+</Mod>

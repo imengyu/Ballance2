@@ -262,17 +262,18 @@ namespace Ballance2.Managers
             {
                 case WindowType.GlobalAlert:
                     window.GetRectTransform().transform.SetParent(GlobalWindowRectTransform.transform);
-                    if (currentVisibleWindowAlert != null)
-                        currentVisibleWindowAlert.Hide();
                     PagesRectTransform.gameObject.SetActive(false);
                     WindowsRectTransform.gameObject.SetActive(false);
+                    WindowsRectTransform.SetAsLastSibling();
                     currentVisibleWindowAlert = window;
                     break;
                 case WindowType.Normal:
                     window.GetRectTransform().transform.SetParent(WindowsRectTransform.transform);
+                    WindowsRectTransform.SetAsLastSibling();
                     break;
                 case WindowType.Page:
                     window.GetRectTransform().transform.SetParent(PagesRectTransform.transform);
+                    PagesRectTransform.SetAsLastSibling();
                     break;
             }
             window.SetVisible(true);

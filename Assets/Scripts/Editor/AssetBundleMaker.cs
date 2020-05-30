@@ -52,7 +52,7 @@ public class AssetBundleMaker
         var option = EditorUtility.DisplayDialogComplex(
             "要保存为什么格式?",
             "Please choose one of the following options.",
-            "unity3d",
+            "ballance",
             "assetbundle",
             "Cancel");
         switch (option)
@@ -60,7 +60,7 @@ public class AssetBundleMaker
             case 0:
                 path = EditorUtility.SaveFilePanel("Save Resource", 
                     EditorPrefs.GetString("AssetBundleMakerDefSaveDir", GamePathManager.DEBUG_PATH), 
-                    EditorPrefs.GetString("AssetBundleMakerDefFileName", "New Resource"), "unity3d");
+                    EditorPrefs.GetString("AssetBundleMakerDefFileName", "New Resource"), "ballance");
                 break;
             case 1:
                 path = EditorUtility.SaveFilePanel("Save Resource", 

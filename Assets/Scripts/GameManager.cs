@@ -220,6 +220,7 @@ namespace Ballance2
 
                     UIManager =  (UIManager)RegisterManager(new UIManager());
 
+                    RegisterManager(GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, GameInit.TAG).AddComponent<GameInit>());
                     RegisterManager(GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, DebugManager.TAG).AddComponent<DebugManager>());
                     RegisterManager(GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, ModManager.TAG).AddComponent<ModManager>());
 
