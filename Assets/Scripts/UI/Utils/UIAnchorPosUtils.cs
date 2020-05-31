@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Scripts.UI.Utils
+namespace Ballance2.UI.Utils
 {
     [SLua.CustomLuaClass]
     /// <summary>

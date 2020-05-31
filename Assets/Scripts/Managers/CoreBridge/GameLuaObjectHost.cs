@@ -18,6 +18,8 @@ namespace Ballance2.Managers.CoreBridge
         public string Name;
         public GameMod GameMod { get; set; }
 
+        public LuaTable LuaSelf { get { return self; } }
+
         private LuaTable self;
         private LuaFunction update;
         private LuaFunction start;

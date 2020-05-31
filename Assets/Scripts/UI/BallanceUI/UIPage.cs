@@ -10,5 +10,6 @@ namespace Ballance2.UI.BallanceUI
     [SLua.CustomLuaClass]
     public class UIPage : MonoBehaviour
     {
+
     }
 }

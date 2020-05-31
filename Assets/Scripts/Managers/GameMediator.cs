@@ -115,8 +115,10 @@ namespace Ballance2.Managers
         /// 执行事件分发
         /// </summary>
         /// <param name="id">事件名称</param>
-        public void DispatchGlobalEvent(string evtName, string handlerFilter, params object[] pararms)
+        /// <returns>返回已经发送的接收器个数</returns>
+        public int DispatchGlobalEvent(string evtName, string handlerFilter, params object[] pararms)
         {
+            int handledCount = 0;
             GameEvent gameEvent = null;
             if (IsGlobalEventRegistered(evtName, out gameEvent))
             {
@@ -124,6 +126,7 @@ namespace Ballance2.Managers
                 {
                     if (handlerFilter == "*" || Regex.IsMatch(gameHandler.Name, handlerFilter))
                     {
+                        handledCount++;
                         if (gameHandler.Call(evtName, pararms))
                         {
                             GameLogger.Log(TAG, "Event {0} was interrupted by : {1}", evtName, gameHandler.Name);
@@ -137,6 +140,7 @@ namespace Ballance2.Managers
                 GameLogger.Warning(TAG, "事件 {0} 未注册", evtName);
                 GameErrorManager.LastError = GameError.Unregistered;
             }
+            return handledCount;
         }
 
         //卸载所有命令
@@ -228,6 +232,10 @@ namespace Ballance2.Managers
 
         #region 全局操作控制器
 
+        #endregion
+
+        #region GameMediator 调试命令
+
         private DebugManager DebugManager;
 
         private void InitModDebug()
@@ -243,6 +251,7 @@ namespace Ballance2.Managers
             });
         }
 
+
         private bool OnCommandShowEvents(string keyword, string fullCmd, string[] args)
         {
             bool showHandlers = args != null && args.Length > 0 && args[0] == "true";
@@ -257,7 +266,7 @@ namespace Ballance2.Managers
                 if (showHandlers && e.EventHandlers.Count > 0)
                 {
                     s.Append("\n    Handlers : ");
-                    foreach(GameHandler h in  e.EventHandlers)
+                    foreach (GameHandler h in e.EventHandlers)
                     {
                         s.Append("\n  ");
                         s.Append(h.ToString());

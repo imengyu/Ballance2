@@ -25,8 +25,9 @@ namespace Ballance2.Managers.CoreBridge
             ModManager = modManager;
             Uid = CommonUtils.GenNonDuplicateID();
             PackagePath = packagePath;
-            PackageName = GamePathManager.GetFileNameWithoutExt(packagePath);
+            PackageName = "unknow." + Uid;
             TAG = ModManager.TAG + ":" + Uid;
+            modInfo = new GameModInfo(GamePathManager.GetFileNameWithoutExt(PackagePath));
         }
 
         /// <summary>
@@ -131,12 +132,38 @@ namespace Ballance2.Managers.CoreBridge
                     yield break;
                 }
 
+                //判断包名是否重复
+                if(ModHasDefFile)
+                {
+                    GameMod otherNod = null;
+                    GameMod[] allNameMod = ModManager.FindAllGameModByName(PackageName);
+                    if(allNameMod.Length > 1)
+                    {
+                        foreach(GameMod m in allNameMod)
+                            if(m != this)
+                            {
+                                otherNod = m;
+                                break;
+                            }
+
+                        GameLogger.Warning(ModManager.TAG, "模组包 {0} ({1} )，包名与  {0} ({1}) 冲突", PackageName, 
+                            Uid, otherNod.PackagePath, otherNod.Uid);
+
+                        GameErrorManager.LastError = GameError.ModConflict;
+
+                        LoadStatus = GameModStatus.InitializeFailed;
+                        LoadFriendlyErrorExplain = "模组包包名与已加载模组包冲突";
+
+                        ModManager.OnModLoadFinished(this);
+                    }
+                }
+
                 //获取图标
                 if(!string.IsNullOrEmpty(modInfo.Logo))
                 {
                     try {
-                        ModLogo = Sprite.Create(GetAsset<Texture2D>(modInfo.Logo), Rect.zero, Vector2.zero);
-                        GameLogger.Log(TAG, "Load mod logo : {0} => {1}", modInfo.Logo, ModLogo);
+                        Texture2D texture2D = GetAsset<Texture2D>(modInfo.Logo);
+                        ModLogo = Sprite.Create(texture2D, new Rect(Vector2.zero, new Vector2(texture2D.width, texture2D.height)), new Vector2(0.5f, 0.5f));
                     }
                     catch(Exception e)
                     {
@@ -227,7 +254,7 @@ namespace Ballance2.Managers.CoreBridge
 
         #region 模组信息读取
 
-        private GameModInfo modInfo = new GameModInfo();
+        private GameModInfo modInfo;
         private GameCompatibilityInfo modCompatibilityInfo = 
             new GameCompatibilityInfo(GameConst.GameBulidVersion, GameConst.GameBulidVersion, GameConst.GameBulidVersion);
         private XmlDocument modDefXmlDoc = new XmlDocument();
@@ -279,15 +306,20 @@ namespace Ballance2.Managers.CoreBridge
         }
         private void ReadModDefBaseInfo(XmlNode nodeBaseInfo)
         {
+            foreach (XmlAttribute attribute in nodeBaseInfo.Attributes)
+            {
+                switch(attribute.Name)
+                {
+                    case "packageName":
+                        PackageName = attribute.Value;
+                        break;
+                }
+            }
             foreach (XmlNode node in nodeBaseInfo.ChildNodes)
             {
                 switch (node.Name)
                 {
-                    case "Name":
-                        modInfo.Name = node.InnerText;
-                        if(!string.IsNullOrWhiteSpace(modInfo.Name))
-                            PackageName = modInfo.Name;
-                        break;
+                    case "Name": modInfo.Name = node.InnerText; break;
                     case "Author": modInfo.Author = node.InnerText; break;
                     case "Introduction": modInfo.Introduction = node.InnerText; break;
                     case "Logo": modInfo.Logo = node.InnerText; break;
@@ -568,6 +600,15 @@ namespace Ballance2.Managers.CoreBridge
     /// </summary>
     public struct GameModInfo
     {
+        public GameModInfo(string name)
+        {
+            Name = name;
+            Author = "未知";
+            Introduction = "未填写介绍";
+            Logo = "";
+            Version = "未知";
+        }
+
         public string Name;
         public string Author;
         public string Introduction;

@@ -79,6 +79,10 @@ namespace Ballance2.Utils
         /// </summary>
         GameInitPartLoadFailed,
         /// <summary>
+        /// 下一步操作对应接收器丢失，无法继续流程
+        /// </summary>
+        HandlerLost,
+        /// <summary>
         /// 部件、模组、模块已经注册，不能重复注册
         /// </summary>
         AlredayRegistered,
@@ -94,6 +98,10 @@ namespace Ballance2.Utils
         /// 无效资源包
         /// </summary>
         BadAssetBundle,
+        /// <summary>
+        /// 模组包冲突
+        /// </summary>
+        ModConflict,
         /// <summary>
         /// 模组包版本不兼容
         /// </summary>

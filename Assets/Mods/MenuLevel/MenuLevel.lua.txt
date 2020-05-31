@@ -1,0 +1,275 @@
+
+-- 游戏进入页面主菜单控制器
+
+GameBulider = Ballance.GameBulider
+GameObject = UnityEngine.GameObject
+GameModulManager = GameBulider.GameModulManager
+GameSoundManager = GameBulider.GameSoundManager
+
+Vector3 = UnityEngine.Vector3
+Time = UnityEngine.Time
+
+MenuLevel = {
+  gameObject = false,
+  GameModul = nil, 
+  audioSourceMenuLoad =  nil,
+  audioSourceMenuThunder =  nil,
+  audioSourceMenuAtmo =  nil,
+  light = nil,
+  skyBox=  nil,
+  skyBoxDay =  nil,
+  skyBoxNight =  nil,
+  speed = 5,
+  runningLoop = false,
+  transform = nil,
+  domePosition = nil,
+
+  textSuDu = nil,
+  textLiLiang = nil,
+  textNenLi = nil,
+  GameLuaObjectHost = nil,
+
+  viewMain = nil,
+  viewStart = nil,
+  viewScore = nil,
+  viewSettings = nil,
+  viewAbout = nil,
+  viewQuit = nil,
+  viewQuitAsk = nil,
+  viewStartCustom = nil,
+  LZButtonBack = nil,
+  MenuLevePanel = nil,
+  menuLevelUI = nil
+}
+
+function class_MenuLevel()
+
+  function MenuLevel:new(o)
+    o = o or {}
+    setmetatable(o, self)
+    self.__index = self
+    return o
+  end
+
+  function MenuLevel:Start(thisGameObject)
+    
+		self.gameObject = thisGameObject
+		self.GameLuaObjectHost = thisGameObject:GetComponent("GameLuaObjectHost")
+		self.GameModul = self.GameLuaObjectHost.GameModul
+		self.skyBoxDay = GameModulManager:MakeSkyBox("C")
+		self.skyBoxNight = GameModulManager:MakeSkyBox("I")
+		self.light = GameObject.Find("I_Light"):GetComponent("Light")
+		self.skyBox = self.gameObject:GetComponent("Skybox")
+		self.skyBox.material = self.skyBoxDay
+
+		self:InitMenuLevelBackGroundMusic()
+		self:InitMenuLevelUI()
+
+    local menuLevel = GameObject.Find("GameMenuLevel");
+
+		self.textSuDu = menuLevel.transform:Find("I_Zone_SuDu_Innen").gameObject
+		self.textLiLiang = menuLevel.transform:Find("I_Zone_LiLiang_Innen").gameObject
+		self.textNenLi = menuLevel.transform:Find("I_Zone_NenLi_Innen").gameObject
+
+		self.domePosition = GameObject.Find("I_Dome_MF").transform.position
+		self.transform = self.gameObject.transform
+    self.runningLoop = true
+    
+	end
+
+	function MenuLevel:OnDesory()
+		GameSoundManager:DestroySoundPlayer(self.audioSourceMenuLoad);
+		GameSoundManager:DestroySoundPlayer(self.audioSourceMenuThunder);
+		GameSoundManager:DestroySoundPlayer(self.audioSourceMenuAtmo);
+	end
+
+	function MenuLevel:InitMenuLevelUI()
+		self.menuLevelUI = GameModulManager:GetResource("MenuLevel", "MenuLevelUI.prefab")
+		self.menuLevelUI = GameBulider.GameUIManager:CreateUIWithPrefabAndBindToCanvans(self.menuLevelUI)
+		self.menuLevelUI.name = "GameMenuLevelUI";
+		self.viewMain = self.menuLevelUI.transform:Find("ViewMain").gameObject
+		self.viewQuit = self.menuLevelUI.transform:Find("ViewQuitAsk").gameObject
+		self.viewStartCustom = self.menuLevelUI.transform:Find("ViewStartCustom").gameObject
+		self.MenuLevePanel = self.menuLevelUI.transform:Find("MenuLevePanel").gameObject
+
+		self.LZButtonBack = self.menuLevelUI.transform:Find("LZButtonBack").gameObject
+		self.LZButtonBack:SetActive(false)
+		self.LZButtonBack:GetComponent("Button").onClick:AddListener(function() self:onQuitLzClick() end)
+
+		-- 首页按钮事件
+		GameObject.Find("ButtonStart"):GetComponent("Button").onClick:AddListener(function()
+			self.viewMain:SetActive(false)
+			self.viewStart:SetActive(true)
+		end)
+		GameObject.Find("ButtonScore"):GetComponent("Button").onClick:AddListener(function()
+			self.viewMain:SetActive(false)
+			self.viewScore:SetActive(true)
+		end)
+		GameObject.Find("ButtonSettings"):GetComponent("Button").onClick:AddListener(function()
+			self.viewMain:SetActive(false)
+			self.viewSettings:SetActive(true)
+		end)
+		GameObject.Find("ButtonAbout"):GetComponent("Button").onClick:AddListener(function()
+			self.viewMain:SetActive(false)
+			self.viewAbout:SetActive(true)
+		end)
+		GameObject.Find("ButtonExit"):GetComponent("Button").onClick:AddListener(function()
+			self.viewMain:SetActive(false)
+			self.viewQuit:SetActive(true)
+		end)
+		GameObject.Find("QuitButton"):GetComponent("Button").onClick:AddListener(function()
+			GameBulider.GameManager:GameQuit()
+		end)
+		GameObject.Find("QuitCancelButton"):GetComponent("Button").onClick:AddListener(function() self:onPageBackClick() end)
+
+	  -- 开始页按钮事件
+		self.viewStart = self.menuLevelUI.transform:Find("ViewStart").gameObject
+		GameObject.Find("LevButtonBack"):GetComponent("Button").onClick:AddListener(function() self:onPageBackClick() end)
+		GameObject.Find("LevButtonOthers"):GetComponent("Button").onClick:AddListener(function()
+			self.viewStart:SetActive(false)
+			self.viewStartCustom:SetActive(true)
+		end)
+		GameObject.Find("LevcusButtonBack"):GetComponent("Button").onClick:AddListener(function()
+			self.viewStart:SetActive(true)
+			self.viewStartCustom:SetActive(false)
+		end)
+		GameObject.Find("LevButton1"):GetComponent("Button").onClick:AddListener(function()
+			self:onLoadLevelClick("1")
+		end)
+		GameObject.Find("LevButton2"):GetComponent("Button").onClick:AddListener(function()
+			self:onLoadLevelClick("2")
+		end)
+		GameObject.Find("LevButton3"):GetComponent("Button").onClick:AddListener(function()
+			self:onLoadLevelClick("3")
+		end)
+		GameObject.Find("LevButton4"):GetComponent("Button").onClick:AddListener(function()
+			self:onLoadLevelClick("4")
+		end)
+		GameObject.Find("LevButton5"):GetComponent("Button").onClick:AddListener(function()
+			self:onLoadLevelClick("5")
+		end)
+		GameObject.Find("LevButton6"):GetComponent("Button").onClick:AddListener(function()
+			self:onLoadLevelClick("6")
+		end)
+		GameObject.Find("LevButton7"):GetComponent("Button").onClick:AddListener(function()
+			self:onLoadLevelClick("7")
+		end)
+		GameObject.Find("LevButton8"):GetComponent("Button").onClick:AddListener(function()
+			self:onLoadLevelClick("8")
+		end)
+		GameObject.Find("LevButton9"):GetComponent("Button").onClick:AddListener(function()
+			self:onLoadLevelClick("9")
+		end)
+		GameObject.Find("LevButton10"):GetComponent("Button").onClick:AddListener(function()
+			self:onLoadLevelClick("10")
+		end)
+		GameObject.Find("LevButton11"):GetComponent("Button").onClick:AddListener(function()
+			self:onLoadLevelClick("11")
+		end)
+		GameObject.Find("LevButton12"):GetComponent("Button").onClick:AddListener(function()
+			self:onLoadLevelClick("12")
+		end)
+		GameObject.Find("LevButton13"):GetComponent("Button").onClick:AddListener(function()
+			self:onLzClick()
+		end)
+
+		-- 分数页按钮事件
+		self.viewScore = self.menuLevelUI.transform:Find("ViewScore").gameObject
+		GameObject.Find("ScoreButtonBack"):GetComponent("Button").onClick:AddListener(function() self:onPageBackClick() end)
+
+		-- 设置页按钮事件
+		self.viewSettings = self.menuLevelUI.transform:Find("ViewSettings").gameObject
+		GameObject.Find("SettingsButtonBack"):GetComponent("Button").onClick:AddListener(function() self:onPageBackClick() end)
+
+		-- 关于页按钮事件
+		self.viewAbout = self.menuLevelUI.transform:Find("ViewAbout").gameObject
+		GameObject.Find("AboutButtonBack"):GetComponent("Button").onClick:AddListener(function() self:onPageBackClick() end)
+
+		self:onPageBackClick()
+	end
+
+	function MenuLevel:InitMenuLevelBackGroundMusic()
+		self.audioSourceMenuLoad = GameObject.Find("I_AudioMenuLoad"):GetComponent("AudioSource")
+		self.audioSourceMenuThunder = GameObject.Find("I_AudioMenuThunder"):GetComponent("AudioSource")
+		self.audioSourceMenuAtmo = GameObject.Find("I_AudioMenuAtmo"):GetComponent("AudioSource")
+		self.audioSourceMenuLoad.clip = GameModulManager:GetAudioResource("Menu_load.wav")
+		self.audioSourceMenuThunder.clip = GameModulManager:GetAudioResource("Music_thunder.wav")
+		self.audioSourceMenuAtmo.clip = GameModulManager:GetAudioResource("Menu_atmo.wav")
+
+		GameSoundManager:RegisterSoundPlayer('ui', self.audioSourceMenuLoad);
+		GameSoundManager:RegisterSoundPlayer('normal', self.audioSourceMenuThunder);
+		GameSoundManager:RegisterSoundPlayer('background', self.audioSourceMenuAtmo);
+
+		self.audioSourceMenuAtmo:Play();
+	end
+
+	function MenuLevel:Update()
+		if(self.runningLoop) then
+			self.transform:RotateAround(self.domePosition, Vector3.up, Time.deltaTime * self.speed)
+			self.transform:LookAt(self.domePosition)
+		end
+	end
+
+	function MenuLevel:onQuitLzClick()
+		self.light.color = UnityEngine.Color(1,0.945,0.733)
+		self.textSuDu:SetActive(false)
+		self.textLiLiang:SetActive(false)
+		self.textNenLi:SetActive(false)
+		self.skyBox.material = self.skyBoxDay
+		self.viewStart:SetActive(true)
+		self.LZButtonBack:SetActive(false)
+		self.MenuLevePanel:SetActive(true)
+  end
+  
+	function MenuLevel:onLzClick()
+		self.MenuLevePanel:SetActive(false)
+		self.viewStart:SetActive(false)
+		self.LZButtonBack:SetActive(true)
+		self.audioSourceMenuThunder:Play()
+		self.light.color = UnityEngine.Color(0.266,0.301,0.435)
+		self.textSuDu:SetActive(true)
+		self.textLiLiang:SetActive(true)
+		self.textNenLi:SetActive(true)
+		self.skyBox.material = self.skyBoxNight
+	end
+
+	function MenuLevel:onLoadLevelClick(id)
+		self.audioSourceMenuLoad:Play()
+		print("开始加载关卡")
+
+		-- 隐藏UI
+		self.MenuLevePanel:SetActive(false)
+		self.viewStart:SetActive(false)
+		self.viewMain:SetActive(false)
+		-- 停止音乐
+		self.audioSourceMenuAtmo:Stop();
+		GameBulider.GameUIManager:GlobalBlackFadeIn(1)
+
+		self.GameLuaObjectHost:StartCoroutine(function ()
+
+			-- 等待延时1秒
+			coroutine.yield(UnityEngine.WaitForSeconds(3))
+
+			-- 通知开始加载
+			GameBulider.GameManager:GameStartLevelLoader(id)
+
+		  -- 卸载所有MenuLevel资源
+			UnityEngine.Object.Destroy(self.menuLevelUI)
+			UnityEngine.Object.Destroy(GameObject.Find("GameMenuLevel"))
+		end)
+
+  end
+
+	function MenuLevel:onPageBackClick()
+		if(self.viewStartCustom.activeSelf) then self.viewStartCustom:SetActive(false) end
+		if(self.viewQuit.activeSelf) then self.viewQuit:SetActive(false) end
+		if(self.viewStart.activeSelf) then self.viewStart:SetActive(false) end
+		if(self.viewScore.activeSelf) then self.viewScore:SetActive(false) end
+		if(self.viewSettings.activeSelf) then self.viewSettings:SetActive(false) end
+		if(self.viewAbout.activeSelf) then self.viewAbout:SetActive(false) end
+		self.viewMain:SetActive(true)
+	end
+
+  return MenuLevel:new(nil)
+
+end

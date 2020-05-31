@@ -5,6 +5,7 @@ using Ballance2.UI.Utils;
 using Ballance2.Utils;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -65,7 +66,8 @@ namespace Ballance2.Managers
             }
 
             mod = new GameMod(packagePath, this);
-            gameMods.Add(mod);
+            if(!gameMods.Contains(mod))
+                gameMods.Add(mod);
 
             GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_MOD_REGISTERED, "*", mod.Uid, mod);
             GameLogger.Log(TAG, "Register mod \"{0}\"", packagePath);
@@ -88,6 +90,31 @@ namespace Ballance2.Managers
             return null;
         }
         /// <summary>
+        /// 通过包名查找模组包
+        /// </summary>
+        /// <param name="packagePath">路径</param>
+        /// <returns>模组包</returns>
+        public GameMod FindGameModByName(string packageName)
+        {
+            foreach (GameMod m in gameMods)
+                if (m.PackageName == packageName)
+                    return m;
+            return null;
+        }
+        /// <summary>
+        /// 通过包名查找模组包
+        /// </summary>
+        /// <param name="packagePath">路径</param>
+        /// <returns>模组包</returns>
+        public GameMod[] FindAllGameModByName(string packageName)
+        {
+            List<GameMod> list = new List<GameMod>();
+            foreach (GameMod m in gameMods)
+                if (m.PackageName == packageName)
+                    list.Add(m);
+            return list.ToArray() ;
+        }
+        /// <summary>
         /// 通过UID查找模组包
         /// </summary>
         /// <param name="modUid">模组包UID</param>
@@ -98,6 +125,25 @@ namespace Ballance2.Managers
                 if (m.Uid == modUid)
                     return m;
             return null;
+        }
+        /// <summary>
+        /// 通过资源定义字符串查找模组包
+        /// </summary>
+        /// <param name="modStrIndef">模组包UID或资源定义字符串</param>
+        /// <returns></returns>
+        public GameMod FindGameModByAssetStr(string modStrIndef)
+        {
+            if (modStrIndef.Contains(":") && !modStrIndef.StartsWith(":"))
+                modStrIndef = modStrIndef.Substring(0, modStrIndef.IndexOf(':') - 1);
+
+            int modUid = 0;
+            if(int.TryParse(modStrIndef, out modUid))
+                return FindGameMod(modUid);
+             
+            if(Regex.IsMatch(modStrIndef, "^([a-zA-Z]+[.][a-zA-Z]+)[.]*.*"))
+                return FindGameModByName(modStrIndef);
+
+            return FindGameModByPath(modStrIndef);
         }
         /// <summary>
         /// 卸载模组包
@@ -276,7 +322,6 @@ namespace Ballance2.Managers
             Image image = newItem.itemObject.transform.Find("Image").GetComponent<Image>();
             Toggle toggleOn = newItem.itemObject.transform.Find("Loaded").GetComponent<Toggle>();
             toggleOn.isOn = mod.LoadStatus == GameModStatus.InitializeSuccess;
-            title.text = mod.PackageName + "  (UID " + mod.Uid + "/" + mod.ModType + ")";
 
             switch (mod.LoadStatus)
             {
@@ -287,6 +332,7 @@ namespace Ballance2.Managers
                     Unload.gameObject.SetActive(true);
                     TextFailed.text = "初始化失败" ;
                     text.text = "错误信息：" + mod.LoadFriendlyErrorExplain;
+                    title.text = mod.PackageName + "\n " + mod.PackagePath + "\n(" + mod.Uid + ")";
                     break;
                 case GameModStatus.BadMod:
                     image.sprite = mod_icon_bad;
@@ -295,6 +341,7 @@ namespace Ballance2.Managers
                     toggleOn.gameObject.SetActive(false);
                     TextFailed.text = "此模组与当前游戏版本不兼容";
                     text.text = "";
+                    title.text = mod.ModInfo.Name + "\n( " + mod.PackageName + "/" + mod.Uid + "/" + mod.ModType + ")";
                     break;
                 case GameModStatus.InitializeSuccess:
                     toggleOn.gameObject.SetActive(true);
@@ -304,6 +351,7 @@ namespace Ballance2.Managers
                     else image.sprite = mod_icon_default;
                     text.text = mod.ModInfo.Introduction + "\n作者：" + mod.ModInfo.Author + "   版本：" +
                         mod.ModInfo.Version;
+                    title.text = mod.ModInfo.Name + "\n( " + mod.PackageName + "/" + mod.Uid + "/" + mod.ModType + ")";
                     break;
                 case GameModStatus.NotInitialize:
                     image.sprite = mod_icon_not_load;
@@ -311,6 +359,7 @@ namespace Ballance2.Managers
                     toggleOn.gameObject.SetActive(true);
                     TextFailed.gameObject.SetActive(false);
                     Unload.gameObject.SetActive(true);
+                    title.text = mod.PackageName + "\n " + mod.PackagePath + "\n(" + mod.Uid + ")";
                     break;
             }
         

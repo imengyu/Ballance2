@@ -2,6 +2,7 @@
 
 namespace Ballance2.Managers.CoreBridge
 {
+    [SLua.CustomLuaClass]
     /// <summary>
     /// 全局事件存储类
     /// </summary>
@@ -22,6 +23,7 @@ namespace Ballance2.Managers.CoreBridge
         public List<GameHandler> EventHandlers { get; private set; }
     }
 
+    [SLua.CustomLuaClass]
     /// <summary>
     /// 游戏内部事件说明
     /// </summary>

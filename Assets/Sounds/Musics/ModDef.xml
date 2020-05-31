@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Mod>
-  <BaseInfo>
+  <BaseInfo packageName="core.assets.musics">
     <Name>Ballance Music Pack</Name>
     <Author>mengyu</Author>
     <Introduction>基础背景音乐资源包</Introduction>
-    <Logo>Assets/Sounds/Musics/ModLogo.png</Logo>
+    <Logo>Assets/Sounds/Musics/ModLogo.jpg</Logo>
     <Version>1.0</Version>
   </BaseInfo>
   <ModType>AssetPack</ModType>

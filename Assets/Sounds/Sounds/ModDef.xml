@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Mod>
-  <BaseInfo>
+  <BaseInfo packageName="core.assets.sounds">
     <Name>Ballance Sound Pack</Name>
     <Author>mengyu</Author>
     <Introduction>基础声音资源包</Introduction>

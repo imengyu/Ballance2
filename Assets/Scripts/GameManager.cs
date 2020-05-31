@@ -220,9 +220,10 @@ namespace Ballance2
 
                     UIManager =  (UIManager)RegisterManager(new UIManager());
 
-                    RegisterManager(GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, GameInit.TAG).AddComponent<GameInit>());
                     RegisterManager(GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, DebugManager.TAG).AddComponent<DebugManager>());
                     RegisterManager(GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, ModManager.TAG).AddComponent<ModManager>());
+                    RegisterManager(GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, SoundManager.TAG).AddComponent<SoundManager>());
+                    RegisterManager(GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, GameInit.TAG).AddComponent<GameInit>());
 
                     //Lua
                     GameMainLuaState = new LuaSvr.MainState();
@@ -240,14 +241,24 @@ namespace Ballance2
                         GameMediator.RegisterEventKernalHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, TAG, (evtName, param) =>
                         {
                             //通知进行下一步内核加载
-                            GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_ENTRY, "*", null);
+                            int initEventHandledCount = GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_ENTRY, "*", null);
+                            if (initEventHandledCount == 0)
+                            {
+                                GameLogger.Error(TAG, "Not found handler for EVENT_GAME_INIT_ENTRY!");
+                                GameErrorManager.ThrowGameError(GameError.HandlerLost, "未找到 EVENT_GAME_INIT_ENTRY 的下一步事件接收器\n此错误出现原因可能是配置不正确");
+                            }
                             return false;
                         });
                     }
                     else
                     {
                         //通知进行下一步内核加载
-                        GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_ENTRY, "*", null);
+                        int initEventHandledCount = GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_ENTRY, "*", null);
+                        if (initEventHandledCount == 0)
+                        {
+                            GameLogger.Error(TAG, "Not found handler for EVENT_GAME_INIT_ENTRY!");
+                            GameErrorManager.ThrowGameError(GameError.HandlerLost, "未找到 EVENT_GAME_INIT_ENTRY 的下一步事件接收器\n此错误出现原因可能是配置不正确");
+                        }
                     }
                 }
                 catch(Exception e)
@@ -292,6 +303,15 @@ namespace Ballance2
         }
 
         /// <summary>
+        /// 设置基础摄像机状态
+        /// </summary>
+        /// <param name="visible">是否显示</param>
+        public static void SetGameBaseCameraVisible(bool visible)
+        {
+            GameBaseCamera.gameObject.SetActive(visible);
+        }
+
+        /// <summary>
         /// 立即退出游戏
         /// </summary>
         public static void QuitGame()
@@ -313,7 +333,20 @@ namespace Ballance2
             foreach (Camera c in Camera.allCameras)
                 c.gameObject.SetActive(false);
             for (int i = 0, c = GameCanvas.transform.childCount; i < c; i++)
-                GameCanvas.transform.GetChild(i).gameObject.SetActive(false);
+            {
+                GameObject go = GameCanvas.transform.GetChild(i).gameObject;
+                if (go.name == "GameUIWindow")
+                {
+                    for (int j = 0, c1 = go.transform.childCount; j < c1; j++)
+                    {
+                        go = go.transform.GetChild(j).gameObject;
+                        if(go.name != "GameUIWindow_Debug Window")
+                            go.SetActive(false);
+                    }
+                }
+                else if(go.name != "GameUIDebugToolBar" && go.name != "GameUIWindow_Debug Window")
+                    go.SetActive(false);
+            }
             for (int i = 0, c = GameRoot.transform.childCount; i < c; i++)
                 GameRoot.transform.GetChild(i).gameObject.SetActive(false);
             GameBaseCamera.gameObject.SetActive(true);

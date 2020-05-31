@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Mod>
-  <BaseInfo>
+  <BaseInfo packageName="core.assets.skys">
     <Name>Ballance Sky Texture Pack</Name>
     <Author>mengyu</Author>
     <Introduction>Ballance 基础天空贴图资源包</Introduction>

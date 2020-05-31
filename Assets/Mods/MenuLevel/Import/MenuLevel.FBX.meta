@@ -1,0 +1,459 @@
+fileFormatVersion: 2
+guid: b3b44520e9aee704fabf443596f6b03c
+ModelImporter:
+  serializedVersion: 19300
+  internalIDToNameTable:
+  - first:
+      74: 1827226128182048838
+    second: Take 001
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Ball_Stone
+    second: {fileID: 2100000, guid: 44d3223dfe982d24e8c55caf459f306e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Columns_beige_fade
+    second: {fileID: 2100000, guid: c42bc99db8f4ad84695a04589fd06d63, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Colums_beige
+    second: {fileID: 2100000, guid: 862e87ce53aac574fa7bcaf864b9700d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Colums_blue
+    second: {fileID: 2100000, guid: ddae01c5f75fe094dafcc997c8a910a3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Dome
+    second: {fileID: 2100000, guid: e9d58c2ad5868804595626bc724272bc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_DomeShadow
+    second: {fileID: 2100000, guid: a5541974bb279e84b9d75675d81384aa, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Floor_Side
+    second: {fileID: 2100000, guid: f16fa696a0a245b469f217203d220a04, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Floor_Top_Boderless
+    second: {fileID: 2100000, guid: 572c10fb1cc6713479177c6237ab976c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Floor_Top_Checkpoint
+    second: {fileID: 2100000, guid: b3b6c40f05ff73a469050a5c5aa05f9e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Floor_Top_Flat
+    second: {fileID: 2100000, guid: a568de40fd1a2dd44ac365785f9a30cf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Floor_Top_Profile
+    second: {fileID: 2100000, guid: 469487d42435c234e9dad0eec4e9948e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Floor_Top_ProfileFlat
+    second: {fileID: 2100000, guid: c834785b21c889342b0c3d7a8d5eb395, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Floor_Trafo_Paper
+    second: {fileID: 2100000, guid: eed3929668c56de4fa57817d489a76b2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Floor_Trafo_Stone
+    second: {fileID: 2100000, guid: a8eb70d84bf9dc74bb1e96ce83781e4e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Floor_Trafo_Wood
+    second: {fileID: 2100000, guid: 97585e5c224c75e4d9697dffc8021ce6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Floor_Wood
+    second: {fileID: 2100000, guid: e0ba99d847cbd994bb0a6fe838f31c8b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Laterne_Glas
+    second: {fileID: 2100000, guid: 6820f4689e7086748901a1cb597d40a0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Laterne_Metal
+    second: {fileID: 2100000, guid: 15b2369d2d8b4f642ba33233dc944713, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Laterne_Schatten
+    second: {fileID: 2100000, guid: 5910c2cf92a85614ba24fe24a5f3fefa, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Laterne_Verlauf
+    second: {fileID: 2100000, guid: a68237de1c6124f4a8e56a1c8572ad84, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Misc_MetalButtons
+    second: {fileID: 2100000, guid: 5777d72d04929f74b8ffec62d307c506, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Misc_Schelle
+    second: {fileID: 2100000, guid: d7244644cbf3f29478ca90b9967cb1ca, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Modul_11_Wood01
+    second: {fileID: 2100000, guid: 59766faf4e7007e49b050a31b1f618cc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Modul_11_Wood02
+    second: {fileID: 2100000, guid: 6fa6f7217ece55841a70ad7a92db6f91, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Modul_13_Metal
+    second: {fileID: 2100000, guid: 0bdcc385197be7c43ae8d5a42425713e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Modul_13_Wood
+    second: {fileID: 2100000, guid: 58f85e5008ff3c5498f333d0170d5764, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Rail
+    second: {fileID: 2100000, guid: fbeff0726e6f3414288d3b7cf4147463, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_TowerRail
+    second: {fileID: 2100000, guid: 79eb6cdf2d750eb40895067c17b666a7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_TowerRoof
+    second: {fileID: 2100000, guid: 1271f62a4b534dc44942aff5614a9c98, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_TowerRoof_Brim
+    second: {fileID: 2100000, guid: 1f9ad5e33ccb9b144a59ab5c35b35494, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Tower_Floor_Side
+    second: {fileID: 2100000, guid: 0214d6f1fe47f1c45a0a5df34fdd5615, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Tower_Floor_Top_Flat_illu
+    second: {fileID: 2100000, guid: 8735ff53823e8f64fae5dffcaf48dece, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Trafo_Paper
+    second: {fileID: 2100000, guid: 09828ff7718d38f4baedec7c95723969, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Trafo_Paper_Color
+    second: {fileID: 2100000, guid: d18957f2daba1d9428c317eb5216031a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Trafo_Paper_Shadow
+    second: {fileID: 2100000, guid: c4b5d067408b0bc47acc987476aabf1c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Trafo_Stone
+    second: {fileID: 2100000, guid: cc7fba29e876add4ab83795df84c1361, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Trafo_Stone_Color
+    second: {fileID: 2100000, guid: 891864d155efd8149a51db80918c723a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Trafo_Stone_Shadow
+    second: {fileID: 2100000, guid: cdee56812ee160141ab14c0ceb8e68b9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Trafo_Wood
+    second: {fileID: 2100000, guid: d64647c4df5e0a04cbcd8286e62dccc7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Trafo_Wood_Color
+    second: {fileID: 2100000, guid: 902a7150c61048f44a6b88950c8c21ca, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Trafo_Wood_Shadow
+    second: {fileID: 2100000, guid: 01ea4dc606a09584389fa30a6ddc95de, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Zone_LiLiang_Innen
+    second: {fileID: 2100000, guid: affc63cc255c56f45a9973484834e622, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Zone_NenLi_Innen
+    second: {fileID: 2100000, guid: 99f02a09463b38441a4f9444aee6cce2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: I_Zone_SuDu_Innen
+    second: {fileID: 2100000, guid: 9e2b10d4603dee543a5ad89897041cb1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: _MenuLevelI_Floor_Top_Border
+    second: {fileID: 2100000, guid: 83330685f4ff3004a9ba8d2a379e7175, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Ball_Paper
+    second: {fileID: 2800000, guid: 79c8d0466571f23469a721291007387d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Ball_Stone
+    second: {fileID: 2800000, guid: 1e327acac7623674597a0bb7976c13d2, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Ball_Wood
+    second: {fileID: 2800000, guid: 2d5969ab6c2d12143bbae8e358683c75, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Column_beige
+    second: {fileID: 2800000, guid: 1d4b76481995f6247ba0d4f2f2d14607, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Column_beige_fade
+    second: {fileID: 2800000, guid: 15181a446abf94541a408aeb8e0880b6, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Column_blue
+    second: {fileID: 2800000, guid: dbc41d2a2bf0f0f46830145d2bca35c9, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Dome
+    second: {fileID: 2800000, guid: 7cbef3f3699ac4142a6e1fb28826f83e, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: DomeShadow
+    second: {fileID: 2800000, guid: 559d9a35fb3d73a4aa3d5b6593c38eac, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: E_Holzbeschlag
+    second: {fileID: 2800000, guid: c8ffe09e353d39c43a034be328ec9fe8, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Floor_Side
+    second: {fileID: 2800000, guid: b4ef6ff61bd26854dbd976922c4b830e, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Floor_Top_Borderless
+    second: {fileID: 2800000, guid: 28444ea4704d9ce4f948732688aa26b6, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Floor_Top_Checkpoint
+    second: {fileID: 2800000, guid: d1da48adba7db1948b60350c757a48d7, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Floor_Top_Flat
+    second: {fileID: 2800000, guid: 016431e377f70f04ca83938d5ac2a01c, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Floor_Top_Profil
+    second: {fileID: 2800000, guid: 8e12428aeb9f01743be78a3d355cba4b, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Floor_Top_ProfilFlat
+    second: {fileID: 2800000, guid: a41ccc34bfa50a648a22d480213a5b77, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Laterne_Glas
+    second: {fileID: 2800000, guid: 205a8c41e1e9ff1439add7e56cca52ba, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Laterne_Schatten
+    second: {fileID: 2800000, guid: 447a526f75bc1e04db384f7d3d55ca50, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Laterne_Verlauf
+    second: {fileID: 2800000, guid: 27546bbd8a7604d4a842eec9d77480bf, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Metal_stained
+    second: {fileID: 2800000, guid: 3d1f58c16b8f5484d96d81eb4f894988, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Modul11_13_Wood
+    second: {fileID: 2800000, guid: 6231c7ed670f04a478a14761a0ddcb9f, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Modul11_Wood
+    second: {fileID: 2800000, guid: 05d12f4497232f448b436df57d8c8fe2, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Rail_Environment
+    second: {fileID: 2800000, guid: 58fa1ebce14ec594a803ecf03c219793, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Tower_Roof
+    second: {fileID: 2800000, guid: 2d06590fd54d56b4dbea0de5f8323345, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Trafo_Environment
+    second: {fileID: 2800000, guid: 0373e26500a9bfc408d1105e2f90ce27, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Trafo_Shadow_Big
+    second: {fileID: 2800000, guid: 3db04b0f2c41ea040b3d3b4b76aa6603, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wood_Metal
+    second: {fileID: 2800000, guid: 49fd02504581c4146ba39fb1dd83ceb3, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wood_Panel
+    second: {fileID: 2800000, guid: 8ca92ccb9c54d06408ee6c00d3c9ef51, type: 3}
+  materials:
+    materialImportMode: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

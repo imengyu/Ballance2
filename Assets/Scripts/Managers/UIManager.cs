@@ -1,5 +1,6 @@
 ﻿using Ballance2.Managers.CoreBridge;
 using Ballance2.UI.BallanceUI;
+using Ballance2.UI.Utils;
 using Ballance2.Utils;
 using System;
 using System.Collections.Generic;
@@ -66,6 +67,7 @@ namespace Ballance2.Managers
         private RectTransform GlobalWindowRectTransform;
         private RectTransform PagesRectTransform;
         private RectTransform WindowsRectTransform;
+        private RectTransform ViewsRectTransform;
 
         private void InitAllObects()
         {
@@ -74,6 +76,9 @@ namespace Ballance2.Managers
             GlobalWindowRectTransform = GameCloneUtils.CreateEmptyUIObjectWithParent(UIRoot.transform, "GameUIGlobalWindow").GetComponent<RectTransform>();
             PagesRectTransform = GameCloneUtils.CreateEmptyUIObjectWithParent(UIRoot.transform, "GameUIPages").GetComponent<RectTransform>();
             WindowsRectTransform = GameCloneUtils.CreateEmptyUIObjectWithParent(UIRoot.transform, "GameUIWindow").GetComponent<RectTransform>();
+            ViewsRectTransform = GameCloneUtils.CreateEmptyUIObjectWithParent(UIRoot.transform, "ViewsRectTransform").GetComponent<RectTransform>();
+            UIAnchorPosUtils.SetUIAnchor(ViewsRectTransform, UIAnchor.Stretch, UIAnchor.Stretch);
+            UIAnchorPosUtils.SetUIPos(ViewsRectTransform, 0, 0, 0, 0);
         }
 
         #region 全局渐变遮罩
@@ -81,6 +86,24 @@ namespace Ballance2.Managers
         private Image GlobalFadeMaskWhite;
         private Image GlobalFadeMaskBlack;
 
+        /// <summary>
+        /// 全局黑色遮罩隐藏
+        /// </summary>
+        public void MaskBlackSet(bool show)
+        {
+            GlobalFadeMaskBlack.color = new Color(GlobalFadeMaskBlack.color.r,
+                   GlobalFadeMaskBlack.color.g, GlobalFadeMaskBlack.color.b, show ? 1.0f : 0f);
+            GlobalFadeMaskBlack.gameObject.SetActive(show);
+        }
+        /// <summary>
+        /// 全局黑色遮罩隐藏
+        /// </summary>
+        public void MaskWhiteSet(bool show)
+        {
+            GlobalFadeMaskWhite.color = new Color(GlobalFadeMaskWhite.color.r,
+                GlobalFadeMaskWhite.color.g, GlobalFadeMaskWhite.color.b, show ? 1.0f : 0f);
+            GlobalFadeMaskWhite.gameObject.SetActive(show);
+        }
         /// <summary>
         /// 全局黑色遮罩渐变淡入
         /// </summary>
@@ -299,6 +322,14 @@ namespace Ballance2.Managers
         public void AttatchViewToCanvas(RectTransform view)
         {
             view.SetParent(UIRoot.gameObject.transform);
+        }
+        public RectTransform InitViewToCanvas(GameObject prefab, string name)
+        {
+            GameObject go = GameCloneUtils.CloneNewObjectWithParent(prefab,
+                ViewsRectTransform.transform, name);
+            RectTransform view = go.GetComponent<RectTransform>();
+            view.SetParent(ViewsRectTransform.gameObject.transform);
+            return view;
         }
 
         #endregion

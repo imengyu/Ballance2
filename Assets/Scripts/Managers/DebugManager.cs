@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.UI.Utils;
-using Ballance2.Config;
+﻿using Ballance2.Config;
 using Ballance2.Managers.CoreBridge;
 using Ballance2.UI.BallanceUI;
 using Ballance2.UI.Utils;

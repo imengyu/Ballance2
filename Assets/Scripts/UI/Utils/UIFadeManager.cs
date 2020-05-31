@@ -8,7 +8,7 @@ using UnityEngine.UI;
  *  负责自动化脚本的管理与执行
  */
 
-namespace Ballance2.Utils
+namespace Ballance2.UI.Utils
 {
     /// <summary>
     /// 渐变自管理类
