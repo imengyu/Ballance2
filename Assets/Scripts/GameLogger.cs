@@ -92,6 +92,7 @@ namespace Ballance2
             WriteLog(LogType.Info, tag, format, param);
         }
 
+        [SLua.CustomLuaClass]
         /// <summary>
         /// 日志类型
         /// </summary>

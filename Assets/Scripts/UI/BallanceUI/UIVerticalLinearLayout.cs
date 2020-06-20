@@ -7,8 +7,12 @@ using UnityEngine;
 
 namespace Ballance2.UI.BallanceUI
 {
-    public class UIVerticalLinearLayout : MonoBehaviour
+    [SLua.CustomLuaClass]
+    public class UIVerticalLinearLayout : UILinearLayout
     {
-
+        public UIVerticalLinearLayout()
+        {
+            layoutType = LayoutType.Vertical;
+        }
     }
 }

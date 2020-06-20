@@ -1,12 +1,10 @@
 ﻿using Ballance2.Managers.CoreBridge;
 using Ballance2.UI.BallanceUI;
+using Ballance2.UI.BallanceUI.Element;
 using Ballance2.UI.Utils;
 using Ballance2.Utils;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -32,25 +30,24 @@ namespace Ballance2.Managers
 
             GlobalFadeMaskWhite = UIRoot.transform.Find("GlobalFadeMaskWhite").gameObject.GetComponent<Image>();
             GlobalFadeMaskBlack = UIRoot.transform.Find("GlobalFadeMaskBlack").gameObject.GetComponent<Image>();
+            GlobalFadeMaskBlack.gameObject.SetActive(true);
 
             InitAllObects();
             InitWindowManagement();
+            InitPageManagement();
+            InitUIPrefabs();
 
-            GameLogger.Log(TAG, "InitManager");
             return true;
         }
         public override bool ReleaseManager()
         {
             DestroyWindowManagement();
+            DestroyPageManagement();
 
             GameLogger.Log(TAG, "Destroy {0} ui objects", UIRoot.transform.childCount);
             for (int i = 0, c = UIRoot.transform.childCount; i < c; i++)
                 UnityEngine.Object.Destroy(UIRoot.transform.GetChild(i).gameObject);
             return true;
-        }
-        public override void ReloadData()
-        {
-            base.ReloadData();
         }
 
         /// <summary>
@@ -68,6 +65,8 @@ namespace Ballance2.Managers
         private RectTransform PagesRectTransform;
         private RectTransform WindowsRectTransform;
         private RectTransform ViewsRectTransform;
+        private RectTransform PageContainerRectTransform;
+        private RectTransform PageBackgroundRectTransform;
 
         private void InitAllObects()
         {
@@ -79,6 +78,9 @@ namespace Ballance2.Managers
             ViewsRectTransform = GameCloneUtils.CreateEmptyUIObjectWithParent(UIRoot.transform, "ViewsRectTransform").GetComponent<RectTransform>();
             UIAnchorPosUtils.SetUIAnchor(ViewsRectTransform, UIAnchor.Stretch, UIAnchor.Stretch);
             UIAnchorPosUtils.SetUIPos(ViewsRectTransform, 0, 0, 0, 0);
+
+            PageContainerRectTransform = GameCloneUtils.CreateEmptyUIObjectWithParent(PagesRectTransform, "PageContainer").GetComponent<RectTransform>();
+            PageBackgroundRectTransform = GameCloneUtils.CreateEmptyUIObjectWithParent(PagesRectTransform, "PageBackground").GetComponent<RectTransform>();
         }
 
         #region 全局渐变遮罩
@@ -310,6 +312,506 @@ namespace Ballance2.Managers
             if (windowId < 2048) windowId++;
             return windowId;
         }
+
+        #endregion
+
+        #region 页管理
+
+        //页
+        private List<UIPage> managedPages = null;
+        private List<UIPrefab> pagePrefabs = null;
+        private List<UIPrefab> elementPrefabs = null;
+
+        private struct UIPrefab {
+            public UIPrefab(GameObject o, string n)
+            {
+                Prefab = o;
+                Name = n;
+                LuaObjectHost = o.GetComponent<GameLuaObjectHost>();
+                IsLuaPrefab = LuaObjectHost != null;
+            }
+
+            public GameObject Prefab;
+            public string Name;
+            public bool IsLuaPrefab;
+            public GameLuaObjectHost LuaObjectHost;
+        }
+        private UIPage currentShowPage = null;
+
+        private void InitPageManagement()
+        {
+            managedPages = new List<UIPage>();
+            pagePrefabs = new List<UIPrefab>();
+            elementPrefabs = new List<UIPrefab>();
+
+            GameObject UIPagePrefabDefault = GameManager.FindStaticPrefabs("UIPagePrefabDefault");
+            GameObject UIPageBackgroundDefault = GameManager.FindStaticPrefabs("UIPageBackgroundDefault");
+
+            RegisterPageBackgroundPrefab(UIPageBackgroundDefault, "Default");
+            RegisterPagePrefab(UIPagePrefabDefault, "Default");
+        }
+        private void DestroyPageManagement()
+        {
+            if (managedPages != null)
+            {
+                foreach (UIPage w in managedPages)
+                    w.Destroy();
+                managedPages.Clear();
+                managedPages = null;
+            }
+            if (pagePrefabs != null)
+            {
+                pagePrefabs.Clear();
+                pagePrefabs = null;
+            }
+            if (elementPrefabs != null)
+            {
+                elementPrefabs.Clear();
+                elementPrefabs = null;
+            }
+        }
+
+        /// <summary>
+        /// 注册 Ballance 样式的 UI 页
+        /// </summary>
+        /// <param name="pagePath"></param>
+        /// <param name="template">UI模板</param>
+        /// <param name="handlers">UI事件接收器模板</param>
+        /// <returns></returns>
+        public UIPage RegisterBallanceUIPage(string pagePath, string templateXml, Dictionary<string, string> handlers, string backgroundPrefabName = "Default")
+        {
+            if (FindUIPage(pagePath) != null)
+            {
+                GameErrorManager.LastError = GameError.AlredayRegistered;
+                return null;
+            }
+
+            return RegisterUIPage(pagePath, "Default", backgroundPrefabName, BuildLayoutByTemplate(pagePath, templateXml, handlers).RectTransform);
+        }
+        /// <summary>
+        /// 注册 UI 页
+        /// </summary>
+        /// <param name="pagePath">页路径</param>
+        /// <param name="prefabName">注册的 Prefab 名称</param>
+        /// <param name="backgroundPrefabName">注册的背景 Prefab 名称</param>
+        /// <param name="content">页内容</param>
+        /// <returns></returns>
+        public UIPage RegisterUIPage(string pagePath, string prefabName, string backgroundPrefabName, RectTransform content)
+        {
+            if (FindUIPage(pagePath) != null)
+            {
+                GameErrorManager.LastError = GameError.AlredayRegistered;
+                return null;
+            }
+
+            //找到预制体
+            GameObject prefab = FindRegisterPagePrefab(prefabName);
+            if (prefab == null)
+            {
+                GameErrorManager.LastError = GameError.PrefabNotFound;
+                return null;
+            }
+
+            //实例化
+            GameObject pageGo = GameCloneUtils.CloneNewObjectWithParent(prefab, PageContainerRectTransform, pagePath, false);
+            UIPage page = pageGo.GetComponent<UIPage>();
+            if(page.ContentRectTransform == null)
+                page.ContentRectTransform = page.RectTransform;
+            content.SetParent(page.ContentRectTransform);
+            UIAnchorPosUtils.SetUIPos(content, 0, 0, 0, 0);
+
+            //背景
+            if (!string.IsNullOrEmpty(backgroundPrefabName))
+                page.PageBackground = FindPageBackgroundPrefab(backgroundPrefabName);
+
+            return page;
+        }
+        /// <summary>
+        /// 查找已注册页
+        /// </summary>
+        /// <param name="pagePath">页路径</param>
+        /// <returns></returns>
+        public UIPage FindUIPage(string pagePath)
+        {
+            foreach(UIPage p in managedPages)
+                if(p.PagePath == pagePath)
+                    return p;
+            return null;
+        }
+        /// <summary>
+        /// 销毁已注册页
+        /// </summary>
+        /// <param name="pagePath">页路径</param>
+        /// <returns></returns>
+        public bool DestroyUIPage(string pagePath)
+        {
+            UIPage p = FindUIPage(pagePath);
+            if(p != null)
+            {
+                managedPages.Remove(p);
+                return true;
+            }
+            else {
+                GameErrorManager.LastError = GameError.Unregistered;
+                return false;
+            }
+        }
+        /// <summary>
+        /// 跳转到某个页
+        /// </summary>
+        /// <param name="pagePath">页路径</param>
+        /// <returns></returns>
+        public bool GotoUIPage(string pagePath)
+        {
+            UIPage p = FindUIPage(pagePath);
+            if (p != null)
+            {
+                if(p != currentShowPage)
+                {
+                    currentShowPage.gameObject.SetActive(false);
+                    if (currentShowPage.PageBackground != null)
+                        currentShowPage.PageBackground.SetActive(false);
+                    p.gameObject.SetActive(true);
+                    if (p.PageBackground != null)
+                        p.PageBackground.SetActive(true);
+                    currentShowPage = p;
+                }
+                return true;
+            }
+            else
+            {
+                GameErrorManager.LastError = GameError.Unregistered;
+                return false;
+            }
+        }
+        /// <summary>
+        /// 隐藏页
+        /// </summary>
+        /// <param name="pagePath">页路径，如果为空则隐藏当前显示的页</param>
+        /// <returns></returns>
+        public bool CloseUIPage(string pagePath)
+        {
+            UIPage p = string.IsNullOrEmpty(pagePath) ? currentShowPage : FindUIPage(pagePath);
+            if (p != null)
+            {
+                if (p != currentShowPage)
+                {
+                    p.gameObject.SetActive(false);
+                    if (p.PageBackground != null)
+                        p.PageBackground.SetActive(false);
+                }
+                return true;
+            }
+            else
+            {
+                GameErrorManager.LastError = GameError.Unregistered;
+                return false;
+            }
+        }
+        /// <summary>
+        /// 从当前页退回上级页，如果当前没有显示的页或当前页已经是顶级，返回 false
+        /// </summary>
+        /// <param name="pagePath">页路径</param>
+        /// <returns>如果当前没有显示的页，返回 false</returns>
+        public bool BackUIPage()
+        {
+            if (currentShowPage != null)
+            {
+                string pagePath = currentShowPage.PagePath;
+                if (pagePath.Contains("."))
+                {
+                    pagePath = pagePath.Substring(0, pagePath.LastIndexOf('.'));
+
+                    UIPage p = FindUIPage(pagePath);
+                    if (p != null)
+                    {
+                        if (p != currentShowPage)
+                        {
+                            currentShowPage.gameObject.SetActive(false);
+                            if (currentShowPage.PageBackground != null)
+                                currentShowPage.PageBackground.SetActive(false);
+                            p.gameObject.SetActive(true);
+                            if (p.PageBackground != null)
+                                p.PageBackground.SetActive(true);
+                            currentShowPage = p;
+                        }
+                        return true;
+                    }
+                    else GameErrorManager.LastError = GameError.Unregistered;
+                }
+            }
+            return false;
+        }
+
+        #region 自动布局生成器
+
+        /// <summary>
+        /// 生成 垂直自动布局
+        /// </summary>
+        /// <param name="name">布局名称</param>
+        /// <param name="template">UI模板</param>
+        /// <param name="handlers">LUA接收器模板</param>
+        /// <returns></returns>
+        public ILayoutContainer BuildLayoutByTemplate(string name, string templateXml, Dictionary<string, string> handlers)
+        {
+            Dictionary<string, GameHandler> handlerList = new Dictionary<string, GameHandler>();
+            string h = "";
+            foreach (string key in handlers.Keys)
+            {
+                h = handlers[key];
+                handlerList.Add(key, new GameHandler(name + ":" + h, h));
+            }
+            return BuildLayoutByTemplate(name, templateXml, handlerList);
+        }
+        /// <summary>
+        /// 生成 垂直自动布局
+        /// </summary>
+        /// <param name="name">布局名称</param>
+        /// <param name="template">UI模板</param>
+        /// <param name="handlers">接收器模板</param>
+        /// <returns></returns>
+        public ILayoutContainer BuildLayoutByTemplate(string name, string templateXml, Dictionary<string, GameHandler> handlers)
+        {
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(templateXml);
+            return BuildLayoutByTemplate(name, xmlDocument, handlers, null);
+        }
+        public ILayoutContainer BuildLayoutByTemplate(string name, XmlNode templateXml, Dictionary<string, GameHandler> handlers, ILayoutContainer parent)
+        {
+            //实例化UI预制体
+            string prefabName = templateXml.Name;
+            GameObject prefab = FindRegisterElementPrefab(prefabName);
+            if(prefab == null)
+            {
+                GameLogger.Log(TAG, "BuildLayoutByTemplate failed, not found prefab {0}", prefabName);
+                GameErrorManager.LastError = GameError.PrefabNotFound;
+                return null;
+            }
+
+            //获取预制体上的脚本
+            ILayoutContainer ilayout = prefab.GetComponent<ILayoutContainer>();            
+            if(ilayout == null) //该方法必须实例化UI容器
+            {
+                GameLogger.Log(TAG, "BuildLayoutByTemplate with prefab {0} failed, root must be a container", prefabName);
+                GameErrorManager.LastError = GameError.MustBeContainer;
+                return null;
+            }
+
+            GameObject newCon = GameCloneUtils.CloneNewObjectWithParent(prefab,
+                parent == null ? UIRoot.transform : parent.RectTransform);
+            ilayout = newCon.GetComponent<ILayoutContainer>();
+
+            GameObject newEle = null;
+            UIElement uIElement = null;
+
+            //子元素
+            for (int i = 0, c = templateXml.ChildNodes.Count; i < c; i++)
+            {
+                //xml 属性读取
+                XmlNode eleNode = templateXml.ChildNodes[i];
+                string eleName = "";
+                foreach (XmlAttribute a in eleNode.Attributes) {
+                    if (a.Name == "name") eleName = a.Value;
+                }
+
+                //预制体
+                prefab = FindRegisterElementPrefab(eleNode.Name);
+                if (prefab == null)
+                {
+                    GameLogger.Log(TAG, "BuildLayoutByTemplate failed, not found prefab {0}", prefabName);
+                    continue;
+                }
+                if (prefab.GetComponent<ILayoutContainer>() != null) //这是UI容器
+                    return BuildLayoutByTemplate(eleName, eleNode, handlers, ilayout);//递归构建
+
+                //构建子元素
+                newEle = GameCloneUtils.CloneNewObjectWithParent(prefab, ilayout.RectTransform, eleName);
+
+                uIElement = newEle.GetComponent<UIElement>();
+                uIElement.Init(eleName, eleNode);
+
+                ilayout.AddElement(uIElement, false);
+            }
+
+            ilayout.PostDoLayout();
+            return ilayout;
+        }
+
+        #endregion
+
+        #region 外壳模板
+
+        private void InitUIPrefabs()
+        {
+            RegisterElementPrefab(GameManager.FindStaticPrefabs("UISpace"), "UISpace");
+            RegisterElementPrefab(GameManager.FindStaticPrefabs("UISmallButton"), "UISmallButton");
+            RegisterElementPrefab(GameManager.FindStaticPrefabs("UIMainButton"), "UIMainButton");
+            RegisterElementPrefab(GameManager.FindStaticPrefabs("UILevButton"), "UILevButton");
+            RegisterElementPrefab(GameManager.FindStaticPrefabs("UIButtonBack"), "UIButtonBack");
+            RegisterElementPrefab(GameManager.FindStaticPrefabs("UIHorizontalLinearLayout"), "UIHorizontalLinearLayout");
+            RegisterElementPrefab(GameManager.FindStaticPrefabs("UIVertcialLinearLayout"), "UIVertcialLinearLayout");
+
+
+        }
+
+        /// <summary>
+        /// 注册UI元素的外壳Prefab
+        /// </summary>
+        /// <param name="prefab"></param>
+        /// <param name="name"></param>
+        public bool RegisterElementPrefab(GameObject prefab, string name)
+        {
+            if(FindRegisterElementPrefab(name) != null)
+            {
+                GameErrorManager.LastError = GameError.AlredayRegistered;
+                return false;
+            }
+            elementPrefabs.Add(new UIPrefab(prefab, name));
+            return true;
+        }
+        /// <summary>
+        /// 取消注册UI元素的外壳Prefab
+        /// </summary>
+        /// <param name="name"></param>
+        public bool UnRegisterElementPrefab(string name)
+        {
+            for (int i = elementPrefabs.Count - 1; i >= 0; i--)
+            {
+                if (elementPrefabs[i].Name == name)
+                {
+                    elementPrefabs.RemoveAt(i);
+                    return true;
+                }
+            }
+            GameErrorManager.LastError = GameError.Unregistered;
+            return false;
+        }
+        /// <summary>
+        /// 获取注册的UI元素的外壳Prefab
+        /// </summary>
+        /// <param name="name"></param>
+        public GameObject FindRegisterElementPrefab(string name)
+        {
+            for (int i = elementPrefabs.Count - 1; i >= 0; i--)
+            {
+                if (elementPrefabs[i].Name == name)
+                    return elementPrefabs[i].Prefab;
+            }
+            return null;
+        }
+        /// <summary>
+        /// 实例化已经注册的UI预制体
+        /// </summary>
+        /// <param name="name">预制体名称</param>
+        /// <param name="parent">父元素</param>
+        /// <param name="name">新元素名称</param>
+        public GameObject InstanceElement(string prefabName, RectTransform parent, string name)
+        {
+            GameObject prefab = FindRegisterElementPrefab(name);
+            if(prefab == null)
+            {
+                GameErrorManager.LastError = GameError.PrefabNotFound;
+                return null;
+            }
+            
+            return GameCloneUtils.CloneNewObjectWithParent(prefab, parent, prefabName + ":" +name);
+        }
+
+        /// <summary>
+        /// 注册UI页的外壳Prefab
+        /// </summary>
+        /// <param name="prefab"></param>
+        /// <param name="name"></param>
+        public bool RegisterPagePrefab(GameObject prefab, string name)
+        {
+            if (FindRegisterPagePrefab(name) != null)
+            {
+                GameErrorManager.LastError = GameError.AlredayRegistered;
+                return false;
+            }
+            pagePrefabs.Add(new UIPrefab(prefab, name));
+            return true;
+        }
+        /// <summary>
+        /// 取消注册UI页的外壳Prefab
+        /// </summary>
+        /// <param name="name"></param>
+        public bool UnRegisterPagePrefab(string name)
+        {
+            for(int i = pagePrefabs.Count - 1; i>=0;i--)
+            {
+                if (pagePrefabs[i].Name == name)
+                {
+                    pagePrefabs.RemoveAt(i);
+                }
+            }
+            GameErrorManager.LastError = GameError.Unregistered;
+            return true;
+        }
+        /// <summary>
+        /// 获取注册的UI页的外壳Prefab
+        /// </summary>
+        /// <param name="name"></param>
+        public GameObject FindRegisterPagePrefab(string name)
+        {
+            for (int i = pagePrefabs.Count - 1; i >= 0; i--)
+            {
+                if (pagePrefabs[i].Name == name)
+                    return pagePrefabs[i].Prefab;
+            }
+            return null;
+        }
+        /// <summary>
+        /// 注册UI页的背景Prefab
+        /// </summary>
+        /// <param name="prefab"></param>
+        /// <param name="name"></param>
+        public bool RegisterPageBackgroundPrefab(GameObject prefab, string name)
+        {
+            if (FindPageBackgroundPrefab(name) != null)
+            {
+                GameErrorManager.LastError = GameError.AlredayRegistered;
+                return false;
+            }
+            GameCloneUtils.CloneNewObjectWithParent(prefab, PageBackgroundRectTransform, name, false);
+            return true;
+        }
+        /// <summary>
+        /// 取消注册UI页的背景Prefab
+        /// </summary>
+        /// <param name="name"></param>
+        public bool UnRegisterPageBackgroundPrefab(string name)
+        {
+            GameObject go = null;
+            for (int i = PageBackgroundRectTransform.childCount - 1; i >= 0; i--)
+            {
+                go = PageBackgroundRectTransform.GetChild(i).gameObject;
+                if (go.name == name)
+                {
+                    UnityEngine.Object.Destroy(go);
+                    return true;
+                }
+            }
+            GameErrorManager.LastError = GameError.Unregistered;
+            return false;
+        }
+        /// <summary>
+        /// 获取注册的UI页的背景Prefab
+        /// </summary>
+        /// <param name="name"></param>
+        public GameObject FindPageBackgroundPrefab(string name)
+        {
+            GameObject go = null;
+            for (int i = PageBackgroundRectTransform.childCount - 1; i >= 0; i--)
+            {
+                go = PageBackgroundRectTransform.GetChild(i).gameObject;
+                if (go.name == name)
+                    break;
+            }
+            return go;
+        }
+
+        #endregion
 
         #endregion
 

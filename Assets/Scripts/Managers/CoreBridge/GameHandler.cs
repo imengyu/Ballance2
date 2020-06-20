@@ -1,5 +1,6 @@
 ﻿namespace Ballance2.Managers.CoreBridge
 {
+    [SLua.CustomLuaClass]
     /// <summary>
     /// 游戏通用接收器
     /// </summary>
@@ -21,13 +22,22 @@
         /// 创建 LUA 层使用的 Handler
         /// </summary>
         /// <param name="name">接收器名称</param>
-        /// <param name="luaModulHandler">LUA Handler （格式：模块名:Modul/lua虚拟脚本名字:主模块函数名称）</param>
+        /// <param name="luaModulHandler">LUA Handler （格式：模块名:Modul/lua虚拟脚本名字:主模块函数名称:附带参数）</param>
         public GameHandler(string name, string luaModulHandler)
         {
             Name = name;
             Type = GameHandlerType.LuaModul;
             LuaModulHandler = luaModulHandler;
             LuaModulHandlerFunc = new GameLuaHandler(luaModulHandler);
+        }
+
+        public static GameHandler CreateLuaGameHandler(string name, string luaModulHandler)
+        {
+            return new GameHandler(name, luaModulHandler);
+        }
+        public static GameHandler CreateKernelGameHandler(string name, GameHandlerDelegate gameHandlerDelegate)
+        {
+            return new GameHandler(name, gameHandlerDelegate);
         }
 
         /// <summary>
@@ -82,6 +92,7 @@
         }
     }
 
+    [SLua.CustomLuaClass]
     /// <summary>
     /// 通用接收器类型
     /// </summary>

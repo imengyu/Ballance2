@@ -63,7 +63,7 @@ namespace Ballance2.Managers
         }
         private IEnumerator LoadGameInitUI()
         {
-            int modUid = ModManager.LoadGameMod(GamePathManager.GetResRealPath("core", "assets/gameinit_ui.assetbundle"), false);
+            int modUid = ModManager.LoadGameMod(GamePathManager.GetResRealPath("core", "core.gameinit.ballance"), false);
             gameInitMod = ModManager.FindGameMod(modUid);
             if (gameInitMod == null)
             {
@@ -90,19 +90,6 @@ namespace Ballance2.Managers
             UIProgressValue.sizeDelta = new Vector2(val * UIProgress.sizeDelta.x, UIProgressValue.sizeDelta.y);
         }
 
-        /*
-         * GameInit.txt 格式
-         * 
-         * 格式：REQUIRED/OPTIONAL:CORE/MOD:资源路径
-         * 必须/可选模组       内核(游戏内置)/外部模组    文件路径 可使用 [Platform] 来代表平台，其会替换为
-         * 指定平台字符串：win/android/ios 等等
-         *
-         * eg : REQUIRED:CORE:assets/musics_[Platform].unity3d
-         *          REQUIRED:CORE:scenses/menulevel.unity3d
-         * 
-         */
-
-        //加载 GameInit.txt 中的模块
         private IEnumerator GameInitModuls()
         {
             yield return new WaitUntil(IsGameInitUILoaded);
@@ -111,57 +98,33 @@ namespace Ballance2.Managers
             IntroAudio.Play();
 
             GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_GAME_INIT_FINISH);
-
-            string gameinit_txt_path = GamePathManager.GetResRealPath("gameinit", "");
-            UnityWebRequest request = UnityWebRequest.Get(gameinit_txt_path);
-            yield return request.SendWebRequest();
-            if (request.isDone && string.IsNullOrEmpty(request.error))
+            ModManager.RegisterOnUpdateCurrentLoadingModCallback((m) =>
             {
-                string GameInitTable = request.downloadHandler.text;
-                StringSpliter sp = new StringSpliter(GameInitTable, '\n');
-                if (sp.Count >= 1)
-                {
-                    int loadedCount = 0;
-                    foreach (string ar in sp.Result)
-                    {
-                        bool required = false;
-                        string fullPath = ar;
-                        if (ar.StartsWith(":")) continue;
-                        else if (ar.StartsWith("REQUIRED:"))
-                        {
-                            fullPath = GamePathManager.GetResRealPath("", fullPath.Substring(9));
-                            required = true;
-                        }
-                        else if (ar.StartsWith("OPTIONAL:"))
-                            fullPath = GamePathManager.GetResRealPath("", fullPath.Substring(10));
-
-                        //状态
-                        loadedCount++;
-                        LoadGameInitUIProgressValue(loadedCount / (float)sp.Count);
-                        UIProgressText.text = "Loading " + fullPath;
-
-                        //加载
-                        int modUid = ModManager.LoadGameMod(fullPath, false);
-                        GameMod mod = ModManager.FindGameMod(modUid);
-                        //等待加载
-                        yield return StartCoroutine(mod.LoadInternal());
-
-                        if (mod.LoadStatus == GameModStatus.InitializeSuccess)
-                            continue;
-                        else if (required)
-                            GameErrorManager.ThrowGameError(GameError.GameInitPartLoadFailed, "加载模块  " + fullPath + " 时发生错误");
-                        else GameLogger.Warning(TAG, "加载模块  {0} 时发生错误", fullPath);
-                    }
-                }
-            }
-            else GameErrorManager.ThrowGameError(GameError.GameInitReadFailed, "加载 GameInit.txt  " + gameinit_txt_path + " 时发生错误：" + request.error);
-
+                LoadGameInitUIProgressValue((ModManager.GetLoadedModCount() + 1) / 
+                    (float)ModManager.GetAllModCount());
+                UIProgressText.text = m.PackagePath;
+            });
+            
             UIProgressText.text = "Loading";
+
+            int modUid = ModManager.LoadGameMod(GamePathManager.GetResRealPath("core", "core.gamepackages.ballance"), false);
+            GameMod gamePackagesMod = ModManager.FindGameMod(modUid);
+            if (gamePackagesMod == null)
+            {
+                GameErrorManager.ThrowGameError(GameError.GameInitPartLoadFailed, "加载 GamePackages 资源包失败 ");
+                StopAllCoroutines();
+            }
+
+            yield return StartCoroutine(gamePackagesMod.LoadInternal());
+
+            yield return new WaitUntil(IsGameInitAnimPlayend);
+
+            //初始化模组启动代码（游戏初始化完成）
+            ModManager.ExecuteModEntryCodeAtStart();
 
             int initEventHandledCount = GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_FINISH, "*");
             GameManager.GameMediator.UnRegisterGlobalEvent(GameEventNames.EVENT_GAME_INIT_FINISH);
-
-            yield return new WaitUntil(IsGameInitAnimPlayend);
+           
             if (initEventHandledCount == 0)
             {
                 GameErrorManager.ThrowGameError(GameError.HandlerLost, "未找到 EVENT_GAME_INIT_FINISH 的下一步事件接收器\n此错误出现原因可能是配置不正确");

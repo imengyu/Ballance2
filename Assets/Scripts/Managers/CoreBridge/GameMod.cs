@@ -5,7 +5,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Xml;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -20,12 +19,13 @@ namespace Ballance2.Managers.CoreBridge
     {
         private string TAG = "";
 
-        public GameMod(string packagePath, ModManager modManager)
+        public GameMod(string packagePath, ModManager modManager, string packageName = null)
         {
             ModManager = modManager;
             Uid = CommonUtils.GenNonDuplicateID();
             PackagePath = packagePath;
-            PackageName = "unknow." + Uid;
+            if (string.IsNullOrEmpty(packageName)) PackageName = "unknow." + Uid;
+            else PackageName = packageName;
             TAG = ModManager.TAG + ":" + Uid;
             modInfo = new GameModInfo(GamePathManager.GetFileNameWithoutExt(PackagePath));
         }
@@ -44,6 +44,7 @@ namespace Ballance2.Managers.CoreBridge
         public string PackageName { get; private set; }
 
         private ModManager ModManager;
+        private bool hasMustDependenciesLoadFailed = false;
 
         /// <summary>
         /// 初始化模组包
@@ -82,11 +83,26 @@ namespace Ballance2.Managers.CoreBridge
                 luaObjects = null;
             }
         }
-        //加载
+        /// <summary>
+        /// 开始运行模组包
+        /// </summary>
+        public bool Run()
+        {
+            return RunModExecutionCode();
+        }
+        /// <summary>
+        /// 加载（协程）
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator LoadInternal()
         {
+            if (LoadStatus == GameModStatus.Loading
+                || LoadStatus == GameModStatus.InitializeSuccess) yield break;
+
+            LoadStatus = GameModStatus.Loading;
+
             //路径处理
-            if (!Regex.IsMatch(PackagePath, "(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]")) {
+            if (!StringUtils.IsUrl(PackagePath)) {
                 //不是URL，处理路径至mod文件夹路径
                 if(!PackagePath.StartsWith(Application.streamingAssetsPath) && !GamePathManager.IsAbsolutePath(PackagePath))
                     PackagePath = GamePathManager.GetResRealPath("mod", PackagePath);
@@ -94,16 +110,26 @@ namespace Ballance2.Managers.CoreBridge
 
             GameLogger.Log(ModManager.TAG, "Initialize mod package {0} , Full path : {1}", PackageName, PackagePath);
 
+            //当前
+            ModManager.OnUpdateCurrentLoadingMod(this);
+
             //请求
-            UnityWebRequest request = UnityWebRequest.Get(PackagePath);
-            yield return request.SendWebRequest();
+            UnityWebRequest request = null;
 
-            if (!request.isNetworkError && string.IsNullOrEmpty(request.error))
+            if (AssetBundle == null)
             {
-                AssetBundleCreateRequest assetBundleCreateRequest = AssetBundle.LoadFromMemoryAsync(request.downloadHandler.data);
-                yield return assetBundleCreateRequest;
-                AssetBundle = assetBundleCreateRequest.assetBundle;
+                request = UnityWebRequest.Get(PackagePath);
+                yield return request.SendWebRequest();
+            }
 
+            if (AssetBundle != null || (!request.isNetworkError && string.IsNullOrEmpty(request.error)))
+            {
+                if (AssetBundle == null)
+                {
+                    AssetBundleCreateRequest assetBundleCreateRequest = AssetBundle.LoadFromMemoryAsync(request.downloadHandler.data);
+                    yield return assetBundleCreateRequest;
+                    AssetBundle = assetBundleCreateRequest.assetBundle;
+                }
                 if (AssetBundle == null)
                 {
                     LoadFriendlyErrorExplain = "无效的资源包";
@@ -155,6 +181,7 @@ namespace Ballance2.Managers.CoreBridge
                         LoadFriendlyErrorExplain = "模组包包名与已加载模组包冲突";
 
                         ModManager.OnModLoadFinished(this);
+                        yield break;
                     }
                 }
 
@@ -173,10 +200,40 @@ namespace Ballance2.Managers.CoreBridge
                     }
                 }
 
-                LoadStatus = GameModStatus.InitializeSuccess;
+                //加载依赖
+                if (ModDependencyInfo.Count > 0)
+                {
+                    yield return ModManager.StartCoroutine(CheckAndLoadModDependencies());
+
+                    if(hasMustDependenciesLoadFailed)
+                    {
+                        GameErrorManager.LastError = GameError.ModDependenciesLoadFailed;
+
+                        LoadStatus = GameModStatus.InitializeFailed;
+                        LoadFriendlyErrorExplain = "模组包的一个必要依赖项未能成功加载";
+
+                        ModManager.OnModLoadFinished(this);
+                        yield break;
+                    }
+                }
+                else
+                {
+                    ModDependencyAllLoaded = true;
+                    hasMustDependenciesLoadFailed = false;
+                }
+
+                //启动LUA 虚拟机
+                if (ModType == GameModType.ModPack)
+                {
+                    //依赖需要全部加载
+                    if(ModDependencyAllLoaded)  InitLuaState();
+                    else GameLogger.Warning(TAG, "模组包 {0} 的依赖项没有全部加载，因此模组包不能运行", PackageName);
+                }
 
                 //修复 模块透明材质 Shader
                 FixBundleShader();
+
+                LoadStatus = GameModStatus.InitializeSuccess;
 
                 ModManager.OnModLoadFinished(this);
                 yield break;
@@ -242,6 +299,18 @@ namespace Ballance2.Managers.CoreBridge
         /// 模组适配信息
         /// </summary>
         public GameCompatibilityInfo ModCompatibilityInfo { get { return modCompatibilityInfo; } }
+        /// <summary>
+        /// 模组依赖信息
+        /// </summary>
+        public List<GameDependencyInfo> ModDependencyInfo { get { return modeDependencyInfos; } }
+        /// <summary>
+        /// 模组依赖是否已经全部加载
+        /// </summary>
+        public bool ModDependencyAllLoaded { get; private set; } = false;
+        /// <summary>
+        /// 模组启动代码自动调用时机
+        /// </summary>
+        public GameModEntryCodeExecutionAt ModEntryCodeExecutionAt { get; private set; } = GameModEntryCodeExecutionAt.Manual;
 
         public string ModEntryCode { get; private set; }
         public LuaServer ModLuaServer { get; private set; }
@@ -258,6 +327,7 @@ namespace Ballance2.Managers.CoreBridge
         private GameCompatibilityInfo modCompatibilityInfo = 
             new GameCompatibilityInfo(GameConst.GameBulidVersion, GameConst.GameBulidVersion, GameConst.GameBulidVersion);
         private XmlDocument modDefXmlDoc = new XmlDocument();
+        private List<GameDependencyInfo> modeDependencyInfos = new List<GameDependencyInfo>();
 
         //读取模组定义文件
         private void ReadModDef(TextAsset ModDef)
@@ -273,11 +343,29 @@ namespace Ballance2.Managers.CoreBridge
                     case "BaseInfo": ReadModDefBaseInfo(node);  break;
                     case "Compatibility": ReadModDefCompatibility(node); break;
                     case "ModType":
-                        GameModType type = GameModType.NotSet;
-                        if (Enum.TryParse(node.InnerText, true, out type)) ModType = type;
-                        else GameLogger.Warning(TAG, "Bad ModType : {0}", node.InnerText);
-                        break;
-                    case "EntryCode": ModEntryCode = node.InnerText; break;
+                        {
+                            GameModType type = GameModType.NotSet;
+                            if (Enum.TryParse(node.InnerText, true, out type)) ModType = type;
+                            else GameLogger.Warning(TAG, "Bad ModType : {0}", node.InnerText);
+                            break;
+                        }
+                    case "EntryCode":
+                        {
+                            ModEntryCode = node.InnerText;
+                            foreach (XmlAttribute attribute in node.Attributes)
+                            {
+                                switch (attribute.Name)
+                                {
+                                    case "executionAt":
+                                        GameModEntryCodeExecutionAt executionAt = GameModEntryCodeExecutionAt.Manual;
+                                        if (Enum.TryParse(attribute.Value, out executionAt))
+                                            ModEntryCodeExecutionAt = executionAt;
+                                        break;
+                                }
+                            }
+
+                            break;
+                        }
                     case "Define": break;
                     case "Data": break;
                 }
@@ -324,6 +412,29 @@ namespace Ballance2.Managers.CoreBridge
                     case "Introduction": modInfo.Introduction = node.InnerText; break;
                     case "Logo": modInfo.Logo = node.InnerText; break;
                     case "Version": modInfo.Version = node.InnerText; break;
+                    case "Dependencies": ReadModDefDependencies(node); break;
+                }
+            }
+        }
+        private void ReadModDefDependencies(XmlNode nodeBaseInfo)
+        {
+            modeDependencyInfos.Clear();
+            foreach (XmlNode node in nodeBaseInfo.ChildNodes)
+            {
+                if (node.Name == "Package")
+                {
+                    GameDependencyInfo dependencyInfo = new GameDependencyInfo();
+                    foreach (XmlAttribute attribute in node.Attributes)
+                    {
+                        switch (attribute.Name)
+                        {
+                            case "name": dependencyInfo.PackageName = attribute.Value; break;
+                            case "minVer": dependencyInfo.MinVersion = attribute.Value; break;
+                            case "mustLoad": dependencyInfo.MustLoad = attribute.Value == "true"; break;
+                        }
+                    }
+                    if(!string.IsNullOrEmpty(dependencyInfo.PackageName))
+                        ModDependencyInfo.Add(dependencyInfo);
                 }
             }
         }
@@ -332,7 +443,9 @@ namespace Ballance2.Managers.CoreBridge
 
         #region 模组操作
 
-        //修复 模块透明材质 Shader
+        /// <summary>
+        /// 修复 模块透明材质 Shader
+        /// </summary>
         private void FixBundleShader()
         {
             var materials = AssetBundle.LoadAllAssets<Material>();
@@ -361,6 +474,64 @@ namespace Ballance2.Managers.CoreBridge
                         material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
                         material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
                     }
+                }
+            }
+        }
+        /// <summary>
+        /// 加载模组依赖
+        /// </summary>
+        private IEnumerator CheckAndLoadModDependencies()
+        {
+            GameLogger.Log(ModManager.TAG, "Lod mod package {0} dependencies : {1}", PackageName, ModDependencyInfo.Count);
+
+            ModDependencyAllLoaded = true;
+            hasMustDependenciesLoadFailed = false;
+            int i = 0;
+            foreach (GameDependencyInfo d in ModDependencyInfo)
+            {
+                i++;
+                GameLogger.Log(ModManager.TAG, "Lod mod dependency : {0} ({1}/{2})", d.PackageName, i, ModDependencyInfo.Count);
+                if (!d.Loaded)
+                {
+                    GameMod m = ModManager.FindGameModByName(d.PackageName);
+                    if (m == null)
+                    {
+                        //如果没有注册，则尝试从包名直接加载
+                        int uid = ModManager.LoadGameModByPackageName(d.PackageName, false);
+                        m = ModManager.FindGameMod(uid);
+                        yield return ModManager.StartCoroutine(m.LoadInternal());
+                    }
+                    else if (m != null && m.LoadStatus == GameModStatus.NotInitialize)//如果没有初始化则初始化
+                       yield return ModManager.StartCoroutine(m.LoadInternal());
+
+                    if(m.LoadStatus != GameModStatus.InitializeSuccess 
+                        && m.LoadStatus != GameModStatus.Loading)
+                    {
+                        //模组依赖加载失败
+                        ModDependencyAllLoaded = false;
+                        GameLogger.Error(TAG, "加载模组包 {0} 的依赖项 {1} 失败", PackageName, d.PackageName);
+
+                        if (d.MustLoad)
+                        {
+                            hasMustDependenciesLoadFailed = true;
+                            yield break;
+                        }
+                    }
+                    else
+                    {
+                        //如果设置了MinVersion，则还需要比较模组版本
+                        if (!string.IsNullOrEmpty(d.MinVersion) && !string.IsNullOrEmpty(m.ModInfo.Version))
+                        {
+                           if( StringUtils.CompareTwoVersion(m.ModInfo.Version, d.MinVersion) < 0)
+                            {
+                                GameLogger.Error(TAG, "加载模组包 {0} 的依赖项 {1} 发生错误，" +
+                                    "需要最低版本 {}，当前版本", PackageName, d.PackageName, d.MinVersion, m.ModInfo.Version);
+                                hasMustDependenciesLoadFailed = true;
+                            }
+                        }
+                    }
+
+                    ModManager.OnUpdateCurrentLoadingMod(this);
                 }
             }
         }
@@ -412,29 +583,61 @@ namespace Ballance2.Managers.CoreBridge
         {
             luaObjects.Remove(o);
         }
+        /// <summary>
+        /// 获取模组启动代码是否已经执行
+        /// </summary>
+        /// <returns></returns>
+        public bool GetModEntryCodeExecuted() { return mainLuaCodeLoaded; }
 
         private bool mainLuaCodeLoaded = false;
+        private bool luaStateInited = false;
 
         //初始化LUA虚拟机
         private void InitLuaState()
         {
             ModLuaServer = new LuaServer(PackageName);
-            ModLuaServer.init(null, RunModExecutionCode);
             ModLuaState = ModLuaServer.getLuaState();
+            ModLuaServer.init(null, LuaStateInitFinished);
         }
-        private void RunModExecutionCode()
+        private void LuaStateInitFinished()
+        {
+            luaStateInited = true;
+            if (ModEntryCodeExecutionAt == GameModEntryCodeExecutionAt.AfterLoaded)
+                RunModExecutionCode();
+        }
+        /// <summary>
+        /// 运行模组初始化代码
+        /// </summary>
+        /// <returns></returns>
+        public bool RunModExecutionCode()
         {
             if(!string.IsNullOrWhiteSpace(ModEntryCode))
             {
+                if(!luaStateInited)
+                {
+                    GameLogger.Warning(TAG, "Lua state not init, mod maybe cannot run");
+                    GameErrorManager.LastError = GameError.ModCanNotRun;
+                    return false;
+                }
+
                 TextAsset lua = GetTextAsset(ModEntryCode);
                 if (lua == null) GameLogger.Warning(TAG, "未找到模组启动代码 {0} ", ModEntryCode);
-                else
+                else if (!mainLuaCodeLoaded)
                 {
+                    GameLogger.Log(TAG, "Run mod ModEntryCode {0} ", ModEntryCode);
+
                     mainLuaCodeLoaded = true;
                     ModLuaState.doString(lua.text);
                     CallLuaFun("ModulEntry", this);
+                    return true;
+                }
+                else
+                {
+                    GameLogger.Warning(TAG, "无法重复运行模组启动代码 {0} {1} ", ModEntryCode, PackageName);
+                    GameErrorManager.LastError = GameError.AlredayRegistered;
                 }
             }
+            return false;
         }
         private void DestroyLuaState()
         {
@@ -454,6 +657,12 @@ namespace Ballance2.Managers.CoreBridge
         /// <returns>返回函数，未找到返回null</returns>
         public LuaFunction GetLuaFun(string funName)
         {
+            if (ModLuaState == null)
+            {
+                GameLogger.Warning(TAG, "GetLuaFun Failed because mod cannot run");
+                GameErrorManager.LastError = GameError.ModCanNotRun;
+                return null;
+            }
             return ModLuaState.getFunction(funName);
         }
         /// <summary>
@@ -464,6 +673,7 @@ namespace Ballance2.Managers.CoreBridge
         {
             LuaFunction f = GetLuaFun(funName);
             if (f != null) f.call();
+            else GameLogger.Warning(TAG, "CallLuaFun Failed because function {0} not founnd", funName);
         }
         /// <summary>
         /// 调用模块主代码的lua函数
@@ -474,6 +684,7 @@ namespace Ballance2.Managers.CoreBridge
         {
             LuaFunction f = GetLuaFun(funName);
             if (f != null) f.call(pararms);
+            else GameLogger.Warning(TAG, "CallLuaFun Failed because function {0} not founnd", funName);
         }
         /// <summary>
         /// 调用指定的lua虚拟脚本中的lua无参函数
@@ -485,6 +696,7 @@ namespace Ballance2.Managers.CoreBridge
             GameLuaObjectHost targetObject = null;
             if (FindLuaObject(luaObjectName, out targetObject))
                 targetObject.CallLuaFun(funName);
+            else GameLogger.Warning(TAG, "CallLuaFun Failed because object {0} not founnd", luaObjectName);
         }
         /// <summary>
         /// 调用指定的lua虚拟脚本中的lua函数
@@ -497,6 +709,7 @@ namespace Ballance2.Managers.CoreBridge
             GameLuaObjectHost targetObject = null;
             if (FindLuaObject(luaObjectName, out targetObject))
                 targetObject.CallLuaFun(funName, pararms);
+            else GameLogger.Warning(TAG, "CallLuaFun Failed because object {0} not founnd", luaObjectName);
         }
 
         #endregion
@@ -567,6 +780,10 @@ namespace Ballance2.Managers.CoreBridge
         /// </summary>
         InitializeSuccess,
         /// <summary>
+        /// 正在加载
+        /// </summary>
+        Loading,
+        /// <summary>
         /// 初始化失败
         /// </summary>
         InitializeFailed,
@@ -594,6 +811,33 @@ namespace Ballance2.Managers.CoreBridge
         /// </summary>
         Level,
     }
+    /// <summary>
+    /// 模组启动代码执行时机
+    /// </summary>
+    public enum GameModEntryCodeExecutionAt
+    {
+        /// <summary>
+        /// 手动
+        /// </summary>
+        Manual,
+        /// <summary>
+        /// 模组加载完毕后
+        /// </summary>
+        AfterLoaded,
+        /// <summary>
+        /// 游戏加载完毕时
+        /// </summary>
+        AtStart,
+        /// <summary>
+        /// 关卡加载时
+        /// </summary>
+        AtLevelLoading,
+        /// <summary>
+        /// 关卡加载完成时
+        /// </summary>
+        AfterLevelLoad,
+    }
+    
 
     /// <summary>
     /// 模组信息
@@ -630,5 +874,23 @@ namespace Ballance2.Managers.CoreBridge
         public int MinVersion;
         public int TargetVersion;
         public int MaxVersion;
+    }
+    /// <summary>
+    /// 模组依赖信息
+    /// </summary>
+    public struct GameDependencyInfo
+    {
+        public GameDependencyInfo(string name, string mi)
+        {
+            MinVersion = mi;
+            PackageName = name;
+            Loaded = false;
+            MustLoad = false;
+        }
+
+        public string PackageName;
+        public string MinVersion;
+        public bool Loaded;
+        public bool MustLoad;
     }
 }

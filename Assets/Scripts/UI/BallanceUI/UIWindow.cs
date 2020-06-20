@@ -230,6 +230,7 @@ namespace Ballance2.UI.BallanceUI
         #endregion
     }
 
+    [SLua.CustomLuaClass]
     /// <summary>
     /// 窗口类型
     /// </summary>
@@ -249,6 +250,7 @@ namespace Ballance2.UI.BallanceUI
         Page
     }
 
+    [SLua.CustomLuaClass]
     /// <summary>
     /// 基础窗口接口
     /// </summary>

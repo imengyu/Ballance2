@@ -13,13 +13,14 @@ local goMenuLevel = nil
 
 -- 模块入口函数
 function ModEntry(thisGameModul)
+	print("ModEntry !")
 	GameModul = thisGameModul
 	GameLogger:Log(TAG, "ModEntry !")
-	GameManager.SetGameBaseCameraVisible(false);
+	--GameManager.SetGameBaseCameraVisible(false);
 
 	GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_GAME_INIT_FINISH, TAG, TAG + ":OnEnterMenuLevel")
-	goMenuLevel = GameCloneUtils.CloneNewObjectWithParent(GameModul.GetPrefabAsset("Assets/Mods/MenuLevel/MenuLevel.prefab"));
-	thisGameModul.RegisterLuaObject("MenuLevel", goMenuLevel, GameModul.GetPrefabAsset("Assets/Mods/MenuLevel/MenuLevel.lua.txt"), "MenuLevel")
+	--goMenuLevel = GameCloneUtils.CloneNewObjectWithParent(GameModul.GetPrefabAsset("Assets/Mods/MenuLevel/MenuLevel.prefab"));
+	--thisGameModul.RegisterLuaObject("MenuLevel", goMenuLevel, GameModul.GetPrefabAsset("Assets/Mods/MenuLevel/MenuLevel.lua.txt"), "MenuLevel")
 	
 	GameManager.UIManager.MaskBlackFadeOut(2);
 	return true
@@ -35,7 +36,7 @@ end
 
 function OnEnterMenuLevel()
 	
-
+	GameLogger:Log(TAG, "OnEnterMenuLevel !")
 
 	return true
 end

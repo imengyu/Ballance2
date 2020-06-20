@@ -89,6 +89,7 @@ GameObject:
   - component: {fileID: 4563329949564914539}
   - component: {fileID: 5786644106964435209}
   - component: {fileID: 7455709899827336129}
+  - component: {fileID: -1290423360460543504}
   m_Layer: 5
   m_Name: UIButtonBack
   m_TagString: Untagged
@@ -196,3 +197,15 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &-1290423360460543504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3768048561716528878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d40394c663aad55449b09f6d66a4c5c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

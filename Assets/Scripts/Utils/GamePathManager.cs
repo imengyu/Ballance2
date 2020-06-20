@@ -64,17 +64,6 @@ namespace Ballance2.Utils
             if (replacePlatform && pathorname.Contains("[Platform]"))
                 pathorname = pathorname.Replace("[Platform]", GameConst.GamePlatformIdentifier);
 
-            if (type == "gameinit")
-            {
-#if UNITY_EDITOR
-                return DEBUG_PATH + "core/GameInit.txt";
-#elif UNITY_STANDALONE || UNITY_ANDROID
-                    return Application.dataPath + "/core/GameInit.txt";
-#elif UNITY_IOS
-                    return Application.streamingAssetsPath + "/core/GameInit.txt";
-#endif
-            }
-
             spbuf = SplitResourceIdentifier(pathorname, out pathbuf);
 
             if (type == "" && pathorname.Contains(":"))

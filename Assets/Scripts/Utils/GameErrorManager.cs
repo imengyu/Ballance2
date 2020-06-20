@@ -53,6 +53,7 @@ namespace Ballance2.Utils
         }
     }
 
+    [SLua.CustomLuaClass]
     /// <summary>
     /// 游戏发生错误的枚举
     /// </summary>
@@ -91,6 +92,10 @@ namespace Ballance2.Utils
         /// </summary>
         Unregistered,
         /// <summary>
+        /// 需要初始化的 Prefab 未找到，可能是未注册
+        /// </summary>
+        PrefabNotFound,
+        /// <summary>
         /// 初始化失败
         /// </summary>
         InitializationFailed,
@@ -99,9 +104,21 @@ namespace Ballance2.Utils
         /// </summary>
         BadAssetBundle,
         /// <summary>
+        /// 未找到文件
+        /// </summary>
+        FileNotFound,
+        /// <summary>
         /// 模组包冲突
         /// </summary>
         ModConflict,
+        /// <summary>
+        /// 模组包必要依赖项加载失败
+        /// </summary>
+        ModDependenciesLoadFailed,
+        /// <summary>
+        /// 模组不能运行
+        /// </summary>
+        ModCanNotRun,
         /// <summary>
         /// 模组包版本不兼容
         /// </summary>
@@ -114,5 +131,9 @@ namespace Ballance2.Utils
         /// 未初始化
         /// </summary>
         NotInitialize,
+        /// <summary>
+        /// 实例化根必须是容器
+        /// </summary>
+        MustBeContainer,
     }
 }

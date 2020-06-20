@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Ballance2.Managers
 {
+    [SLua.CustomLuaClass]
     /// <summary>
     /// 管理器接口
     /// </summary>

@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using SubjectNerd.Utilities;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace Ballance2
@@ -26,10 +28,12 @@ namespace Ballance2
         /// <summary>
         /// 静态 Prefab 资源引入
         /// </summary>
+        [Reorderable("GamePrefab", true, "Name")]
         public List<GameManager.GameObjectInfo> GamePrefab = null;
         /// <summary>
         /// 静态资源引入
         /// </summary>
+        [Reorderable("GameAssets", true, "Name")]
         public List<GameManager.GameAssetsInfo> GameAssets = null;
 
         void Start()

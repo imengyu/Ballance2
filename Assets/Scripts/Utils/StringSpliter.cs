@@ -8,6 +8,7 @@ namespace Ballance2.Utils
      * 字符串分割器
      */
 
+    [SLua.CustomLuaClass]
     /// <summary>
     /// 字符串分割器
     /// </summary>

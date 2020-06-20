@@ -12,7 +12,7 @@ namespace Ballance2
 
         void Start()
         {
-            StartCoroutine(Run());
+            //StartCoroutine(Run());
         }
         void Update()
         {

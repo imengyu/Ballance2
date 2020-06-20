@@ -11,7 +11,7 @@ namespace Ballance2
     /// <summary>
     /// 游戏主管理器
     /// </summary>
-    [SLua.CustomLuaClass]
+    [CustomLuaClass]
     public static class GameManager
     {
         private const string TAG = "GameManager";
@@ -98,6 +98,7 @@ namespace Ballance2
 
         #region  游戏总体初始化例程
 
+        [SLua.CustomLuaClass]
         /// <summary>
         /// 指定游戏状态模式
         /// </summary>
@@ -159,12 +160,16 @@ namespace Ballance2
         {
             public GameObject Object;
             public string Name;
+
+            public override string ToString() { return Name; }
         }
         [Serializable]
         public class GameAssetsInfo
         {
             public UnityEngine.Object Object;
             public string Name;
+
+            public override string ToString() { return Name; }
         }
 
         private static bool gameMediatorInitFinished = false;

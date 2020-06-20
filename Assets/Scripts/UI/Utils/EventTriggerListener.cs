@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 
 namespace Ballance2.UI.Utils
 {
+    [SLua.CustomLuaClass]
     /// <summary>
     /// UI 事件侦听器
     /// </summary>

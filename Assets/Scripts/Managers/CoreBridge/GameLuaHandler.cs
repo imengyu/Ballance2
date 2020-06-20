@@ -30,6 +30,7 @@ namespace Ballance2.Managers.CoreBridge
         private GameMod targetMod = null;
         private GameLuaObjectHost targetObject = null;
 
+        private string[] handlerArgs = new string[0];
         private string handlerFuncName = "";
         private LuaFunction handlerFunc = null;
         private bool initSuccess = false;
@@ -40,8 +41,7 @@ namespace Ballance2.Managers.CoreBridge
             if (strs.Length >= 3)
             {
                 targetMod = ModManager.FindGameModByAssetStr(strs[0]);
-                if (targetMod == null)
-                    return;
+                if (targetMod == null) return;
                 if (strs[1].ToLower() == "main")
                 {
                     handlerFuncName = strs[2];
@@ -53,6 +53,13 @@ namespace Ballance2.Managers.CoreBridge
                     handlerFuncName = strs[2];
                     handlerFunc = targetObject.GetLuaFun(handlerFuncName);
                     initSuccess = true;
+                }
+
+                if(strs.Length >= 4)
+                {
+                    handlerArgs = new string[strs.Length - 3];
+                    for(int i = 3; i  < strs.Length; i++)
+                        handlerArgs[i - 3] = strs[i];
                 }
             }
         }
@@ -78,10 +85,12 @@ namespace Ballance2.Managers.CoreBridge
             {
                 bool rs = false;
                 object rso = null;
-                object[] pararms2 = new object[pararms.Length + 1];
+                object[] pararms2 = new object[pararms.Length + 1 + handlerArgs.Length];
                 pararms2[0] = evtName;
-                for (int i = 0;i < pararms.Length;i++)
+                for (int i = 0; i < pararms.Length;i++)
                     pararms2[i + 1] = pararms[i];
+                for (int i = 0; i < handlerArgs.Length; i++)
+                    pararms2[i + 1 + pararms.Length] = handlerArgs[i];
                 if (targetObject != null)  rso = handlerFunc.call(targetObject.LuaSelf, pararms2);
                 else rso = handlerFunc.call(pararms2);
                 if (rso is bool) rs = (bool)rso;
@@ -93,10 +102,16 @@ namespace Ballance2.Managers.CoreBridge
         {
             if (initSuccess)
             {
+                object[] pararms2 = new object[pararms.Length + handlerArgs.Length];
+                for (int i = 0; i < pararms.Length; i++)
+                    pararms2[i] = pararms[i];
+                for (int i = 0; i < handlerArgs.Length; i++)
+                    pararms2[i + pararms.Length] = handlerArgs[i];
+
                 if (targetObject != null)
-                    handlerFunc.call(targetObject.LuaSelf, pararms);
+                    handlerFunc.call(targetObject.LuaSelf, pararms2);
                 else
-                    handlerFunc.call(pararms);
+                    handlerFunc.call(pararms2);
             }
             return false;
         }

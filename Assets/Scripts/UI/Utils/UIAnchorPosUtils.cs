@@ -118,6 +118,7 @@ namespace Ballance2.UI.Utils
         }
     }
 
+    [SLua.CustomLuaClass]
     /// <summary>
     /// UI 组件锚点
     /// </summary>

@@ -853,6 +853,9 @@ MonoBehaviour:
     Name: PrefabEmpty
   - Object: {fileID: 493137468655556670, guid: fc9c271469baf5349a09b656e45d5fff, type: 3}
     Name: PrefabUIEmpty
+  - Object: {fileID: 6108144835751680736, guid: 166efe800b338ea4fb9fd20a71e2fbd5,
+      type: 3}
+    Name: AudioSource
   - Object: {fileID: 1953235002799851516, guid: 8884140c80a43a4479b60b1d28067253,
       type: 3}
     Name: UIAlertWindow
@@ -876,9 +879,36 @@ MonoBehaviour:
   - Object: {fileID: 7145627799809064521, guid: 71af0c0c41c8b4648ae27da076df05bc,
       type: 3}
     Name: UIModListItem
-  - Object: {fileID: 6108144835751680736, guid: 166efe800b338ea4fb9fd20a71e2fbd5,
+  - Object: {fileID: 2180769702299432643, guid: 905a18223d158a747bb4191f0148b6ad,
       type: 3}
-    Name: AudioSource
+    Name: UIPagePrefabDefault
+  - Object: {fileID: 2221001576298070693, guid: 717a6c0d5929b8e4880555a5376bdbe5,
+      type: 3}
+    Name: UIPageBackgroundDefault
+  - Object: {fileID: 4433225297609897140, guid: a334b770cfc4e4c4b98660511dc1398a,
+      type: 3}
+    Name: UISpace
+  - Object: {fileID: 5608425261421624918, guid: 92e8bc12fafb6ec4fbb85274c6af32f3,
+      type: 3}
+    Name: UISmallButton
+  - Object: {fileID: 8503982214463881749, guid: b4808262f874bd8408d8d609ad86a488,
+      type: 3}
+    Name: UIMainButton
+  - Object: {fileID: 3091033571328104410, guid: 16271e27266ca9941affb6dca8c3dac2,
+      type: 3}
+    Name: UILevButton
+  - Object: {fileID: 3768048561716528878, guid: 9600550b209d50b428577db9d6d5cb90,
+      type: 3}
+    Name: UIButtonBack
+  - Object: {fileID: 8488907333302388010, guid: d6ecf5c63b74b8445b63cb1aa3a78df1,
+      type: 3}
+    Name: UIScrollView
+  - Object: {fileID: 6609144642316379161, guid: 947078348eb5f7d4daf3f4629b920742,
+      type: 3}
+    Name: UIVertcialLinearLayout
+  - Object: {fileID: 1225137423566472137, guid: adddf4fd5ae19074494de9d9b9fdffca,
+      type: 3}
+    Name: UIHorizontalLinearLayout
   - Object: {fileID: 0}
     Name: 
   GameAssets:
@@ -1506,7 +1536,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1723772457
 RectTransform:
   m_ObjectHideFlags: 0

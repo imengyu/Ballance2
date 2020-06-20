@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Mod>
-  <BaseInfo packageName="core.menulevel">
+  <BaseInfo packageName="core.scenes.menulevel">
     <Name>MenuLevel</Name>
     <Author>mengyu</Author>
     <Introduction>MenuLevel Base Pack</Introduction>
-    <Logo>Assets/Mods/TestMod/Textures/ModLogo.jpg</Logo>
+    <Logo>Assets/Mods/MenuLevel/ModLogo.png</Logo>
     <Version>1.0</Version>
   </BaseInfo>
   <Compatibility>
     <MinVersion>1</MinVersion>
     <TargetVersion>1</TargetVersion>
   </Compatibility>
-  <EntryCode>Assets/Mods/MenuLevel/Entry.lua.txt</EntryCode>
+  <EntryCode executionAt="AtStart">Assets/Mods/MenuLevel/Entry.lua.txt</EntryCode>
   <ModType>ModPack</ModType>
   
 </Mod>
