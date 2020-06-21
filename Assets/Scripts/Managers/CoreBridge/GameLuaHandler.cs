@@ -37,6 +37,8 @@ namespace Ballance2.Managers.CoreBridge
 
         private void InitHandler(string luaModulHandlerString)
         {
+            if (string.IsNullOrEmpty(luaModulHandlerString))
+                throw new System.Exception("luaModulHandlerString is null");
             string[] strs = luaModulHandlerString.Split(':');
             if (strs.Length >= 3)
             {

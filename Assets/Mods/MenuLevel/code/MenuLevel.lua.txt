@@ -1,0 +1,166 @@
+
+-- 游戏进入页面主菜单控制器
+
+GameManager = Ballance2.GameManager
+GameLogger = Ballance2.GameLogger
+
+Vector3 = UnityEngine.Vector3
+Time = UnityEngine.Time
+
+local UIManager = GameManager.UIManager
+local TAG = "MenuLevel:MainCamera"
+
+MenuLevel = {
+  gameObject = false,
+  runningLoop = false,
+  transform = nil,
+  GameLuaObjectHost = nil,
+  domePosition = nil,
+  I_Camera = nil,
+  I_Light_Day = nil,
+  I_Light_Night = nil,
+  speed = 0.5,
+
+  dialogQuitId = nil,
+  pageMain = nil,
+  pageStart = nil,
+  pageAbout = nil,
+  pageHighScore = nil,
+  pageLightZone = nil,
+}
+
+local thisMod = nil
+
+function class_MenuLevel()
+
+  function MenuLevel:new(o)
+    o = o or {}
+    setmetatable(o, self)
+    self.__index = self
+    return o
+  end
+
+  function MenuLevel:Start(thisGameObject)
+    self.gameObject = thisGameObject
+    
+    self.transform = self.gameObject.transform
+    self.GameLuaObjectHost = self.gameObject:GetComponent("GameLuaObjectHost")
+
+    thisMod = self.GameLuaObjectHost.GameMod
+    
+    self.domePosition = self.transform:Find("I_Dome_MF").position
+    self.I_Camera = self.transform:Find("I_Camera").gameObject
+    self.I_Camera:SetActive(true)
+    self.I_Light_Night = self.transform:Find("I_Light_Night").gameObject
+    self.I_Light_Day = self.transform:Find("I_Light_Day").gameObject
+
+    self.runningLoop = true
+
+    self:InitUI()
+
+    GameManager.SetGameBaseCameraVisible(false)
+    UIManager:MaskBlackFadeOut(2)
+	end
+
+	function MenuLevel:OnDesory()
+		self.runningLoop = false
+	end
+
+	function MenuLevel:Update()
+		if(self.runningLoop) then
+			self.I_Camera.transform:RotateAround(self.domePosition, Vector3.up, Time.deltaTime * self.speed)
+			self.I_Camera.transform:LookAt(self.domePosition)
+		end
+  end
+  
+  -- 初始化 UI
+  function MenuLevel:InitUI() 
+
+    local pageMainXml = thisMod:GetTextAsset("PageMain.xml").text
+    local pageStartXml = thisMod:GetTextAsset("PageStart.xml").text
+    local pageAboutXml = thisMod:GetTextAsset("PageAbout.xml").text
+    local pageLightZoneXml = thisMod:GetTextAsset("PageLightZone.xml").text
+    local pageHighscoreXml = thisMod:GetTextAsset("PageHighscore.xml").text
+    
+    self.pageMain = UIManager.RegisterBallanceUIPage("main", pageMainXml, 
+      { "btn.start:click","btn.highscore:click","btn.settings:click","btn.about:click","btn.quit:click" }, 
+      { 
+        function() UIManager:GotoPage(self.pageStart.PagePath) end, 
+        function() UIManager:GotoPage(self.pageHighScore.PagePath) end, 
+        function() 
+          
+        end, 
+        function() UIManager:GotoPage(self.pageAbout.PagePath) end, 
+        function()  elf.dialogQuitId = UIManager:GlobalConfirm("真的要退出游戏吗", "提示", "确定","取消") end
+      }, 
+      "Default")
+
+    self.pageStart = UIManager.RegisterBallanceUIPage("main.start", pageStartXml, 
+      { 
+        "btn.back:click","btn.lev.1:click","btn.lev.2:click","btn.lev.3:click","btn.lev.4:click","btn.lev.5:click","btn.lev.6:click",
+        "btn.lev.7:click","btn.lev.8:click","btn.lev.9:click","btn.lev.10:click","btn.lev.11:click","btn.lev.12:click","btn.lev.lz:click"
+      }, 
+      { 
+        function() UIManager:BackUIPage() end, 
+        function() self:OnLevelStart("1") end,
+        function() self:OnLevelStart("2") end,
+        function() self:OnLevelStart("3") end,
+        function() self:OnLevelStart("4") end,
+        function() self:OnLevelStart("5") end,
+        function() self:OnLevelStart("6") end,
+        function() self:OnLevelStart("7") end,
+        function() self:OnLevelStart("8") end,
+        function() self:OnLevelStart("9") end,
+        function() self:OnLevelStart("10") end,
+        function() self:OnLevelStart("11") end,
+        function() self:OnLevelStart("12") end,
+        function() self:OnSwitchLz(true) end
+      }, 
+      "Default")
+    self.pageAbout = UIManager.RegisterBallanceUIPage("main.about", pageAboutXml, 
+      { "btn.back:click" }, 
+      { function() UIManager:BackUIPage() end }, 
+      "Default")
+    self.pageHighScore = UIManager.RegisterBallanceUIPage("main.highscore", pageAboutXml, 
+      { "btn.back:click" }, 
+      { function() UIManager:BackUIPage() end }, 
+      "Default")
+    self.pageLightZone = UIManager.RegisterBallanceUIPage("main.start.lightzone", pageLightZoneXml, 
+      { "btn.back:click" }, 
+      { function() UIManager:BackUIPage() end }, 
+      "None")
+
+    --
+    UIManager:GotoPage(self.pageMain.PagePath)
+
+    -- 对话框事件
+    GameManager.GameMediator:RegisterEventHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, TAG, function(id, confirm)
+      if(id == self.dialogQuitId and confirm)
+      then
+        GameManager:QuitGame()
+      end
+    end)
+  end
+
+  function MenuLevel:OnSwitchLz(on) 
+    if(on) 
+    then
+      UIManager:GotoPage(self.pageLightZone.PagePath)
+      self.I_Light_Night:SetActive(true)
+      self.I_Light_Day:SetActive(false)
+
+    else
+      UIManager:GotoPage(self.pageMain.PagePath)
+      self.I_Light_Day:SetActive(true)
+      self.I_Light_Night:SetActive(false)
+
+    end
+  end
+  function MenuLevel:OnLevelStart(lev) 
+    print("start level", lev)
+  end
+
+
+  return MenuLevel:new(nil)
+
+end

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UIVertcialLinearLayout>
+  <UIMainButton name="btn.start" text="开始" />
+  <UIMainButton name="btn.highscore" text="高分" />
+  <UIMainButton name="btn.settings" text="设置" />
+  <UIMainButton name="btn.about" text="关于" />
+  <UIMainButton name="btn.quit" text="退出" />
+</UIVertcialLinearLayout>

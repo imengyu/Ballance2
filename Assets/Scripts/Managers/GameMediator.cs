@@ -166,14 +166,23 @@ namespace Ballance2.Managers
         }
 
         /// <summary>
-        /// 注册命令接收器（C#使用）
+        /// 注册命令接收器（Delegate）
         /// </summary>
         /// <param name="evtName">事件名称</param>
         /// <param name="name">接收器名字</param>
         /// <param name="gameHandlerDelegate">回调</param>
         /// <returns></returns>
-        public GameHandler RegisterEventKernalHandler(string evtName, string name, GameHandlerDelegate gameHandlerDelegate)
+        public GameHandler RegisterEventHandler(string evtName, string name, GameHandlerDelegate gameHandlerDelegate)
         {
+            if (string.IsNullOrEmpty(evtName)
+               || string.IsNullOrEmpty(name)
+               || gameHandlerDelegate == null)
+            {
+                GameLogger.Warning(TAG, "参数缺失", evtName);
+                GameErrorManager.LastError = GameError.ParamNotProvide;
+                return null;
+            }
+
             GameEvent gameEvent = null;
             if (IsGlobalEventRegistered(evtName, out gameEvent))
             {
@@ -197,6 +206,14 @@ namespace Ballance2.Managers
         /// <returns>返回接收器类</returns>
         public GameHandler RegisterEventHandler(string evtName, string name, string luaModulHandler)
         {
+            if(string.IsNullOrEmpty(evtName) 
+                || string.IsNullOrEmpty(name) 
+                || string.IsNullOrEmpty(luaModulHandler)) {
+                GameLogger.Warning(TAG, "参数缺失", evtName);
+                GameErrorManager.LastError = GameError.ParamNotProvide;
+                return null;
+            }
+          
             GameEvent gameEvent = null;
             if (IsGlobalEventRegistered(evtName, out gameEvent))
             {
@@ -218,6 +235,14 @@ namespace Ballance2.Managers
         /// <param name="handler">接收器类</param>
         public void UnRegisterEventHandler(string evtName, GameHandler handler)
         {
+            if (string.IsNullOrEmpty(evtName)
+                || handler == null)
+            {
+                GameLogger.Warning(TAG, "参数缺失", evtName);
+                GameErrorManager.LastError = GameError.ParamNotProvide;
+                return;
+            }
+
             GameEvent gameEvent = null;
             if (IsGlobalEventRegistered(evtName, out gameEvent))
                 gameEvent.EventHandlers.Remove(handler);
@@ -240,7 +265,7 @@ namespace Ballance2.Managers
 
         private void InitModDebug()
         {
-            RegisterEventKernalHandler(GameEventNames.EVENT_BASE_MANAGER_INIT_FINISHED, TAG, (evtName, param) =>
+            RegisterEventHandler(GameEventNames.EVENT_BASE_MANAGER_INIT_FINISHED, TAG, (evtName, param) =>
             {
                 if (param[0].ToString() == DebugManager.TAG)
                 {

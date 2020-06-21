@@ -23,7 +23,7 @@ namespace Ballance2.Managers
             BackgroundAudioMixer = GameManager.FindStaticAssets<AudioMixer>("BackgroundAudioMixer");
             GameMainAudioMixer = GameManager.FindStaticAssets<AudioMixer>("GameMainAudioMixer");
             GameUIAudioMixer = GameManager.FindStaticAssets<AudioMixer>("GameUIAudioMixer");
-            GameManager.GameMediator.RegisterEventKernalHandler(
+            GameManager.GameMediator.RegisterEventHandler(
                 GameEventNames.EVENT_BASE_INIT_FINISHED, TAG, (e, p) =>
                 {
                     GameLogger.Log(TAG, GameEventNames.EVENT_BASE_INIT_FINISHED);

@@ -27,6 +27,7 @@ namespace Ballance2.Managers
         }
         public override bool ReleaseManager()
         {
+            logDestroyed = true;
             OnDisable();
             DestroyCommands();
             DestroyDebugWindow();
@@ -157,8 +158,11 @@ namespace Ballance2.Managers
         {
             OnDisable();
             GameLogger.UnRegisterLogCallback();
-            ClearLogs();
-            debugWindow.Close();
+            if (!thisDestroyed)
+            {
+                ClearLogs();
+                debugWindow.Close();
+            }
         }
 
         private int customDebugToolItemY = 0;
@@ -196,6 +200,14 @@ namespace Ballance2.Managers
 
         #region 日志截取
 
+        private void OnDestroy()
+        {
+            logDestroyed = true;
+            thisDestroyed = true;
+        }
+
+        private bool thisDestroyed = false;
+        private bool logDestroyed = false;
         private float currentLogY = 0;
         private float currentLogX = 0;
         private bool[] showLogTypes = new bool[(int)GameLogger.LogType.Max] {
@@ -218,7 +230,7 @@ namespace Ballance2.Managers
         }
         private void HandleLog(GameLogger.LogData data)
         {
-            if (showLogTypes[(int)data.Type])
+            if (!logDestroyed && showLogTypes[(int)data.Type])
             {
                 AddLogItem(data);
                 DeleteExcessLogs();
@@ -227,6 +239,9 @@ namespace Ballance2.Managers
         }
         private void AddLogItem(GameLogger.LogData data)
         {
+            if (logDestroyed)
+                return;
+
             GameObject newGo = GameCloneUtils.CloneNewObjectWithParent(UIDebugTextItem, DebugCmdContent.transform, "Text");
             GameObject newT = newGo.transform.Find("Text").gameObject;
             Image newI = newGo.transform.Find("Image").gameObject.GetComponent<Image>();
@@ -266,7 +281,7 @@ namespace Ballance2.Managers
             Vector2 textSize = UIContentSizeUtils.GetContentSizeFitterPreferredSize(newTextRectTransform,
                newT.GetComponent<ContentSizeFitter>());
 
-            currentLogY += textSize.y;
+            currentLogY += 12;
             if (textSize.x + 2 > currentLogX)
                 currentLogX = textSize.x + 2;
             DebugCmdContent.sizeDelta = new Vector2(currentLogX, currentLogY + 6);
@@ -367,9 +382,11 @@ namespace Ballance2.Managers
 
         void HandleUnityLog(string message, string stackTrace, LogType type)
         {
-            GameLogger.WriteLog(type == LogType.Exception ?
-                GameLogger.LogType.Error : (GameLogger.LogType)type, "", message + "\n" + stackTrace);
-            UpdateLogCount();
+            if (!logDestroyed) { 
+                GameLogger.WriteLog(type == LogType.Exception ?
+                    GameLogger.LogType.Error : (GameLogger.LogType)type, "Unity", message + "\n" + stackTrace);
+                UpdateLogCount();
+            }
         }
 
         #endregion
@@ -378,6 +395,7 @@ namespace Ballance2.Managers
 
         #region 调试命令控制
 
+        [SLua.CustomLuaClass]
         public delegate bool CommandDelegate(string keyword, string fullCmd, string[] args);
 
         private List<CmdItem> commands = null;

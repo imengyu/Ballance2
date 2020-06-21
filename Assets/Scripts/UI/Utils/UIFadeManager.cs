@@ -169,7 +169,7 @@ namespace Ballance2.UI.Utils
                     fadeObjects.Remove(fadeObject);
 
                 fadeObject = new FadeObject();
-                fadeObject.gameObject = gameObject;
+                fadeObject.gameObject = image.gameObject;
                 fadeObject.timeInSecond = timeInSecond;
                 fadeObject.alpha = 1;
                 fadeObject.material = null;
@@ -198,7 +198,7 @@ namespace Ballance2.UI.Utils
                     fadeObjects.Remove(fadeObject);
 
                 fadeObject = new FadeObject();
-                fadeObject.gameObject = gameObject;
+                fadeObject.gameObject = image.gameObject;
                 fadeObject.timeInSecond = timeInSecond;
                 fadeObject.alpha = 0;
                 fadeObject.material = null;

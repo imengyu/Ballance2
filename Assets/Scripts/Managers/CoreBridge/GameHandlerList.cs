@@ -1,7 +1,7 @@
 ﻿using Ballance2.Managers.CoreBridge;
 using System.Collections.Generic;
 
-namespace Assets.Scripts.Managers.CoreBridge
+namespace Ballance2.Managers.CoreBridge
 {
     [SLua.CustomLuaClass]
     public class GameHandlerList : List<GameHandler>

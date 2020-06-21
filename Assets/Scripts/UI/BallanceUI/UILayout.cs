@@ -68,6 +68,25 @@ namespace Ballance2.UI.BallanceUI
             elements.Insert(index, element);
             return element;
         }
+        /// <summary>
+        /// 通过名字查找元素
+        /// </summary>
+        /// <param name="name">名字</param>
+        /// <returns></returns>
+        public UIElement FindElementByName(string name)
+        {
+            foreach(UIElement u in elements)
+            {
+                if (u.Name == name) return u;
+                else if(u is ILayoutContainer)
+                {
+                    UIElement rs = (u as ILayoutContainer).FindElementByName(name);
+                    if (rs != null) return rs;
+                }
+            }
+            return null;
+        }
+
 
         private List<UIElement> elements = null;
 
@@ -102,5 +121,7 @@ namespace Ballance2.UI.BallanceUI
         public virtual void DoLayout(int startChildIndex)
         {
         }
+
+
     }
 }

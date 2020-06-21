@@ -909,6 +909,9 @@ MonoBehaviour:
   - Object: {fileID: 1225137423566472137, guid: adddf4fd5ae19074494de9d9b9fdffca,
       type: 3}
     Name: UIHorizontalLinearLayout
+  - Object: {fileID: 7217001282430660351, guid: 8eded6a5c63e5e749897c9b3258d281a,
+      type: 3}
+    Name: UIText
   - Object: {fileID: 0}
     Name: 
   GameAssets:

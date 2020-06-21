@@ -369,27 +369,27 @@ namespace Ballance2.Managers
             modList = modManagerView.transform.Find("UIScrollView/Viewport/Content").gameObject.GetComponent<UICommonList>();
             TextModCount = modManagerView.transform.Find("TextModCount").GetComponent<Text>();
 
-            GameManager.GameMediator.RegisterEventKernalHandler(GameEventNames.EVENT_MOD_REGISTERED, "ModDebug", (evtName, param) =>
+            GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_MOD_REGISTERED, "ModDebug", (evtName, param) =>
             {
                 OnModAdded((GameMod)param[1]);
                 return false;
             });
-            GameManager.GameMediator.RegisterEventKernalHandler(GameEventNames.EVENT_MOD_UNLOAD, "ModDebug", (evtName, param) =>
+            GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_MOD_UNLOAD, "ModDebug", (evtName, param) =>
             {
                 OnModRemoved((GameMod)param[1]);
                 return false;
             });
-            GameManager.GameMediator.RegisterEventKernalHandler(GameEventNames.EVENT_MOD_LOAD_FAILED, "ModDebug", (evtName, param) =>
+            GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_MOD_LOAD_FAILED, "ModDebug", (evtName, param) =>
             {
                 UpdateModListItemInfos(modList.GetItemById((int)param[0]), (GameMod)param[1]);
                 return false;
             });
-            GameManager.GameMediator.RegisterEventKernalHandler(GameEventNames.EVENT_MOD_LOAD_SUCCESS, "ModDebug", (evtName, param) =>
+            GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_MOD_LOAD_SUCCESS, "ModDebug", (evtName, param) =>
             {
                 UpdateModListItemInfos(modList.GetItemById((int)param[0]), (GameMod)param[1]);
                 return false;
             });
-            GameManager.GameMediator.RegisterEventKernalHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, "ModDebug", (evtName, param) =>
+            GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, "ModDebug", (evtName, param) =>
             {
                 if (currentModConfirm != null)
                 {

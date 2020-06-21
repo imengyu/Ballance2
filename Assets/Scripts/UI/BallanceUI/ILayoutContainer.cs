@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace Ballance2.UI.BallanceUI
 {
+    /// <summary>
+    /// 布局容器接口
+    /// </summary>
     public  interface ILayoutContainer
     {
         /// <summary>
@@ -30,6 +33,12 @@ namespace Ballance2.UI.BallanceUI
         /// <param name="index">插入的索引</param>
         /// <returns></returns>
         UIElement InsertElement(UIElement element, int index, bool doLayout = true);
+        /// <summary>
+        /// 通过元素名字查找
+        /// </summary>
+        /// <param name="name">元素名字</param>
+        /// <returns></returns>
+        UIElement FindElementByName(string name);
 
         /// <summary>
         /// 强制重新布局

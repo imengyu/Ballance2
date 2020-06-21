@@ -40,6 +40,7 @@ namespace Ballance2
         }
         public static void DestroyLogger()
         {
+            on = false;
             if (logFile != null)
             {
                 logFile = null;
@@ -73,23 +74,23 @@ namespace Ballance2
 
         public static void Log(string tag, string message, params object []param)
         {
-            string format = string.Format("[{0}] {1}", tag, message);
-            WriteLog(LogType.Text, tag, format, param);
+            message = string.Format(message, param);
+            WriteLog(LogType.Text, tag, message, param);
         }
         public static void Warning(string tag, string message, params object[] param)
         {
-            string format = string.Format("[{0}] {1}", tag, message);
-            WriteLog(LogType.Warning, tag, format, param);
+            message = string.Format(message, param);
+            WriteLog(LogType.Warning, tag, message, param);
         }
         public static void Error(string tag, string message, params object[] param)
         {
-            string format = string.Format("[{0}] {1}", tag, message);
-            WriteLog(LogType.Error, tag, format, param);
+            message = string.Format(message, param);
+            WriteLog(LogType.Error, tag, message, param);
         }
         public static void Info(string tag, string message, params object[] param)
         {
-            string format = string.Format("[{0}] {1}", tag, message);
-            WriteLog(LogType.Info, tag, format, param);
+            message = string.Format(message, param);
+            WriteLog(LogType.Info, tag, message, param);
         }
 
         [SLua.CustomLuaClass]
@@ -165,7 +166,7 @@ namespace Ballance2
             {
                 LogData data = new LogData();
                 data.Type = type;
-                data.Data = string.Format("[{0}] {1}", GetNowDateString(), message);
+                data.Data = string.Format("[{0}] [{1}] {2}", GetNowDateString(), tag, message);
                 data.StackTrace = new StackTrace(true).ToString();
 
                 if (logToFile)

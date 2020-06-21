@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Ballance2.Utils
 {
@@ -41,6 +42,29 @@ namespace Ballance2.Utils
 
             if (ver1 == ver2) return 0;
             return ver1 < ver2 ? -1 : 1;
+        }
+
+        public static Color StringToColor(string color)
+        {
+            switch(color)
+            {
+                case "black": return Color.black;
+                case "blue": return Color.blue;
+                case "clear": return Color.clear;
+                case "cyan": return Color.cyan;
+                case "gray": return Color.gray;
+                case "green": return Color.green;
+                case "magenta": return Color.magenta;
+                case "red": return Color.red;
+                case "white": return Color.white;
+                case "yellow": return Color.yellow;
+                default:
+                    Color nowColor;
+                    if (ColorUtility.TryParseHtmlString(color, out nowColor))
+                        return nowColor;
+                    break;
+            }
+            return Color.black;
         }
     }
 }

@@ -113,9 +113,81 @@ namespace Ballance2.UI.BallanceUI.Element
             {
                 foreach (XmlAttribute a in xml.Attributes)
                 {
-                    if (a.Name == "anchorX")
+                    if (a.Name == "name")
+                        Name = a.Value;
+
+                    else if (a.Name == "size")
+                    {
+                        string[] av = a.Value.Split(',');
+                        float x, y;
+                        if (av.Length >= 2 && float.TryParse(av[0], out x) && float.TryParse(av[1], out y))
+                            RectTransform.sizeDelta = new Vector2(x, y);
+                    }
+                    else if(a.Name == "width")
+                    {
+                        float x;
+                        if (float.TryParse(a.Value, out x))
+                            RectTransform.sizeDelta = new Vector2(x, RectTransform.sizeDelta.y);
+                    }
+                    else  if (a.Name == "height")
+                    {
+                        float y;
+                        if (float.TryParse(a.Value, out y))
+                            RectTransform.sizeDelta = new Vector2(RectTransform.sizeDelta.x, y);
+                    }
+
+                    else  if (a.Name == "left")
+                    {
+                        float v;
+                        if (float.TryParse(a.Value, out v))
+                            UIAnchorPosUtils.SetUILeftBottom(RectTransform, v, UIAnchorPosUtils.GetUIBottom(RectTransform));
+                    }
+                    else if (a.Name == "bottom")
+                    {
+                        float v;
+                        if (float.TryParse(a.Value, out v))
+                            UIAnchorPosUtils.SetUILeftBottom(RectTransform, UIAnchorPosUtils.GetUILeft(RectTransform), v);
+                    }
+                    else if (a.Name == "leftBottom")
+                    {
+                        string[] av = a.Value.Split(',');
+                        float x, y;
+                        if (av.Length >= 2 && float.TryParse(av[0], out x) && float.TryParse(av[1], out y))
+                            UIAnchorPosUtils.SetUILeftBottom(RectTransform, x, y);
+                    }
+
+                    else if (a.Name == "right")
+                    {
+                        float v;
+                        if (float.TryParse(a.Value, out v))
+                            UIAnchorPosUtils.SetUIRightTop(RectTransform, v, UIAnchorPosUtils.GetUITop(RectTransform));
+                    }
+                    else if (a.Name == "top")
+                    {
+                        float v;
+                        if (float.TryParse(a.Value, out v))
+                            UIAnchorPosUtils.SetUIRightTop(RectTransform, UIAnchorPosUtils.GetUIRight(RectTransform), v);
+                    }
+                    else if (a.Name == "rightTop")
+                    {
+                        string[] av = a.Value.Split(',');
+                        float x, y;
+                        if (av.Length >= 2 && float.TryParse(av[0], out x) && float.TryParse(av[1], out y))
+                            UIAnchorPosUtils.SetUIRightTop(RectTransform, x, y);
+                    }
+
+                    else if (a.Name == "anchor")
+                    {
+                        string[] av = a.Value.Split(',');
+                        if (av.Length >= 2)
+                        {
+                            System.Enum.TryParse(av[0], out anchorX);
+                            System.Enum.TryParse(av[1], out anchorY);
+                        }
+                    }
+                    else if (a.Name == "anchorX")
                         System.Enum.TryParse(a.Value, out anchorX);
-                    if (a.Name == "anchorY")
+                    else if (a.Name == "anchorY")
                         System.Enum.TryParse(a.Value, out anchorY);
                 }
             }
@@ -124,6 +196,7 @@ namespace Ballance2.UI.BallanceUI.Element
         private void Start()
         {
             RectTransform = GetComponent<RectTransform>();
+            name = Name;
         }
     }
 }

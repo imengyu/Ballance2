@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using Ballance2.Managers.CoreBridge;
 using System.Collections;
-using UnityEngine.Networking;
 using Ballance2.Utils;
 using UnityEngine.UI;
 
@@ -20,14 +19,14 @@ namespace Ballance2.Managers
 
         public override bool InitManager()
         {
-            GameManager.GameMediator.RegisterEventKernalHandler(
+            GameManager.GameMediator.RegisterEventHandler(
                 GameEventNames.EVENT_BASE_INIT_FINISHED, TAG, (e, p) =>
                 {
                     LoadGameInitBase();
                     StartCoroutine(LoadGameInitUI());
                     return false;
                 });
-            GameManager.GameMediator.RegisterEventKernalHandler(
+            GameManager.GameMediator.RegisterEventHandler(
                 GameEventNames.EVENT_GAME_INIT_ENTRY, TAG, (e, p) =>
                 { StartCoroutine(GameInitModuls()); return false; });
             return true;

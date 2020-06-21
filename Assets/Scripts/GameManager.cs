@@ -21,27 +21,40 @@ namespace Ballance2
         /// <summary>
         /// 全局管理器单例数组
         /// </summary>
-        private static List<IManager> managers = null;
+        private static List<BaseManager> managers = null;
 
         /// <summary>
         /// 获取管理器
         /// </summary>
         /// <param name="name">标识符名称</param>
-        /// <returns></returns>
-        public static IManager GetManager(string name, string subName = "Singleton")
+        /// <param name="subName">二级名称</param>
+        /// <returns>管理器</returns>
+        public static BaseManager GetManager(string name, string subName)
         {
-            foreach (IManager m in managers)
+            foreach (BaseManager m in managers)
                 if (m.GetName() == name && m.GetSubName() == subName)
                     return m;
             return null;
+        }
+        /// <summary>
+        /// 获取管理器（单例）
+        /// </summary>
+        /// <param name="name">标识符名称</param>
+        /// <returns></returns>
+        public static BaseManager GetManager(string name) 
+        {
+            return GetManager(name, "Singleton");
         }
         /// <summary>
         /// 注册自定义管理器
         /// </summary>
         /// <param name="classInstance">实例</param>
         /// <returns></returns>
-        public static IManager RegisterManager(IManager classInstance)
+        public static BaseManager RegisterManager(Type classType)
         {
+           BaseManager classInstance = (BaseManager)GameCloneUtils.CreateEmptyObjectWithParent(
+               GameRoot.transform, classType.Name).AddComponent(classType);
+
             string name = classInstance.GetName();
             if (GetManager(name) != null)
             {
@@ -82,11 +95,12 @@ namespace Ballance2
         /// <returns></returns>
         public static bool DestroyManager(string name)
         {
-            foreach (IManager m in managers)
+            foreach (BaseManager m in managers)
                 if (m.GetName() == name)
                 {
                     m.ReleaseManager();
                     managers.Remove(m);
+                    UnityEngine.Object.Destroy(m);
                     GameLogger.Log(TAG, "Manager destroyed : {0}:{1}", m.GetName(), m.GetSubName());
                     return true;
                 }
@@ -134,6 +148,10 @@ namespace Ballance2
         /// 游戏根，所有游戏部件在这里托管
         /// </summary>
         public static GameObject GameRoot { get; private set; }
+        /// <summary>
+        /// GameManager 元素
+        /// </summary>
+        public static GameObject GameManagerObject { get; private set; }
         /// <summary>
         /// 游戏UI根
         /// </summary>
@@ -206,8 +224,9 @@ namespace Ballance2
 
             InitStaticPrefab();
             GameBaseCamera = GameObject.Find("GameBaseCamera").GetComponent<Camera>();
+            GameManagerObject = GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, TAG);
             gameBreakAtStart = breakAtStart;
-            managers = new List<IManager>();
+            managers = new List<BaseManager>();
             
             //错误提示
             GameObject GlobalGameErrorPanel = GameCanvas.transform.Find("GlobalGameErrorPanel").gameObject;
@@ -220,15 +239,13 @@ namespace Ballance2
                 try
                 {
                     //初始化各个管理器
-                    GameMediator = (GameMediator)RegisterManager(new GameMediator());
+                    GameMediator = (GameMediator)RegisterManager(typeof(GameMediator));
                     gameMediatorInitFinished = true;
-
-                    UIManager =  (UIManager)RegisterManager(new UIManager());
-
-                    RegisterManager(GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, DebugManager.TAG).AddComponent<DebugManager>());
-                    RegisterManager(GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, ModManager.TAG).AddComponent<ModManager>());
-                    RegisterManager(GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, SoundManager.TAG).AddComponent<SoundManager>());
-                    RegisterManager(GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, GameInit.TAG).AddComponent<GameInit>());
+                    UIManager = (UIManager)RegisterManager(typeof(UIManager));
+                    RegisterManager(typeof(DebugManager));
+                    RegisterManager(typeof(ModManager));
+                    RegisterManager(typeof(SoundManager));
+                    RegisterManager(typeof(GameInit));
 
                     //Lua
                     GameMainLuaState = new LuaSvr.MainState();
@@ -243,7 +260,7 @@ namespace Ballance2
                     {
                         GameLogger.Log(TAG, "Game break at start");
                         UIManager.GlobalAlert("BreakAtStart<br/>您可以点击“继续运行”", "BreakAtStart", "继续运行");
-                        GameMediator.RegisterEventKernalHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, TAG, (evtName, param) =>
+                        GameMediator.RegisterEventHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, TAG, (evtName, param) =>
                         {
                             //通知进行下一步内核加载
                             int initEventHandledCount = GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_ENTRY, "*", null);

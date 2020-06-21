@@ -17,16 +17,23 @@ namespace Ballance2.Managers.CoreBridge
     [CustomLuaClass]
     public class GameMod
     {
-        private string TAG = "";
+        private string _TAG = "";
 
         public GameMod(string packagePath, ModManager modManager, string packageName = null)
         {
             ModManager = modManager;
             Uid = CommonUtils.GenNonDuplicateID();
             PackagePath = packagePath;
-            if (string.IsNullOrEmpty(packageName)) PackageName = "unknow." + Uid;
-            else PackageName = packageName;
-            TAG = ModManager.TAG + ":" + Uid;
+            if (string.IsNullOrEmpty(packageName))
+            {
+                PackageName = "unknow." + Uid;
+                _TAG = ModManager.TAG + ":" + Uid;
+            }
+            else
+            {
+                PackageName = packageName;
+                _TAG = ModManager.TAG + ":" + PackageName;
+            }
             modInfo = new GameModInfo(GamePathManager.GetFileNameWithoutExt(PackagePath));
         }
 
@@ -60,10 +67,10 @@ namespace Ballance2.Managers.CoreBridge
         public void Destroy()
         {
             GameLogger.Log(ModManager.TAG, "Destroy mod package {0} uid: {1}", PackageName, Uid);
-            if (modDefXmlDoc != null)
-                modDefXmlDoc = null;
             if (mainLuaCodeLoaded)
                 CallLuaFun("ModBeforeUnLoad", this);
+            if (modDefXmlDoc != null)
+                modDefXmlDoc = null;
             if (AssetBundle != null)
             {
                 AssetBundle.Unload(true);
@@ -275,6 +282,7 @@ namespace Ballance2.Managers.CoreBridge
         /// </summary>
         public AssetBundle AssetBundle { get; private set; }
 
+        public string TAG { get { return _TAG; } }
         /// <summary>
         /// 模组图标
         /// </summary>
@@ -400,6 +408,7 @@ namespace Ballance2.Managers.CoreBridge
                 {
                     case "packageName":
                         PackageName = attribute.Value;
+                        _TAG = ModManager.TAG + ":" + PackageName;
                         break;
                 }
             }
@@ -499,7 +508,20 @@ namespace Ballance2.Managers.CoreBridge
                         //如果没有注册，则尝试从包名直接加载
                         int uid = ModManager.LoadGameModByPackageName(d.PackageName, false);
                         m = ModManager.FindGameMod(uid);
-                        yield return ModManager.StartCoroutine(m.LoadInternal());
+                        if (m == null)
+                        {
+                            ModDependencyAllLoaded = false;
+                            GameLogger.Error(TAG, "加载模组包 {0} 的依赖项 {1} 失败", PackageName, d.PackageName);
+
+                            if (d.MustLoad)
+                            {
+                                hasMustDependenciesLoadFailed = true;
+                                yield break;
+                            }
+                            continue;
+                        }
+                        else
+                            yield return ModManager.StartCoroutine(m.LoadInternal());
                     }
                     else if (m != null && m.LoadStatus == GameModStatus.NotInitialize)//如果没有初始化则初始化
                        yield return ModManager.StartCoroutine(m.LoadInternal());
@@ -549,6 +571,7 @@ namespace Ballance2.Managers.CoreBridge
         /// <param name="name">lua虚拟脚本的名称</param>
         /// <param name="gameObject">要附加的物体</param>
         /// <param name="script">脚本代码资源</param>
+        /// <param name="scclassNameript">目标代码类名</param>
         public void RegisterLuaObject(string name, GameObject gameObject, TextAsset script, string className)
         {
             GameLuaObjectHost newGameLuaObjectHost = gameObject.AddComponent<GameLuaObjectHost>();
@@ -628,8 +651,22 @@ namespace Ballance2.Managers.CoreBridge
 
                     mainLuaCodeLoaded = true;
                     ModLuaState.doString(lua.text);
-                    CallLuaFun("ModulEntry", this);
-                    return true;
+                    LuaFunction fModEntry = GetLuaFun("ModEntry");
+                    if (fModEntry != null)
+                    {
+                        object b = fModEntry.call(this);
+                        if (b is bool && !((bool)b))
+                        {
+                            GameLogger.Warning(TAG, "模组 {0} ModEntry 返回了错误", PackageName);
+                            return (bool)b;
+                        }
+                        return false;
+                    }
+                    else
+                    {
+                        GameLogger.Warning(TAG, "模组 {0} 未找到 ModEntry ", PackageName);
+                        GameErrorManager.LastError = GameError.AlredayRegistered;
+                    }
                 }
                 else
                 {

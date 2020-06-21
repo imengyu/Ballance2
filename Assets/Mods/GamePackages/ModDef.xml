@@ -5,7 +5,7 @@
       <Package name="core.assets.musics" minVer="1.0" mustLoad="true" ></Package>
       <Package name="core.assets.sounds" minVer="1.0" mustLoad="true"></Package>
       <Package name="core.assets.skys" minVer="1.0" mustLoad="true"></Package>
-      <Package name="core.scenes.menulevel" minVer="1.0" mustLoad="true"></Package>
+      <Package name="core.scenes.menulevel.base" minVer="1.0" mustLoad="true"></Package>
     </Dependencies>
     <Name>GamePackages</Name>
     <Author>mengyu</Author>

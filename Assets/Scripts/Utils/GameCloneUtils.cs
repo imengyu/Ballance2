@@ -7,7 +7,7 @@ namespace Ballance2.Utils
     {
         public static GameObject CloneNewObject(GameObject prefab, string name)
         {
-            GameObject go = Object.Instantiate(prefab, GameManager.GameRoot.transform);
+            GameObject go = Object.Instantiate(prefab, GameManager.GameManagerObject.transform);
             go.name = name;
             return go;
         }
@@ -31,7 +31,7 @@ namespace Ballance2.Utils
 
         public static GameObject CreateEmptyObject(string name)
         {
-            GameObject go = Object.Instantiate(GameManager.PrefabEmpty, GameManager.GameRoot.transform);
+            GameObject go = Object.Instantiate(GameManager.PrefabEmpty, GameManager.GameManagerObject.transform);
             go.name = name;
             return go;
         }

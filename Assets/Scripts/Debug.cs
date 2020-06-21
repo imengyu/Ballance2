@@ -27,7 +27,7 @@ namespace Ballance2
 
             yield return new WaitUntil(GameManager.IsGameBaseInitFinished);
 
-            GameManager.GameMediator.RegisterEventKernalHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE,
+            GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE,
                 "Debug", (evtName, param) =>
                 {
                     GameLogger.Log(TAG, "{0} Alert closed : {1} => {2}", evtName, param[0], param[1]);

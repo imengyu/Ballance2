@@ -87,6 +87,19 @@ namespace Ballance2.UI.BallanceUI.Element
                 else lua_DoLayout.call(startChildIndex);
             }
         }
+        public UIElement FindElementByName(string name)
+        {
+            foreach (UIElement u in elements)
+            {
+                if (u.Name == name) return u;
+                else if (u is ILayoutContainer)
+                {
+                    UIElement rs = (u as ILayoutContainer).FindElementByName(name);
+                    if (rs != null) return rs;
+                }
+            }
+            return null;
+        }
 
         int loopUpdate = 0;
 
@@ -105,5 +118,7 @@ namespace Ballance2.UI.BallanceUI.Element
         {
             loopUpdate = 30;
         }
+
+
     }
 }

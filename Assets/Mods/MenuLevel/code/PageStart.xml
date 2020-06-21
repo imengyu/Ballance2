@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UIVertcialLinearLayout>
+  <UILevButton name="btn.lev.1" text="Level 1" />
+  <UILevButton name="btn.lev.2" text="Level 2" />
+  <UILevButton name="btn.lev.3" text="Level 3" />
+  <UILevButton name="btn.lev.4" text="Level 4" />
+  <UILevButton name="btn.lev.5" text="Level 5" />
+  <UILevButton name="btn.lev.6" text="Level 6" />
+  <UILevButton name="btn.lev.7" text="Level 7" />
+  <UILevButton name="btn.lev.8" text="Level 8" />
+  <UILevButton name="btn.lev.9" text="Level 9" />
+  <UILevButton name="btn.lev.10" text="Level 10" />
+  <UILevButton name="btn.lev.11" text="Level 11" />
+  <UILevButton name="btn.lev.12" text="Level 12" />
+  <UILevButton name="btn.lev.lz" text="Light Zone" />
+
+  <UISpace height="30" />
+  <UIMainButton name="btn.lev.custom" text="自制关卡" />
+  <UISpace height="30" />
+  
+  <UIButtonBack name="btn.back" text="返回" />
+</UIVertcialLinearLayout>

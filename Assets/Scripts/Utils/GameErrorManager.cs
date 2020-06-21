@@ -92,6 +92,10 @@ namespace Ballance2.Utils
         /// </summary>
         Unregistered,
         /// <summary>
+        /// 参数未提供
+        /// </summary>
+        ParamNotProvide,
+        /// <summary>
         /// 需要初始化的 Prefab 未找到，可能是未注册
         /// </summary>
         PrefabNotFound,

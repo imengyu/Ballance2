@@ -108,6 +108,7 @@
         LuaModul,
     }
 
+    [SLua.CustomLuaClass]
     /// <summary>
     /// 接收器内核回调
     /// </summary>

@@ -25,12 +25,18 @@ public class AssetBundleMaker
                 break;
         }
     }
-    [@MenuItem("AssetBundles/Build AssetBundle From Selection PC")]
+    [@MenuItem("AssetBundles/Build AssetBundle From Selection StandaloneWindows")]
     static void BuildABsPCSel()
     {
         BuildABsSelC(BuildTarget.StandaloneWindows);
     }
-    [@MenuItem("AssetBundles/Build AssetBundle From Selection Mac")]
+    [@MenuItem("AssetBundles/Build AssetBundle From Selection StandaloneLinux64")]
+    static void BuildABsLinuxSel()
+    {
+        BuildABsSelC(BuildTarget.StandaloneLinux64);
+    }
+
+    [@MenuItem("AssetBundles/Build AssetBundle From Selection StandaloneOSX")]
     static void BuildABsMacSel()
     {
         BuildABsSelC(BuildTarget.StandaloneOSX);

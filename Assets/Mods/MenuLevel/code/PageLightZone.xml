@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UIVertcialLinearLayout>
+  <UIButtonBack name="btn.back" text="返回" />
+</UIVertcialLinearLayout>
