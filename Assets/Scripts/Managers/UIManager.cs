@@ -81,6 +81,11 @@ namespace Ballance2.Managers
 
             PageContainerRectTransform = GameCloneUtils.CreateEmptyUIObjectWithParent(PagesRectTransform, "PageContainer").GetComponent<RectTransform>();
             PageBackgroundRectTransform = GameCloneUtils.CreateEmptyUIObjectWithParent(PagesRectTransform, "PageBackground").GetComponent<RectTransform>();
+
+            UIAnchorPosUtils.SetUIAnchor(PageContainerRectTransform, UIAnchor.Stretch, UIAnchor.Stretch);
+            UIAnchorPosUtils.SetUIPos(PageContainerRectTransform, 0, 0, 0, 0);
+            UIAnchorPosUtils.SetUIAnchor(PageBackgroundRectTransform, UIAnchor.Stretch, UIAnchor.Stretch);
+            UIAnchorPosUtils.SetUIPos(PageBackgroundRectTransform, 0, 0, 0, 0);
         }
 
         #region 全局渐变遮罩
@@ -376,6 +381,34 @@ namespace Ballance2.Managers
         /// </summary>
         /// <param name="pagePath"></param>
         /// <param name="template">UI模板</param>
+        /// <param name="handlerNames">UI事件接收器目标列表</param>
+        /// <param name="handlers">UI事件接收器函数</param>
+        /// <param name="self">UI事件接收器接收类</param>
+        /// <returns></returns>
+        public UIPage RegisterBallanceUIPage(string pagePath, string templateXml, string[] handlerNames, SLua.LuaFunction[] handlers, SLua.LuaTable self, string backgroundPrefabName = "Default")
+        {
+            if (FindUIPage(pagePath) != null)
+            {
+                GameErrorManager.LastError = GameError.AlredayRegistered;
+                return null;
+            }
+
+            ILayoutContainer layoutContainer = BuildLayoutByTemplate(pagePath, templateXml, handlerNames, handlers, self);
+            if(layoutContainer == null)
+            {
+                GameErrorManager.LastError = GameError.LayoutBuildFailed;
+                return null;
+            }
+
+            UIPage page = RegisterUIPage(pagePath, "Default", backgroundPrefabName, layoutContainer.RectTransform);
+            page.ContentContainer = layoutContainer;
+            return page;
+        }
+        /// <summary>
+        /// 注册 Ballance 样式的 UI 页
+        /// </summary>
+        /// <param name="pagePath"></param>
+        /// <param name="template">UI模板</param>
         /// <param name="handlers">UI事件接收器模板</param>
         /// <returns></returns>
         public UIPage RegisterBallanceUIPage(string pagePath, string templateXml, string[] handlerNames, GameHandlerDelegate[] handlers, string backgroundPrefabName = "Default")
@@ -386,6 +419,12 @@ namespace Ballance2.Managers
                 return null;
             }
             ILayoutContainer layoutContainer = BuildLayoutByTemplate(pagePath, templateXml, handlerNames, handlers);
+            if (layoutContainer == null)
+            {
+                GameErrorManager.LastError = GameError.LayoutBuildFailed;
+                return null;
+            }
+
             UIPage page = RegisterUIPage(pagePath, "Default", backgroundPrefabName, layoutContainer.RectTransform);
             page.ContentContainer = layoutContainer;
             return page;
@@ -406,6 +445,12 @@ namespace Ballance2.Managers
             }
 
             ILayoutContainer layoutContainer = BuildLayoutByTemplate(pagePath, templateXml, handlerNames, handlers);
+            if (layoutContainer == null)
+            {
+                GameErrorManager.LastError = GameError.LayoutBuildFailed;
+                return null;
+            }
+
             UIPage page = RegisterUIPage(pagePath, "Default", backgroundPrefabName, layoutContainer.RectTransform);
             page.ContentContainer = layoutContainer;
             return page;
@@ -430,6 +475,7 @@ namespace Ballance2.Managers
             GameObject prefab = FindRegisterPagePrefab(prefabName);
             if (prefab == null)
             {
+                GameLogger.Error(TAG, "RegisterUIPage failed, not found prefab {0}", prefabName);
                 GameErrorManager.LastError = GameError.PrefabNotFound;
                 return null;
             }
@@ -444,7 +490,11 @@ namespace Ballance2.Managers
 
             //背景
             if (!string.IsNullOrEmpty(backgroundPrefabName) && backgroundPrefabName != "None")
+            {
                 page.PageBackground = FindPageBackgroundPrefab(backgroundPrefabName);
+                if(page.PageBackground == null)
+                    GameLogger.Error(TAG, "Not found PageBackground prefab {0}", backgroundPrefabName);
+            }
 
             return page;
         }
@@ -572,6 +622,22 @@ namespace Ballance2.Managers
         /// </summary>
         /// <param name="name">布局名称</param>
         /// <param name="template">UI模板</param>
+        /// <param name="handlerNames">UI事件接收器目标列表</param>
+        /// <param name="handlers">UI事件接收器函数</param>
+        /// <param name="self">UI事件接收器接收类</param>
+        /// <returns></returns>
+        public ILayoutContainer BuildLayoutByTemplate(string name, string templateXml, string[] handlerNames, SLua.LuaFunction[] handlers, SLua.LuaTable self)
+        {
+            Dictionary<string, GameHandler> handlerList = new Dictionary<string, GameHandler>();
+            for (int i = 0; i < handlerNames.Length; i++)
+                handlerList.Add(handlerNames[i], new GameHandler(name, handlers[i], self));
+            return BuildLayoutByTemplate(name, templateXml, handlerList);
+        }
+        /// <summary>
+        /// 生成 垂直自动布局
+        /// </summary>
+        /// <param name="name">布局名称</param>
+        /// <param name="template">UI模板</param>
         /// <param name="handlers">LUA接收器模板</param>
         /// <returns></returns>
         public ILayoutContainer BuildLayoutByTemplate(string name, string templateXml, string[] handlerNames, string[] handlers)
@@ -615,7 +681,7 @@ namespace Ballance2.Managers
         {
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.LoadXml(templateXml);
-            return BuildLayoutByTemplateInternal(name, xmlDocument, handlers, null);
+            return BuildLayoutByTemplateInternal(name, xmlDocument.DocumentElement, handlers, null);
         }
 
         private ILayoutContainer BuildLayoutByTemplateInternal(string name, XmlNode templateXml, Dictionary<string, GameHandler> handlers, ILayoutContainer parent)
@@ -642,9 +708,18 @@ namespace Ballance2.Managers
             GameObject newCon = GameCloneUtils.CloneNewObjectWithParent(prefab,
                 parent == null ? UIRoot.transform : parent.RectTransform);
             ilayout = newCon.GetComponent<ILayoutContainer>();
+            ilayout.RectTransform = newCon.GetComponent<RectTransform>();
 
             GameObject newEle = null;
-            UIElement uIElement = null;
+            UIElement uIElement = newCon.GetComponent<UIElement>();
+            if(uIElement == null)
+            {
+                GameLogger.Error(TAG, "BuildLayoutByTemplate failed, root prefab {0} does not contain UIElement", prefabName);
+                return null;
+            }
+
+            //容器的XML读取
+            uIElement.LateInit(name, templateXml);
 
             //子元素
             for (int i = 0, c = templateXml.ChildNodes.Count; i < c; i++)
@@ -660,7 +735,7 @@ namespace Ballance2.Managers
                 prefab = FindRegisterElementPrefab(eleNode.Name);
                 if (prefab == null)
                 {
-                    GameLogger.Log(TAG, "BuildLayoutByTemplate failed, not found prefab {0}", prefabName);
+                    GameLogger.Error(TAG, "BuildLayoutByTemplate failed, not found prefab {0}", prefabName);
                     continue;
                 }
                 if (prefab.GetComponent<ILayoutContainer>() != null) //这是UI容器
@@ -670,16 +745,25 @@ namespace Ballance2.Managers
                 newEle = GameCloneUtils.CloneNewObjectWithParent(prefab, ilayout.RectTransform, eleName);
 
                 uIElement = newEle.GetComponent<UIElement>();
-                uIElement.Init(eleName, eleNode);
+                uIElement.RectTransform = newEle.GetComponent<RectTransform>();
+                uIElement.LateInit(eleName, eleNode);
 
-                foreach(string key in handlers.Keys)
+                //初始化子元素的事件接收器
+                Dictionary<string, GameHandler> lateInitHandlers = new Dictionary<string, GameHandler>();
+                foreach (string key in handlers.Keys)
                 {
-                    if(key.StartsWith(uIElement.Name))
+                    string[] sp = key.Split(':');
+                    if (sp.Length >= 2 && sp[0] == uIElement.Name)
                     {
-                        string[] sp = key.Split(':');
-                        if (sp.Length >= 2) uIElement.SetEventHandler(sp[1], handlers[key]);
+                        try {  lateInitHandlers.Add(sp[1], handlers[key]); }
+                        catch(System.ArgumentException e)
+                        {
+                            GameLogger.Warning(TAG, "Add event for {0} -> {1} failed {2}", key, handlers[key].Name, e.Message);
+                            continue;
+                        }
                     }
                 }
+                if (lateInitHandlers.Count > 0) uIElement.LateInitHandlers(lateInitHandlers);
 
                 ilayout.AddElement(uIElement, false);
             }

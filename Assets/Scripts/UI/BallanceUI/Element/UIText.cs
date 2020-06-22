@@ -48,8 +48,8 @@ namespace Ballance2.UI.BallanceUI.Element
                             text.lineSpacing = f;
                     }
                 }
-                if (!string.IsNullOrEmpty(xml.InnerText))
-                    Text = xml.InnerText;
+                if (!string.IsNullOrEmpty(xml.InnerXml))
+                    Text = xml.InnerXml;
             }
         }
 
@@ -64,11 +64,9 @@ namespace Ballance2.UI.BallanceUI.Element
             set { text.text = value; }
         }
 
-
         private void Start()
         {
             text = GetComponent<Text>();
         }
-
     }
 }

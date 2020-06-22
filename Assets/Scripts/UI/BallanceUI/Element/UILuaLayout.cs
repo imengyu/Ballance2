@@ -23,10 +23,11 @@ namespace Ballance2.UI.BallanceUI.Element
 
         public List<UIElement> Elements { get { return elements; } }
 
-        private void Start()
+        public UILuaLayout()
         {
             elements = new List<UIElement>();
         }
+
         private void OnDestroy()
         {
             if (elements != null)

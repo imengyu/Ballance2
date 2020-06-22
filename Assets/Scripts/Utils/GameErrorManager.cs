@@ -139,5 +139,9 @@ namespace Ballance2.Utils
         /// 实例化根必须是容器
         /// </summary>
         MustBeContainer,
+        /// <summary>
+        /// 布局构建失败
+        /// </summary>
+        LayoutBuildFailed,
     }
 }

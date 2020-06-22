@@ -491,7 +491,7 @@ namespace Ballance2.Managers.CoreBridge
         /// </summary>
         private IEnumerator CheckAndLoadModDependencies()
         {
-            GameLogger.Log(ModManager.TAG, "Lod mod package {0} dependencies : {1}", PackageName, ModDependencyInfo.Count);
+            GameLogger.Log(ModManager.TAG, "Load mod package {0} dependencies : {1}", PackageName, ModDependencyInfo.Count);
 
             ModDependencyAllLoaded = true;
             hasMustDependenciesLoadFailed = false;
@@ -499,7 +499,7 @@ namespace Ballance2.Managers.CoreBridge
             foreach (GameDependencyInfo d in ModDependencyInfo)
             {
                 i++;
-                GameLogger.Log(ModManager.TAG, "Lod mod dependency : {0} ({1}/{2})", d.PackageName, i, ModDependencyInfo.Count);
+                GameLogger.Log(ModManager.TAG, "Load mod dependency : {0} ({1}/{2})", d.PackageName, i, ModDependencyInfo.Count);
                 if (!d.Loaded)
                 {
                     GameMod m = ModManager.FindGameModByName(d.PackageName);
@@ -604,7 +604,8 @@ namespace Ballance2.Managers.CoreBridge
         //清除已释放的lua虚拟脚本
         internal void RemoveLuaObject(GameLuaObjectHost o)
         {
-            luaObjects.Remove(o);
+            if(luaObjects != null)
+                luaObjects.Remove(o);
         }
         /// <summary>
         /// 获取模组启动代码是否已经执行

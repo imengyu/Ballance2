@@ -382,7 +382,7 @@ namespace Ballance2.Managers
 
         void HandleUnityLog(string message, string stackTrace, LogType type)
         {
-            if (!logDestroyed) { 
+            if (!logDestroyed && !GameLogger.GetUnityLogLock()) { 
                 GameLogger.WriteLog(type == LogType.Exception ?
                     GameLogger.LogType.Error : (GameLogger.LogType)type, "Unity", message + "\n" + stackTrace);
                 UpdateLogCount();

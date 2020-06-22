@@ -1,5 +1,6 @@
 ﻿using Ballance2.Managers.CoreBridge;
 using Ballance2.UI.Utils;
+using System.Collections.Generic;
 using System.Xml;
 using UnityEngine;
 
@@ -34,6 +35,26 @@ namespace Ballance2.UI.BallanceUI.Element
             ReadAndSolveXml(xml);
         }
 
+        private XmlNode lateInitXml = null;
+        private Dictionary<string, GameHandler> lateInitHandlers = null;
+
+        public void LateInitHandlers(Dictionary<string, GameHandler> gameHandlers)
+        {
+            lateInitHandlers = gameHandlers;
+        }
+        public void LateInit(string name, string xml)
+        {
+            Name = name;
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(xml);
+            lateInitXml = doc.DocumentElement;
+        }
+        public void LateInit(string name, XmlNode xml)
+        {
+            Name = name;
+            lateInitXml = xml;
+        }
+
         /// <summary>
         /// 处理元素XML样式
         /// </summary>
@@ -42,7 +63,7 @@ namespace Ballance2.UI.BallanceUI.Element
         {
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(xml);
-            SolveXml(doc);
+            SolveXml(doc.DocumentElement);
         }
         /// <summary>
         /// 处理元素XML样式
@@ -100,7 +121,7 @@ namespace Ballance2.UI.BallanceUI.Element
         /// <summary>
         /// 当前 RectTransform
         /// </summary>
-        public RectTransform RectTransform { get; private set; }
+        public RectTransform RectTransform { get; set; }
         /// <summary>
         /// 父级
         /// </summary>
@@ -197,6 +218,24 @@ namespace Ballance2.UI.BallanceUI.Element
         {
             RectTransform = GetComponent<RectTransform>();
             name = Name;
+            if (lateInitXml != null || lateInitHandlers != null)
+                Invoke("DoLateInit", 0.3f);
+        }
+
+        private void DoLateInit()
+        {
+            if (lateInitXml != null)
+            {
+                Init(Name, lateInitXml);
+                lateInitXml = null;
+            }
+            if(lateInitHandlers != null)
+            {
+                foreach(string key in lateInitHandlers.Keys)
+                    SetEventHandler(key, lateInitHandlers[key]);
+                
+                lateInitHandlers = null;
+            }
         }
     }
 }

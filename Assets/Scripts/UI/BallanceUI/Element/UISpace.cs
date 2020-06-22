@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using Ballance2.Managers.CoreBridge;
-using Newtonsoft.Json.Linq;
 using System.Xml;
 
 namespace Ballance2.UI.BallanceUI.Element
@@ -34,8 +32,6 @@ namespace Ballance2.UI.BallanceUI.Element
             }
         }
 
-        private RectTransform rectTransform;
-
         private float height = 50;
 
         /// <summary>
@@ -49,24 +45,16 @@ namespace Ballance2.UI.BallanceUI.Element
                 switch (layoutType)
                 {
                     case LayoutType.None:
-                        rectTransform.sizeDelta = new Vector2(height, height);
+                        RectTransform.sizeDelta = new Vector2(height, height);
                         break;
                     case LayoutType.Vertical:
-                        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, height);
+                        RectTransform.sizeDelta = new Vector2(RectTransform.sizeDelta.x, height);
                         break;
                     case LayoutType.Horizontal:
-                        rectTransform.sizeDelta = new Vector2(height, rectTransform.sizeDelta.y);
+                        RectTransform.sizeDelta = new Vector2(height, RectTransform.sizeDelta.y);
                         break;
                 }
             }
-        }
-
-        private void Start()
-        {
-            rectTransform = GetComponent<RectTransform>();
-        }
-        private void OnDestroy()
-        {
         }
     }
 }

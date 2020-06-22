@@ -1,4 +1,6 @@
-﻿namespace Ballance2.Managers.CoreBridge
+﻿using SLua;
+
+namespace Ballance2.Managers.CoreBridge
 {
     [SLua.CustomLuaClass]
     /// <summary>
@@ -29,6 +31,19 @@
             Type = GameHandlerType.LuaModul;
             LuaModulHandler = luaModulHandler;
             LuaModulHandlerFunc = new GameLuaHandler(luaModulHandler);
+        }
+
+        /// <summary>
+        /// 创建 LUA 层使用的 Handler
+        /// </summary>
+        /// <param name="name">接收器名称</param>
+        /// <param name="luaFunction">LUA 函数</param>
+        public GameHandler(string name, LuaFunction luaFunction, LuaTable self = null)
+        {
+            Name = name;
+            Type = GameHandlerType.LuaFun;
+            LuaFunction = luaFunction;
+            LuaSelf = self;
         }
 
         public static GameHandler CreateLuaGameHandler(string name, string luaModulHandler)
@@ -62,6 +77,18 @@
                 result = CSKernelHandler(evtName, pararms);
             else if (Type == GameHandlerType.LuaModul)
                 result = LuaModulHandlerFunc.RunEventHandler(evtName, pararms);
+            else if (Type == GameHandlerType.LuaFun)
+            {
+                object rs = null;
+                object[] pararms2 = new object[pararms.Length + 1];
+                pararms2[0] = evtName;
+                for (int i = 0; i < pararms.Length; i++)
+                    pararms2[i + 1] = pararms[i];
+                if (LuaSelf != null) rs = LuaFunction.call(LuaSelf, pararms2);
+                else rs = LuaFunction.call(pararms2);
+                if (rs is bool)
+                    result = (bool)rs;
+            }
             return result;
         }
 
@@ -85,6 +112,14 @@
         /// LUA Handler 执行体接收器
         /// </summary>
         public GameLuaHandler LuaModulHandlerFunc { get; private set; }
+        /// <summary>
+        /// LUA Handler 函数
+        /// </summary>
+        public LuaFunction LuaFunction { get; private set; }
+        /// <summary>
+        /// LUA Handler 函数的self
+        /// </summary>
+        public LuaTable LuaSelf { get; private set; }
 
         public override string ToString()
         {
@@ -106,6 +141,7 @@
         /// Lua 模块使用的
         /// </summary>
         LuaModul,
+        LuaFun
     }
 
     [SLua.CustomLuaClass]

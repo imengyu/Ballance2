@@ -122,6 +122,7 @@ namespace Ballance2
         private static int countError = 0;
         private static int countWarning = 0;
         private static int countInfo = 0;
+        private static bool unityLogLock = false;
 
         public static int GetLogCount(LogType type)
         {
@@ -139,6 +140,16 @@ namespace Ballance2
         internal delegate void LogCallback(LogData data);
         internal static List<LogData> GetLogData()  { return logDatas;  }
 
+        private static void SetUnityLogLock() { unityLogLock = true; }
+        internal static bool GetUnityLogLock()
+        {
+            if (unityLogLock)
+            {
+                unityLogLock = false;
+                return true;
+            }
+            return false;
+        }
         internal static void RegisterLogCallback(LogCallback logCallback)
         {
             GameLogger.logCallback = logCallback;
@@ -186,6 +197,19 @@ namespace Ballance2
                     case LogType.Info: countInfo++; break;
                     case LogType.Warning: countWarning++; break;
                 }
+
+#if UNITY_EDITOR
+                SetUnityLogLock();
+                string unityOutPutLog = string.Format("[{0}] {1}", tag, message);
+                switch (type)
+                {
+                    case LogType.Text: UnityEngine.Debug.Log(unityOutPutLog); break;
+                    case LogType.Error: UnityEngine.Debug.LogError(unityOutPutLog); break;
+                    case LogType.Assert: UnityEngine.Debug.LogAssertion(unityOutPutLog); break;
+                    case LogType.Info: UnityEngine.Debug.Log(unityOutPutLog); break;
+                    case LogType.Warning: UnityEngine.Debug.LogWarning(unityOutPutLog); break;
+                }
+#endif
 
             }
         }

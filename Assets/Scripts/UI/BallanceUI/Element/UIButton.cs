@@ -14,7 +14,7 @@ namespace Ballance2.UI.BallanceUI.Element
 
         public UIButton()
         {
-            baseName = TAG;
+            baseName = TAG;       
         }
 
         public override void SetEventHandler(string name, GameHandler handler)

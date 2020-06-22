@@ -7,7 +7,7 @@
     <Logo>Assets/Mods/MenuLevel/base/ModLogo.png</Logo>
     <Version>1.0</Version>
     <Dependencies>
-      <Package name="core.scenes.menulevel.code" minVer="1.0" mustLoad="true" ></Package>
+      <Package name="core.scenes.menulevel.ui" minVer="1.0" mustLoad="true" ></Package>
     </Dependencies>
   </BaseInfo>
   <Compatibility>

@@ -57,6 +57,6 @@ namespace Ballance2.UI.BallanceUI
         /// <summary>
         /// 获取 RectTransform
         /// </summary>
-        RectTransform RectTransform { get;  }
+        RectTransform RectTransform { get; set; }
     }
 }

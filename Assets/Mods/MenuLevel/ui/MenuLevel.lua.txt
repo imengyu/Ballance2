@@ -1,0 +1,194 @@
+
+-- 游戏进入页面主菜单控制器
+
+GameManager = Ballance2.GameManager
+GameLogger = Ballance2.GameLogger
+
+Vector3 = UnityEngine.Vector3
+Time = UnityEngine.Time
+
+local UIManager = GameManager.UIManager
+local TAG = "MenuLevel:MainCamera"
+
+MenuLevel = {
+  gameObject = false,
+  runningLoop = false,
+  runningLzLoop = false,
+  transform = nil,
+  GameLuaObjectHost = nil,
+  domePosition = nil,
+  I_Zone = nil,
+  I_Camera = nil,
+  I_Light_Day = nil,
+  I_Light_Night = nil,
+  I_Zone_SuDu_Innen = nil,
+  I_Zone_NenLi_Innen = nil,
+  I_Zone_LiLiang_Innen = nil,
+  speed = 0.5,
+
+  dialogQuitId = nil,
+  pageMain = nil,
+  pageStart = nil,
+  pageAbout = nil,
+  pageHighScore = nil,
+  pageLightZone = nil,
+}
+
+local thisMod = nil
+
+function class_MenuLevel()
+
+  function MenuLevel:new(o)
+    o = o or {}
+    setmetatable(o, self)
+    self.__index = self
+    return o
+  end
+
+  function MenuLevel:Start(thisGameObject)
+    self.gameObject = thisGameObject
+
+    GameManager.SetGameBaseCameraVisible(false)
+    
+    self.transform = self.gameObject.transform
+    self.GameLuaObjectHost = self.gameObject:GetComponent("GameLuaObjectHost")
+
+    thisMod = self.GameLuaObjectHost.GameMod
+    
+    self.domePosition = self.transform:Find("I_Dome_MF").position
+    self.I_Camera = self.transform:Find("I_Camera").gameObject
+    self.I_Camera:SetActive(true)
+    self.I_Light_Night = self.transform:Find("I_Light_Night").gameObject
+    self.I_Light_Day = self.transform:Find("I_Light_Day").gameObject
+    self.I_Zone = self.transform:Find("I_Zone").gameObject
+    self.I_Zone_SuDu_Innen = self.I_Zone.transform:Find("I_Zone_SuDu_Innen").gameObject
+    self.I_Zone_NenLi_Innen = self.I_Zone.transform:Find("I_Zone_NenLi_Innen").gameObject
+    self.I_Zone_LiLiang_Innen = self.I_Zone.transform:Find("I_Zone_LiLiang_Innen").gameObject
+
+    self.runningLoop = true
+
+    self:InitMusic()
+    self:InitUI()
+
+    
+    UIManager:MaskBlackFadeOut(2)
+	end
+
+	function MenuLevel:OnDesory()
+		self.runningLoop = false
+	end
+
+	function MenuLevel:Update()
+		if(self.runningLoop) then
+			self.I_Camera.transform:RotateAround(self.domePosition, Vector3.up, Time.deltaTime * self.speed)
+			self.I_Camera.transform:LookAt(self.domePosition)
+    end
+    if(self.runningLzLoop) then 
+      self.I_Zone_SuDu_Innen.transform:LookAt(self.I_Camera.transform.position)
+      self.I_Zone_NenLi_Innen.transform:LookAt(self.I_Camera.transform.position)
+      self.I_Zone_LiLiang_Innen.transform:LookAt(self.I_Camera.transform.position)
+    end
+  end
+  
+  -- 初始化音乐
+  function MenuLevel:InitMusic() 
+
+  end
+  -- 初始化 UI
+  function MenuLevel:InitUI() 
+
+    local pageMainXml = thisMod:GetTextAsset("PageMain.xml").text
+    local pageStartXml = thisMod:GetTextAsset("PageStart.xml").text
+    local pageAboutXml = thisMod:GetTextAsset("PageAbout.xml").text
+    local pageLightZoneXml = thisMod:GetTextAsset("PageLightZone.xml").text
+    local pageHighscoreXml = thisMod:GetTextAsset("PageHighscore.xml").text
+    
+    self.pageMain = UIManager:RegisterBallanceUIPage("main", pageMainXml, 
+      { "btn.start:click","btn.highscore:click","btn.settings:click","btn.about:click","btn.quit:click" }, 
+      { 
+        function(evtName) UIManager:GotoUIPage(self.pageStart.PagePath) end, 
+        function(evtName) UIManager:GotoUIPage(self.pageHighScore.PagePath) end, 
+        function(evtName) 
+          
+        end, 
+        function(evtName) UIManager:GotoUIPage(self.pageAbout.PagePath) end, 
+        function(evtName) self.dialogQuitId = UIManager:GlobalConfirm("真的要退出游戏吗", "提示", "确定","取消") end
+      }, 
+      self,
+      "Default")
+
+    self.pageStart = UIManager:RegisterBallanceUIPage("main.start", pageStartXml, 
+      { 
+        "btn.back:click","btn.lev.1:click","btn.lev.2:click","btn.lev.3:click","btn.lev.4:click","btn.lev.5:click","btn.lev.6:click",
+        "btn.lev.7:click","btn.lev.8:click","btn.lev.9:click","btn.lev.10:click","btn.lev.11:click","btn.lev.12:click","btn.lev.lz:click"
+      }, 
+      { 
+        function(evtName) UIManager:BackUIPage() end, 
+        function(evtName) self:OnLevelStart("1") end,
+        function(evtName) self:OnLevelStart("2") end,
+        function(evtName) self:OnLevelStart("3") end,
+        function(evtName) self:OnLevelStart("4") end,
+        function(evtName) self:OnLevelStart("5") end,
+        function(evtName) self:OnLevelStart("6") end,
+        function(evtName) self:OnLevelStart("7") end,
+        function(evtName) self:OnLevelStart("8") end,
+        function(evtName) self:OnLevelStart("9") end,
+        function(evtName) self:OnLevelStart("10") end,
+        function(evtName) self:OnLevelStart("11") end,
+        function(evtName) self:OnLevelStart("12") end,
+        function(evtName) self:OnSwitchLz(true) end
+      }, 
+      self,
+      "Default")
+    self.pageAbout = UIManager:RegisterBallanceUIPage("main.about", pageAboutXml, 
+      { "btn.back:click" }, 
+      { function(evtName) UIManager:BackUIPage() end }, 
+      self,
+      "Default")
+    self.pageHighScore = UIManager:RegisterBallanceUIPage("main.highscore", pageAboutXml, 
+      { "btn.back:click" }, 
+      { function(evtName) UIManager:BackUIPage() end }, 
+      self,
+      "Default")
+    self.pageLightZone = UIManager:RegisterBallanceUIPage("main.start.lightzone", pageLightZoneXml, 
+      { "btn.back:click" }, 
+      { function(evtName) UIManager:BackUIPage() end }, 
+      self,
+      "None")
+
+    --
+    UIManager:GotoUIPage(self.pageMain.PagePath)
+
+    -- 对话框事件
+    GameManager.GameMediator:RegisterEventHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, TAG, function(id, confirm)
+      if(id == self.dialogQuitId and confirm)
+      then
+        GameManager:QuitGame()
+      end
+    end)
+  end
+
+  function MenuLevel:OnSwitchLz(on) 
+    if(on) 
+    then
+      UIManager:GotoUIPage(self.pageLightZone.PagePath)
+      self.I_Light_Night:SetActive(true)
+      self.I_Light_Day:SetActive(false)
+      self.I_Zone:SetActive(true)
+      self.runningLzLoop = true
+    else
+      UIManager:GotoUIPage(self.pageMain.PagePath)
+      self.I_Light_Day:SetActive(true)
+      self.I_Light_Night:SetActive(false)
+      self.I_Zone:SetActive(false)
+      self.runningLzLoop = false
+    end
+  end
+  function MenuLevel:OnLevelStart(lev) 
+    print("start level", lev)
+  end
+
+
+  return MenuLevel:new(nil)
+
+end

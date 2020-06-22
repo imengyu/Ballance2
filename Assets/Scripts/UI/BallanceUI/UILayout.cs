@@ -87,15 +87,15 @@ namespace Ballance2.UI.BallanceUI
             return null;
         }
 
+        public UILayout()
+        {
+            elements = new List<UIElement>();
+        }
 
         private List<UIElement> elements = null;
 
         int loopUpdate = 0; 
 
-        private void Start()
-        {
-            elements = new List<UIElement>();
-        }
         private void OnDestroy()
         {
             if (elements != null)

@@ -1,0 +1,52 @@
+--- MenuLevel
+--- Entry
+
+GameManager = Ballance2.GameManager
+GameLogger = Ballance2.GameLogger
+GameEventNames = Ballance2.Managers.CoreBridge.GameEventNames
+GameCloneUtils = Ballance2.Utils.GameCloneUtils
+ModManager = Ballance2.Managers.ModManager
+
+local TAG = "core.scenes.menulevel.ui:Main"
+
+local ModManagerInstance = nil
+local gameModThis = nil
+local gameModBase = nil
+
+local goMenuLevel = nil
+
+-- 模块入口函数
+function ModEntry(thisGameMod)
+
+  gameModThis = thisGameMod
+  
+  GameManager.GameMediator:RegisterEventHandler(GameEventNames.EVENT_GAME_INIT_FINISH, TAG, TAG..":OnEnterMenuLevel")
+  ModManagerInstance = Slua.As(GameManager.GetManager(ModManager.TAG), ModManager)
+  gameModBase = ModManagerInstance:FindGameModByName("core.scenes.menulevel.base")
+
+	return true
+end
+
+-- 模块卸载前函数
+function ModBeforeUnLoad(thisGameMod)
+	gameModThis = thisGameMod
+  
+	GameLogger.Log(TAG, "ModBeforeUnLoad !")
+	return true
+end
+
+function OnEnterMenuLevel()
+
+  -- 初始化 MenuLevel 资源
+  local prefab = gameModBase:GetPrefabAsset("MenuLevel.prefab")
+  if(prefab == nil)
+  then
+    GameLogger.Error(TAG, "MenuLevel.prefab not found !")
+  else 
+    goMenuLevel = GameCloneUtils.CloneNewObject(prefab, "MenuLevel")
+    gameModThis:RegisterLuaObject("MenuLevel:MainCamera", goMenuLevel, gameModThis:GetTextAsset("MenuLevel.lua.txt"), "MenuLevel")
+  end
+  
+  GameLogger.Log(TAG, "MenuLevel init OK !")
+	return true
+end
