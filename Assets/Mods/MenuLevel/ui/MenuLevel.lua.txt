@@ -24,7 +24,7 @@ MenuLevel = {
   I_Zone_SuDu_Innen = nil,
   I_Zone_NenLi_Innen = nil,
   I_Zone_LiLiang_Innen = nil,
-  speed = 0.5,
+  speed = 2.5,
 
   dialogQuitId = nil,
   pageMain = nil,

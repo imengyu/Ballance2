@@ -24,6 +24,8 @@ namespace Ballance2.UI.BallanceUI
         private GameObject pageBackground = null;
         [SerializeField, SetProperty("ContentRectTransform")]
         private RectTransform contentRectTransform = null;
+        [SerializeField, SetProperty("ContentContainer")]
+        private UILayout layoutContainer = null;
 
         /// <summary>
         /// 页路径
@@ -36,7 +38,7 @@ namespace Ballance2.UI.BallanceUI
         /// <summary>
         /// 页的 RectTransform
         /// </summary>
-        public RectTransform RectTransform { get; private set; }
+        public RectTransform RectTransform { get; set; }
         /// <summary>
         /// 内容的 RectTransform
         /// </summary>
@@ -45,7 +47,7 @@ namespace Ballance2.UI.BallanceUI
         /// 内容的容器，可手动指定。
         /// 如果不手动指定，那么必须是 BallanceUI 的页才有此属性。
         /// </summary>
-        public ILayoutContainer ContentContainer { get; set; }
+        public UILayout ContentContainer { get { return layoutContainer; } set { layoutContainer = value; } }
 
         /// <summary>
         /// 通过名字查找元素

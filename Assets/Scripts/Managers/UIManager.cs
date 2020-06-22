@@ -4,6 +4,7 @@ using Ballance2.UI.BallanceUI.Element;
 using Ballance2.UI.Utils;
 using Ballance2.Utils;
 using System.Collections.Generic;
+using System.Text;
 using System.Xml;
 using UnityEngine;
 using UnityEngine.UI;
@@ -36,6 +37,7 @@ namespace Ballance2.Managers
             InitWindowManagement();
             InitPageManagement();
             InitUIPrefabs();
+            InitUIDebug();
 
             return true;
         }
@@ -78,9 +80,11 @@ namespace Ballance2.Managers
             ViewsRectTransform = GameCloneUtils.CreateEmptyUIObjectWithParent(UIRoot.transform, "ViewsRectTransform").GetComponent<RectTransform>();
             UIAnchorPosUtils.SetUIAnchor(ViewsRectTransform, UIAnchor.Stretch, UIAnchor.Stretch);
             UIAnchorPosUtils.SetUIPos(ViewsRectTransform, 0, 0, 0, 0);
+            UIAnchorPosUtils.SetUIAnchor(PagesRectTransform, UIAnchor.Stretch, UIAnchor.Stretch);
+            UIAnchorPosUtils.SetUIPos(PagesRectTransform, 0, 0, 0, 0);
 
-            PageContainerRectTransform = GameCloneUtils.CreateEmptyUIObjectWithParent(PagesRectTransform, "PageContainer").GetComponent<RectTransform>();
             PageBackgroundRectTransform = GameCloneUtils.CreateEmptyUIObjectWithParent(PagesRectTransform, "PageBackground").GetComponent<RectTransform>();
+            PageContainerRectTransform = GameCloneUtils.CreateEmptyUIObjectWithParent(PagesRectTransform, "PageContainer").GetComponent<RectTransform>();
 
             UIAnchorPosUtils.SetUIAnchor(PageContainerRectTransform, UIAnchor.Stretch, UIAnchor.Stretch);
             UIAnchorPosUtils.SetUIPos(PageContainerRectTransform, 0, 0, 0, 0);
@@ -283,6 +287,18 @@ namespace Ballance2.Managers
             managedWindows.Add(window);
             return window;
         }
+        /// <summary>
+        /// 通过 ID 查找窗口
+        /// </summary>
+        /// <param name="windowId">窗口ID</param>
+        /// <returns></returns>
+        public IWindow FindWindowById(int windowId)
+        {
+            foreach (IWindow w in managedWindows)
+                if (w.GetWindowId() == windowId)
+                    return w;
+            return null;
+        }
 
         private IWindow currentVisibleWindowAlert = null;
 
@@ -393,16 +409,15 @@ namespace Ballance2.Managers
                 return null;
             }
 
-            ILayoutContainer layoutContainer = BuildLayoutByTemplate(pagePath, templateXml, handlerNames, handlers, self);
+            UILayout layoutContainer = BuildLayoutByTemplate(pagePath, templateXml, handlerNames, handlers, self);
             if(layoutContainer == null)
             {
                 GameErrorManager.LastError = GameError.LayoutBuildFailed;
                 return null;
             }
 
-            UIPage page = RegisterUIPage(pagePath, "Default", backgroundPrefabName, layoutContainer.RectTransform);
-            page.ContentContainer = layoutContainer;
-            return page;
+            layoutContainer.MinSize = new Vector2(0, Screen.height);
+            return RegisterUIPage(pagePath, "Default", backgroundPrefabName, layoutContainer);
         }
         /// <summary>
         /// 注册 Ballance 样式的 UI 页
@@ -418,16 +433,15 @@ namespace Ballance2.Managers
                 GameErrorManager.LastError = GameError.AlredayRegistered;
                 return null;
             }
-            ILayoutContainer layoutContainer = BuildLayoutByTemplate(pagePath, templateXml, handlerNames, handlers);
+            UILayout layoutContainer = BuildLayoutByTemplate(pagePath, templateXml, handlerNames, handlers);
             if (layoutContainer == null)
             {
                 GameErrorManager.LastError = GameError.LayoutBuildFailed;
                 return null;
             }
 
-            UIPage page = RegisterUIPage(pagePath, "Default", backgroundPrefabName, layoutContainer.RectTransform);
-            page.ContentContainer = layoutContainer;
-            return page;
+            layoutContainer.MinSize = new Vector2(0, Screen.height);
+            return RegisterUIPage(pagePath, "Default", backgroundPrefabName, layoutContainer);
         }
         /// <summary>
         /// 注册 Ballance 样式的 UI 页
@@ -444,15 +458,56 @@ namespace Ballance2.Managers
                 return null;
             }
 
-            ILayoutContainer layoutContainer = BuildLayoutByTemplate(pagePath, templateXml, handlerNames, handlers);
+            UILayout layoutContainer = BuildLayoutByTemplate(pagePath, templateXml, handlerNames, handlers);
             if (layoutContainer == null)
             {
                 GameErrorManager.LastError = GameError.LayoutBuildFailed;
                 return null;
             }
 
-            UIPage page = RegisterUIPage(pagePath, "Default", backgroundPrefabName, layoutContainer.RectTransform);
-            page.ContentContainer = layoutContainer;
+            layoutContainer.MinSize = new Vector2(0, Screen.height);
+            return RegisterUIPage(pagePath, "Default", backgroundPrefabName, layoutContainer); 
+        }
+        /// <summary>
+        /// 注册 UI 页
+        /// </summary>
+        /// <param name="pagePath">页路径</param>
+        /// <param name="prefabName">注册的 Prefab 名称</param>
+        /// <param name="backgroundPrefabName">注册的背景 Prefab 名称</param>
+        /// <param name="content">页内容</param>
+        /// <returns></returns>
+        public UIPage RegisterUIPage(string pagePath, string prefabName, string backgroundPrefabName, UILayout content)
+        {
+            if (FindUIPage(pagePath) != null)
+            {
+                GameErrorManager.LastError = GameError.AlredayRegistered;
+                return null;
+            }
+
+            //找到预制体
+            GameObject prefab = FindRegisterPagePrefab(prefabName);
+            if (prefab == null)
+            {
+                GameLogger.Error(TAG, "RegisterUIPage failed, not found prefab {0}", prefabName);
+                GameErrorManager.LastError = GameError.PrefabNotFound;
+                return null;
+            }
+
+            //实例化
+            GameObject pageGo = GameCloneUtils.CloneNewObjectWithParent(prefab, PageContainerRectTransform, pagePath, false);
+            UIPage page = pageGo.GetComponent<UIPage>();
+            page.RectTransform = pageGo.GetComponent<RectTransform>();
+            if (page.ContentRectTransform == null)
+                page.ContentRectTransform = page.RectTransform;
+            page.PagePath = pagePath;
+            if (page.ContentContainer.RectTransform == null)
+                page.ContentContainer.RectTransform = page.ContentContainer.gameObject.GetComponent<RectTransform>();
+            page.ContentContainer.AddElement(content, false);
+
+            //背景
+            SetPageBackground(page, backgroundPrefabName);
+
+            managedPages.Add(page);
             return page;
         }
         /// <summary>
@@ -483,21 +538,32 @@ namespace Ballance2.Managers
             //实例化
             GameObject pageGo = GameCloneUtils.CloneNewObjectWithParent(prefab, PageContainerRectTransform, pagePath, false);
             UIPage page = pageGo.GetComponent<UIPage>();
-            if(page.ContentRectTransform == null)
+            page.RectTransform = pageGo.GetComponent<RectTransform>();
+            if (page.ContentRectTransform == null)
                 page.ContentRectTransform = page.RectTransform;
-            content.SetParent(page.ContentRectTransform);
-            UIAnchorPosUtils.SetUIPos(content, 0, 0, 0, 0);
+            page.PagePath = pagePath;
+            if (content.parent != page.ContentRectTransform) {
+                content.SetParent(page.ContentRectTransform);
+                UIAnchorPosUtils.SetUIPos(content, 0, 0, 0, 0);
+            }
 
             //背景
+            SetPageBackground(page, backgroundPrefabName);
+
+            managedPages.Add(page);
+            return page;
+        }
+
+        private void SetPageBackground(UIPage page, string backgroundPrefabName)
+        {
             if (!string.IsNullOrEmpty(backgroundPrefabName) && backgroundPrefabName != "None")
             {
                 page.PageBackground = FindPageBackgroundPrefab(backgroundPrefabName);
-                if(page.PageBackground == null)
+                if (page.PageBackground == null)
                     GameLogger.Error(TAG, "Not found PageBackground prefab {0}", backgroundPrefabName);
             }
-
-            return page;
         }
+
         /// <summary>
         /// 查找已注册页
         /// </summary>
@@ -520,6 +586,7 @@ namespace Ballance2.Managers
             UIPage p = FindUIPage(pagePath);
             if(p != null)
             {
+                p.gameObject.SetActive(false);
                 managedPages.Remove(p);
                 return true;
             }
@@ -540,18 +607,24 @@ namespace Ballance2.Managers
             {
                 if(p != currentShowPage)
                 {
-                    currentShowPage.gameObject.SetActive(false);
-                    if (currentShowPage.PageBackground != null)
-                        currentShowPage.PageBackground.SetActive(false);
+                    if (currentShowPage != null)
+                    {
+                        currentShowPage.gameObject.SetActive(false);
+                        if (currentShowPage.PageBackground != null)
+                            currentShowPage.PageBackground.SetActive(false);
+                    }
                     p.gameObject.SetActive(true);
                     if (p.PageBackground != null)
                         p.PageBackground.SetActive(true);
                     currentShowPage = p;
+
+                    GameLogger.Log(TAG, "GotoUIPage {0}", pagePath);
                 }
                 return true;
             }
             else
             {
+                GameLogger.Warning(TAG, "GotoUIPage 未找到指定页 {0}", pagePath);
                 GameErrorManager.LastError = GameError.Unregistered;
                 return false;
             }
@@ -566,12 +639,9 @@ namespace Ballance2.Managers
             UIPage p = string.IsNullOrEmpty(pagePath) ? currentShowPage : FindUIPage(pagePath);
             if (p != null)
             {
-                if (p != currentShowPage)
-                {
-                    p.gameObject.SetActive(false);
-                    if (p.PageBackground != null)
-                        p.PageBackground.SetActive(false);
-                }
+                p.gameObject.SetActive(false);
+                if (p.PageBackground != null)
+                    p.PageBackground.SetActive(false);
                 return true;
             }
             else
@@ -606,10 +676,16 @@ namespace Ballance2.Managers
                             if (p.PageBackground != null)
                                 p.PageBackground.SetActive(true);
                             currentShowPage = p;
+
+                            GameLogger.Log(TAG, "BackUIPage {0}", currentShowPage.PagePath);
                         }
                         return true;
                     }
-                    else GameErrorManager.LastError = GameError.Unregistered;
+                    else
+                    {
+                        GameLogger.Log(TAG, "BackUIPage 未找到上级页 {0}", pagePath);
+                        GameErrorManager.LastError = GameError.Unregistered;
+                    }
                 }
             }
             return false;
@@ -626,7 +702,7 @@ namespace Ballance2.Managers
         /// <param name="handlers">UI事件接收器函数</param>
         /// <param name="self">UI事件接收器接收类</param>
         /// <returns></returns>
-        public ILayoutContainer BuildLayoutByTemplate(string name, string templateXml, string[] handlerNames, SLua.LuaFunction[] handlers, SLua.LuaTable self)
+        public UILayout BuildLayoutByTemplate(string name, string templateXml, string[] handlerNames, SLua.LuaFunction[] handlers, SLua.LuaTable self)
         {
             Dictionary<string, GameHandler> handlerList = new Dictionary<string, GameHandler>();
             for (int i = 0; i < handlerNames.Length; i++)
@@ -640,7 +716,7 @@ namespace Ballance2.Managers
         /// <param name="template">UI模板</param>
         /// <param name="handlers">LUA接收器模板</param>
         /// <returns></returns>
-        public ILayoutContainer BuildLayoutByTemplate(string name, string templateXml, string[] handlerNames, string[] handlers)
+        public UILayout BuildLayoutByTemplate(string name, string templateXml, string[] handlerNames, string[] handlers)
         {
             Dictionary<string, GameHandler> handlerList = new Dictionary<string, GameHandler>();
             string h = "";
@@ -659,7 +735,7 @@ namespace Ballance2.Managers
         /// <param name="template">UI模板</param>
         /// <param name="handlers">LUA接收器模板</param>
         /// <returns></returns>
-        public ILayoutContainer BuildLayoutByTemplate(string name, string templateXml, string[] handlerNames, GameHandlerDelegate[] handlers)
+        public UILayout BuildLayoutByTemplate(string name, string templateXml, string[] handlerNames, GameHandlerDelegate[] handlers)
         {
             Dictionary<string, GameHandler> handlerList = new Dictionary<string, GameHandler>();
             GameHandlerDelegate h = null;
@@ -677,14 +753,14 @@ namespace Ballance2.Managers
         /// <param name="template">UI模板</param>
         /// <param name="handlers">接收器模板</param>
         /// <returns></returns>
-        public ILayoutContainer BuildLayoutByTemplate(string name, string templateXml, Dictionary<string, GameHandler> handlers)
+        public UILayout BuildLayoutByTemplate(string name, string templateXml, Dictionary<string, GameHandler> handlers)
         {
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.LoadXml(templateXml);
             return BuildLayoutByTemplateInternal(name, xmlDocument.DocumentElement, handlers, null);
         }
 
-        private ILayoutContainer BuildLayoutByTemplateInternal(string name, XmlNode templateXml, Dictionary<string, GameHandler> handlers, ILayoutContainer parent)
+        private UILayout BuildLayoutByTemplateInternal(string name, XmlNode templateXml, Dictionary<string, GameHandler> handlers, UILayout parent)
         {
             //实例化UI预制体
             string prefabName = templateXml.Name;
@@ -697,7 +773,7 @@ namespace Ballance2.Managers
             }
 
             //获取预制体上的脚本
-            ILayoutContainer ilayout = prefab.GetComponent<ILayoutContainer>();            
+            UILayout ilayout = prefab.GetComponent<UILayout>();            
             if(ilayout == null) //该方法必须实例化UI容器
             {
                 GameLogger.Log(TAG, "BuildLayoutByTemplate with prefab {0} failed, root must be a container", prefabName);
@@ -707,19 +783,17 @@ namespace Ballance2.Managers
 
             GameObject newCon = GameCloneUtils.CloneNewObjectWithParent(prefab,
                 parent == null ? UIRoot.transform : parent.RectTransform);
-            ilayout = newCon.GetComponent<ILayoutContainer>();
-            ilayout.RectTransform = newCon.GetComponent<RectTransform>();
-
-            GameObject newEle = null;
-            UIElement uIElement = newCon.GetComponent<UIElement>();
-            if(uIElement == null)
+            ilayout = newCon.GetComponent<UILayout>();
+            if (ilayout == null)
             {
                 GameLogger.Error(TAG, "BuildLayoutByTemplate failed, root prefab {0} does not contain UIElement", prefabName);
                 return null;
             }
+            ilayout.RectTransform = newCon.GetComponent<RectTransform>();
+            ilayout.LateInit(name, templateXml); //容器的XML读取
 
-            //容器的XML读取
-            uIElement.LateInit(name, templateXml);
+            GameObject newEle = null;
+            UIElement uIElement = null;
 
             //子元素
             for (int i = 0, c = templateXml.ChildNodes.Count; i < c; i++)
@@ -738,7 +812,7 @@ namespace Ballance2.Managers
                     GameLogger.Error(TAG, "BuildLayoutByTemplate failed, not found prefab {0}", prefabName);
                     continue;
                 }
-                if (prefab.GetComponent<ILayoutContainer>() != null) //这是UI容器
+                if (prefab.GetComponent<UILayout>() != null) //这是UI容器
                     return BuildLayoutByTemplateInternal(eleName, eleNode, handlers, ilayout);//递归构建
 
                 //构建子元素
@@ -947,6 +1021,109 @@ namespace Ballance2.Managers
         }
 
         #endregion
+
+        #endregion
+
+        #region 调试
+
+        private DebugManager DebugManager;
+
+        private void InitUIDebug()
+        {
+            GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_BASE_MANAGER_INIT_FINISHED, TAG, (evtName, param) =>
+            {
+                if (param[0].ToString() == DebugManager.TAG)
+                {
+                    DebugManager = (DebugManager)GameManager.GetManager(DebugManager.TAG);
+                    DebugManager.RegisterCommand("pages", OnCommandShowPages, 0, "显示页");
+                    DebugManager.RegisterCommand("windows", OnCommandShowWindows, 0, "显示页窗口");
+                    DebugManager.RegisterCommand("gouipage", OnCommandGoUIPage, 1, "跳转到页");
+                    DebugManager.RegisterCommand("closeuipage", OnCommandCloseUIPage, 1, "关闭已经显示的页");
+                    DebugManager.RegisterCommand("backuipage", OnCommandBackUIPage, 0, "返回上级页");
+
+                    DebugManager.RegisterCommand("showwindow", OnCommandShowWindow, 1, "显示窗口");
+                    DebugManager.RegisterCommand("closewindow", OnCommandCloseWindow, 1, "关闭窗口");
+                    DebugManager.RegisterCommand("hidewindow", OnCommandHideWindow, 1, "隐藏窗口");
+                }
+                return false;
+            });
+        }
+
+        private bool OnCommandCloseWindow(string keyword, string fullCmd, string[] args)
+        {
+            return OnCommandShowHideCloseWindow(args[0], "close");
+        }
+        private bool OnCommandHideWindow(string keyword, string fullCmd, string[] args)
+        {
+            return OnCommandShowHideCloseWindow(args[0], "hise");
+        }
+        private bool OnCommandShowWindow(string keyword, string fullCmd, string[] args)
+        {
+            return OnCommandShowHideCloseWindow(args[0], "show");
+        }
+        private bool OnCommandShowHideCloseWindow(string idstr, string act)
+        {
+            int id = 0;
+            if(!int.TryParse(idstr, out id))
+            {
+                GameLogger.Error(TAG, "参数 1 必须是 int 类型 {0} : ", idstr);
+                return false;
+            }
+
+            IWindow w = FindWindowById(id);
+            if(w == null)
+            {
+                GameLogger.Error(TAG, "未找到 ID 为 {0} 的窗口", id);
+                return false;
+            }
+
+            switch(act)
+            {
+                case "show": ShowWindow(w);  break;
+                case "hide": HideWindow(w); break;
+                case "close": CloseWindow(w); break;
+            }
+
+            return true;
+        }
+        private bool OnCommandCloseUIPage(string keyword, string fullCmd, string[] args)
+        {
+            return CloseUIPage(args[0]);
+        }
+        private bool OnCommandBackUIPage(string keyword, string fullCmd, string[] args)
+        {
+            return BackUIPage();
+        }
+        private bool OnCommandGoUIPage(string keyword, string fullCmd, string[] args)
+        {
+            return GotoUIPage(args[0]);
+        }
+        private bool OnCommandShowWindows(string keyword, string fullCmd, string[] args)
+        {
+            StringBuilder s = new StringBuilder();
+            foreach (UIWindow w in managedWindows)
+            {
+                s.Append("\n(");
+                s.Append(w.GetWindowId());
+                s.Append(')');
+                s.Append(w.Title);
+            }
+            GameLogger.Log(TAG, "All windows count {0} : \n{1}", managedWindows.Count, s.ToString());
+            return true;
+        }
+        private bool OnCommandShowPages(string keyword, string fullCmd, string[] args)
+        {
+            StringBuilder s = new StringBuilder();
+            foreach (UIPage p in managedPages)
+            {
+                s.Append('\n');
+                s.Append(p.PagePath);
+                s.Append(" /");
+                s.Append(p.PageBackground);
+            }
+            GameLogger.Log(TAG, "All Pages count {0} : \n{1}", managedPages.Count, s.ToString());
+            return true;
+        }
 
         #endregion
 

@@ -1,9 +1,5 @@
 ﻿using Ballance2.Utils;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using UnityEngine.UI;
 
@@ -27,25 +23,26 @@ namespace Ballance2.UI.BallanceUI.Element
             {
                 foreach (XmlAttribute a in xml.Attributes)
                 {
-                    if (a.Name == "text")
-                        Text = a.InnerText;
-                    if (a.Name == "fontSize")
+                    switch (a.Name.ToLower())
                     {
-                        int i;
-                        if (int.TryParse(a.Value, out i))
-                            text.fontSize = i;
-                    }
-                    if (a.Name == "fontSize")
-                        text.fontStyle = (UnityEngine.FontStyle)Enum.Parse(typeof(UnityEngine.FontStyle), a.Value);
-                    if (a.Name == "color")
-                        text.color = StringUtils.StringToColor(a.Value);
-                    if (a.Name == "alignment")
-                        text.alignment = (UnityEngine.TextAnchor)Enum.Parse(typeof(UnityEngine.TextAnchor), a.Value);
-                    if (a.Name == "lineSpacing")
-                    {
-                        float f;
-                        if (float.TryParse(a.Value, out f))
-                            text.lineSpacing = f;
+                        case "text": Text = a.InnerText;  break;
+                        case "fontSize":
+                            {
+                                int i;
+                                if (int.TryParse(a.Value, out i))
+                                    text.fontSize = i;
+                                break;
+                            }
+                        case "fontsize": text.fontStyle = (UnityEngine.FontStyle)Enum.Parse(typeof(UnityEngine.FontStyle), a.Value); break;
+                        case "color": text.color = StringUtils.StringToColor(a.Value); break;
+                        case "alignment": text.alignment = (UnityEngine.TextAnchor)Enum.Parse(typeof(UnityEngine.TextAnchor), a.Value); break;
+                        case "lineSpacing":
+                            {
+                                float f;
+                                if (float.TryParse(a.Value, out f))
+                                    text.lineSpacing = f;
+                                break;
+                            }
                     }
                 }
                 if (!string.IsNullOrEmpty(xml.InnerXml))

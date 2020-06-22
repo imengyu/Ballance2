@@ -10,7 +10,7 @@ namespace Ballance2.UI.BallanceUI.Element
     /// UI 元素 基类
     /// </summary>
     [SLua.CustomLuaClass]
-    public class UIElement : MonoBehaviour, IElement
+    public class UIElement : MonoBehaviour
     {
         /// <summary>
         /// 初始化
@@ -89,7 +89,12 @@ namespace Ballance2.UI.BallanceUI.Element
 
         private UIAnchor anchorX;
         private UIAnchor anchorY;
+        private Vector2 minSize = new Vector2(0, 0);
 
+        /// <summary>
+        /// 最小大小
+        /// </summary>
+        public Vector2 MinSize { get { return minSize; } set  { minSize = value; DoResize(); } }
         /// <summary>
         /// X轴锚点
         /// </summary>
@@ -125,7 +130,7 @@ namespace Ballance2.UI.BallanceUI.Element
         /// <summary>
         /// 父级
         /// </summary>
-        public ILayoutContainer Parent { get; set; }
+        public UILayout Parent { get; set; }
 
         protected string baseName = "UIElement";
         protected virtual void SolveXml(XmlNode xml)
@@ -134,82 +139,126 @@ namespace Ballance2.UI.BallanceUI.Element
             {
                 foreach (XmlAttribute a in xml.Attributes)
                 {
-                    if (a.Name == "name")
-                        Name = a.Value;
-
-                    else if (a.Name == "size")
+                    switch (a.Name.ToLower())
                     {
-                        string[] av = a.Value.Split(',');
-                        float x, y;
-                        if (av.Length >= 2 && float.TryParse(av[0], out x) && float.TryParse(av[1], out y))
-                            RectTransform.sizeDelta = new Vector2(x, y);
+                        case "name": Name = a.Value; break;
+                        case "size":
+                            {
+                                string[] av = a.Value.Split(',');
+                                float x, y;
+                                if (av.Length >= 2 && float.TryParse(av[0], out x) && float.TryParse(av[1], out y))
+                                    RectTransform.sizeDelta = new Vector2(x, y);
+                                break;
+                            }
+                        case "minsize":
+                            {
+                                string[] av = a.Value.Split(',');
+                                float x, y;
+                                if (av.Length >= 2 && float.TryParse(av[0], out x) && float.TryParse(av[1], out y))
+                                    minSize = new Vector2(x, y);
+                                break;
+                            }
+                        case "width":
+                            {
+                                float x;
+                                if (float.TryParse(a.Value, out x))
+                                    RectTransform.sizeDelta = new Vector2(x, RectTransform.sizeDelta.y);
+                                break;
+                            }
+                        case "height":
+                            {
+                                float y;
+                                if (float.TryParse(a.Value, out y))
+                                    RectTransform.sizeDelta = new Vector2(RectTransform.sizeDelta.x, y);
+                                break;
+                            }
+                        case "x":
+                            {
+                                float v;
+                                if (float.TryParse(a.Value, out v))
+                                    RectTransform.anchoredPosition = new Vector2(v, RectTransform.anchoredPosition.y);
+                                break;
+                            }
+                        case "y":
+                            {
+                                float v;
+                                if (float.TryParse(a.Value, out v))
+                                    RectTransform.anchoredPosition = new Vector2(RectTransform.anchoredPosition.x, v);
+                                break;
+                            }
+                        case "position":
+                            {
+                                string[] av = a.Value.Split(',');
+                                float x, y;
+                                if (av.Length >= 2 && float.TryParse(av[0], out x) && float.TryParse(av[1], out y))
+                                    RectTransform.anchoredPosition = new Vector2(x, y);
+                                break;
+                            }
+                        case "left":
+                            {
+                                float v;
+                                if (float.TryParse(a.Value, out v))
+                                    UIAnchorPosUtils.SetUILeftBottom(RectTransform, v, UIAnchorPosUtils.GetUIBottom(RectTransform));
+                                break;
+                            }
+                        case "bottom":
+                            {
+                                float v;
+                                if (float.TryParse(a.Value, out v))
+                                    UIAnchorPosUtils.SetUILeftBottom(RectTransform, UIAnchorPosUtils.GetUILeft(RectTransform), v);
+                                break;
+                            }
+                        case "leftbottom":
+                            {
+                                string[] av = a.Value.Split(',');
+                                float x, y;
+                                if (av.Length >= 2 && float.TryParse(av[0], out x) && float.TryParse(av[1], out y))
+                                    UIAnchorPosUtils.SetUILeftBottom(RectTransform, x, y);
+                                break;
+                            }
+                        case "right":
+                            {
+                                float v;
+                                if (float.TryParse(a.Value, out v))
+                                    UIAnchorPosUtils.SetUIRightTop(RectTransform, v, UIAnchorPosUtils.GetUITop(RectTransform));
+                                break;
+                            }
+                        case "top":
+                            {
+                                float v;
+                                if (float.TryParse(a.Value, out v))
+                                    UIAnchorPosUtils.SetUIRightTop(RectTransform, UIAnchorPosUtils.GetUIRight(RectTransform), v);
+                                break;
+                            }
+                        case "righttop":
+                            {
+                                string[] av = a.Value.Split(',');
+                                float x, y;
+                                if (av.Length >= 2 && float.TryParse(av[0], out x) && float.TryParse(av[1], out y))
+                                    UIAnchorPosUtils.SetUIRightTop(RectTransform, x, y);
+                                break;
+                            }
+                        case "anchor":
+                            {
+                                string[] av = a.Value.Split(',');
+                                if (av.Length >= 2)
+                                {
+                                    System.Enum.TryParse(av[0], out anchorX);
+                                    System.Enum.TryParse(av[1], out anchorY);
+                                }
+                                break;
+                            }
+                        case "anchorX":
+                            {
+                                System.Enum.TryParse(a.Value, out anchorX);
+                                break;
+                            }
+                        case "anchorY":
+                            {
+                                System.Enum.TryParse(a.Value, out anchorY);
+                                break;
+                            }
                     }
-                    else if(a.Name == "width")
-                    {
-                        float x;
-                        if (float.TryParse(a.Value, out x))
-                            RectTransform.sizeDelta = new Vector2(x, RectTransform.sizeDelta.y);
-                    }
-                    else  if (a.Name == "height")
-                    {
-                        float y;
-                        if (float.TryParse(a.Value, out y))
-                            RectTransform.sizeDelta = new Vector2(RectTransform.sizeDelta.x, y);
-                    }
-
-                    else  if (a.Name == "left")
-                    {
-                        float v;
-                        if (float.TryParse(a.Value, out v))
-                            UIAnchorPosUtils.SetUILeftBottom(RectTransform, v, UIAnchorPosUtils.GetUIBottom(RectTransform));
-                    }
-                    else if (a.Name == "bottom")
-                    {
-                        float v;
-                        if (float.TryParse(a.Value, out v))
-                            UIAnchorPosUtils.SetUILeftBottom(RectTransform, UIAnchorPosUtils.GetUILeft(RectTransform), v);
-                    }
-                    else if (a.Name == "leftBottom")
-                    {
-                        string[] av = a.Value.Split(',');
-                        float x, y;
-                        if (av.Length >= 2 && float.TryParse(av[0], out x) && float.TryParse(av[1], out y))
-                            UIAnchorPosUtils.SetUILeftBottom(RectTransform, x, y);
-                    }
-
-                    else if (a.Name == "right")
-                    {
-                        float v;
-                        if (float.TryParse(a.Value, out v))
-                            UIAnchorPosUtils.SetUIRightTop(RectTransform, v, UIAnchorPosUtils.GetUITop(RectTransform));
-                    }
-                    else if (a.Name == "top")
-                    {
-                        float v;
-                        if (float.TryParse(a.Value, out v))
-                            UIAnchorPosUtils.SetUIRightTop(RectTransform, UIAnchorPosUtils.GetUIRight(RectTransform), v);
-                    }
-                    else if (a.Name == "rightTop")
-                    {
-                        string[] av = a.Value.Split(',');
-                        float x, y;
-                        if (av.Length >= 2 && float.TryParse(av[0], out x) && float.TryParse(av[1], out y))
-                            UIAnchorPosUtils.SetUIRightTop(RectTransform, x, y);
-                    }
-
-                    else if (a.Name == "anchor")
-                    {
-                        string[] av = a.Value.Split(',');
-                        if (av.Length >= 2)
-                        {
-                            System.Enum.TryParse(av[0], out anchorX);
-                            System.Enum.TryParse(av[1], out anchorY);
-                        }
-                    }
-                    else if (a.Name == "anchorX")
-                        System.Enum.TryParse(a.Value, out anchorX);
-                    else if (a.Name == "anchorY")
-                        System.Enum.TryParse(a.Value, out anchorY);
                 }
             }
         }
@@ -222,6 +271,23 @@ namespace Ballance2.UI.BallanceUI.Element
                 Invoke("DoLateInit", 0.3f);
         }
 
+        private void DoResize()
+        {
+            bool changed = false;
+            Vector2 newSize = RectTransform.sizeDelta;
+            if (RectTransform.sizeDelta.x > minSize.x)
+            {
+                newSize.x = minSize.x;
+                changed = true;
+            }
+            if (RectTransform.sizeDelta.y > minSize.y)
+            {
+                newSize.y = minSize.y;
+                changed = true;
+            }
+            if (changed)
+                RectTransform.sizeDelta = newSize;
+        }
         private void DoLateInit()
         {
             if (lateInitXml != null)
@@ -236,6 +302,7 @@ namespace Ballance2.UI.BallanceUI.Element
                 
                 lateInitHandlers = null;
             }
+            DoResize();
         }
     }
 }

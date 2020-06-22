@@ -22,7 +22,7 @@ namespace Ballance2.UI.BallanceUI.Element
             {
                 foreach(XmlAttribute a in xml.Attributes)
                 {
-                    if(a.Name == "height")
+                    if(a.Name.ToLower() == "height")
                     {
                         float val = 0;
                         if (float.TryParse(a.InnerText, out val))

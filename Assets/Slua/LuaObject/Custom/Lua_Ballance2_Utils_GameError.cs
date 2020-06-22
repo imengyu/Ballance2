@@ -25,6 +25,7 @@ public class Lua_Ballance2_Utils_GameError : LuaObject {
 		addMember(l,17,"NetworkError");
 		addMember(l,18,"NotInitialize");
 		addMember(l,19,"MustBeContainer");
+		addMember(l,20,"LayoutBuildFailed");
 		LuaDLL.lua_pop(l, 1);
 	}
 }

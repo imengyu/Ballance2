@@ -681,18 +681,39 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.UIManager self=(Ballance2.Managers.UIManager)checkSelf(l);
-			System.String a1;
-			checkType(l,2,out a1);
-			System.String a2;
-			checkType(l,3,out a2);
-			System.String a3;
-			checkType(l,4,out a3);
-			UnityEngine.RectTransform a4;
-			checkType(l,5,out a4);
-			var ret=self.RegisterUIPage(a1,a2,a3,a4);
-			pushValue(l,true);
-			pushValue(l,ret);
+			int argc = LuaDLL.lua_gettop(l);
+			if(matchType(l,argc,2,typeof(string),typeof(string),typeof(string),typeof(Ballance2.UI.BallanceUI.UILayout))){
+				Ballance2.Managers.UIManager self=(Ballance2.Managers.UIManager)checkSelf(l);
+				System.String a1;
+				checkType(l,2,out a1);
+				System.String a2;
+				checkType(l,3,out a2);
+				System.String a3;
+				checkType(l,4,out a3);
+				Ballance2.UI.BallanceUI.UILayout a4;
+				checkType(l,5,out a4);
+				var ret=self.RegisterUIPage(a1,a2,a3,a4);
+				pushValue(l,true);
+				pushValue(l,ret);
+				return 2;
+			}
+			else if(matchType(l,argc,2,typeof(string),typeof(string),typeof(string),typeof(UnityEngine.RectTransform))){
+				Ballance2.Managers.UIManager self=(Ballance2.Managers.UIManager)checkSelf(l);
+				System.String a1;
+				checkType(l,2,out a1);
+				System.String a2;
+				checkType(l,3,out a2);
+				System.String a3;
+				checkType(l,4,out a3);
+				UnityEngine.RectTransform a4;
+				checkType(l,5,out a4);
+				var ret=self.RegisterUIPage(a1,a2,a3,a4);
+				pushValue(l,true);
+				pushValue(l,ret);
+				return 2;
+			}
+			pushValue(l,false);
+			LuaDLL.lua_pushstring(l,"No matched override function RegisterUIPage to call");
 			return 2;
 		}
 		catch(Exception e) {

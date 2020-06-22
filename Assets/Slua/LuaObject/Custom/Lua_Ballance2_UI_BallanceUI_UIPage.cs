@@ -336,7 +336,7 @@ public class Lua_Ballance2_UI_BallanceUI_UIPage : LuaObject {
 			#endif
 			#endif
 			Ballance2.UI.BallanceUI.UIPage self=(Ballance2.UI.BallanceUI.UIPage)checkSelf(l);
-			Ballance2.UI.BallanceUI.ILayoutContainer v;
+			Ballance2.UI.BallanceUI.UILayout v;
 			checkType(l,2,out v);
 			self.ContentContainer=v;
 			pushValue(l,true);

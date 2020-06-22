@@ -38,7 +38,7 @@ namespace Ballance2.UI.BallanceUI.Element
                     Text = xml.InnerText;
                 foreach (XmlAttribute a in xml.Attributes)
                 {
-                    if (a.Name == "text")
+                    if (a.Name.ToLower() == "text")
                         Text = a.InnerText;
                 }
                 

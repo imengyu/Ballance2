@@ -10,7 +10,7 @@ namespace Ballance2.UI.BallanceUI
     /// 布局
     /// </summary>
     [SLua.CustomLuaClass]
-    public class UILayout : UIElement, ILayoutContainer
+    public class UILayout : UIElement
     {
         /// <summary>
         /// 子元素
@@ -78,9 +78,9 @@ namespace Ballance2.UI.BallanceUI
             foreach(UIElement u in elements)
             {
                 if (u.Name == name) return u;
-                else if(u is ILayoutContainer)
+                else if(u is UILayout)
                 {
-                    UIElement rs = (u as ILayoutContainer).FindElementByName(name);
+                    UIElement rs = (u as UILayout).FindElementByName(name);
                     if (rs != null) return rs;
                 }
             }
