@@ -1,4 +1,5 @@
-﻿using Ballance2.Managers.CoreBridge;
+﻿using Ballance2.Managers;
+using Ballance2.Managers.CoreBridge;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,37 +13,74 @@ namespace Ballance2.Main
 
         void Start()
         {
-            //StartCoroutine(Run());
+            StartCoroutine(Run());
         }
         void Update()
         {
 
         }
 
+        private int dialogQuitId = 0;
+
         IEnumerator Run()
         {
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(1f);
 
-              GameLogger.Log(TAG, "Run Start");
+            if(GameManager.Mode != GameManager.GameMode.MinimumLoad)
+            {
+                yield break;
+            }
+
+            GameLogger.Log(TAG, "Run Start");
 
             yield return new WaitUntil(GameManager.IsGameBaseInitFinished);
 
+            GameManager.CloseGameManagerAlert();
             GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE,
-                "Debug", (evtName, param) =>
-                {
-                    GameLogger.Log(TAG, "{0} Alert closed : {1} => {2}", evtName, param[0], param[1]);
-                    return false;
-                });
+               "Debug", (evtName, param) =>
+               {
+                   if((int)param[0] == dialogQuitId)
+                   {
+                       if ((bool)param[1])
+                           GameManager.QuitGame();
+                   }
+                   return false;
+               });
 
-            GameLogger.Log(TAG, "IsGameBaseInitFinished");
-            GameLogger.Warning(TAG, "Test warning log");
-            GameLogger.Error(TAG, "Test Error log");
-            GameLogger.Error(TAG, "Test Error log2");
-            //GameManager.UIManager.GlobalAlert("测试对话框内容", "测试对话框");
+            DebugLinearLayout();
 
+            GameManager.UIManager.MaskBlackSet(false);
             GameLogger.Log(TAG, "Run End");
         }
 
+        public TextAsset PageMain;
+        public TextAsset PageLightZone;
 
+        private void DebugLinearLayout()
+        {
+            GameManager.UIManager.RegisterBallanceUIPage("main", PageMain.text,
+                new string[] { "btn.start:click" , "btn.quit:click" },
+                new GameHandlerDelegate[] {
+                    (evtName, param) => {
+                        GameManager.UIManager.GotoUIPage("main.lz");
+                        return false;
+                    },
+                    (evtName, param) => {
+                        dialogQuitId  = GameManager.UIManager.GlobalConfirm("真的要退出游戏吗", "提示", "确定","取消");
+                        return false;
+                    }
+                },
+                "Default");
+            GameManager.UIManager.RegisterBallanceUIPage("main.lz", PageLightZone.text,
+                new string[] { "btn.back:click" },
+                new GameHandlerDelegate[] {
+                    (evtName, param) => {
+                        GameManager.UIManager.BackUIPage();
+                        return false;
+                    }
+                },
+                "Default");
+            GameManager.UIManager.GotoUIPage("main");
+        }
     }
 }

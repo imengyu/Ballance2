@@ -3,5 +3,6 @@
   <UIButtonBack
     name="btn.back" 
     layout_centerHorizontal="true"
+    layout_alignParentBottom="true"
     layout_marginBottom="30">返回</UIButtonBack>
 </UIRelativeLayout>

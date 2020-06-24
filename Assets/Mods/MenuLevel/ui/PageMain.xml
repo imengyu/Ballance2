@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <UIVertcialLinearLayout
-  layoutChildSpacing="10"
+  width="match_parent"
+  layoutChildSpacing="20"
   gravity="Center">
   <UIMainButton name="btn.start">开始</UIMainButton>
   <UIMainButton name="btn.highscore">高分</UIMainButton>

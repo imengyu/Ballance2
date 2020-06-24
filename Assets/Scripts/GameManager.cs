@@ -190,6 +190,8 @@ namespace Ballance2
             public override string ToString() { return Name; }
         }
 
+        private static int gameManagerAlertDialogId = 0;
+
         private static bool gameMediatorInitFinished = false;
         private static bool gameBaseInitFinished = false;
         private static bool gameBreakAtStart = false;
@@ -245,29 +247,40 @@ namespace Ballance2
                     RegisterManager(typeof(DebugManager));
                     RegisterManager(typeof(ModManager));
                     RegisterManager(typeof(SoundManager));
-                    RegisterManager(typeof(GameInit));
-
-                    //Lua
-                    GameMainLuaState = new LuaSvr.MainState();
+                    
+                    if (Mode != GameMode.MinimumLoad)
+                    {
+                        //游戏加载器
+                        RegisterManager(typeof(GameInit));
+                        //Lua
+                        GameMainLuaState = new LuaSvr.MainState();
+                    }
 
                     //初始化完成
                     gameBaseInitFinished = true;
                     GameLogger.Log(TAG, "All manager initialization complete");
                     GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_BASE_INIT_FINISHED, "*", null);
 
-                    //启动时暂停
-                    if (gameBreakAtStart)
+                    if (Mode == GameMode.MinimumLoad)
+                    {
+                        GameLogger.Log(TAG, "MinimumLoad Break");
+                        gameManagerAlertDialogId = UIManager.GlobalAlert("MinimumLoad<br/>当前是最小加载模式。", "提示", "关闭");
+                    }
+                    else if (gameBreakAtStart) //启动时暂停
                     {
                         GameLogger.Log(TAG, "Game break at start");
-                        UIManager.GlobalAlert("BreakAtStart<br/>您可以点击“继续运行”", "BreakAtStart", "继续运行");
+                        gameManagerAlertDialogId = UIManager.GlobalAlert("BreakAtStart<br/>您可以点击“继续运行”", "BreakAtStart", "继续运行");
                         GameMediator.RegisterEventHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, TAG, (evtName, param) =>
                         {
-                            //通知进行下一步内核加载
-                            int initEventHandledCount = GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_ENTRY, "*", null);
-                            if (initEventHandledCount == 0)
+                            if ((int)param[0] == gameManagerAlertDialogId)
                             {
-                                GameLogger.Error(TAG, "Not found handler for EVENT_GAME_INIT_ENTRY!");
-                                GameErrorManager.ThrowGameError(GameError.HandlerLost, "未找到 EVENT_GAME_INIT_ENTRY 的下一步事件接收器\n此错误出现原因可能是配置不正确");
+                                //通知进行下一步内核加载
+                                int initEventHandledCount = GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_ENTRY, "*", null);
+                                if (initEventHandledCount == 0)
+                                {
+                                    GameLogger.Error(TAG, "Not found handler for EVENT_GAME_INIT_ENTRY!");
+                                    GameErrorManager.ThrowGameError(GameError.HandlerLost, "未找到 EVENT_GAME_INIT_ENTRY 的下一步事件接收器\n此错误出现原因可能是配置不正确");
+                                }
                             }
                             return false;
                         });
@@ -372,6 +385,11 @@ namespace Ballance2
             for (int i = 0, c = GameRoot.transform.childCount; i < c; i++)
                 GameRoot.transform.GetChild(i).gameObject.SetActive(false);
             GameBaseCamera.gameObject.SetActive(true);
+        }
+
+        public static void CloseGameManagerAlert()
+        {
+            UIManager.CloseWindow(UIManager.FindWindowById(gameManagerAlertDialogId));
         }
 
         #endregion

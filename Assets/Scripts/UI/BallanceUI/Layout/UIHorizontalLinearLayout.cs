@@ -6,6 +6,7 @@
         public UIHorizontalLinearLayout()
         {
             layoutDirection = LayoutAxis.Horizontal;
+            baseName = "UIHorizontalLinearLayout";
         }
     }
 }

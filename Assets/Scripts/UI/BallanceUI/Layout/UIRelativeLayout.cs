@@ -13,6 +13,11 @@ namespace Ballance2.UI.BallanceUI.Layout
     [SLua.CustomLuaClass]
     public class UIRelativeLayout : UILayout
     {
+        public UIRelativeLayout()
+        {
+            baseName = "UIRelativeLayout";
+        }
+
         protected override void OnGravityChanged()
         {
             base.OnGravityChanged();
@@ -21,12 +26,8 @@ namespace Ballance2.UI.BallanceUI.Layout
         protected override void OnLayout()
         {
             //调整最小大小
-            UIAnchor[] thisAnchor = UIAnchorPosUtils.GetUIAnchor(RectTransform);
-            if (RectTransform.sizeDelta.x < MinSize.x && thisAnchor[0] != UIAnchor.Stretch)
-                RectTransform.sizeDelta = new Vector2(MinSize.x, RectTransform.sizeDelta.y);
-            if (RectTransform.sizeDelta.y < MinSize.y && thisAnchor[1] != UIAnchor.Stretch)
-                RectTransform.sizeDelta = new Vector2(RectTransform.sizeDelta.x, MinSize.y);
-
+            DoResize();
+            magEles.Clear();
             //构建依赖
             BuildSortChilds();
             //布局
@@ -67,7 +68,7 @@ namespace Ballance2.UI.BallanceUI.Layout
             else
             {
                 UIElement parentEle = FindElementInLayoutByName(name);
-                if (parentEle != null)
+                if (parentEle != null && parentEle.Visibility != UIVisibility.Gone)
                 {
                     parent = BuildChildRefInfo(parentEle);
                     return isV ? parent.dependenciesLevelVertical : parent.dependenciesLevelHorizontal;
@@ -145,8 +146,8 @@ namespace Ballance2.UI.BallanceUI.Layout
             for (int i = 0; i < Elements.Count; i++)
             {
                 e = Elements[i];
-                if (e.gameObject.activeSelf)
-                    if (e.Layout_above == null && e.Layout_alignBottom == null && e.Layout_alignLeft == null
+                if (e.Visibility != UIVisibility.Gone 
+                    && e.Layout_above == null && e.Layout_alignBottom == null && e.Layout_alignLeft == null
                         && e.Layout_alignRight == null && e.Layout_alignTop == null && e.Layout_below == null
                         && e.Layout_toLeftOf == null && e.Layout_toRightOf == null)
                         magEles.Add(e.Name, new ElementNode(e, 0, 0));
@@ -155,7 +156,7 @@ namespace Ballance2.UI.BallanceUI.Layout
             for (int i = 0; i < Elements.Count; i++)
             {
                 e = Elements[i];
-                if (e.gameObject.activeSelf)
+                if (e.Visibility != UIVisibility.Gone)
                     BuildChildRefInfo(e);
             }
             //生成排序列表
@@ -173,7 +174,7 @@ namespace Ballance2.UI.BallanceUI.Layout
             for (int i = 0, c = sortedHorizontalChildren.Count; i < c; i++)
                 DoLayoutElementHorizontalInternal(sortedHorizontalChildren[i].element);
             for (int i = 0, c = sortedVerticalChildren.Count; i < c; i++)
-                DoLayoutElementHorizontalInternal(sortedVerticalChildren[i].element);
+                DoLayoutElementVerticalInternal(sortedVerticalChildren[i].element);
         }
         private void DoLayoutElementHorizontalInternal(UIElement e)
         {

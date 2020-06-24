@@ -57,13 +57,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e91e48bf980b6d4380d573958085d0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  anchorX: 0
+  anchorX: 6
   anchorY: 0
-  minSize: {x: 0, y: 0}
+  minSize: {x: 0, y: 410.30927}
+  maxSize: {x: 0, y: 0}
+  name: 'main:Default:main:Default:main:Default:'
   layout_marginLeft: 0
   layout_marginTop: 0
   layout_marginRight: 0
   layout_marginBottom: 0
+  visibility: 0
   layout_centerHorizontal: 0
   layout_centerVertical: 0
   layout_centerInParent: 0
@@ -79,6 +82,7 @@ MonoBehaviour:
   layout_alignBottom: 
   layout_alignLeft: 
   layout_alignRight: 
+  elements: []
   gravity: 0
   layoutDirection: 0
   layoutChildSpacing: 0

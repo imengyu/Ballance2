@@ -6,6 +6,7 @@
         public UIVerticalLinearLayout()
         {
             layoutDirection = LayoutAxis.Vertical;
+            baseName = "UIVerticalLinearLayout";
         }
     }
 }

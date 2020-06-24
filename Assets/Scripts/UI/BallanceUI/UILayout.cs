@@ -38,12 +38,15 @@ namespace Ballance2.UI.BallanceUI
         /// <returns></returns>
         public virtual UIElement AddElement(UIElement element, bool doLayout = true)
         {
-            RectTransform rectTransform = element.RectTransform;
-            rectTransform.SetParent(RectTransform);
-            if (doLayout)
-                PostDoLayout();
-            elements.Add(element);
-            element.Parent = this;
+            if (element != null)
+            {
+                RectTransform rectTransform = element.RectTransform;
+                rectTransform.SetParent(RectTransform);
+                if (doLayout)
+                    PostDoLayout();
+                elements.Add(element);
+                element.Parent = this;
+            }
             return element;
         }
         /// <summary>
@@ -126,7 +129,7 @@ namespace Ballance2.UI.BallanceUI
             elements = new List<UIElement>();
         }
 
-        [Reorderable("Elements", true, "Name")]
+        [SerializeField, SetProperty("Elements")]
         private List<UIElement> elements = null;
         [SerializeField, SetProperty("Gravity")]
         private LayoutGravity gravity;
@@ -136,27 +139,25 @@ namespace Ballance2.UI.BallanceUI
         private int layoutDelyCount = 0;
         private bool layoutLock = false;
 
-        private void OnDestroy()
+        protected new void OnDestroy()
         {
             if (elements != null)
             {
                 elements.Clear();
                 elements = null;
             }
+            base.OnDestroy();
         }
-        private void Update()
+        protected new void Update()
         {
-            if (loopUpdate > 0) {
+            if (loopUpdate > 0 && !layoutLock) {
                 loopUpdate--;
                 if (loopUpdate == 0)
-                {
-                    layoutPendCount = 0;
                     DoLayout();
-                }
             }
-            if(layoutDelyCount > 0)
+            if(layoutDelyCount > 0 && !layoutLock)
                 layoutDelyCount--;
-            
+            base.Update();
         }
 
         public void LayoutUnLock() { layoutLock = false; }
@@ -167,8 +168,9 @@ namespace Ballance2.UI.BallanceUI
         public void PostDoLayout()
         {
             layoutPendCount++;
-            loopUpdate = 20 - (int)(17 * (layoutPendCount / 5.0f));
-            if (loopUpdate < 5) loopUpdate = 5;
+            loopUpdate = 10 - (int)(5 * (layoutPendCount / 5.0f));
+            if (loopUpdate < 2) loopUpdate = 2;
+            if (loopUpdate > 20) loopUpdate = 20;
         }
         /// <summary>
         /// 强制布局
@@ -176,11 +178,19 @@ namespace Ballance2.UI.BallanceUI
         /// <param name="startChildIndex"></param>
         public void DoLayout()
         {
-            if (!layoutLock && layoutDelyCount == 0)
+            if (!layoutLock)
             {
-                layoutLock = true;
-                layoutDelyCount = 5;
-                OnLayout();
+                if (layoutDelyCount == 0)
+                {
+                    layoutDelyCount = 2;
+                    layoutPendCount = 0;
+                    layoutLock = true;
+                   
+                    OnLayout();
+
+                    layoutLock = false;
+                }
+                else loopUpdate = 2;
             }
         }
         /// <summary>
@@ -194,19 +204,21 @@ namespace Ballance2.UI.BallanceUI
 
         protected override void SetProp(string name, string val)
         {
-            base.SetProp(name, val);
-            switch(name)
+            switch (name)
             {
                 case "gravity":
                     System.Enum.TryParse(val, out gravity);
                     OnGravityChanged();
                     PostDoLayout();
                     break;
+                default:
+                    base.SetProp(name, val);
+                    break;
             }
         }
     }
 
-    [SLua.CustomLuaClass]
+    [SLua.CustomLuaClass] 
     public static class UILayoutUtils
     {
         public static UIAnchor GravityToAnchor(LayoutGravity gravity, RectTransform.Axis axis)

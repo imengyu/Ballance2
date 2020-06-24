@@ -50,23 +50,12 @@ public class Lua_Ballance2_UI_BallanceUI_UIElement : LuaObject {
 			#endif
 			#endif
 			int argc = LuaDLL.lua_gettop(l);
-			if(matchType(l,argc,2,typeof(string),typeof(string))){
+			if(matchType(l,argc,1,typeof(System.Xml.XmlNode))){
 				Ballance2.UI.BallanceUI.UIElement self=(Ballance2.UI.BallanceUI.UIElement)checkSelf(l);
-				System.String a1;
-				checkType(l,2,out a1);
-				System.String a2;
-				checkType(l,3,out a2);
-				self.LateInit(a1,a2);
-				pushValue(l,true);
-				return 1;
-			}
-			else if(matchType(l,argc,2,typeof(string),typeof(System.Xml.XmlNode))){
-				Ballance2.UI.BallanceUI.UIElement self=(Ballance2.UI.BallanceUI.UIElement)checkSelf(l);
-				System.String a1;
-				checkType(l,2,out a1);
+
 				System.Xml.XmlNode a2;
 				checkType(l,3,out a2);
-				self.LateInit(a1,a2);
+				self.LateInit(a2);
 				pushValue(l,true);
 				return 1;
 			}

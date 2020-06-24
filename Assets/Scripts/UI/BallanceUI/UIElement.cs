@@ -20,34 +20,14 @@ namespace Ballance2.UI.BallanceUI
             lateInitHandlers = gameHandlers;
             lateInitDeaily = 30;
         }
-        public void LateInit(string name, string xml)
-        {
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(xml);
-            if (startClled)
-            {
-                Name = name;
-                SolveXml(doc.DocumentElement);
-            }
-            else
-            {
-                lateInitDeaily = 30;
-                Name = name;
-                lateInitXml = doc.DocumentElement;
-            }
-        }
-        public void LateInit(string name, XmlNode xml)
+        public void LateInit(XmlNode xml)
         {
             if (startClled)
-            {
-                Name = name;
                 SolveXml(xml);
-            }
             else
             {
-                lateInitDeaily = 30;
-                Name = name;
                 lateInitXml = xml;
+                lateInitDeaily = 30;
             }
         }
 
@@ -56,13 +36,17 @@ namespace Ballance2.UI.BallanceUI
         /// </summary>
         /// <param name="name">事件名称</param>
         /// <param name="handler">接收器</param>
-        public virtual void SetEventHandler(string name, GameHandler handler) { }
+        public virtual void SetEventHandler(string name, GameHandler handler) {
+            GameLogger.Log(Name, "SetEventHandler {0} {1}", name, handler.Name);
+        }
         /// <summary>
         /// 移除事件接收器
         /// </summary>
         /// <param name="name">事件名称</param>
         /// <param name="handler">接收器</param>
-        public virtual void RemoveEventHandler(string name, GameHandler handler) { }
+        public virtual void RemoveEventHandler(string name, GameHandler handler) {
+            GameLogger.Log(Name, "RemoveEventHandler {0} {1}", name, handler.Name);
+        }
 
         [SerializeField, SetProperty("AnchorX")]
         private UIAnchor anchorX;
@@ -70,7 +54,10 @@ namespace Ballance2.UI.BallanceUI
         private UIAnchor anchorY;
         [SerializeField, SetProperty("MinSize")]
         private Vector2 minSize = new Vector2(0, 0);
-
+        [SerializeField, SetProperty("MaxSize")]
+        private Vector2 maxSize = new Vector2(0, 0);
+        [SerializeField, SetProperty("Name")]
+        private new string name = "";
         [SerializeField, SetProperty("Layout_marginLeft")]
         private float layout_marginLeft = 0;
         [SerializeField, SetProperty("Layout_marginTop")]
@@ -107,6 +94,10 @@ namespace Ballance2.UI.BallanceUI
         /// </summary>
         public Vector2 MinSize { get { return minSize; } set  { minSize = value; DoPostLayout(); } }
         /// <summary>
+        /// 最大大小
+        /// </summary>
+        public Vector2 MaxSize { get { return maxSize; } set { maxSize = value; DoPostLayout(); } }
+        /// <summary>
         /// X轴锚点
         /// </summary>
         public UIAnchor AnchorX
@@ -130,10 +121,19 @@ namespace Ballance2.UI.BallanceUI
                 if (Parent != null) Parent.PostDoLayout();
             }
         }
+
         /// <summary>
         /// 创建时的名字
         /// </summary>
-        public string Name { get; set; }
+        public string Name
+        {
+            get { return name; }
+            set
+            {
+                name = value;
+                base.name = value;
+            }
+        }
         /// <summary>
         /// 当前 RectTransform
         /// </summary>
@@ -143,6 +143,8 @@ namespace Ballance2.UI.BallanceUI
         /// </summary>
         public UILayout Parent { get; set; }
 
+        [SerializeField, SetProperty("Visibility")]
+        private UIVisibility visibility = UIVisibility.Visible;
         [SerializeField, SetProperty("Layout_centerHorizontal")]
         private bool layout_centerHorizontal = false;
         [SerializeField, SetProperty("Layout_centerVertical")]
@@ -174,6 +176,16 @@ namespace Ballance2.UI.BallanceUI
         [SerializeField, SetProperty("Layout_alignRight")]
         private string layout_alignRight = null;
 
+        public UIVisibility Visibility
+        {
+            get { return visibility; }
+            set
+            {
+                visibility = value;
+                gameObject.SetActive(visibility == UIVisibility.Visible);
+                DoPostLayout();
+            }
+        }
         public bool Layout_centerHorizontal { get { return layout_centerHorizontal; } set { layout_centerHorizontal = value; DoPostLayout(); } }
         public bool Layout_centerVertical { get { return layout_centerVertical; } set { layout_centerVertical = value; DoPostLayout(); } }
         public bool Layout_centerInParent { get { return layout_centerInParent; } set { layout_centerInParent = value; DoPostLayout(); } }
@@ -207,13 +219,8 @@ namespace Ballance2.UI.BallanceUI
         protected string baseName = "UIElement";
         protected virtual void SolveXml(XmlNode xml)
         {
-            if (xml.Attributes.Count > 0)
-            {
-                foreach (XmlAttribute a in xml.Attributes)
-                {
-                    SetProp(a.Name, a.Value);
-                }
-            }
+            foreach (XmlAttribute a in xml.Attributes)
+                SetProp(a.Name, a.Value);
         }
         protected virtual void SetProp(string name, string val)
         {
@@ -368,6 +375,13 @@ namespace Ballance2.UI.BallanceUI
                     {
                         System.Enum.TryParse(val, out anchorX);
                         DoPostLayout();
+                        break;
+                    }
+                case "visibility":
+                    {
+                        UIVisibility v;
+                        System.Enum.TryParse(val, out v);
+                        Visibility = v;
                         break;
                     }
                 case "anchorY":
@@ -552,13 +566,14 @@ namespace Ballance2.UI.BallanceUI
         private bool startClled = false;
         private int lateInitDeaily = 0;
 
-        private void Start()
+        protected void Start()
         {
+            if(string.IsNullOrEmpty(name))
+                Name = baseName;
             RectTransform = GetComponent<RectTransform>();
-            name = Name;
             startClled = true;
         }
-        private void Update()
+        protected void Update()
         {
             if(lateInitDeaily > 0)
             {
@@ -566,7 +581,7 @@ namespace Ballance2.UI.BallanceUI
                 if (lateInitDeaily == 0) DoLateInit();
             }
         }
-        private void OnDestroy()
+        protected void OnDestroy()
         {
             if (data != null)
             {
@@ -576,40 +591,14 @@ namespace Ballance2.UI.BallanceUI
         }
         private void DoLateInit()
         {
-            name = Name;
-
             if (lateInitXml != null)
             {
                 SolveXml(lateInitXml);
-                lateInitXml = null;
             }
-            if(lateInitHandlers != null)
+            if (lateInitHandlers != null)
             {
-                foreach(string key in lateInitHandlers.Keys)
+                foreach (string key in lateInitHandlers.Keys)
                     SetEventHandler(key, lateInitHandlers[key]);
-                
-                lateInitHandlers = null;
-            }
-        }
-        private void DoResize()
-        {
-            UIAnchor[] thisAnchor = UIAnchorPosUtils.GetUIAnchor(RectTransform);
-
-            if (RectTransform.sizeDelta.x < MinSize.x && thisAnchor[0] != UIAnchor.Stretch)
-                RectTransform.sizeDelta = new Vector2(MinSize.x, RectTransform.sizeDelta.y);
-            if (RectTransform.sizeDelta.y < MinSize.y && thisAnchor[1] != UIAnchor.Stretch)
-                RectTransform.sizeDelta = new Vector2(RectTransform.sizeDelta.x, MinSize.y);
-
-            if(thisAnchor[0] == UIAnchor.Stretch)
-            {
-                UIAnchorPosUtils.SetUILeftBottom(RectTransform, layout_marginLeft, UIAnchorPosUtils.GetUIBottom(RectTransform));
-                UIAnchorPosUtils.SetUIRightTop(RectTransform, layout_marginRight, UIAnchorPosUtils.GetUIRight(RectTransform));
-            }
-
-            if (thisAnchor[1] == UIAnchor.Stretch)
-            {
-                UIAnchorPosUtils.SetUILeftBottom(RectTransform, UIAnchorPosUtils.GetUILeft(RectTransform), layout_marginBottom);
-                UIAnchorPosUtils.SetUIRightTop(RectTransform, UIAnchorPosUtils.GetUITop(RectTransform), layout_marginTop);
             }
         }
         private void DoPostLayout()
@@ -622,5 +611,44 @@ namespace Ballance2.UI.BallanceUI
             if (this is UILayout) (this as UILayout).PostDoLayout();
             else DoResize();
         }
+
+        /// <summary>
+        /// 强制重新适应 MinSize MaxSize
+        /// </summary>
+        public void DoResize()
+        {
+            UIAnchor[] thisAnchor = UIAnchorPosUtils.GetUIAnchor(RectTransform);
+
+            if (RectTransform.rect.width < MinSize.x && thisAnchor[0] != UIAnchor.Stretch)
+                RectTransform.sizeDelta = new Vector2(MinSize.x, RectTransform.sizeDelta.y);
+            if (RectTransform.rect.height < MinSize.y && thisAnchor[1] != UIAnchor.Stretch)
+                RectTransform.sizeDelta = new Vector2(RectTransform.sizeDelta.x, MinSize.y);
+
+            if (MaxSize.x > 0 && RectTransform.rect.width > MaxSize.x && thisAnchor[0] != UIAnchor.Stretch)
+                RectTransform.sizeDelta = new Vector2(MaxSize.x, RectTransform.sizeDelta.y);
+            if (MaxSize.y > 0 && RectTransform.rect.height > MaxSize.y && thisAnchor[1] != UIAnchor.Stretch)
+                RectTransform.sizeDelta = new Vector2(RectTransform.sizeDelta.x, MaxSize.y);
+
+            if (thisAnchor[0] == UIAnchor.Stretch)
+            {
+                UIAnchorPosUtils.SetUILeftBottom(RectTransform, layout_marginLeft, UIAnchorPosUtils.GetUIBottom(RectTransform));
+                UIAnchorPosUtils.SetUIRightTop(RectTransform, layout_marginRight, UIAnchorPosUtils.GetUIRight(RectTransform));
+            }
+            if (thisAnchor[1] == UIAnchor.Stretch)
+            {
+                UIAnchorPosUtils.SetUILeftBottom(RectTransform, UIAnchorPosUtils.GetUILeft(RectTransform), layout_marginBottom);
+                UIAnchorPosUtils.SetUIRightTop(RectTransform, UIAnchorPosUtils.GetUITop(RectTransform), layout_marginTop);
+            }
+        }
+    }
+    [SLua.CustomLuaClass]
+    /// <summary>
+    /// 可见性
+    /// </summary>
+    public enum UIVisibility
+    {
+        Visible,
+        Gone,
+        InVisible,
     }
 }

@@ -20,7 +20,7 @@ public class UIAlertWindow : UIWindow
     public void Show(string text, string title, string okText)
     {
         Title = title;
-        UIDialogText.text = text;
+        UIDialogText.text = text.Replace("<br>", "\n").Replace("<br/>", "\n");
         UIButtonConfirmText.text = okText;
         Show();
     }

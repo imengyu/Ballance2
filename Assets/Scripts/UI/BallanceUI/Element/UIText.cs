@@ -19,15 +19,11 @@ namespace Ballance2.UI.BallanceUI.Element
         {
             base.SolveXml(xml);
 
-            if (xml.Name == TAG && xml.Attributes.Count > 0)
-            {
-                if (!string.IsNullOrEmpty(xml.InnerXml))
-                    Text = xml.InnerXml;
-            }
+            if (!string.IsNullOrEmpty(xml.InnerXml))
+                Text = xml.InnerXml;
         }
         protected override void SetProp(string name, string val)
         {
-            base.SetProp(name, val);
             switch (name)
             {
                 case "text": Text = val; break;
@@ -48,6 +44,9 @@ namespace Ballance2.UI.BallanceUI.Element
                             text.lineSpacing = f;
                         break;
                     }
+                default:
+                    base.SetProp(name, val);
+                    break;
             }
         }
 
@@ -59,12 +58,14 @@ namespace Ballance2.UI.BallanceUI.Element
         public string Text
         {
             get { return text.text; }
-            set { text.text = value; }
+            set { text.text = value.Replace("<br>", "\n").Replace("<br/>", "\n"); }
         }
 
-        private void Start()
+        private new void Start()
         {
             text = GetComponent<Text>();
+
+            base.Start();
         }
     }
 }

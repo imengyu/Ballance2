@@ -25,7 +25,7 @@ public class UIConfirmWindow : UIWindow
     public void Show(string text, string title, string okText, string cancelText)
     {
         Title = title;
-        UIConfirmText.text = text;
+        UIConfirmText.text = text.Replace("<br>", "\n").Replace("<br/>", "\n");
         UIButtonConfirmText.text = okText;
         UIButtonCancelText.text = cancelText;
         Show();

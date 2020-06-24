@@ -32,11 +32,8 @@ namespace Ballance2.UI.BallanceUI.Element
         {
             base.SolveXml(xml);
 
-            if (xml.Name == TAG && xml.Attributes.Count > 0)
-            {
-                if (!string.IsNullOrEmpty(xml.InnerXml))
-                    Text = xml.InnerText;
-            }
+            if (!string.IsNullOrEmpty(xml.InnerXml))
+                Text = xml.InnerText;
         }
         protected override void SetProp(string name, string val)
         {
@@ -54,10 +51,10 @@ namespace Ballance2.UI.BallanceUI.Element
         public string Text
         {
             get { return text.text; }
-            set { text.text = value; }
+            set { text.text = value.Replace("<br>", "\n").Replace("<br/>", "\n"); }
         }
 
-        private void Start()
+        private new void Start()
         {
             clickEventHandler = new GameHandlerList();
             text = transform.Find("Text").gameObject.GetComponent<Text>();
@@ -72,14 +69,18 @@ namespace Ballance2.UI.BallanceUI.Element
             {
 
             };
+
+            base.Start();
         }
-        private void OnDestroy()
+        private new void OnDestroy()
         {
             if (clickEventHandler != null)
             {
                 clickEventHandler.Dispose();
                 clickEventHandler = null;
             }
+
+            base.OnDestroy();
         }
     }
 }
