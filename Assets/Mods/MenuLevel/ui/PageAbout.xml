@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <UIVertcialLinearLayout>
-  <UIText text="关于" />
-  <UIButtonBack name="btn.back" text="返回" />
+  <UIText color="#ffffff">
+    关于<br/>
+    关于文字<br/>
+    关于文字<br/>
+    关于文字<br/>
+    关于文字<br/>
+    关于文字<br/>
+    v<br/>
+    关于文字<br/>
+    关于文字<br/>
+    关于文字<br/>
+  </UIText>
+  <UIButtonBack name="btn.back">返回</UIButtonBack>
 </UIVertcialLinearLayout>

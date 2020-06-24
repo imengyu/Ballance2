@@ -65,6 +65,54 @@ namespace Ballance2.UI.Utils
             rectTransform.anchorMin = new Vector2(x1, y1);
             rectTransform.anchorMax = new Vector2(x2, y2);
         }
+        /// <summary>
+        /// 获取 UI 组件锚点
+        /// </summary>
+        /// <param name="rectTransform">UI 组件</param>
+        public static UIAnchor[] GetUIAnchor(RectTransform rectTransform)
+        {
+            UIAnchor x = UIAnchor.None, y = UIAnchor.None;
+            float x1 = rectTransform.anchorMin.x, x2 = rectTransform.anchorMax.x, 
+                y1 = rectTransform.anchorMin.y, y2 = rectTransform.anchorMax.y;
+
+            if (x1 == 0 && x2 == 0) x = UIAnchor.Left;
+            else if (x1 == 0.5f && x2 == 0.5f) x = UIAnchor.Center;
+            else if (x1 == 1 && x2 == 1) x = UIAnchor.Right;
+            else if (x1 == 0 && x2 == 1) x = UIAnchor.Stretch;
+
+            if (y1 == 0 && y2 == 0) y = UIAnchor.Bottom;
+            else if (y1 == 0.5f && y2 == 0.5f) y = UIAnchor.Center;
+            else if (y1 == 1 && y2 == 1) y = UIAnchor.Top;
+            else if (y1 == 0 && y2 == 1) y = UIAnchor.Stretch;
+
+            return new UIAnchor[2] { x, y };
+        }
+        /// <summary>
+        /// 获取 UI 组件锚点
+        /// </summary>
+        /// <param name="rectTransform">UI 组件</param>
+        /// <param name="axis">要获取的轴</param>
+        public static UIAnchor GetUIAnchor(RectTransform rectTransform, RectTransform.Axis axis)
+        {
+            UIAnchor anchor = UIAnchor.None;
+            if (axis == RectTransform.Axis.Horizontal)
+            {
+                float x1 = rectTransform.anchorMin.x, x2 = rectTransform.anchorMax.x;
+                if (x1 == 0 && x2 == 0) anchor = UIAnchor.Left;
+                else if (x1 == 0.5f && x2 == 0.5f) anchor = UIAnchor.Center;
+                else if (x1 == 1 && x2 == 1) anchor = UIAnchor.Right;
+                else if (x1 == 0 && x2 == 1) anchor = UIAnchor.Stretch;
+            }
+            else if (axis == RectTransform.Axis.Vertical)
+            {
+                float y1 = rectTransform.anchorMin.y, y2 = rectTransform.anchorMax.y;
+                if (y1 == 0 && y2 == 0) anchor = UIAnchor.Left;
+                else if (y1 == 0.5f && y2 == 0.5f) anchor = UIAnchor.Center;
+                else if (y1 == 1 && y2 == 1) anchor = UIAnchor.Right;
+                else if (y1 == 0 && y2 == 1) anchor = UIAnchor.Stretch;
+            }
+            return anchor;
+        }
 
         /// <summary>
         /// 设置 UI 组件 上 右 坐标
@@ -116,14 +164,129 @@ namespace Ballance2.UI.Utils
         {
             return rectTransform.offsetMin.y;
         }
+
+        /// <summary>
+        /// 设置 UI 组件枢轴
+        /// </summary>
+        /// <param name="rectTransform">UI 组件</param>
+        /// <param name="x">X 轴锚点</param>
+        /// <param name="y">Y 轴锚点</param>
+        public static void SetUIPivot(RectTransform rectTransform, UIPivot pivot)
+        {
+            float x = 0.5f, y = 0.5f;
+
+            switch (pivot)
+            {
+                case UIPivot.TopLeft:
+                    x = 0;
+                    y = 1;
+                    break;
+                case UIPivot.TopCenter:
+                    x = 0.5f;
+                    y = 1;
+                    break;
+                case UIPivot.TopRight:
+                    x = 1;
+                    y = 1;
+                    break;
+                case UIPivot.CenterLeft:
+                    x = 0;
+                    y = 0.5f;
+                    break;
+                case UIPivot.Center:
+                    x = 0.5f;
+                    y = 0.5f;
+                    break;
+                case UIPivot.CenterRight:
+                    x = 1;
+                    y = 0.5f;
+                    break;
+                case UIPivot.BottomCenter:
+                    x = 0.5f;
+                    y = 0;
+                    break;
+                case UIPivot.BottomLeft:
+                    x = 0;
+                    y = 0;
+                    break;
+                case UIPivot.BottomRight:
+                    x = 1;
+                    y = 0;
+                    break;
+            }
+
+            rectTransform.pivot = new Vector2(x, y);
+        }
+        /// <summary>
+        /// 获取 UI 组件枢轴
+        /// </summary>
+        /// <param name="rectTransform">UI 组件</param>
+        public static UIPivot GetUIPivot(RectTransform rectTransform)
+        {
+            UIPivot uIPivot = UIPivot.None;
+            float x = rectTransform.pivot.x, y = rectTransform.pivot.y;
+
+            if (x == 0 && y == 1) uIPivot = UIPivot.TopLeft;
+            else if (x == 0 && y == 1) uIPivot = UIPivot.TopCenter;
+            else if (x == 0.5f && y == 1) uIPivot = UIPivot.TopRight;
+            else if (x == 1 && y == 1) uIPivot = UIPivot.TopLeft;
+            else if (x == 0 && y == 1) uIPivot = UIPivot.TopLeft;
+            else if (x == 0 && y == 1) uIPivot = UIPivot.TopLeft;
+            else if (x == 0 && y == 1) uIPivot = UIPivot.TopLeft;
+            else if (x == 0 && y == 1) uIPivot = UIPivot.TopLeft;
+
+            return uIPivot;
+        }
+
+        /// <summary>
+        /// 计算 UI 坐标值枢轴的偏移
+        /// </summary>
+        /// <param name="rectTransform"></param>
+        /// <param name="value"></param>
+        /// <param name="axis"></param>
+        /// <returns></returns>
+        public static float GetUIPivotLocationOffest(RectTransform rectTransform, float value, RectTransform.Axis axis)
+        {
+            if(axis == RectTransform.Axis.Horizontal)
+                return value - ((1 - rectTransform.pivot.x) / 1 * rectTransform.rect.width);
+            else if (axis == RectTransform.Axis.Vertical)
+                return value - ((1 - rectTransform.pivot.y) / 1 * rectTransform.rect.height);
+            
+            return value;
+        }
+
+
     }
 
+    [SLua.CustomLuaClass]
+    /// <summary>
+    /// UI 组件枢轴
+    /// </summary>
+    public enum UIPivot
+    {
+        None,
+        Top = 0x1,
+        Center = 0x2,
+        Bottom = 0x4,
+        Left = 0x8,
+        Right = 0x10,
+
+        TopLeft = Top | Left,
+        TopCenter = Top | Center,
+        TopRight = Top | Right,
+        CenterLeft = Center | Left,
+        CenterRight = Center | Right,
+        BottomCenter = Bottom | Center,
+        BottomLeft = Bottom | Left,
+        BottomRight = Bottom | Right,
+    }
     [SLua.CustomLuaClass]
     /// <summary>
     /// UI 组件锚点
     /// </summary>
     public enum UIAnchor
     {
+        None,
         Top,
         Center,
         Bottom,

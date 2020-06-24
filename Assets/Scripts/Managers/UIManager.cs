@@ -70,8 +70,14 @@ namespace Ballance2.Managers
         private RectTransform PageContainerRectTransform;
         private RectTransform PageBackgroundRectTransform;
 
+        /// <summary>
+        /// UI 根 RectTransform
+        /// </summary>
+        public RectTransform UIRootRectTransform { get; private set; }
+
         private void InitAllObects()
         {
+            UIRootRectTransform = UIRoot.GetComponent<RectTransform>();
             TemporarilyRectTransform = GameCloneUtils.CreateEmptyUIObjectWithParent(UIRoot.transform, "GameUITemporarily").GetComponent<RectTransform>();
             TemporarilyRectTransform.gameObject.SetActive(false);
             GlobalWindowRectTransform = GameCloneUtils.CreateEmptyUIObjectWithParent(UIRoot.transform, "GameUIGlobalWindow").GetComponent<RectTransform>();
@@ -416,8 +422,11 @@ namespace Ballance2.Managers
                 return null;
             }
 
-            layoutContainer.MinSize = new Vector2(0, Screen.height);
-            return RegisterUIPage(pagePath, "Default", backgroundPrefabName, layoutContainer);
+            layoutContainer.MinSize = new Vector2(0, UIRootRectTransform.rect.height);
+            UIPage page = RegisterUIPage(pagePath, "Default", backgroundPrefabName, layoutContainer);
+            if (page.ContentContainer != null)
+                page.ContentContainer.MinSize = layoutContainer.MinSize;
+            return page;
         }
         /// <summary>
         /// 注册 Ballance 样式的 UI 页
@@ -440,8 +449,11 @@ namespace Ballance2.Managers
                 return null;
             }
 
-            layoutContainer.MinSize = new Vector2(0, Screen.height);
-            return RegisterUIPage(pagePath, "Default", backgroundPrefabName, layoutContainer);
+            layoutContainer.MinSize = new Vector2(0, UIRootRectTransform.rect.height);
+            UIPage page = RegisterUIPage(pagePath, "Default", backgroundPrefabName, layoutContainer);
+            if (page.ContentContainer != null)
+                page.ContentContainer.MinSize = layoutContainer.MinSize;
+            return page;
         }
         /// <summary>
         /// 注册 Ballance 样式的 UI 页
@@ -465,8 +477,11 @@ namespace Ballance2.Managers
                 return null;
             }
 
-            layoutContainer.MinSize = new Vector2(0, Screen.height);
-            return RegisterUIPage(pagePath, "Default", backgroundPrefabName, layoutContainer); 
+            layoutContainer.MinSize = new Vector2(0, UIRootRectTransform.rect.height);
+            UIPage page = RegisterUIPage(pagePath, "Default", backgroundPrefabName, layoutContainer);
+            if (page.ContentContainer != null)
+                page.ContentContainer.MinSize = layoutContainer.MinSize;
+            return page;
         }
         /// <summary>
         /// 注册 UI 页
@@ -497,12 +512,16 @@ namespace Ballance2.Managers
             GameObject pageGo = GameCloneUtils.CloneNewObjectWithParent(prefab, PageContainerRectTransform, pagePath, false);
             UIPage page = pageGo.GetComponent<UIPage>();
             page.RectTransform = pageGo.GetComponent<RectTransform>();
+            page.PagePath = pagePath;
+            //添加内容
             if (page.ContentRectTransform == null)
                 page.ContentRectTransform = page.RectTransform;
-            page.PagePath = pagePath;
             if (page.ContentContainer.RectTransform == null)
                 page.ContentContainer.RectTransform = page.ContentContainer.gameObject.GetComponent<RectTransform>();
+            page.ContentContainer.Name = pagePath + ":" + prefabName + ":" + backgroundPrefabName;
             page.ContentContainer.AddElement(content, false);
+
+            content.RectTransform.anchoredPosition = Vector2.zero;
 
             //背景
             SetPageBackground(page, backgroundPrefabName);
@@ -544,6 +563,7 @@ namespace Ballance2.Managers
             page.PagePath = pagePath;
             if (content.parent != page.ContentRectTransform) {
                 content.SetParent(page.ContentRectTransform);
+                UIAnchorPosUtils.SetUIAnchor(content, UIAnchor.Stretch, UIAnchor.Stretch);
                 UIAnchorPosUtils.SetUIPos(content, 0, 0, 0, 0);
             }
 
@@ -757,10 +777,11 @@ namespace Ballance2.Managers
         {
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.LoadXml(templateXml);
-            return BuildLayoutByTemplateInternal(name, xmlDocument.DocumentElement, handlers, null);
+            return BuildLayoutByTemplateInternal(name, xmlDocument.DocumentElement, handlers, null, null);
         }
 
-        private UILayout BuildLayoutByTemplateInternal(string name, XmlNode templateXml, Dictionary<string, GameHandler> handlers, UILayout parent)
+        //布局
+        private UILayout BuildLayoutByTemplateInternal(string name, XmlNode templateXml, Dictionary<string, GameHandler> handlers, UILayout parent, UILayout root)
         {
             //实例化UI预制体
             string prefabName = templateXml.Name;
@@ -776,20 +797,18 @@ namespace Ballance2.Managers
             UILayout ilayout = prefab.GetComponent<UILayout>();            
             if(ilayout == null) //该方法必须实例化UI容器
             {
-                GameLogger.Log(TAG, "BuildLayoutByTemplate with prefab {0} failed, root must be a container", prefabName);
+                GameLogger.Error(TAG, "BuildLayoutByTemplate with prefab {0} failed, root must be a container", prefabName);
                 GameErrorManager.LastError = GameError.MustBeContainer;
                 return null;
             }
+            if (root == null) root = ilayout;
 
             GameObject newCon = GameCloneUtils.CloneNewObjectWithParent(prefab,
                 parent == null ? UIRoot.transform : parent.RectTransform);
-            ilayout = newCon.GetComponent<UILayout>();
-            if (ilayout == null)
-            {
-                GameLogger.Error(TAG, "BuildLayoutByTemplate failed, root prefab {0} does not contain UIElement", prefabName);
-                return null;
-            }
+            ilayout.LayoutLock();
             ilayout.RectTransform = newCon.GetComponent<RectTransform>();
+            UIAnchorPosUtils.SetUIPivot(ilayout.RectTransform, UIPivot.TopCenter);
+            ilayout.RectTransform.anchoredPosition = Vector2.zero;
             ilayout.LateInit(name, templateXml); //容器的XML读取
 
             GameObject newEle = null;
@@ -813,7 +832,7 @@ namespace Ballance2.Managers
                     continue;
                 }
                 if (prefab.GetComponent<UILayout>() != null) //这是UI容器
-                    return BuildLayoutByTemplateInternal(eleName, eleNode, handlers, ilayout);//递归构建
+                    return BuildLayoutByTemplateInternal(eleName, eleNode, handlers, ilayout, root);//递归构建
 
                 //构建子元素
                 newEle = GameCloneUtils.CloneNewObjectWithParent(prefab, ilayout.RectTransform, eleName);
@@ -821,6 +840,7 @@ namespace Ballance2.Managers
                 uIElement = newEle.GetComponent<UIElement>();
                 uIElement.RectTransform = newEle.GetComponent<RectTransform>();
                 uIElement.LateInit(eleName, eleNode);
+                uIElement.rootContainer = root;
 
                 //初始化子元素的事件接收器
                 Dictionary<string, GameHandler> lateInitHandlers = new Dictionary<string, GameHandler>();
@@ -839,9 +859,11 @@ namespace Ballance2.Managers
                 }
                 if (lateInitHandlers.Count > 0) uIElement.LateInitHandlers(lateInitHandlers);
 
+                //添加元素
                 ilayout.AddElement(uIElement, false);
             }
 
+            ilayout.LayoutUnLock();
             ilayout.PostDoLayout();
             return ilayout;
         }
@@ -857,6 +879,8 @@ namespace Ballance2.Managers
             RegisterElementPrefab(GameManager.FindStaticPrefabs("UIMainButton"), "UIMainButton");
             RegisterElementPrefab(GameManager.FindStaticPrefabs("UILevButton"), "UILevButton");
             RegisterElementPrefab(GameManager.FindStaticPrefabs("UIButtonBack"), "UIButtonBack");
+            RegisterElementPrefab(GameManager.FindStaticPrefabs("UILinearLayout"), "UILinearLayout");
+            RegisterElementPrefab(GameManager.FindStaticPrefabs("UIRelativeLayout"), "UIRelativeLayout");
             RegisterElementPrefab(GameManager.FindStaticPrefabs("UIHorizontalLinearLayout"), "UIHorizontalLinearLayout");
             RegisterElementPrefab(GameManager.FindStaticPrefabs("UIVertcialLinearLayout"), "UIVertcialLinearLayout");
             RegisterElementPrefab(GameManager.FindStaticPrefabs("UISpace"), "UISpace");

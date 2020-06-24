@@ -1,37 +1,30 @@
 ﻿using UnityEngine;
-using System.Xml;
+using Ballance2.UI.BallanceUI.Layout;
 
 namespace Ballance2.UI.BallanceUI.Element
 {
     [SLua.CustomLuaClass]
     public class UISpace : UIElement
     {
-        private const string TAG = "Space";
-        internal LayoutType layoutType = LayoutType.None;
+        private const string TAG = "UISpace";
 
         public UISpace()
         {
             baseName = TAG;
         }
 
-        protected override void SolveXml(XmlNode xml)
+        protected override void SetProp(string name, string value)
         {
-            base.SolveXml(xml);
-
-            if(xml.Name == TAG && xml.Attributes.Count > 0)
+            base.SetProp(name, value);
+            if (name.ToLower() == "height")
             {
-                foreach(XmlAttribute a in xml.Attributes)
-                {
-                    if(a.Name.ToLower() == "height")
-                    {
-                        float val = 0;
-                        if (float.TryParse(a.InnerText, out val))
-                            Height = val;
-                    }
-                }
+                float val = 0;
+                if (float.TryParse(value, out val))
+                    Height = val;
             }
         }
 
+        [SerializeField, SetProperty("Height")]
         private float height = 50;
 
         /// <summary>
@@ -42,17 +35,21 @@ namespace Ballance2.UI.BallanceUI.Element
             get { return height; }
             set {
                 height = value;
-                switch (layoutType)
+                if (Parent != null && Parent is UILinearLayout)
                 {
-                    case LayoutType.None:
-                        RectTransform.sizeDelta = new Vector2(height, height);
-                        break;
-                    case LayoutType.Vertical:
-                        RectTransform.sizeDelta = new Vector2(RectTransform.sizeDelta.x, height);
-                        break;
-                    case LayoutType.Horizontal:
-                        RectTransform.sizeDelta = new Vector2(height, RectTransform.sizeDelta.y);
-                        break;
+                    switch ((Parent as UILinearLayout).LayoutDirection)
+                    {
+                        case LayoutAxis.Vertical:
+                            RectTransform.sizeDelta = new Vector2(RectTransform.sizeDelta.x, height);
+                            break;
+                        case LayoutAxis.Horizontal:
+                            RectTransform.sizeDelta = new Vector2(height, RectTransform.sizeDelta.y);
+                            break;
+                    }
+                }
+                else
+                {
+                    RectTransform.sizeDelta = new Vector2(height, height);
                 }
             }
         }

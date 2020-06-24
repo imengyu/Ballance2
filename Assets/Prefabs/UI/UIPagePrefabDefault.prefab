@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3993191999914645214}
   - component: {fileID: 8831876691121537712}
-  - component: {fileID: 3630843976870289406}
+  - component: {fileID: 8030392243815162469}
   m_Layer: 5
   m_Name: UIPagePrefabDefault
   m_TagString: Untagged
@@ -46,7 +46,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2180769702299432643}
   m_CullTransparentMesh: 0
---- !u!114 &3630843976870289406
+--- !u!114 &8030392243815162469
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -61,8 +61,8 @@ MonoBehaviour:
   pagePath: 
   pageBackground: {fileID: 0}
   contentRectTransform: {fileID: 2524165208669709085}
-  layoutContainer: {fileID: 5360547278872492134}
---- !u!114 &5360547278872492134
+  layoutContainer: {fileID: 6431543363000426339}
+--- !u!114 &6431543363000426339
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -71,9 +71,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 3501078892909638712}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cba5d12f9cb6f3a47ae62ec02685cd10, type: 3}
+  m_Script: {fileID: 11500000, guid: c8031b513cff78c43a3006722148a536, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  anchorX: 0
+  anchorY: 0
+  minSize: {x: 0, y: 0}
+  layout_marginLeft: 0
+  layout_marginTop: 0
+  layout_marginRight: 0
+  layout_marginBottom: 0
+  layout_centerHorizontal: 0
+  layout_centerVertical: 0
+  layout_centerInParent: 0
+  layout_alignParentTop: 0
+  layout_alignParentBottom: 0
+  layout_alignParentLeft: 0
+  layout_alignParentRight: 0
+  layout_above: 
+  layout_below: 
+  layout_toRightOf: 
+  layout_toLeftOf: 
+  layout_alignTop: 
+  layout_alignBottom: 
+  layout_alignLeft: 
+  layout_alignRight: 
+  gravity: 0
+  layoutDirection: 0
+  layoutChildSpacing: 0
+  layoutReverse: 0
 --- !u!1001 &7769431443285145483
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -89,7 +115,7 @@ PrefabInstance:
     - target: {fileID: 2213381144028249880, guid: d6ecf5c63b74b8445b63cb1aa3a78df1,
         type: 3}
       propertyPath: m_Size
-      value: 1
+      value: 0.99989533
       objectReference: {fileID: 0}
     - target: {fileID: 2348306489508277679, guid: d6ecf5c63b74b8445b63cb1aa3a78df1,
         type: 3}
@@ -229,7 +255,7 @@ PrefabInstance:
     - target: {fileID: 5248156302813336726, guid: d6ecf5c63b74b8445b63cb1aa3a78df1,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.0000008941074
+      value: 0.000060879687
       objectReference: {fileID: 0}
     - target: {fileID: 6180648712719987531, guid: d6ecf5c63b74b8445b63cb1aa3a78df1,
         type: 3}

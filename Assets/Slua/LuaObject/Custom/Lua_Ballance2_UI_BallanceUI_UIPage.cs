@@ -229,6 +229,39 @@ public class Lua_Ballance2_UI_BallanceUI_UIPage : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int set_RectTransform(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.UI.BallanceUI.UIPage self=(Ballance2.UI.BallanceUI.UIPage)checkSelf(l);
+			UnityEngine.RectTransform v;
+			checkType(l,2,out v);
+			self.RectTransform=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int get_ContentRectTransform(IntPtr l) {
 		try {
 			#if DEBUG
@@ -362,7 +395,7 @@ public class Lua_Ballance2_UI_BallanceUI_UIPage : LuaObject {
 		addMember(l,FindElementByName);
 		addMember(l,"PagePath",get_PagePath,set_PagePath,true);
 		addMember(l,"PageBackground",get_PageBackground,set_PageBackground,true);
-		addMember(l,"RectTransform",get_RectTransform,null,true);
+		addMember(l,"RectTransform",get_RectTransform,set_RectTransform,true);
 		addMember(l,"ContentRectTransform",get_ContentRectTransform,set_ContentRectTransform,true);
 		addMember(l,"ContentContainer",get_ContentContainer,set_ContentContainer,true);
 		createTypeMetatable(l,null, typeof(Ballance2.UI.BallanceUI.UIPage),typeof(UnityEngine.MonoBehaviour));

@@ -71,6 +71,6 @@ public class Lua_Ballance2_UI_BallanceUI_Element_UISpace : LuaObject {
 	static public void reg(IntPtr l) {
 		getTypeTable(l,"Ballance2.UI.BallanceUI.Element.UISpace");
 		addMember(l,"Height",get_Height,set_Height,true);
-		createTypeMetatable(l,null, typeof(Ballance2.UI.BallanceUI.Element.UISpace),typeof(Ballance2.UI.BallanceUI.Element.UIElement));
+		createTypeMetatable(l,null, typeof(Ballance2.UI.BallanceUI.Element.UISpace),typeof(Ballance2.UI.BallanceUI.UIElement));
 	}
 }

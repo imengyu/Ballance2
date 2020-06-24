@@ -143,6 +143,6 @@ public class Lua_Ballance2_UI_BallanceUI_Element_UIButton : LuaObject {
 		addMember(l,SetEventHandler);
 		addMember(l,RemoveEventHandler);
 		addMember(l,"Text",get_Text,set_Text,true);
-		createTypeMetatable(l,null, typeof(Ballance2.UI.BallanceUI.Element.UIButton),typeof(Ballance2.UI.BallanceUI.Element.UIElement));
+		createTypeMetatable(l,null, typeof(Ballance2.UI.BallanceUI.Element.UIButton),typeof(Ballance2.UI.BallanceUI.UIElement));
 	}
 }

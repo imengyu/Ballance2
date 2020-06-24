@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<UIVertcialLinearLayout>
-  <UILevButton name="btn.lev.1" text="Level 1" />
-  <UILevButton name="btn.lev.2" text="Level 2" />
-  <UILevButton name="btn.lev.3" text="Level 3" />
-  <UILevButton name="btn.lev.4" text="Level 4" />
-  <UILevButton name="btn.lev.5" text="Level 5" />
-  <UILevButton name="btn.lev.6" text="Level 6" />
-  <UILevButton name="btn.lev.7" text="Level 7" />
-  <UILevButton name="btn.lev.8" text="Level 8" />
-  <UILevButton name="btn.lev.9" text="Level 9" />
-  <UILevButton name="btn.lev.10" text="Level 10" />
-  <UILevButton name="btn.lev.11" text="Level 11" />
-  <UILevButton name="btn.lev.12" text="Level 12" />
-  <UILevButton name="btn.lev.lz" text="Light Zone" />
+<UIVertcialLinearLayout
+  gravity="Center">
+  <UILevButton name="btn.lev.1">Level 1</UILevButton>
+  <UILevButton name="btn.lev.2">Level 2</UILevButton>
+  <UILevButton name="btn.lev.3">Level 3</UILevButton>
+  <UILevButton name="btn.lev.4">Level 4</UILevButton>
+  <UILevButton name="btn.lev.5">Level 5</UILevButton>
+  <UILevButton name="btn.lev.6">Level 6</UILevButton>
+  <UILevButton name="btn.lev.7">Level 7</UILevButton>
+  <UILevButton name="btn.lev.8">Level 8</UILevButton>
+  <UILevButton name="btn.lev.9">Level 9</UILevButton>
+  <UILevButton name="btn.lev.10">Level 10</UILevButton>
+  <UILevButton name="btn.lev.11">Level 11</UILevButton>
+  <UILevButton name="btn.lev.12">Level 12</UILevButton>
+  <UILevButton name="btn.lev.lz" >Light Zone</UILevButton>
 
   <UISpace height="30" />
-  <UIMainButton name="btn.lev.custom" text="自制关卡" />
+  <UIMainButton name="btn.lev.custom" >自制关卡</UIMainButton>
   <UISpace height="30" />
-  
+
   <UIButtonBack name="btn.back" text="返回" />
 </UIVertcialLinearLayout>

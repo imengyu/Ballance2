@@ -94,7 +94,7 @@ namespace Knife.PostProcessing
         static Material outlineBufferMaterial;
 
         static List<Renderer> renderers = new List<Renderer>();
-        static Action onTargetsChanged;
+        //static Action onTargetsChanged;
 
         Dictionary<Camera, CameraOutlineData> registeredCameras = new Dictionary<Camera, CameraOutlineData>();
 
@@ -168,20 +168,20 @@ namespace Knife.PostProcessing
             if(!renderers.Contains(r))
                 renderers.Add(r);
 
-            if(onTargetsChanged != null)
-            {
-                onTargetsChanged();
-            }
+            //if(onTargetsChanged != null)
+            //{
+            //    onTargetsChanged();
+            //}
         }
 
         public static void RemoveRenderer(Renderer r)
         {
             renderers.Remove(r);
 
-            if (onTargetsChanged != null)
-            {
-                onTargetsChanged();
-            }
+            //if (onTargetsChanged != null)
+            //{
+            //    onTargetsChanged();
+            //}
         }
 
         public override void Render(PostProcessRenderContext context)

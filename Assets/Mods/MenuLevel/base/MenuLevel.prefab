@@ -20627,6 +20627,7 @@ GameObject:
   - component: {fileID: 5132716201124876510}
   - component: {fileID: 5132716201124876509}
   - component: {fileID: 3104265788658427684}
+  - component: {fileID: 5732581078973489366}
   m_Layer: 0
   m_Name: I_Camera
   m_TagString: Untagged
@@ -20761,6 +20762,15 @@ MonoBehaviour:
   m_AfterStackBundles:
   - assemblyQualifiedName: Knife.PostProcessing.Outline, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!45 &5732581078973489366
+Skybox:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5132716201124876507}
+  m_Enabled: 1
+  m_CustomSkybox: {fileID: 0}
 --- !u!1 &5132716201779021943
 GameObject:
   m_ObjectHideFlags: 0

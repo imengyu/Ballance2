@@ -2,7 +2,7 @@
 using SLua;
 using System.Collections.Generic;
 [UnityEngine.Scripting.Preserve]
-public class Lua_Ballance2_UI_BallanceUI_UILinearLayout : LuaObject {
+public class Lua_Ballance2_UI_BallanceUI_Layout_UILinearLayout : LuaObject {
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
 	static public int AddElement(IntPtr l) {
@@ -16,8 +16,8 @@ public class Lua_Ballance2_UI_BallanceUI_UILinearLayout : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.UI.BallanceUI.UILinearLayout self=(Ballance2.UI.BallanceUI.UILinearLayout)checkSelf(l);
-			Ballance2.UI.BallanceUI.Element.UIElement a1;
+			Ballance2.UI.BallanceUI.Layout.UILinearLayout self=(Ballance2.UI.BallanceUI.Layout.UILinearLayout)checkSelf(l);
+			Ballance2.UI.BallanceUI.UIElement a1;
 			checkType(l,2,out a1);
 			System.Boolean a2;
 			checkType(l,3,out a2);
@@ -52,8 +52,8 @@ public class Lua_Ballance2_UI_BallanceUI_UILinearLayout : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.UI.BallanceUI.UILinearLayout self=(Ballance2.UI.BallanceUI.UILinearLayout)checkSelf(l);
-			Ballance2.UI.BallanceUI.Element.UIElement a1;
+			Ballance2.UI.BallanceUI.Layout.UILinearLayout self=(Ballance2.UI.BallanceUI.Layout.UILinearLayout)checkSelf(l);
+			Ballance2.UI.BallanceUI.UIElement a1;
 			checkType(l,2,out a1);
 			System.Int32 a2;
 			checkType(l,3,out a2);
@@ -79,7 +79,7 @@ public class Lua_Ballance2_UI_BallanceUI_UILinearLayout : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int DoLayout(IntPtr l) {
+	static public int ReInitElement(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -90,43 +90,12 @@ public class Lua_Ballance2_UI_BallanceUI_UILinearLayout : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.UI.BallanceUI.UILinearLayout self=(Ballance2.UI.BallanceUI.UILinearLayout)checkSelf(l);
-			System.Int32 a1;
+			Ballance2.UI.BallanceUI.Layout.UILinearLayout self=(Ballance2.UI.BallanceUI.Layout.UILinearLayout)checkSelf(l);
+			Ballance2.UI.BallanceUI.UIElement a1;
 			checkType(l,2,out a1);
-			self.DoLayout(a1);
+			self.ReInitElement(a1);
 			pushValue(l,true);
 			return 1;
-		}
-		catch(Exception e) {
-			return error(l,e);
-		}
-		#if DEBUG
-		finally {
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.EndSample();
-			#else
-			Profiler.EndSample();
-			#endif
-		}
-		#endif
-	}
-	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	[UnityEngine.Scripting.Preserve]
-	static public int get_LayoutType(IntPtr l) {
-		try {
-			#if DEBUG
-			var method = System.Reflection.MethodBase.GetCurrentMethod();
-			string methodName = GetMethodName(method);
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.BeginSample(methodName);
-			#else
-			Profiler.BeginSample(methodName);
-			#endif
-			#endif
-			Ballance2.UI.BallanceUI.UILinearLayout self=(Ballance2.UI.BallanceUI.UILinearLayout)checkSelf(l);
-			pushValue(l,true);
-			pushEnum(l,(int)self.LayoutType);
-			return 2;
 		}
 		catch(Exception e) {
 			return error(l,e);
@@ -154,7 +123,7 @@ public class Lua_Ballance2_UI_BallanceUI_UILinearLayout : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.UI.BallanceUI.UILinearLayout self=(Ballance2.UI.BallanceUI.UILinearLayout)checkSelf(l);
+			Ballance2.UI.BallanceUI.Layout.UILinearLayout self=(Ballance2.UI.BallanceUI.Layout.UILinearLayout)checkSelf(l);
 			pushValue(l,true);
 			pushEnum(l,(int)self.LayoutDirection);
 			return 2;
@@ -185,74 +154,10 @@ public class Lua_Ballance2_UI_BallanceUI_UILinearLayout : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.UI.BallanceUI.UILinearLayout self=(Ballance2.UI.BallanceUI.UILinearLayout)checkSelf(l);
-			Ballance2.UI.BallanceUI.LayoutType v;
-			v = (Ballance2.UI.BallanceUI.LayoutType)LuaDLL.luaL_checkinteger(l, 2);
+			Ballance2.UI.BallanceUI.Layout.UILinearLayout self=(Ballance2.UI.BallanceUI.Layout.UILinearLayout)checkSelf(l);
+			Ballance2.UI.BallanceUI.LayoutAxis v;
+			v = (Ballance2.UI.BallanceUI.LayoutAxis)LuaDLL.luaL_checkinteger(l, 2);
 			self.LayoutDirection=v;
-			pushValue(l,true);
-			return 1;
-		}
-		catch(Exception e) {
-			return error(l,e);
-		}
-		#if DEBUG
-		finally {
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.EndSample();
-			#else
-			Profiler.EndSample();
-			#endif
-		}
-		#endif
-	}
-	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	[UnityEngine.Scripting.Preserve]
-	static public int get_LayoutAutoCenter(IntPtr l) {
-		try {
-			#if DEBUG
-			var method = System.Reflection.MethodBase.GetCurrentMethod();
-			string methodName = GetMethodName(method);
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.BeginSample(methodName);
-			#else
-			Profiler.BeginSample(methodName);
-			#endif
-			#endif
-			Ballance2.UI.BallanceUI.UILinearLayout self=(Ballance2.UI.BallanceUI.UILinearLayout)checkSelf(l);
-			pushValue(l,true);
-			pushValue(l,self.LayoutAutoCenter);
-			return 2;
-		}
-		catch(Exception e) {
-			return error(l,e);
-		}
-		#if DEBUG
-		finally {
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.EndSample();
-			#else
-			Profiler.EndSample();
-			#endif
-		}
-		#endif
-	}
-	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	[UnityEngine.Scripting.Preserve]
-	static public int set_LayoutAutoCenter(IntPtr l) {
-		try {
-			#if DEBUG
-			var method = System.Reflection.MethodBase.GetCurrentMethod();
-			string methodName = GetMethodName(method);
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.BeginSample(methodName);
-			#else
-			Profiler.BeginSample(methodName);
-			#endif
-			#endif
-			Ballance2.UI.BallanceUI.UILinearLayout self=(Ballance2.UI.BallanceUI.UILinearLayout)checkSelf(l);
-			bool v;
-			checkType(l,2,out v);
-			self.LayoutAutoCenter=v;
 			pushValue(l,true);
 			return 1;
 		}
@@ -282,7 +187,7 @@ public class Lua_Ballance2_UI_BallanceUI_UILinearLayout : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.UI.BallanceUI.UILinearLayout self=(Ballance2.UI.BallanceUI.UILinearLayout)checkSelf(l);
+			Ballance2.UI.BallanceUI.Layout.UILinearLayout self=(Ballance2.UI.BallanceUI.Layout.UILinearLayout)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.LayoutChildSpacing);
 			return 2;
@@ -313,7 +218,7 @@ public class Lua_Ballance2_UI_BallanceUI_UILinearLayout : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.UI.BallanceUI.UILinearLayout self=(Ballance2.UI.BallanceUI.UILinearLayout)checkSelf(l);
+			Ballance2.UI.BallanceUI.Layout.UILinearLayout self=(Ballance2.UI.BallanceUI.Layout.UILinearLayout)checkSelf(l);
 			float v;
 			checkType(l,2,out v);
 			self.LayoutChildSpacing=v;
@@ -333,16 +238,79 @@ public class Lua_Ballance2_UI_BallanceUI_UILinearLayout : LuaObject {
 		}
 		#endif
 	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_LayoutReverse(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.UI.BallanceUI.Layout.UILinearLayout self=(Ballance2.UI.BallanceUI.Layout.UILinearLayout)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.LayoutReverse);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_LayoutReverse(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.UI.BallanceUI.Layout.UILinearLayout self=(Ballance2.UI.BallanceUI.Layout.UILinearLayout)checkSelf(l);
+			bool v;
+			checkType(l,2,out v);
+			self.LayoutReverse=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
 	[UnityEngine.Scripting.Preserve]
 	static public void reg(IntPtr l) {
-		getTypeTable(l,"Ballance2.UI.BallanceUI.UILinearLayout");
+		getTypeTable(l,"Ballance2.UI.BallanceUI.Layout.UILinearLayout");
 		addMember(l,AddElement);
 		addMember(l,InsertElement);
-		addMember(l,DoLayout);
-		addMember(l,"LayoutType",get_LayoutType,null,true);
+		addMember(l,ReInitElement);
 		addMember(l,"LayoutDirection",get_LayoutDirection,set_LayoutDirection,true);
-		addMember(l,"LayoutAutoCenter",get_LayoutAutoCenter,set_LayoutAutoCenter,true);
 		addMember(l,"LayoutChildSpacing",get_LayoutChildSpacing,set_LayoutChildSpacing,true);
-		createTypeMetatable(l,null, typeof(Ballance2.UI.BallanceUI.UILinearLayout),typeof(Ballance2.UI.BallanceUI.UILayout));
+		addMember(l,"LayoutReverse",get_LayoutReverse,set_LayoutReverse,true);
+		createTypeMetatable(l,null, typeof(Ballance2.UI.BallanceUI.Layout.UILinearLayout),typeof(Ballance2.UI.BallanceUI.UILayout));
 	}
 }

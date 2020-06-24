@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ballance2
+namespace Ballance2.Main
 {
     //调试承载
     public class Debug : MonoBehaviour

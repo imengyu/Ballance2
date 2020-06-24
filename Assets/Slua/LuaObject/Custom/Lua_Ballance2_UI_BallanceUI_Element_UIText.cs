@@ -71,6 +71,6 @@ public class Lua_Ballance2_UI_BallanceUI_Element_UIText : LuaObject {
 	static public void reg(IntPtr l) {
 		getTypeTable(l,"Ballance2.UI.BallanceUI.Element.UIText");
 		addMember(l,"Text",get_Text,set_Text,true);
-		createTypeMetatable(l,null, typeof(Ballance2.UI.BallanceUI.Element.UIText),typeof(Ballance2.UI.BallanceUI.Element.UIElement));
+		createTypeMetatable(l,null, typeof(Ballance2.UI.BallanceUI.Element.UIText),typeof(Ballance2.UI.BallanceUI.UIElement));
 	}
 }

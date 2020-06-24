@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3394136756007019373}
   - component: {fileID: 1510276899232525117}
-  - component: {fileID: 8608285932072562106}
+  - component: {fileID: 2148044620457263535}
   m_Layer: 5
   m_Name: UIVertcialLinearLayout
   m_TagString: Untagged
@@ -45,7 +45,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6609144642316379161}
   m_CullTransparentMesh: 0
---- !u!114 &8608285932072562106
+--- !u!114 &2148044620457263535
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -54,6 +54,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 6609144642316379161}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cba5d12f9cb6f3a47ae62ec02685cd10, type: 3}
+  m_Script: {fileID: 11500000, guid: 9e91e48bf980b6d4380d573958085d0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  anchorX: 0
+  anchorY: 0
+  minSize: {x: 0, y: 0}
+  layout_marginLeft: 0
+  layout_marginTop: 0
+  layout_marginRight: 0
+  layout_marginBottom: 0
+  layout_centerHorizontal: 0
+  layout_centerVertical: 0
+  layout_centerInParent: 0
+  layout_alignParentTop: 0
+  layout_alignParentBottom: 0
+  layout_alignParentLeft: 0
+  layout_alignParentRight: 0
+  layout_above: 
+  layout_below: 
+  layout_toRightOf: 
+  layout_toLeftOf: 
+  layout_alignTop: 
+  layout_alignBottom: 
+  layout_alignLeft: 
+  layout_alignRight: 
+  gravity: 0
+  layoutDirection: 0
+  layoutChildSpacing: 0
+  layoutReverse: 0

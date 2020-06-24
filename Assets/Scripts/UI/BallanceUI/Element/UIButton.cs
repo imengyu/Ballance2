@@ -10,7 +10,7 @@ namespace Ballance2.UI.BallanceUI.Element
     [SLua.CustomLuaClass]
     public class UIButton : UIElement
     {
-        private const string TAG = "Button";
+        private const string TAG = "UIButton";
 
         public UIButton()
         {
@@ -34,15 +34,15 @@ namespace Ballance2.UI.BallanceUI.Element
 
             if (xml.Name == TAG && xml.Attributes.Count > 0)
             {
-                if (!string.IsNullOrEmpty(xml.InnerText))
+                if (!string.IsNullOrEmpty(xml.InnerXml))
                     Text = xml.InnerText;
-                foreach (XmlAttribute a in xml.Attributes)
-                {
-                    if (a.Name.ToLower() == "text")
-                        Text = a.InnerText;
-                }
-                
             }
+        }
+        protected override void SetProp(string name, string val)
+        {
+            base.SetProp(name, val);
+            if (name.ToLower() == "text")
+                Text = val;
         }
 
         private GameHandlerList clickEventHandler = null;

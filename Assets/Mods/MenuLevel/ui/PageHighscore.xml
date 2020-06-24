@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<UIVertcialLinearLayout>
-  <UIText text="高分" />
+<UIVertcialLinearLayout gravity="Center">
+  <UIText color="#fff" text="高分" />
   <UIButtonBack name="btn.back" text="返回" />
 </UIVertcialLinearLayout>

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Ballance2
+namespace Ballance2.Main
 {
     // 主入口
     class Main : MonoBehaviour
@@ -26,6 +26,10 @@ namespace Ballance2
         /// </summary>
         public bool BreakAtStart = false;
         /// <summary>
+        /// 目标帧率
+        /// </summary>
+        public int TargetFrameRate = 60;
+        /// <summary>
         /// 静态 Prefab 资源引入
         /// </summary>
         [Reorderable("GamePrefab", true, "Name")]
@@ -38,6 +42,7 @@ namespace Ballance2
 
         void Start()
         {
+            Application.targetFrameRate = TargetFrameRate;
             GameLogger.InitLogger();
             GameManager.Init(GameMode, GameRoot, GameCanvas, GamePrefab, GameAssets, BreakAtStart);
         }

@@ -848,6 +848,7 @@ MonoBehaviour:
   GameRoot: {fileID: 1368830292}
   GameCanvas: {fileID: 1928318315}
   BreakAtStart: 0
+  TargetFrameRate: 60
   GamePrefab:
   - Object: {fileID: 730401858883282320, guid: c00cb89e507c3c84e82463508143638e, type: 3}
     Name: PrefabEmpty
@@ -912,6 +913,12 @@ MonoBehaviour:
   - Object: {fileID: 7217001282430660351, guid: 8eded6a5c63e5e749897c9b3258d281a,
       type: 3}
     Name: UIText
+  - Object: {fileID: 7978421516597935436, guid: 70aafb6d0b5842947a1041460d902d64,
+      type: 3}
+    Name: UIRelativeLayout
+  - Object: {fileID: 6794558724857992854, guid: e1918fc7ae3c38c43a3dffb57754b6c9,
+      type: 3}
+    Name: UILinearLayout
   - Object: {fileID: 0}
     Name: 
   GameAssets:
@@ -952,9 +959,7 @@ MonoBehaviour:
   - Object: {fileID: 8300000, guid: b56589974a17d8a428f9ec2e6f4ad830, type: 3}
     Name: IntroMusic
   - Object: {fileID: 0}
-    Name: o
-  - Object: {fileID: 0}
-    Name: o
+    Name: 
 --- !u!4 &1202931503
 Transform:
   m_ObjectHideFlags: 0

@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace Ballance2.Utils
 {
+    [SLua.CustomLuaClass]
     /// <summary>
     /// 字符串工具类
     /// </summary>

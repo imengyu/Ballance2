@@ -3,6 +3,7 @@
 
 GameManager = Ballance2.GameManager
 GameLogger = Ballance2.GameLogger
+SkyBoxUtils = Ballance2.Utils.SkyBoxUtils
 
 Vector3 = UnityEngine.Vector3
 Time = UnityEngine.Time
@@ -24,7 +25,11 @@ MenuLevel = {
   I_Zone_SuDu_Innen = nil,
   I_Zone_NenLi_Innen = nil,
   I_Zone_LiLiang_Innen = nil,
-  speed = 2.5,
+  speed = 6,
+
+  skyBoxDay = nil,
+  skyBoxNighy = nil,
+  skyBox = nil,
 
   dialogQuitId = nil,
   pageMain = nil,
@@ -58,12 +63,18 @@ function class_MenuLevel()
     self.domePosition = self.transform:Find("I_Dome_MF").position
     self.I_Camera = self.transform:Find("I_Camera").gameObject
     self.I_Camera:SetActive(true)
+    -- light
     self.I_Light_Night = self.transform:Find("I_Light_Night").gameObject
     self.I_Light_Day = self.transform:Find("I_Light_Day").gameObject
+    -- izone
     self.I_Zone = self.transform:Find("I_Zone").gameObject
     self.I_Zone_SuDu_Innen = self.I_Zone.transform:Find("I_Zone_SuDu_Innen").gameObject
     self.I_Zone_NenLi_Innen = self.I_Zone.transform:Find("I_Zone_NenLi_Innen").gameObject
     self.I_Zone_LiLiang_Innen = self.I_Zone.transform:Find("I_Zone_LiLiang_Innen").gameObject
+    --skybox
+    self.skyBox = self.I_Camera:GetComponent("Skybox")
+    self.skyBoxDay = SkyBoxUtils.MakeSkyBox("C")
+    self.skyBoxNighy = SkyBoxUtils.MakeSkyBox("D")
 
     self.runningLoop = true
 
@@ -152,7 +163,10 @@ function class_MenuLevel()
       "Default")
     self.pageLightZone = UIManager:RegisterBallanceUIPage("main.start.lightzone", pageLightZoneXml, 
       { "btn.back:click" }, 
-      { function(evtName) UIManager:BackUIPage() end }, 
+      { function(evtName) 
+		UIManager:BackUIPage() 
+		OnSwitchLz(false)
+	  end }, 
       self,
       "None")
 
@@ -175,12 +189,14 @@ function class_MenuLevel()
       self.I_Light_Night:SetActive(true)
       self.I_Light_Day:SetActive(false)
       self.I_Zone:SetActive(true)
+      self.skyBox.material = self.skyBoxNighy
       self.runningLzLoop = true
     else
       UIManager:GotoUIPage(self.pageMain.PagePath)
       self.I_Light_Day:SetActive(true)
       self.I_Light_Night:SetActive(false)
       self.I_Zone:SetActive(false)
+      self.skyBox.material = self.skyBoxDay
       self.runningLzLoop = false
     end
   end

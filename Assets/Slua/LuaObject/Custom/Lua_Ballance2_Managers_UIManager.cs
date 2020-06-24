@@ -455,6 +455,40 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int FindWindowById(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.Managers.UIManager self=(Ballance2.Managers.UIManager)checkSelf(l);
+			System.Int32 a1;
+			checkType(l,2,out a1);
+			var ret=self.FindWindowById(a1);
+			pushValue(l,true);
+			pushInterface(l,ret, typeof(Ballance2.UI.BallanceUI.IWindow));
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int ShowWindow(IntPtr l) {
 		try {
 			#if DEBUG
@@ -1598,6 +1632,37 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 		}
 		#endif
 	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_UIRootRectTransform(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.Managers.UIManager self=(Ballance2.Managers.UIManager)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.UIRootRectTransform);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
 	[UnityEngine.Scripting.Preserve]
 	static public void reg(IntPtr l) {
 		getTypeTable(l,"Ballance2.Managers.UIManager");
@@ -1613,6 +1678,7 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 		addMember(l,GlobalConfirm);
 		addMember(l,CreateWindow);
 		addMember(l,RegisterWindow);
+		addMember(l,FindWindowById);
 		addMember(l,ShowWindow);
 		addMember(l,HideWindow);
 		addMember(l,CloseWindow);
@@ -1641,6 +1707,7 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 		addMember(l,"TAG",get_TAG,null,false);
 		addMember(l,"UIRoot",get_UIRoot,set_UIRoot,true);
 		addMember(l,"UIFadeManager",get_UIFadeManager,set_UIFadeManager,true);
+		addMember(l,"UIRootRectTransform",get_UIRootRectTransform,null,true);
 		createTypeMetatable(l,null, typeof(Ballance2.Managers.UIManager),typeof(Ballance2.Managers.BaseManagerSingleton));
 	}
 }

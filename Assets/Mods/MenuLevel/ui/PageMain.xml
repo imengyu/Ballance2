@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <UIVertcialLinearLayout
-  LayoutChildSpacing="10">
-  <UIMainButton name="btn.start" text="开始" />
-  <UIMainButton name="btn.highscore" text="高分" />
-  <UIMainButton name="btn.settings" text="设置" />
-  <UIMainButton name="btn.about" text="关于" />
-  <UIMainButton name="btn.quit" text="退出" />
+  layoutChildSpacing="10"
+  gravity="Center">
+  <UIMainButton name="btn.start">开始</UIMainButton>
+  <UIMainButton name="btn.highscore">高分</UIMainButton>
+  <UIMainButton name="btn.settings">设置</UIMainButton>
+  <UIMainButton name="btn.about">关于</UIMainButton>
+  <UIMainButton name="btn.quit">退出</UIMainButton>
 </UIVertcialLinearLayout>
