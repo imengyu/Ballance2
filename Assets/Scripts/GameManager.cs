@@ -264,12 +264,12 @@ namespace Ballance2
                     if (Mode == GameMode.MinimumLoad)
                     {
                         GameLogger.Log(TAG, "MinimumLoad Break");
-                        gameManagerAlertDialogId = UIManager.GlobalAlert("MinimumLoad<br/>当前是最小加载模式。", "提示", "关闭");
+                        gameManagerAlertDialogId = UIManager.GlobalAlertWindow("MinimumLoad<br/>当前是最小加载模式。", "提示", "关闭");
                     }
                     else if (gameBreakAtStart) //启动时暂停
                     {
                         GameLogger.Log(TAG, "Game break at start");
-                        gameManagerAlertDialogId = UIManager.GlobalAlert("BreakAtStart<br/>您可以点击“继续运行”", "BreakAtStart", "继续运行");
+                        gameManagerAlertDialogId = UIManager.GlobalAlertWindow("BreakAtStart<br/>您可以点击“继续运行”", "BreakAtStart", "继续运行");
                         GameMediator.RegisterEventHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, TAG, (evtName, param) =>
                         {
                             if ((int)param[0] == gameManagerAlertDialogId)

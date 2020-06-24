@@ -59,6 +59,7 @@ namespace Ballance2.UI.BallanceUI.Layout
 
             //计算所有元素布局占用高度
             float allLayoutHeight = (Elements.Count - 1) * layoutChildSpacing;
+            float maxLayoutOtherHeight = 0;
             for (int i = 0; i < Elements.Count; i++)
             {
                 e = Elements[i];
@@ -86,8 +87,17 @@ namespace Ballance2.UI.BallanceUI.Layout
                             UIAnchorPosUtils.SetUIAnchor(e.RectTransform,
                                 UILayoutUtils.GravityToAnchor(Gravity, RectTransform.Axis.Horizontal),
                                 layoutReverse ? UIAnchor.Bottom : UIAnchor.Top);
+                            UIAnchorPosUtils.SetUIPivot(e.RectTransform,
+                                UILayoutUtils.AnchorToPivot(
+                                    layoutReverse ? UIAnchor.Bottom : UIAnchor.Top, RectTransform.Axis.Vertical),
+                                    RectTransform.Axis.Vertical);
                             e.RectTransform.anchoredPosition = Vector2.zero;
                         }
+
+                        e.DoResize();
+
+                        if (e.RectTransform.rect.width > maxLayoutOtherHeight)
+                            maxLayoutOtherHeight = e.RectTransform.rect.width;
                     }
                     else
                     {
@@ -106,28 +116,41 @@ namespace Ballance2.UI.BallanceUI.Layout
                             UIAnchorPosUtils.SetUIAnchor(e.RectTransform,
                                     layoutReverse ? UIAnchor.Right : UIAnchor.Left,
                                     UILayoutUtils.GravityToAnchor(Gravity, RectTransform.Axis.Vertical));
+                            UIAnchorPosUtils.SetUIPivot(e.RectTransform,
+                                    UILayoutUtils.AnchorToPivot(
+                                        layoutReverse ? UIAnchor.Right : UIAnchor.Left, RectTransform.Axis.Horizontal),
+                                        RectTransform.Axis.Horizontal);
                             e.RectTransform.anchoredPosition = Vector2.zero;
                         }
+
+                        e.DoResize();
+
+                        if (e.RectTransform.rect.height > maxLayoutOtherHeight)
+                            maxLayoutOtherHeight = e.RectTransform.rect.height;
                     }
 
-                    e.DoResize();
+                    
                 }
             }
+            if (maxLayoutOtherHeight <= 0)
+                maxLayoutOtherHeight = layoutDirection == LayoutAxis.Vertical ? RectTransform.rect.width : RectTransform.rect.height;
 
             //自动将本容器撑大
             if (layoutDirection == LayoutAxis.Vertical)
             {
+                if (MaxSize.y > 0 && allLayoutHeight > MaxSize.y) allLayoutHeight = MaxSize.y;
                 if (allLayoutHeight > MinSize.y)
-                    RectTransform.sizeDelta = new Vector2(RectTransform.sizeDelta.x, allLayoutHeight);
+                    RectTransform.sizeDelta = new Vector2(widthAutoWarp ? maxLayoutOtherHeight : RectTransform.sizeDelta.x, allLayoutHeight);
                 else if (thisAnchor[1] != UIAnchor.Stretch)
-                    RectTransform.sizeDelta = new Vector2(RectTransform.sizeDelta.x, MinSize.y);
+                    RectTransform.sizeDelta = new Vector2(widthAutoWarp ? maxLayoutOtherHeight : RectTransform.sizeDelta.x, MinSize.y);
             }
             else if (layoutDirection == LayoutAxis.Horizontal)
             {
+                if (MaxSize.x > 0 && allLayoutHeight > MaxSize.x) allLayoutHeight = MaxSize.x;
                 if (allLayoutHeight > MinSize.x)
-                    RectTransform.sizeDelta = new Vector2(allLayoutHeight, RectTransform.sizeDelta.y);
+                    RectTransform.sizeDelta = new Vector2(allLayoutHeight, heightAutoWarp ? maxLayoutOtherHeight : RectTransform.sizeDelta.y);
                 else if (thisAnchor[0] != UIAnchor.Stretch)
-                    RectTransform.sizeDelta = new Vector2(MinSize.x, RectTransform.sizeDelta.y);
+                    RectTransform.sizeDelta = new Vector2(MinSize.x, heightAutoWarp ? maxLayoutOtherHeight : RectTransform.sizeDelta.y);
             }
 
             DoResize();
@@ -144,10 +167,10 @@ namespace Ballance2.UI.BallanceUI.Layout
                 }
                 else
                 {
-                    if ((Gravity & LayoutGravity.CenterHorizontal) == LayoutGravity.CenterVertical)
-                        startVal -= RectTransform.rect.width / 2 - allLayoutHeight / 2;
-                    if ((Gravity & LayoutGravity.End) == LayoutGravity.Bottom)
-                        startVal -= RectTransform.rect.width - allLayoutHeight;
+                    if ((Gravity & LayoutGravity.CenterHorizontal) == LayoutGravity.CenterHorizontal)
+                        startVal += RectTransform.rect.width / 2 - allLayoutHeight / 2;
+                    if ((Gravity & LayoutGravity.End) == LayoutGravity.End)
+                        startVal += RectTransform.rect.width - allLayoutHeight;
                 }
             }
 
@@ -163,23 +186,17 @@ namespace Ballance2.UI.BallanceUI.Layout
                         if (layoutDirection == LayoutAxis.Vertical)
                         {
                             startVal -= e.Layout_marginTop;
-                            rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, 
-                                UIAnchorPosUtils.GetUIPivotLocationOffest(rectTransform, startVal, RectTransform.Axis.Vertical));
+                            rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, startVal);
                             startVal -= e.Layout_marginBottom;
-                            
+                            startVal -= (rectTransform.rect.height + layoutChildSpacing);
                         }
                         else
                         {
-                            startVal -= e.Layout_marginLeft;
-                            rectTransform.anchoredPosition = new Vector2(
-                                UIAnchorPosUtils.GetUIPivotLocationOffest(rectTransform, startVal, RectTransform.Axis.Horizontal), 
-                                rectTransform.anchoredPosition.y);
-                            startVal -= e.Layout_marginRight;
+                            startVal += e.Layout_marginLeft;
+                            rectTransform.anchoredPosition = new Vector2(startVal, rectTransform.anchoredPosition.y);
+                            startVal += e.Layout_marginRight;
+                            startVal += (rectTransform.rect.width + layoutChildSpacing);
                         }
-
-                        startVal = startVal -
-                            (layoutDirection == LayoutAxis.Vertical ? (rectTransform.rect.height) : (rectTransform.rect.width))
-                            - layoutChildSpacing;
                     }
                 }
             }
@@ -196,41 +213,32 @@ namespace Ballance2.UI.BallanceUI.Layout
                         if (layoutDirection == LayoutAxis.Vertical)
                         {
                             startVal -= e.Layout_marginTop;
-                            rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, 
-                                UIAnchorPosUtils.GetUIPivotLocationOffest(rectTransform, startVal, RectTransform.Axis.Vertical));
+                            rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, startVal);
                             startVal -= e.Layout_marginBottom;
+                            startVal = startVal - rectTransform.rect.height - layoutChildSpacing;
                         }
                         else
                         {
-                            startVal -= e.Layout_marginLeft;
-                            rectTransform.anchoredPosition = new Vector2(
-                                UIAnchorPosUtils.GetUIPivotLocationOffest(rectTransform, startVal, RectTransform.Axis.Horizontal), rectTransform.anchoredPosition.y);
-                            startVal -= e.Layout_marginRight;
+                            startVal += e.Layout_marginLeft;
+                            rectTransform.anchoredPosition = new Vector2(startVal, rectTransform.anchoredPosition.y);
+                            startVal += e.Layout_marginRight;
+                            startVal = startVal  + rectTransform.rect.width + layoutChildSpacing;
                         }
-                        startVal = startVal - (layoutDirection == LayoutAxis.Vertical ? rectTransform.rect.height : rectTransform.rect.width) - layoutChildSpacing;
                     }
                 }
             }
 
             if (Parent != null)
             {
-                if (layoutDirection == LayoutAxis.Vertical
-                    && Parent.RectTransform.rect.width > MinSize.x
-                    && thisAnchor[0] != UIAnchor.Stretch)
-                    RectTransform.sizeDelta = new Vector2(Parent.RectTransform.rect.width, RectTransform.sizeDelta.y);
-                if (layoutDirection == LayoutAxis.Horizontal
-                    && Parent.RectTransform.rect.height > MinSize.y
-                    && thisAnchor[1] != UIAnchor.Stretch)
-                    RectTransform.sizeDelta = new Vector2(RectTransform.sizeDelta.x, Parent.RectTransform.rect.height);
-
                 DoResize();
                 Parent.DoLayout();
             }
 
-
             base.OnLayout();
         }
 
+        private bool widthAutoWarp = false;
+        private bool heightAutoWarp = false;
 
         protected override void SetProp(string name, string val)
         {
@@ -247,6 +255,26 @@ namespace Ballance2.UI.BallanceUI.Layout
                 case "layoutChildSpacing":
                     float.TryParse(val, out layoutChildSpacing);
                     PostDoLayout();
+                    break;
+                case "width":
+                    if (val.ToLower() == "warp_content")
+                        widthAutoWarp = true;
+                    else
+                    {
+                        widthAutoWarp = false;
+                        base.SetProp(name, val);
+                    }
+                    DoPostLayout();
+                    break;
+                case "height":
+                    if (val.ToLower() == "warp_content")
+                        heightAutoWarp = true;
+                    else
+                    {
+                        heightAutoWarp = false;
+                        base.SetProp(name, val);
+                    }
+                    DoPostLayout();
                     break;
                 default:
                     base.SetProp(name, val);

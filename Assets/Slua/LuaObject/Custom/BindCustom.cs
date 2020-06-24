@@ -27,6 +27,7 @@ namespace SLua {
 				Lua_Ballance2_UI_BallanceUI_Layout_UILinearLayout.reg,
 				Lua_Ballance2_UI_BallanceUI_UIHorizontalLinearLayout.reg,
 				Lua_Ballance2_UI_BallanceUI_UIVerticalLinearLayout.reg,
+				Lua_Ballance2_UI_BallanceUI_UIVisibility.reg,
 				Lua_Ballance2_UI_BallanceUI_UILayoutUtils.reg,
 				Lua_Ballance2_UI_BallanceUI_UIPage.reg,
 				Lua_Ballance2_UI_BallanceUI_UIWindow.reg,

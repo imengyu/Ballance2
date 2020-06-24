@@ -231,17 +231,6 @@ namespace Ballance2.UI.BallanceUI
                         Name = val;
                         break;
                     }
-                case "size":
-                    {
-                        string[] av = val.Split(',');
-                        float x, y;
-                        if (av.Length >= 2 && float.TryParse(av[0], out x) && float.TryParse(av[1], out y))
-                        {
-                            RectTransform.sizeDelta = new Vector2(x, y);
-                            DoPostLayout();
-                        }
-                        break;
-                    }
                 case "minSize":
                     {
                         string[] av = val.Split(',');
@@ -601,7 +590,7 @@ namespace Ballance2.UI.BallanceUI
                     SetEventHandler(key, lateInitHandlers[key]);
             }
         }
-        private void DoPostLayout()
+        protected void DoPostLayout()
         {
             if (Parent != null)
             {
@@ -632,12 +621,12 @@ namespace Ballance2.UI.BallanceUI
             if (thisAnchor[0] == UIAnchor.Stretch)
             {
                 UIAnchorPosUtils.SetUILeftBottom(RectTransform, layout_marginLeft, UIAnchorPosUtils.GetUIBottom(RectTransform));
-                UIAnchorPosUtils.SetUIRightTop(RectTransform, layout_marginRight, UIAnchorPosUtils.GetUIRight(RectTransform));
+                UIAnchorPosUtils.SetUIRightTop(RectTransform, layout_marginRight, UIAnchorPosUtils.GetUITop(RectTransform));
             }
             if (thisAnchor[1] == UIAnchor.Stretch)
             {
                 UIAnchorPosUtils.SetUILeftBottom(RectTransform, UIAnchorPosUtils.GetUILeft(RectTransform), layout_marginBottom);
-                UIAnchorPosUtils.SetUIRightTop(RectTransform, UIAnchorPosUtils.GetUITop(RectTransform), layout_marginTop);
+                UIAnchorPosUtils.SetUIRightTop(RectTransform, UIAnchorPosUtils.GetUIRight(RectTransform), layout_marginTop);
             }
         }
     }

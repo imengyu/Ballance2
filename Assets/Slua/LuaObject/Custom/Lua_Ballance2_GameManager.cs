@@ -274,6 +274,36 @@ public class Lua_Ballance2_GameManager : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int CloseGameManagerAlert_s(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.GameManager.CloseGameManagerAlert();
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int FindStaticPrefabs_s(IntPtr l) {
 		try {
 			#if DEBUG
@@ -755,6 +785,7 @@ public class Lua_Ballance2_GameManager : LuaObject {
 		addMember(l,SetGameBaseCameraVisible_s);
 		addMember(l,QuitGame_s);
 		addMember(l,ForceInterruptGame_s);
+		addMember(l,CloseGameManagerAlert_s);
 		addMember(l,FindStaticPrefabs_s);
 		addMember(l,FindStaticAssets_s);
 		addMember(l,"Mode",get_Mode,null,false);

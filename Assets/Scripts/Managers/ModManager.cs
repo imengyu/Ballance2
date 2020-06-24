@@ -522,7 +522,7 @@ namespace Ballance2.Managers
         private void OnUnloadMod(GameMod mod)
         {
             currentModConfirm = mod;
-            unloadModConfirmUid = GameManager.UIManager.GlobalConfirm("您真的要卸载模组 " + mod.PackageName +
+            unloadModConfirmUid = GameManager.UIManager.GlobalConfirmWindow("您真的要卸载模组 " + mod.PackageName +
                 " 吗？\n如果模块正在使用，强制卸载会导致资源丢失！", "警告", "确定卸载");
         }
         private void OnLoadModStatus(GameMod mod)
@@ -530,7 +530,7 @@ namespace Ballance2.Managers
             if (mod.LoadStatus == GameModStatus.NotInitialize)
             {
                 currentModConfirm = mod;
-                initModConfirmUid = GameManager.UIManager.GlobalConfirm("您是否要立即初始化模组 " + mod.PackageName +
+                initModConfirmUid = GameManager.UIManager.GlobalConfirmWindow("您是否要立即初始化模组 " + mod.PackageName +
                     " ?", "提示", "确定初始化");
             }
         }

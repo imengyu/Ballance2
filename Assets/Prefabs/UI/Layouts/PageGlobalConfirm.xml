@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UIVertcialLinearLayout
+  gravity="Center">
+  <UIText
+    name="text.main"
+    color="#ffffff"
+    width="match_parent"
+    height="warp_content"
+    layout_marginLeft="10"
+    layout_marginRight="10">
+  </UIText>
+  <UIHorizontalLinearLayout
+    layout_marginTop="50"
+    gravity="Center"
+    layoutChildSpacing="12"
+    width="match_parent"
+    height="warp_content">
+    <UISmallButton
+      name="btn.cancel"
+      >取消</UISmallButton>
+    <UISmallButton
+      name="btn.ok"
+      >确定</UISmallButton>
+  </UIHorizontalLinearLayout>
+</UIVertcialLinearLayout>

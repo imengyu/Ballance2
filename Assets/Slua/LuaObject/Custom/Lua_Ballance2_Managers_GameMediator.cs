@@ -268,7 +268,20 @@ public class Lua_Ballance2_Managers_GameMediator : LuaObject {
 			#endif
 			#endif
 			int argc = LuaDLL.lua_gettop(l);
-			if(matchType(l,argc,2,typeof(string),typeof(string),typeof(Ballance2.Managers.CoreBridge.GameHandlerDelegate))){
+			if(matchType(l,argc,2,typeof(string),typeof(string),typeof(SLua.LuaFunction))){
+				Ballance2.Managers.GameMediator self=(Ballance2.Managers.GameMediator)checkSelf(l);
+				System.String a1;
+				checkType(l,2,out a1);
+				System.String a2;
+				checkType(l,3,out a2);
+				SLua.LuaFunction a3;
+				checkType(l,4,out a3);
+				var ret=self.RegisterEventHandler(a1,a2,a3);
+				pushValue(l,true);
+				pushValue(l,ret);
+				return 2;
+			}
+			else if(matchType(l,argc,2,typeof(string),typeof(string),typeof(Ballance2.Managers.CoreBridge.GameHandlerDelegate))){
 				Ballance2.Managers.GameMediator self=(Ballance2.Managers.GameMediator)checkSelf(l);
 				System.String a1;
 				checkType(l,2,out a1);

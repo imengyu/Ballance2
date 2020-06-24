@@ -1,5 +1,6 @@
 ﻿using Ballance2.Managers.CoreBridge;
 using Ballance2.Utils;
+using SLua;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -165,6 +166,38 @@ namespace Ballance2.Managers
             RegisterGlobalEvent(GameEventNames.EVENT_BASE_MANAGER_INIT_FINISHED);
         }
 
+        /// <summary>
+        /// 注册命令接收器（Lua）
+        /// </summary>
+        /// <param name="evtName">事件名称</param>
+        /// <param name="name">接收器名字</param>
+        /// <param name="gameHandlerDelegate">回调</param>
+        /// <returns></returns>
+        public GameHandler RegisterEventHandler(string evtName, string name, LuaFunction luaFunction)
+        {
+            if (string.IsNullOrEmpty(evtName)
+               || string.IsNullOrEmpty(name)
+               || luaFunction == null)
+            {
+                GameLogger.Warning(TAG, "参数缺失", evtName);
+                GameErrorManager.LastError = GameError.ParamNotProvide;
+                return null;
+            }
+
+            GameEvent gameEvent = null;
+            if (IsGlobalEventRegistered(evtName, out gameEvent))
+            {
+                GameHandler gameHandler = new GameHandler(name, luaFunction);
+                gameEvent.EventHandlers.Add(gameHandler);
+                return gameHandler;
+            }
+            else
+            {
+                GameLogger.Warning(TAG, "事件 {0} 未注册", evtName);
+                GameErrorManager.LastError = GameError.Unregistered;
+            }
+            return null;
+        }
         /// <summary>
         /// 注册命令接收器（Delegate）
         /// </summary>

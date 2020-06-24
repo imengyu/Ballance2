@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UIVertcialLinearLayout
+  gravity="Center">
+  <UIText 
+    name="text.main"
+    color="#ffffff"
+    width="match_parent"
+    height="warp_content"
+    layout_marginLeft="10"
+    layout_marginRight="10">
+  </UIText>
+  <UISmallButton
+    name="btn.ok"
+    layout_marginTop="50">确定</UISmallButton>
+</UIVertcialLinearLayout>

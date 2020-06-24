@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7777644376155784014}
   - component: {fileID: 8077897547120325319}
   - component: {fileID: 9214649379793061539}
+  - component: {fileID: -6907022328913755726}
   m_Layer: 5
   m_Name: UIText
   m_TagString: Untagged
@@ -90,3 +91,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48eb585ae380138488a2f85eaaf1284a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  anchorX: 0
+  anchorY: 0
+  minSize: {x: 0, y: 0}
+  maxSize: {x: 0, y: 0}
+  name: 
+  layout_marginLeft: 0
+  layout_marginTop: 0
+  layout_marginRight: 0
+  layout_marginBottom: 0
+  visibility: 0
+  layout_centerHorizontal: 0
+  layout_centerVertical: 0
+  layout_centerInParent: 0
+  layout_alignParentTop: 0
+  layout_alignParentBottom: 0
+  layout_alignParentLeft: 0
+  layout_alignParentRight: 0
+  layout_above: 
+  layout_below: 
+  layout_toRightOf: 
+  layout_toLeftOf: 
+  layout_alignTop: 
+  layout_alignBottom: 
+  layout_alignLeft: 
+  layout_alignRight: 
+--- !u!114 &-6907022328913755726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7217001282430660351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 0
+  m_VerticalFit: 0

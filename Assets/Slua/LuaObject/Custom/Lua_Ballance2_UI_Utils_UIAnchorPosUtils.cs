@@ -345,13 +345,30 @@ public class Lua_Ballance2_UI_Utils_UIAnchorPosUtils : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			UnityEngine.RectTransform a1;
-			checkType(l,1,out a1);
-			Ballance2.UI.Utils.UIPivot a2;
-			a2 = (Ballance2.UI.Utils.UIPivot)LuaDLL.luaL_checkinteger(l, 2);
-			Ballance2.UI.Utils.UIAnchorPosUtils.SetUIPivot(a1,a2);
-			pushValue(l,true);
-			return 1;
+			int argc = LuaDLL.lua_gettop(l);
+			if(argc==2){
+				UnityEngine.RectTransform a1;
+				checkType(l,1,out a1);
+				Ballance2.UI.Utils.UIPivot a2;
+				a2 = (Ballance2.UI.Utils.UIPivot)LuaDLL.luaL_checkinteger(l, 2);
+				Ballance2.UI.Utils.UIAnchorPosUtils.SetUIPivot(a1,a2);
+				pushValue(l,true);
+				return 1;
+			}
+			else if(argc==3){
+				UnityEngine.RectTransform a1;
+				checkType(l,1,out a1);
+				Ballance2.UI.Utils.UIPivot a2;
+				a2 = (Ballance2.UI.Utils.UIPivot)LuaDLL.luaL_checkinteger(l, 2);
+				UnityEngine.RectTransform.Axis a3;
+				a3 = (UnityEngine.RectTransform.Axis)LuaDLL.luaL_checkinteger(l, 3);
+				Ballance2.UI.Utils.UIAnchorPosUtils.SetUIPivot(a1,a2,a3);
+				pushValue(l,true);
+				return 1;
+			}
+			pushValue(l,false);
+			LuaDLL.lua_pushstring(l,"No matched override function SetUIPivot to call");
+			return 2;
 		}
 		catch(Exception e) {
 			return error(l,e);

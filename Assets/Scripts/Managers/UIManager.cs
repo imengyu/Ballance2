@@ -164,7 +164,86 @@ namespace Ballance2.Managers
         /// <param name="title">标题</param>
         /// <param name="okText">OK 按钮文字</param>
         /// <returns></returns>
-        public int GlobalAlert(string text, string title, string okText = "确定" )
+        public int GlobalAlert(string text, string title, string okText = "确定")
+        {
+            string oldPagePath = currentShowPage.PagePath;
+            int windowId = GenWindowId();
+            UIPage page = RegisterBallanceUIPage("global.alert." + windowId,
+                PageGlobalConfirm.text,
+                new string[] { "btn.ok:click" },
+                new GameHandlerDelegate[] {
+                    (evtName, param) => {
+                        OnGlobalDialogClicked("alert", true, windowId, oldPagePath);
+                        return true;
+                    },
+                }, "Default");
+
+            GotoUIPage("global.alert." + windowId);
+
+            UIElement textEle = page.ContentContainer.FindElementByName("text.main");
+            UIElement btnOkEle = page.ContentContainer.FindElementByName("btn.ok");
+            if (textEle != null) textEle.SetProperty("text", text);
+            if (btnOkEle != null)  btnOkEle.SetProperty("text", okText);
+    
+            return windowId;
+        }
+        /// <summary>
+        /// 显示全局 Confirm 对话框
+        /// </summary>
+        /// <param name="text">内容</param>
+        /// <param name="title">标题</param>
+        /// <param name="okText">OK 按钮文字</param>
+        /// <param name="cancelText">Cancel 按钮文字</param>
+        /// <returns></returns>
+        public int GlobalConfirm(string text, string title, string okText = "确定", string cancelText = "取消")
+        {
+            string oldPagePath = currentShowPage.PagePath;
+            int windowId = GenWindowId();
+            UIPage page = RegisterBallanceUIPage("global.confirm." + windowId,
+                PageGlobalConfirm.text,
+                new string[] { "btn.ok:click", "btn.cancel:click" },
+                new GameHandlerDelegate[] {
+                    (evtName, param) => {
+                        OnGlobalDialogClicked("confirm", true, windowId, oldPagePath);
+                        return true;
+                    },
+                    (evtName, param) => {
+                        OnGlobalDialogClicked("confirm", false, windowId, oldPagePath);
+                        return true;
+                    }
+                }, "Default");
+
+            GotoUIPage("global.confirm." + windowId);
+
+            UIElement textEle = page.ContentContainer.FindElementByName("text.main");
+            UIElement btnOkEle = page.ContentContainer.FindElementByName("btn.ok");
+            UIElement btnCancelEle = page.ContentContainer.FindElementByName("btn.cancel");
+            if (textEle != null) textEle.SetProperty("text", text);
+            if (btnOkEle != null) btnOkEle.SetProperty("text", okText);
+            if (btnCancelEle != null) btnCancelEle.SetProperty("text", cancelText);
+
+            return windowId;
+        }
+
+        private void OnGlobalDialogClicked(string type, bool isOk, int dialogId, string oldPagePath)
+        {
+            CloseUIPage("global." + type + "." + dialogId);
+
+            if (oldPagePath != null) GotoUIPage(oldPagePath as string);
+
+            GameManager.GameMediator.DispatchGlobalEvent(
+                GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, "*",
+                dialogId, isOk);
+        }
+
+        /// <summary>
+        /// 显示全局 Alert 对话框（窗口模式）
+        /// </summary>
+        /// <param name="text">内容</param>
+        /// <param name="title">标题</param>
+        /// <param name="okText">OK 按钮文字</param>
+        /// <returns></returns>
+        public int GlobalAlertWindow(string text, string title, string okText = "确定")
         {
             GameObject windowGo = GameCloneUtils.CloneNewObjectWithParent(PrefabUIAlertWindow, WindowsRectTransform.transform, "");
             UIAlertWindow window = windowGo.GetComponent<UIAlertWindow>();
@@ -177,17 +256,17 @@ namespace Ballance2.Managers
                 GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, "*",
                     id, false);
             };
-            return window.GetWindowId();
+            return windowId;
         }
         /// <summary>
-        /// 显示全局 Confirm 对话框
+        /// 显示全局 Confirm 对话框（窗口模式）
         /// </summary>
         /// <param name="text">内容</param>
         /// <param name="title">标题</param>
         /// <param name="okText">OK 按钮文字</param>
         /// <param name="cancelText">Cancel 按钮文字</param>
         /// <returns></returns>
-        public int GlobalConfirm(string text, string title, string okText = "确定", string cancelText = "取消")
+        public int GlobalConfirmWindow(string text, string title, string okText = "确定", string cancelText = "取消")
         {
             GameObject windowGo = GameCloneUtils.CloneNewObjectWithParent(PrefabUIConfirmWindow, WindowsRectTransform.transform, "");
             UIConfirmWindow window = windowGo.GetComponent<UIConfirmWindow>();
@@ -202,6 +281,7 @@ namespace Ballance2.Managers
             };
             return window.GetWindowId();
         }
+
 
         #endregion
 
@@ -309,7 +389,7 @@ namespace Ballance2.Managers
 
         public void ShowWindow(IWindow window)
         {
-            switch(window.GetWindowType())
+            switch (window.GetWindowType())
             {
                 case WindowType.GlobalAlert:
                     window.GetRectTransform().transform.SetParent(GlobalWindowRectTransform.transform);
@@ -329,8 +409,8 @@ namespace Ballance2.Managers
             }
             window.SetVisible(true);
         }
-        public void HideWindow(IWindow window) { window.SetVisible(false);  }
-        public void CloseWindow(IWindow window)  { window.Destroy(); managedWindows.Remove(window);  }
+        public void HideWindow(IWindow window) { window.SetVisible(false); }
+        public void CloseWindow(IWindow window) { window.Destroy(); managedWindows.Remove(window); }
 
         private int windowId = 0;
         public int GenWindowId()
@@ -348,7 +428,8 @@ namespace Ballance2.Managers
         private List<UIPrefab> pagePrefabs = null;
         private List<UIPrefab> elementPrefabs = null;
 
-        private struct UIPrefab {
+        private struct UIPrefab
+        {
             public UIPrefab(GameObject o, string n)
             {
                 Prefab = o;
@@ -415,7 +496,7 @@ namespace Ballance2.Managers
             }
 
             UILayout layoutContainer = BuildLayoutByTemplate(pagePath, templateXml, handlerNames, handlers, self);
-            if(layoutContainer == null)
+            if (layoutContainer == null)
             {
                 GameErrorManager.LastError = GameError.LayoutBuildFailed;
                 return null;
@@ -562,7 +643,8 @@ namespace Ballance2.Managers
             if (page.ContentRectTransform == null)
                 page.ContentRectTransform = page.RectTransform;
             page.PagePath = pagePath;
-            if (content.parent != page.ContentRectTransform) {
+            if (content.parent != page.ContentRectTransform)
+            {
                 content.SetParent(page.ContentRectTransform);
                 UIAnchorPosUtils.SetUIAnchor(content, UIAnchor.Stretch, UIAnchor.Stretch);
                 UIAnchorPosUtils.SetUIPos(content, 0, 0, 0, 0);
@@ -592,8 +674,8 @@ namespace Ballance2.Managers
         /// <returns></returns>
         public UIPage FindUIPage(string pagePath)
         {
-            foreach(UIPage p in managedPages)
-                if(p.PagePath == pagePath)
+            foreach (UIPage p in managedPages)
+                if (p.PagePath == pagePath)
                     return p;
             return null;
         }
@@ -605,13 +687,14 @@ namespace Ballance2.Managers
         public bool DestroyUIPage(string pagePath)
         {
             UIPage p = FindUIPage(pagePath);
-            if(p != null)
+            if (p != null)
             {
                 p.gameObject.SetActive(false);
                 managedPages.Remove(p);
                 return true;
             }
-            else {
+            else
+            {
                 GameErrorManager.LastError = GameError.Unregistered;
                 return false;
             }
@@ -626,7 +709,7 @@ namespace Ballance2.Managers
             UIPage p = FindUIPage(pagePath);
             if (p != null)
             {
-                if(p != currentShowPage)
+                if (p != currentShowPage)
                 {
                     if (currentShowPage != null)
                     {
@@ -746,7 +829,7 @@ namespace Ballance2.Managers
                 h = handlers[i];
                 handlerList.Add(handlerNames[i], new GameHandler(name + ":" + h, h));
             }
-            
+
             return BuildLayoutByTemplate(name, templateXml, handlerList);
         }
         /// <summary>
@@ -787,7 +870,7 @@ namespace Ballance2.Managers
             //实例化UI预制体
             string prefabName = templateXml.Name;
             GameObject prefab = FindRegisterElementPrefab(prefabName);
-            if(prefab == null)
+            if (prefab == null)
             {
                 GameLogger.Log(TAG, "BuildLayoutByTemplate failed, not found prefab {0}", prefabName);
                 GameErrorManager.LastError = GameError.PrefabNotFound;
@@ -795,8 +878,8 @@ namespace Ballance2.Managers
             }
 
             //获取预制体上的脚本
-            UILayout ilayout = prefab.GetComponent<UILayout>();            
-            if(ilayout == null) //该方法必须实例化UI容器
+            UILayout ilayout = prefab.GetComponent<UILayout>();
+            if (ilayout == null) //该方法必须实例化UI容器
             {
                 GameLogger.Error(TAG, "BuildLayoutByTemplate with prefab {0} failed, root must be a container", prefabName);
                 GameErrorManager.LastError = GameError.MustBeContainer;
@@ -836,18 +919,23 @@ namespace Ballance2.Managers
                 if (prefab.GetComponent<UILayout>() != null)//这是UI容器
                 {
                     UILayout newLayout = BuildLayoutByTemplateInternal(eleName, eleNode, handlers, ilayout, root);//递归构建
-                    ilayout.AddElement(newLayout, false);
-                    return newLayout;
+
+                    uIElement = newLayout;
+                    uIElement.LateInit(eleNode);
+                    uIElement.rootContainer = root;
+                    uIElement.Name = eleName;
                 }
+                else
+                {
+                    //构建子元素
+                    newEle = GameCloneUtils.CloneNewObjectWithParent(prefab, ilayout.RectTransform, eleName);
 
-                //构建子元素
-                newEle = GameCloneUtils.CloneNewObjectWithParent(prefab, ilayout.RectTransform, eleName);
-
-                uIElement = newEle.GetComponent<UIElement>();
-                uIElement.RectTransform = newEle.GetComponent<RectTransform>();
-                uIElement.LateInit(eleNode);
-                uIElement.rootContainer = root;
-                uIElement.Name = eleName;
+                    uIElement = newEle.GetComponent<UIElement>();
+                    uIElement.RectTransform = newEle.GetComponent<RectTransform>();
+                    uIElement.LateInit(eleNode);
+                    uIElement.rootContainer = root;
+                    uIElement.Name = eleName;
+                }
 
                 //初始化子元素的事件接收器
                 Dictionary<string, GameHandler> lateInitHandlers = new Dictionary<string, GameHandler>();
@@ -856,8 +944,8 @@ namespace Ballance2.Managers
                     string[] sp = key.Split(':');
                     if (sp.Length >= 2 && sp[0] == uIElement.Name)
                     {
-                        try {  lateInitHandlers.Add(sp[1], handlers[key]); }
-                        catch(System.ArgumentException e)
+                        try { lateInitHandlers.Add(sp[1], handlers[key]); }
+                        catch (System.ArgumentException e)
                         {
                             GameLogger.Warning(TAG, "Add event for {0} -> {1} failed {2}", key, handlers[key].Name, e.Message);
                             continue;
@@ -881,8 +969,14 @@ namespace Ballance2.Managers
 
         #region 外壳模板
 
+        private TextAsset PageGlobalConfirm;
+        private TextAsset PageGlobalAlert;
+
         private void InitUIPrefabs()
         {
+            PageGlobalConfirm = GameManager.FindStaticAssets<TextAsset>("PageGlobalConfirm");
+            PageGlobalAlert = GameManager.FindStaticAssets<TextAsset>("PageGlobalAlert");
+
             RegisterElementPrefab(GameManager.FindStaticPrefabs("UISpace"), "UISpace");
             RegisterElementPrefab(GameManager.FindStaticPrefabs("UISmallButton"), "UISmallButton");
             RegisterElementPrefab(GameManager.FindStaticPrefabs("UIMainButton"), "UIMainButton");
@@ -903,7 +997,7 @@ namespace Ballance2.Managers
         /// <param name="name"></param>
         public bool RegisterElementPrefab(GameObject prefab, string name)
         {
-            if(FindRegisterElementPrefab(name) != null)
+            if (FindRegisterElementPrefab(name) != null)
             {
                 GameErrorManager.LastError = GameError.AlredayRegistered;
                 return false;
@@ -950,13 +1044,13 @@ namespace Ballance2.Managers
         public GameObject InstanceElement(string prefabName, RectTransform parent, string name)
         {
             GameObject prefab = FindRegisterElementPrefab(name);
-            if(prefab == null)
+            if (prefab == null)
             {
                 GameErrorManager.LastError = GameError.PrefabNotFound;
                 return null;
             }
-            
-            return GameCloneUtils.CloneNewObjectWithParent(prefab, parent, prefabName + ":" +name);
+
+            return GameCloneUtils.CloneNewObjectWithParent(prefab, parent, prefabName + ":" + name);
         }
 
         /// <summary>
@@ -980,7 +1074,7 @@ namespace Ballance2.Managers
         /// <param name="name"></param>
         public bool UnRegisterPagePrefab(string name)
         {
-            for(int i = pagePrefabs.Count - 1; i>=0;i--)
+            for (int i = pagePrefabs.Count - 1; i >= 0; i--)
             {
                 if (pagePrefabs[i].Name == name)
                 {
@@ -1097,22 +1191,22 @@ namespace Ballance2.Managers
         private bool OnCommandShowHideCloseWindow(string idstr, string act)
         {
             int id = 0;
-            if(!int.TryParse(idstr, out id))
+            if (!int.TryParse(idstr, out id))
             {
                 GameLogger.Error(TAG, "参数 1 必须是 int 类型 {0} : ", idstr);
                 return false;
             }
 
             IWindow w = FindWindowById(id);
-            if(w == null)
+            if (w == null)
             {
                 GameLogger.Error(TAG, "未找到 ID 为 {0} 的窗口", id);
                 return false;
             }
 
-            switch(act)
+            switch (act)
             {
-                case "show": ShowWindow(w);  break;
+                case "show": ShowWindow(w); break;
                 case "hide": HideWindow(w); break;
                 case "close": CloseWindow(w); break;
             }

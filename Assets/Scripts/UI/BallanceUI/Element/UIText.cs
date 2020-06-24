@@ -44,13 +44,35 @@ namespace Ballance2.UI.BallanceUI.Element
                             text.lineSpacing = f;
                         break;
                     }
+                case "width":
+                    if (val.ToLower() == "warp_content")
+                        contentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+                    else
+                    {
+                        contentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+                        base.SetProp(name, val);
+                    }
+                    DoPostLayout();
+                    break;
+                case "height":
+                    if (val.ToLower() == "warp_content")
+                        contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+                    else
+                    {
+                        contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
+                        base.SetProp(name, val);
+                    }
+                    DoPostLayout();
+                    break;
                 default:
                     base.SetProp(name, val);
                     break;
+
             }
         }
 
         private Text text;
+        private ContentSizeFitter contentSizeFitter;
 
         /// <summary>
         /// 获取或设置按钮文字
@@ -58,13 +80,17 @@ namespace Ballance2.UI.BallanceUI.Element
         public string Text
         {
             get { return text.text; }
-            set { text.text = value.Replace("<br>", "\n").Replace("<br/>", "\n"); }
+            set
+            {
+                if(text == null) text = GetComponent<Text>();
+                text.text = StringUtils.ReplaceBrToLine(value);
+            }
         }
 
         private new void Start()
         {
             text = GetComponent<Text>();
-
+            contentSizeFitter = GetComponent<ContentSizeFitter>();
             base.Start();
         }
     }

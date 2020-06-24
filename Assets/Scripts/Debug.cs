@@ -47,7 +47,8 @@ namespace Ballance2.Main
                    return false;
                });
 
-            DebugLinearLayout();
+            //DebugLinearLayout();
+            DebugPageGlobal();
 
             GameManager.UIManager.MaskBlackSet(false);
             GameLogger.Log(TAG, "Run End");
@@ -81,6 +82,36 @@ namespace Ballance2.Main
                 },
                 "Default");
             GameManager.UIManager.GotoUIPage("main");
+        }
+
+        public TextAsset PageGlobalAlert;
+        public TextAsset PageGlobalConfirm;
+
+        private void DebugPageGlobal()
+        {
+            GameManager.UIManager.RegisterBallanceUIPage("global.confirm", PageGlobalConfirm.text,
+                new string[] { "btn.ok:click", "btn.cancel:click" },
+                new GameHandlerDelegate[] {
+                    (evtName, param) => {
+                        GameManager.UIManager.CloseUIPage("global.alert");
+                        return false;
+                    },
+                    (evtName, param) => {
+                        GameManager.UIManager.CloseUIPage("global.alert");
+                        return false;
+                    }
+                },
+                "Default");
+            GameManager.UIManager.RegisterBallanceUIPage("global.alert", PageGlobalAlert.text,
+                new string[] { "btn.ok:click" },
+                new GameHandlerDelegate[] {
+                    (evtName, param) => {
+                        GameManager.UIManager.CloseUIPage("global.alert");
+                        return false;
+                    }
+                },
+                "Default");
+            GameManager.UIManager.GotoUIPage("global.confirm");
         }
     }
 }

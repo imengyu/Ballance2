@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using Ballance2.Managers.CoreBridge;
 using Ballance2.UI.Utils;
 using System.Xml;
+using Ballance2.Utils;
 
 namespace Ballance2.UI.BallanceUI.Element
 {
@@ -51,23 +52,27 @@ namespace Ballance2.UI.BallanceUI.Element
         public string Text
         {
             get { return text.text; }
-            set { text.text = value.Replace("<br>", "\n").Replace("<br/>", "\n"); }
+            set
+            {
+                if (text == null) GetText();
+                text.text = StringUtils.ReplaceBrToLine(value);
+            }
         }
-
+        private void GetText()
+        {
+            Transform textT = transform.Find("Text");
+            if (textT != null)
+                text = textT.gameObject.GetComponent<Text>();
+        }
         private new void Start()
         {
             clickEventHandler = new GameHandlerList();
-            text = transform.Find("Text").gameObject.GetComponent<Text>();
 
             EventTriggerListener eventTriggerListener = EventTriggerListener.Get(gameObject);
             eventTriggerListener.onClick = (g) =>
             {
-                foreach(GameHandler h in clickEventHandler)
-                    h.Call("click", Name);
-            };
-            eventTriggerListener.onEnter = (g) =>
-            {
-
+                foreach (GameHandler h in clickEventHandler)
+                    h.Call("click", this, Name);
             };
 
             base.Start();

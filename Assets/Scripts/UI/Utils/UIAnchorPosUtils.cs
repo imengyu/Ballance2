@@ -218,6 +218,35 @@ namespace Ballance2.UI.Utils
             rectTransform.pivot = new Vector2(x, y);
         }
         /// <summary>
+        /// 设置 UI 组件枢轴
+        /// </summary>
+        /// <param name="rectTransform">UI 组件</param>
+        public static void SetUIPivot(RectTransform rectTransform, UIPivot pivot, RectTransform.Axis axis)
+        {
+            float x = rectTransform.pivot.x, y = rectTransform.pivot.y;
+
+            if (axis == RectTransform.Axis.Vertical)
+            {
+                if((pivot & UIPivot.Top) == UIPivot.Top)
+                    y = 1;
+                else if ((pivot & UIPivot.Center) == UIPivot.Center)
+                    y = 0.5f;
+                else if ((pivot & UIPivot.Bottom) == UIPivot.Bottom)
+                    y = 0;
+            }
+            else
+            {
+                if ((pivot & UIPivot.Left) == UIPivot.Left)
+                    x = 0;
+                else if ((pivot & UIPivot.Center) == UIPivot.Center)
+                    x = 0.5f;
+                else if ((pivot & UIPivot.Right) == UIPivot.Right)
+                    x = 1;
+            }
+
+            rectTransform.pivot = new Vector2(x, y);
+        }
+        /// <summary>
         /// 获取 UI 组件枢轴
         /// </summary>
         /// <param name="rectTransform">UI 组件</param>

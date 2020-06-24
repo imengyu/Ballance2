@@ -167,10 +167,13 @@ namespace Ballance2.UI.BallanceUI
         /// </summary>
         public void PostDoLayout()
         {
+            loopUpdate = 2;
+            /*
             layoutPendCount++;
-            loopUpdate = 10 - (int)(5 * (layoutPendCount / 5.0f));
+            loopUpdate = 5 - (int)(5 * (layoutPendCount / 5.0f));
             if (loopUpdate < 2) loopUpdate = 2;
-            if (loopUpdate > 20) loopUpdate = 20;
+            if (loopUpdate > 15) loopUpdate = 15;
+            */
         }
         /// <summary>
         /// 强制布局
@@ -178,6 +181,8 @@ namespace Ballance2.UI.BallanceUI
         /// <param name="startChildIndex"></param>
         public void DoLayout()
         {
+            OnLayout();
+            /*
             if (!layoutLock)
             {
                 if (layoutDelyCount == 0)
@@ -192,6 +197,7 @@ namespace Ballance2.UI.BallanceUI
                 }
                 else loopUpdate = 2;
             }
+            */
         }
         /// <summary>
         /// 元素布局属性初始化应用
@@ -244,6 +250,28 @@ namespace Ballance2.UI.BallanceUI
                 }
             }
             return UIAnchor.None;
+        }
+        public static UIPivot AnchorToPivot(UIAnchor anchor, RectTransform.Axis axis)
+        {
+            if (axis == RectTransform.Axis.Vertical)
+            {
+                switch (anchor)
+                {
+                    case UIAnchor.Top: return UIPivot.Top;
+                    case UIAnchor.Bottom: return UIPivot.Bottom;
+                    case UIAnchor.Center: return UIPivot.Center;
+                }
+            }
+            else
+            {
+                switch (anchor)
+                {
+                    case UIAnchor.Left: return UIPivot.Left;
+                    case UIAnchor.Right: return UIPivot.Right;
+                    case UIAnchor.Center: return UIPivot.Center;
+                }
+            }
+            return UIPivot.None;
         }
     }
 

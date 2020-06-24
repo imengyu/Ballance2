@@ -844,7 +844,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d14feeec1976b4c47a2cce229386e5fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GameMode: 2
+  GameMode: 1
   GameRoot: {fileID: 1368830292}
   GameCanvas: {fileID: 1928318315}
   BreakAtStart: 0
@@ -857,12 +857,6 @@ MonoBehaviour:
   - Object: {fileID: 6108144835751680736, guid: 166efe800b338ea4fb9fd20a71e2fbd5,
       type: 3}
     Name: AudioSource
-  - Object: {fileID: 1953235002799851516, guid: 8884140c80a43a4479b60b1d28067253,
-      type: 3}
-    Name: UIAlertWindow
-  - Object: {fileID: 5201288512610855020, guid: c129967611dab884e95feb51221921a5,
-      type: 3}
-    Name: UIConfirmWindow
   - Object: {fileID: 7795733834177401997, guid: 4211aeed85e699d4ba0a6aa5a131b090,
       type: 3}
     Name: UIWindow
@@ -919,6 +913,11 @@ MonoBehaviour:
   - Object: {fileID: 6794558724857992854, guid: e1918fc7ae3c38c43a3dffb57754b6c9,
       type: 3}
     Name: UILinearLayout
+  - Object: {fileID: 1953235002799851516, guid: 8884140c80a43a4479b60b1d28067253,
+      type: 3}
+    Name: UIAlertWindow
+  - Object: {fileID: 0}
+    Name: UIConfirmWindow
   - Object: {fileID: 0}
     Name: 
   GameAssets:
@@ -958,6 +957,10 @@ MonoBehaviour:
     Name: GameUIAudioMixer
   - Object: {fileID: 8300000, guid: b56589974a17d8a428f9ec2e6f4ad830, type: 3}
     Name: IntroMusic
+  - Object: {fileID: 4900000, guid: c4588e20cc9df7349845f20e537de222, type: 3}
+    Name: PageGlobalConfirm
+  - Object: {fileID: 4900000, guid: a0e11e3ab1529c546858ced9ae395f1d, type: 3}
+    Name: PageGlobalAlert
   - Object: {fileID: 0}
     Name: 
 --- !u!4 &1202931503
@@ -1643,7 +1646,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 024686e34a341ed4795f123706f1d6ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TestLyout: {fileID: 4900000, guid: e722123d416af6445b752ac39cf28f18, type: 3}
+  PageMain: {fileID: 4900000, guid: e722123d416af6445b752ac39cf28f18, type: 3}
+  PageLightZone: {fileID: 4900000, guid: 0b21ab158903ffc46becd4ff62b307f0, type: 3}
+  PageGlobalAlert: {fileID: 4900000, guid: a0e11e3ab1529c546858ced9ae395f1d, type: 3}
+  PageGlobalConfirm: {fileID: 4900000, guid: c4588e20cc9df7349845f20e537de222, type: 3}
 --- !u!1 &1928318315
 GameObject:
   m_ObjectHideFlags: 0

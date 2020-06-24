@@ -49,19 +49,12 @@ public class Lua_Ballance2_UI_BallanceUI_UIElement : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			int argc = LuaDLL.lua_gettop(l);
-			if(matchType(l,argc,1,typeof(System.Xml.XmlNode))){
-				Ballance2.UI.BallanceUI.UIElement self=(Ballance2.UI.BallanceUI.UIElement)checkSelf(l);
-
-				System.Xml.XmlNode a2;
-				checkType(l,3,out a2);
-				self.LateInit(a2);
-				pushValue(l,true);
-				return 1;
-			}
-			pushValue(l,false);
-			LuaDLL.lua_pushstring(l,"No matched override function LateInit to call");
-			return 2;
+			Ballance2.UI.BallanceUI.UIElement self=(Ballance2.UI.BallanceUI.UIElement)checkSelf(l);
+			System.Xml.XmlNode a1;
+			checkType(l,2,out a1);
+			self.LateInit(a1);
+			pushValue(l,true);
+			return 1;
 		}
 		catch(Exception e) {
 			return error(l,e);
@@ -235,6 +228,37 @@ public class Lua_Ballance2_UI_BallanceUI_UIElement : LuaObject {
 			System.String a2;
 			checkType(l,3,out a2);
 			self.SetProperty(a1,a2);
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int DoResize(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.UI.BallanceUI.UIElement self=(Ballance2.UI.BallanceUI.UIElement)checkSelf(l);
+			self.DoResize();
 			pushValue(l,true);
 			return 1;
 		}
@@ -604,6 +628,70 @@ public class Lua_Ballance2_UI_BallanceUI_UIElement : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int get_MaxSize(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.UI.BallanceUI.UIElement self=(Ballance2.UI.BallanceUI.UIElement)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.MaxSize);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_MaxSize(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.UI.BallanceUI.UIElement self=(Ballance2.UI.BallanceUI.UIElement)checkSelf(l);
+			UnityEngine.Vector2 v;
+			checkType(l,2,out v);
+			self.MaxSize=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int get_AnchorX(IntPtr l) {
 		try {
 			#if DEBUG
@@ -906,6 +994,70 @@ public class Lua_Ballance2_UI_BallanceUI_UIElement : LuaObject {
 			Ballance2.UI.BallanceUI.UILayout v;
 			checkType(l,2,out v);
 			self.Parent=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_Visibility(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.UI.BallanceUI.UIElement self=(Ballance2.UI.BallanceUI.UIElement)checkSelf(l);
+			pushValue(l,true);
+			pushEnum(l,(int)self.Visibility);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_Visibility(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.UI.BallanceUI.UIElement self=(Ballance2.UI.BallanceUI.UIElement)checkSelf(l);
+			Ballance2.UI.BallanceUI.UIVisibility v;
+			v = (Ballance2.UI.BallanceUI.UIVisibility)LuaDLL.luaL_checkinteger(l, 2);
+			self.Visibility=v;
 			pushValue(l,true);
 			return 1;
 		}
@@ -1892,17 +2044,20 @@ public class Lua_Ballance2_UI_BallanceUI_UIElement : LuaObject {
 		addMember(l,SetCustomData);
 		addMember(l,GetCustomData);
 		addMember(l,SetProperty);
+		addMember(l,DoResize);
 		addMember(l,"RootContainer",get_RootContainer,null,true);
 		addMember(l,"Layout_marginLeft",get_Layout_marginLeft,set_Layout_marginLeft,true);
 		addMember(l,"Layout_marginTop",get_Layout_marginTop,set_Layout_marginTop,true);
 		addMember(l,"Layout_marginRight",get_Layout_marginRight,set_Layout_marginRight,true);
 		addMember(l,"Layout_marginBottom",get_Layout_marginBottom,set_Layout_marginBottom,true);
 		addMember(l,"MinSize",get_MinSize,set_MinSize,true);
+		addMember(l,"MaxSize",get_MaxSize,set_MaxSize,true);
 		addMember(l,"AnchorX",get_AnchorX,set_AnchorX,true);
 		addMember(l,"AnchorY",get_AnchorY,set_AnchorY,true);
 		addMember(l,"Name",get_Name,set_Name,true);
 		addMember(l,"RectTransform",get_RectTransform,set_RectTransform,true);
 		addMember(l,"Parent",get_Parent,set_Parent,true);
+		addMember(l,"Visibility",get_Visibility,set_Visibility,true);
 		addMember(l,"Layout_centerHorizontal",get_Layout_centerHorizontal,set_Layout_centerHorizontal,true);
 		addMember(l,"Layout_centerVertical",get_Layout_centerVertical,set_Layout_centerVertical,true);
 		addMember(l,"Layout_centerInParent",get_Layout_centerInParent,set_Layout_centerInParent,true);

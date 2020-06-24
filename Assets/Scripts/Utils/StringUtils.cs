@@ -44,7 +44,10 @@ namespace Ballance2.Utils
             if (ver1 == ver2) return 0;
             return ver1 < ver2 ? -1 : 1;
         }
-
+        public static string ReplaceBrToLine(string str)
+        {
+            return str.Replace("<br>", "\n").Replace("<br/>", "\n").Replace("<br />", "\n"); ;
+        }
         public static Color StringToColor(string color)
         {
             switch(color)

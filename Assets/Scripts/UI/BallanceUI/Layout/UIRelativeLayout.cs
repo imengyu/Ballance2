@@ -179,9 +179,10 @@ namespace Ballance2.UI.BallanceUI.Layout
         private void DoLayoutElementHorizontalInternal(UIElement e)
         {
             UIAnchor a = UIAnchor.None;
-            float finalValue = e.RectTransform.anchoredPosition.x;
+
             if (e.AnchorX != UIAnchor.Stretch)
             {
+
                 if (!string.IsNullOrEmpty(e.Layout_alignLeft) || !string.IsNullOrEmpty(e.Layout_toLeftOf)
                     || e.Layout_alignParentLeft) a = UIAnchor.Left;
                 else if (!string.IsNullOrEmpty(e.Layout_alignRight) || !string.IsNullOrEmpty(e.Layout_toRightOf)
@@ -189,6 +190,12 @@ namespace Ballance2.UI.BallanceUI.Layout
                 else if (e.Layout_centerHorizontal || e.Layout_centerInParent) a = UIAnchor.Center;
                 else a = UILayoutUtils.GravityToAnchor(Gravity, RectTransform.Axis.Horizontal);
 
+                UIAnchorPosUtils.SetUIAnchor(e.RectTransform, a,
+                    UIAnchorPosUtils.GetUIAnchor(e.RectTransform, RectTransform.Axis.Vertical));
+                UIAnchorPosUtils.SetUIPivot(e.RectTransform,
+                    UILayoutUtils.AnchorToPivot(a, RectTransform.Axis.Horizontal), RectTransform.Axis.Horizontal);
+
+                float finalValue = 0;
                 UIElement eRef = null;
                 if (!string.IsNullOrEmpty(e.Layout_toLeftOf))
                 {
@@ -218,21 +225,21 @@ namespace Ballance2.UI.BallanceUI.Layout
                         finalValue = eRef.RectTransform.anchoredPosition.x + eRef.RectTransform.rect.width
                             - e.RectTransform.rect.width - e.Layout_marginRight;
                 }
-                else if (e.Layout_centerInParent) finalValue = 0;
-                else if (e.Layout_alignParentRight) finalValue = -e.Layout_marginRight;
-                else if (e.Layout_alignParentLeft) finalValue = e.Layout_marginLeft;
+                else if (a == UIAnchor.Center) finalValue = 0;
+                else if (a == UIAnchor.Right) finalValue = -e.Layout_marginRight;
+                else if (a == UIAnchor.Left) finalValue = e.Layout_marginLeft;
 
-                UIAnchorPosUtils.SetUIAnchor(e.RectTransform, a, UIAnchorPosUtils.GetUIAnchor(e.RectTransform, RectTransform.Axis.Vertical));
                 e.RectTransform.anchoredPosition = new Vector2(
-                    UIAnchorPosUtils.GetUIPivotLocationOffest(e.RectTransform, finalValue, RectTransform.Axis.Horizontal),
+                    finalValue,
                     e.RectTransform.anchoredPosition.y);
+
             }
         }
         private void DoLayoutElementVerticalInternal(UIElement e)
         {
             UIAnchor a = UIAnchor.None;
-            float finalValue = e.RectTransform.anchoredPosition.y;
-            if (e.AnchorX != UIAnchor.Stretch)
+            
+            if (e.AnchorY != UIAnchor.Stretch)
             {
                 if (!string.IsNullOrEmpty(e.Layout_alignTop) || !string.IsNullOrEmpty(e.Layout_below)
                     || e.Layout_alignParentTop) a = UIAnchor.Top;
@@ -241,6 +248,12 @@ namespace Ballance2.UI.BallanceUI.Layout
                 else if (e.Layout_centerVertical || e.Layout_centerInParent) a = UIAnchor.Center;
                 else a = UILayoutUtils.GravityToAnchor(Gravity, RectTransform.Axis.Vertical);
 
+                UIAnchorPosUtils.SetUIAnchor(e.RectTransform, 
+                    UIAnchorPosUtils.GetUIAnchor(e.RectTransform, RectTransform.Axis.Horizontal), a);
+                UIAnchorPosUtils.SetUIPivot(e.RectTransform,
+                    UILayoutUtils.AnchorToPivot(a, RectTransform.Axis.Vertical), RectTransform.Axis.Vertical);
+
+                float finalValue = 0;
                 UIElement eRef = null;
                 if (!string.IsNullOrEmpty(e.Layout_below))
                 {
@@ -269,15 +282,15 @@ namespace Ballance2.UI.BallanceUI.Layout
                         finalValue = eRef.RectTransform.anchoredPosition.y - eRef.RectTransform.rect.height
                             + e.RectTransform.rect.height + e.Layout_marginBottom;
                 }
-                else if (e.Layout_centerInParent) finalValue = 0;
-                else if (e.Layout_alignParentTop) finalValue = -e.Layout_marginTop;
-                else if (e.Layout_alignParentBottom) finalValue = e.Layout_marginBottom;
+                else if (a == UIAnchor.Center) finalValue = 0;
+                else if (a == UIAnchor.Top) finalValue = -e.Layout_marginTop;
+                else if (a == UIAnchor.Bottom) finalValue = e.Layout_marginBottom;
 
-                UIAnchorPosUtils.SetUIAnchor(e.RectTransform, UIAnchorPosUtils.GetUIAnchor(e.RectTransform, RectTransform.Axis.Horizontal), a);
+                
                 e.RectTransform.anchoredPosition = new Vector2(
                     e.RectTransform.anchoredPosition.x,
-                    UIAnchorPosUtils.GetUIPivotLocationOffest(e.RectTransform, finalValue, RectTransform.Axis.Vertical)
-                    );
+                    finalValue
+                );
             }
         }
     }

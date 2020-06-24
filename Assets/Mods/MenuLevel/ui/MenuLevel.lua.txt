@@ -25,10 +25,10 @@ MenuLevel = {
   I_Zone_SuDu_Innen = nil,
   I_Zone_NenLi_Innen = nil,
   I_Zone_LiLiang_Innen = nil,
-  speed = 6,
+  speed = -6,
 
   skyBoxDay = nil,
-  skyBoxNighy = nil,
+  skyBoxNight = nil,
   skyBox = nil,
 
   dialogQuitId = nil,
@@ -74,7 +74,8 @@ function class_MenuLevel()
     --skybox
     self.skyBox = self.I_Camera:GetComponent("Skybox")
     self.skyBoxDay = SkyBoxUtils.MakeSkyBox("C")
-    self.skyBoxNighy = SkyBoxUtils.MakeSkyBox("D")
+    self.skyBoxNight = SkyBoxUtils.MakeSkyBox("D")
+    self.skyBox.material = self.skyBoxDay
 
     self.runningLoop = true
 
@@ -156,17 +157,19 @@ function class_MenuLevel()
       { function(evtName) UIManager:BackUIPage() end }, 
       self,
       "Default")
-    self.pageHighScore = UIManager:RegisterBallanceUIPage("main.highscore", pageAboutXml, 
+    self.pageHighScore = UIManager:RegisterBallanceUIPage("main.highscore", pageHighscoreXml, 
       { "btn.back:click" }, 
       { function(evtName) UIManager:BackUIPage() end }, 
       self,
       "Default")
     self.pageLightZone = UIManager:RegisterBallanceUIPage("main.start.lightzone", pageLightZoneXml, 
       { "btn.back:click" }, 
-      { function(evtName) 
-		UIManager:BackUIPage() 
-		OnSwitchLz(false)
-	  end }, 
+      { 
+        function(evtName) 
+          UIManager:BackUIPage() 
+          self:OnSwitchLz(false)
+        end 
+      }, 
       self,
       "None")
 
@@ -175,9 +178,8 @@ function class_MenuLevel()
 
     -- 对话框事件
     GameManager.GameMediator:RegisterEventHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, TAG, function(id, confirm)
-      if(id == self.dialogQuitId and confirm)
-      then
-        GameManager:QuitGame()
+      if(id == self.dialogQuitId) then
+        if(confirm) then GameManager:QuitGame() else UIManager:GotoUIPage(self.pageMain.PagePath) end
       end
     end)
   end
@@ -185,13 +187,18 @@ function class_MenuLevel()
   function MenuLevel:OnSwitchLz(on) 
     if(on) 
     then
+      UIManager:MaskBlackSet(true)
+      UIManager:MaskBlackFadeOut(1)
       UIManager:GotoUIPage(self.pageLightZone.PagePath)
       self.I_Light_Night:SetActive(true)
       self.I_Light_Day:SetActive(false)
       self.I_Zone:SetActive(true)
-      self.skyBox.material = self.skyBoxNighy
+      self.skyBox.material = self.skyBoxNight
       self.runningLzLoop = true
+
     else
+      UIManager:MaskBlackSet(true)
+      UIManager:MaskBlackFadeOut(1)
       UIManager:GotoUIPage(self.pageMain.PagePath)
       self.I_Light_Day:SetActive(true)
       self.I_Light_Night:SetActive(false)
