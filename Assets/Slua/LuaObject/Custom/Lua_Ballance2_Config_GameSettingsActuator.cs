@@ -2,10 +2,10 @@
 using SLua;
 using System.Collections.Generic;
 [UnityEngine.Scripting.Preserve]
-public class Lua_Ballance2_Utils_StringUtils : LuaObject {
+public class Lua_Ballance2_Config_GameSettingsActuator : LuaObject {
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int IsUrl_s(IntPtr l) {
+	static public int constructor(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -16,11 +16,12 @@ public class Lua_Ballance2_Utils_StringUtils : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
+			Ballance2.Config.GameSettingsActuator o;
 			System.String a1;
-			checkType(l,1,out a1);
-			var ret=Ballance2.Utils.StringUtils.IsUrl(a1);
+			checkType(l,2,out a1);
+			o=new Ballance2.Config.GameSettingsActuator(a1);
 			pushValue(l,true);
-			pushValue(l,ret);
+			pushValue(l,o);
 			return 2;
 		}
 		catch(Exception e) {
@@ -38,7 +39,7 @@ public class Lua_Ballance2_Utils_StringUtils : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int IsNumber_s(IntPtr l) {
+	static public int SetFloat(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -49,11 +50,29 @@ public class Lua_Ballance2_Utils_StringUtils : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			System.String a1;
-			checkType(l,1,out a1);
-			var ret=Ballance2.Utils.StringUtils.IsNumber(a1);
-			pushValue(l,true);
-			pushValue(l,ret);
+			int argc = LuaDLL.lua_gettop(l);
+			if(matchType(l,argc,2,typeof(string),typeof(int))){
+				Ballance2.Config.GameSettingsActuator self=(Ballance2.Config.GameSettingsActuator)checkSelf(l);
+				System.String a1;
+				checkType(l,2,out a1);
+				System.Int32 a2;
+				checkType(l,3,out a2);
+				self.SetFloat(a1,a2);
+				pushValue(l,true);
+				return 1;
+			}
+			else if(matchType(l,argc,2,typeof(string),typeof(float))){
+				Ballance2.Config.GameSettingsActuator self=(Ballance2.Config.GameSettingsActuator)checkSelf(l);
+				System.String a1;
+				checkType(l,2,out a1);
+				System.Single a2;
+				checkType(l,3,out a2);
+				self.SetFloat(a1,a2);
+				pushValue(l,true);
+				return 1;
+			}
+			pushValue(l,false);
+			LuaDLL.lua_pushstring(l,"No matched override function SetFloat to call");
 			return 2;
 		}
 		catch(Exception e) {
@@ -71,7 +90,7 @@ public class Lua_Ballance2_Utils_StringUtils : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int IsFloatNumber_s(IntPtr l) {
+	static public int GetFloat(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -82,11 +101,31 @@ public class Lua_Ballance2_Utils_StringUtils : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			System.String a1;
-			checkType(l,1,out a1);
-			var ret=Ballance2.Utils.StringUtils.IsFloatNumber(a1);
-			pushValue(l,true);
-			pushValue(l,ret);
+			int argc = LuaDLL.lua_gettop(l);
+			if(matchType(l,argc,2,typeof(string),typeof(int))){
+				Ballance2.Config.GameSettingsActuator self=(Ballance2.Config.GameSettingsActuator)checkSelf(l);
+				System.String a1;
+				checkType(l,2,out a1);
+				System.Int32 a2;
+				checkType(l,3,out a2);
+				var ret=self.GetFloat(a1,a2);
+				pushValue(l,true);
+				pushValue(l,ret);
+				return 2;
+			}
+			else if(matchType(l,argc,2,typeof(string),typeof(float))){
+				Ballance2.Config.GameSettingsActuator self=(Ballance2.Config.GameSettingsActuator)checkSelf(l);
+				System.String a1;
+				checkType(l,2,out a1);
+				System.Single a2;
+				checkType(l,3,out a2);
+				var ret=self.GetFloat(a1,a2);
+				pushValue(l,true);
+				pushValue(l,ret);
+				return 2;
+			}
+			pushValue(l,false);
+			LuaDLL.lua_pushstring(l,"No matched override function GetFloat to call");
 			return 2;
 		}
 		catch(Exception e) {
@@ -104,7 +143,7 @@ public class Lua_Ballance2_Utils_StringUtils : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int IsPackageName_s(IntPtr l) {
+	static public int SetString(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -115,47 +154,14 @@ public class Lua_Ballance2_Utils_StringUtils : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
+			Ballance2.Config.GameSettingsActuator self=(Ballance2.Config.GameSettingsActuator)checkSelf(l);
 			System.String a1;
-			checkType(l,1,out a1);
-			var ret=Ballance2.Utils.StringUtils.IsPackageName(a1);
-			pushValue(l,true);
-			pushValue(l,ret);
-			return 2;
-		}
-		catch(Exception e) {
-			return error(l,e);
-		}
-		#if DEBUG
-		finally {
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.EndSample();
-			#else
-			Profiler.EndSample();
-			#endif
-		}
-		#endif
-	}
-	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	[UnityEngine.Scripting.Preserve]
-	static public int CompareTwoVersion_s(IntPtr l) {
-		try {
-			#if DEBUG
-			var method = System.Reflection.MethodBase.GetCurrentMethod();
-			string methodName = GetMethodName(method);
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.BeginSample(methodName);
-			#else
-			Profiler.BeginSample(methodName);
-			#endif
-			#endif
-			System.String a1;
-			checkType(l,1,out a1);
+			checkType(l,2,out a1);
 			System.String a2;
-			checkType(l,2,out a2);
-			var ret=Ballance2.Utils.StringUtils.CompareTwoVersion(a1,a2);
+			checkType(l,3,out a2);
+			self.SetString(a1,a2);
 			pushValue(l,true);
-			pushValue(l,ret);
-			return 2;
+			return 1;
 		}
 		catch(Exception e) {
 			return error(l,e);
@@ -172,7 +178,7 @@ public class Lua_Ballance2_Utils_StringUtils : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int ReplaceBrToLine_s(IntPtr l) {
+	static public int GetString(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -183,9 +189,12 @@ public class Lua_Ballance2_Utils_StringUtils : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
+			Ballance2.Config.GameSettingsActuator self=(Ballance2.Config.GameSettingsActuator)checkSelf(l);
 			System.String a1;
-			checkType(l,1,out a1);
-			var ret=Ballance2.Utils.StringUtils.ReplaceBrToLine(a1);
+			checkType(l,2,out a1);
+			System.String a2;
+			checkType(l,3,out a2);
+			var ret=self.GetString(a1,a2);
 			pushValue(l,true);
 			pushValue(l,ret);
 			return 2;
@@ -205,7 +214,7 @@ public class Lua_Ballance2_Utils_StringUtils : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int StringToColor_s(IntPtr l) {
+	static public int SetBool(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -216,12 +225,14 @@ public class Lua_Ballance2_Utils_StringUtils : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
+			Ballance2.Config.GameSettingsActuator self=(Ballance2.Config.GameSettingsActuator)checkSelf(l);
 			System.String a1;
-			checkType(l,1,out a1);
-			var ret=Ballance2.Utils.StringUtils.StringToColor(a1);
+			checkType(l,2,out a1);
+			System.Boolean a2;
+			checkType(l,3,out a2);
+			self.SetBool(a1,a2);
 			pushValue(l,true);
-			pushValue(l,ret);
-			return 2;
+			return 1;
 		}
 		catch(Exception e) {
 			return error(l,e);
@@ -238,7 +249,7 @@ public class Lua_Ballance2_Utils_StringUtils : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int TryConvertStringArrayToValueArray_s(IntPtr l) {
+	static public int GetBool(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -249,42 +260,12 @@ public class Lua_Ballance2_Utils_StringUtils : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			System.String[] a1;
-			checkArray(l,1,out a1);
-			var ret=Ballance2.Utils.StringUtils.TryConvertStringArrayToValueArray(a1);
-			pushValue(l,true);
-			pushValue(l,ret);
-			return 2;
-		}
-		catch(Exception e) {
-			return error(l,e);
-		}
-		#if DEBUG
-		finally {
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.EndSample();
-			#else
-			Profiler.EndSample();
-			#endif
-		}
-		#endif
-	}
-	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	[UnityEngine.Scripting.Preserve]
-	static public int ValueArrayToString_s(IntPtr l) {
-		try {
-			#if DEBUG
-			var method = System.Reflection.MethodBase.GetCurrentMethod();
-			string methodName = GetMethodName(method);
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.BeginSample(methodName);
-			#else
-			Profiler.BeginSample(methodName);
-			#endif
-			#endif
-			System.Object[] a1;
-			checkArray(l,1,out a1);
-			var ret=Ballance2.Utils.StringUtils.ValueArrayToString(a1);
+			Ballance2.Config.GameSettingsActuator self=(Ballance2.Config.GameSettingsActuator)checkSelf(l);
+			System.String a1;
+			checkType(l,2,out a1);
+			System.Boolean a2;
+			checkType(l,3,out a2);
+			var ret=self.GetBool(a1,a2);
 			pushValue(l,true);
 			pushValue(l,ret);
 			return 2;
@@ -304,16 +285,13 @@ public class Lua_Ballance2_Utils_StringUtils : LuaObject {
 	}
 	[UnityEngine.Scripting.Preserve]
 	static public void reg(IntPtr l) {
-		getTypeTable(l,"Ballance2.Utils.StringUtils");
-		addMember(l,IsUrl_s);
-		addMember(l,IsNumber_s);
-		addMember(l,IsFloatNumber_s);
-		addMember(l,IsPackageName_s);
-		addMember(l,CompareTwoVersion_s);
-		addMember(l,ReplaceBrToLine_s);
-		addMember(l,StringToColor_s);
-		addMember(l,TryConvertStringArrayToValueArray_s);
-		addMember(l,ValueArrayToString_s);
-		createTypeMetatable(l,null, typeof(Ballance2.Utils.StringUtils));
+		getTypeTable(l,"Ballance2.Config.GameSettingsActuator");
+		addMember(l,SetFloat);
+		addMember(l,GetFloat);
+		addMember(l,SetString);
+		addMember(l,GetString);
+		addMember(l,SetBool);
+		addMember(l,GetBool);
+		createTypeMetatable(l,constructor, typeof(Ballance2.Config.GameSettingsActuator));
 	}
 }

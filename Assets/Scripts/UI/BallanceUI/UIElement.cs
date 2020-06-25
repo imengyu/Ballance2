@@ -12,23 +12,14 @@ namespace Ballance2.UI.BallanceUI
     [SLua.CustomLuaClass]
     public class UIElement : MonoBehaviour
     {
-        private XmlNode lateInitXml = null;
-        private Dictionary<string, GameHandler> lateInitHandlers = null;
-
-        public void LateInitHandlers(Dictionary<string, GameHandler> gameHandlers)
+        public void InitHandlers(Dictionary<string, GameHandler> gameHandlers)
         {
-            lateInitHandlers = gameHandlers;
-            lateInitDeaily = 30;
+            foreach (string key in gameHandlers.Keys)
+                SetEventHandler(key, gameHandlers[key]);
         }
-        public void LateInit(XmlNode xml)
+        public void Init(XmlNode xml)
         {
-            if (startClled)
-                SolveXml(xml);
-            else
-            {
-                lateInitXml = xml;
-                lateInitDeaily = 30;
-            }
+            SolveXml(xml);
         }
 
         /// <summary>
@@ -37,7 +28,7 @@ namespace Ballance2.UI.BallanceUI
         /// <param name="name">事件名称</param>
         /// <param name="handler">接收器</param>
         public virtual void SetEventHandler(string name, GameHandler handler) {
-            GameLogger.Log(Name, "SetEventHandler {0} {1}", name, handler.Name);
+            //GameLogger.Log(Name, "SetEventHandler {0} {1}", name, handler.Name);
         }
         /// <summary>
         /// 移除事件接收器
@@ -45,7 +36,7 @@ namespace Ballance2.UI.BallanceUI
         /// <param name="name">事件名称</param>
         /// <param name="handler">接收器</param>
         public virtual void RemoveEventHandler(string name, GameHandler handler) {
-            GameLogger.Log(Name, "RemoveEventHandler {0} {1}", name, handler.Name);
+            //GameLogger.Log(Name, "RemoveEventHandler {0} {1}", name, handler.Name);
         }
 
         [SerializeField, SetProperty("AnchorX")]
@@ -553,43 +544,33 @@ namespace Ballance2.UI.BallanceUI
         }
 
         private bool startClled = false;
-        private int lateInitDeaily = 0;
 
-        protected void Start()
+        internal void DoCallStart()
+        {
+            Start();
+        }
+        void Start()
         {
             if(string.IsNullOrEmpty(name))
                 Name = baseName;
             RectTransform = GetComponent<RectTransform>();
             startClled = true;
+            OnInitElement();
         }
-        protected void Update()
+        void Update()
         {
-            if(lateInitDeaily > 0)
-            {
-                lateInitDeaily--;
-                if (lateInitDeaily == 0) DoLateInit();
-            }
+            OnUpdateElement();
         }
-        protected void OnDestroy()
+        void OnDestroy()
         {
+            OnDestroyElement();
             if (data != null)
             {
                 data.Clear();
                 data = null;
             }
         }
-        private void DoLateInit()
-        {
-            if (lateInitXml != null)
-            {
-                SolveXml(lateInitXml);
-            }
-            if (lateInitHandlers != null)
-            {
-                foreach (string key in lateInitHandlers.Keys)
-                    SetEventHandler(key, lateInitHandlers[key]);
-            }
-        }
+
         protected void DoPostLayout()
         {
             if (Parent != null)
@@ -599,6 +580,19 @@ namespace Ballance2.UI.BallanceUI
             }
             if (this is UILayout) (this as UILayout).PostDoLayout();
             else DoResize();
+        }
+
+        protected virtual void OnInitElement()
+        {
+            
+        }
+        protected virtual void OnUpdateElement()
+        {
+
+        }
+        protected virtual void OnDestroyElement()
+        {
+
         }
 
         /// <summary>

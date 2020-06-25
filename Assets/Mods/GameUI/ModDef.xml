@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mod>
+  <BaseInfo packageName="core.ui">
+    <Name>GameUI</Name>
+    <Author>mengyu</Author>
+    <Introduction>Game Base UI Pack</Introduction>
+    <Logo>Assets/Mods/GameUI/ModLogo.png</Logo>
+    <Version>1.0</Version>
+  </BaseInfo>
+  <Compatibility>
+    <MinVersion>1</MinVersion>
+    <TargetVersion>1</TargetVersion>
+  </Compatibility>
+  <EntryCode executionAt="AtStart">Assets/Mods/GameUI/Entry.lua.txt</EntryCode>
+  <ModType>ModPack</ModType>
+</Mod>

@@ -139,25 +139,26 @@ namespace Ballance2.UI.BallanceUI
         private int layoutDelyCount = 0;
         private bool layoutLock = false;
 
-        protected new void OnDestroy()
+        protected override void OnUpdateElement()
+        {
+            if (loopUpdate > 0 && !layoutLock)
+            {
+                loopUpdate--;
+                if (loopUpdate == 0)
+                    DoLayout();
+            }
+            if (layoutDelyCount > 0 && !layoutLock)
+                layoutDelyCount--;
+            base.OnUpdateElement();
+        }
+        protected override void OnDestroyElement()
         {
             if (elements != null)
             {
                 elements.Clear();
                 elements = null;
             }
-            base.OnDestroy();
-        }
-        protected new void Update()
-        {
-            if (loopUpdate > 0 && !layoutLock) {
-                loopUpdate--;
-                if (loopUpdate == 0)
-                    DoLayout();
-            }
-            if(layoutDelyCount > 0 && !layoutLock)
-                layoutDelyCount--;
-            base.Update();
+            base.OnDestroyElement();
         }
 
         public void LayoutUnLock() { layoutLock = false; }

@@ -171,7 +171,7 @@ namespace Ballance2.Managers
             UIPage page = RegisterBallanceUIPage("global.alert." + windowId,
                 PageGlobalConfirm.text,
                 new string[] { "btn.ok:click" },
-                new GameHandlerDelegate[] {
+                new GameEventHandlerDelegate[] {
                     (evtName, param) => {
                         OnGlobalDialogClicked("alert", true, windowId, oldPagePath);
                         return true;
@@ -202,7 +202,7 @@ namespace Ballance2.Managers
             UIPage page = RegisterBallanceUIPage("global.confirm." + windowId,
                 PageGlobalConfirm.text,
                 new string[] { "btn.ok:click", "btn.cancel:click" },
-                new GameHandlerDelegate[] {
+                new GameEventHandlerDelegate[] {
                     (evtName, param) => {
                         OnGlobalDialogClicked("confirm", true, windowId, oldPagePath);
                         return true;
@@ -281,7 +281,6 @@ namespace Ballance2.Managers
             };
             return window.GetWindowId();
         }
-
 
         #endregion
 
@@ -516,7 +515,7 @@ namespace Ballance2.Managers
         /// <param name="template">UI模板</param>
         /// <param name="handlers">UI事件接收器模板</param>
         /// <returns></returns>
-        public UIPage RegisterBallanceUIPage(string pagePath, string templateXml, string[] handlerNames, GameHandlerDelegate[] handlers, string backgroundPrefabName = "Default")
+        public UIPage RegisterBallanceUIPage(string pagePath, string templateXml, string[] handlerNames, GameEventHandlerDelegate[] handlers, string backgroundPrefabName = "Default")
         {
             if (FindUIPage(pagePath) != null)
             {
@@ -795,6 +794,8 @@ namespace Ballance2.Managers
             return false;
         }
 
+        #endregion
+
         #region 自动布局生成器
 
         /// <summary>
@@ -839,10 +840,10 @@ namespace Ballance2.Managers
         /// <param name="template">UI模板</param>
         /// <param name="handlers">LUA接收器模板</param>
         /// <returns></returns>
-        public UILayout BuildLayoutByTemplate(string name, string templateXml, string[] handlerNames, GameHandlerDelegate[] handlers)
+        public UILayout BuildLayoutByTemplate(string name, string templateXml, string[] handlerNames, GameEventHandlerDelegate[] handlers)
         {
             Dictionary<string, GameHandler> handlerList = new Dictionary<string, GameHandler>();
-            GameHandlerDelegate h = null;
+            GameEventHandlerDelegate h = null;
             for (int i = 0; i < handlerNames.Length; i++)
             {
                 h = handlers[i];
@@ -889,6 +890,7 @@ namespace Ballance2.Managers
             GameObject newCon = GameCloneUtils.CloneNewObjectWithParent(prefab,
                 parent == null ? UIRoot.transform : parent.RectTransform);
             ilayout = newCon.GetComponent<UILayout>();
+            ilayout.DoCallStart();
             ilayout.LayoutLock();
             ilayout.RectTransform = newCon.GetComponent<RectTransform>();
             UIAnchorPosUtils.SetUIPivot(ilayout.RectTransform, UIPivot.TopCenter);
@@ -921,7 +923,6 @@ namespace Ballance2.Managers
                     UILayout newLayout = BuildLayoutByTemplateInternal(eleName, eleNode, handlers, ilayout, root);//递归构建
 
                     uIElement = newLayout;
-                    uIElement.LateInit(eleNode);
                     uIElement.rootContainer = root;
                     uIElement.Name = eleName;
                 }
@@ -932,7 +933,8 @@ namespace Ballance2.Managers
 
                     uIElement = newEle.GetComponent<UIElement>();
                     uIElement.RectTransform = newEle.GetComponent<RectTransform>();
-                    uIElement.LateInit(eleNode);
+                    uIElement.DoCallStart();
+                    uIElement.Init(eleNode);
                     uIElement.rootContainer = root;
                     uIElement.Name = eleName;
                 }
@@ -952,13 +954,13 @@ namespace Ballance2.Managers
                         }
                     }
                 }
-                if (lateInitHandlers.Count > 0) uIElement.LateInitHandlers(lateInitHandlers);
+                if (lateInitHandlers.Count > 0) uIElement.InitHandlers(lateInitHandlers);
 
                 //添加元素
                 ilayout.AddElement(uIElement, false);
             }
 
-            ilayout.LateInit(templateXml); //容器的XML读取
+            ilayout.Init(templateXml); //容器的XML读取
             ilayout.LayoutUnLock();
             ilayout.PostDoLayout();
 
@@ -1146,8 +1148,6 @@ namespace Ballance2.Managers
             }
             return go;
         }
-
-        #endregion
 
         #endregion
 

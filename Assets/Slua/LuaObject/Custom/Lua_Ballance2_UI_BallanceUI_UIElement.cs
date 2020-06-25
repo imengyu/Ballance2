@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Lua_Ballance2_UI_BallanceUI_UIElement : LuaObject {
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int LateInitHandlers(IntPtr l) {
+	static public int InitHandlers(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -19,7 +19,7 @@ public class Lua_Ballance2_UI_BallanceUI_UIElement : LuaObject {
 			Ballance2.UI.BallanceUI.UIElement self=(Ballance2.UI.BallanceUI.UIElement)checkSelf(l);
 			System.Collections.Generic.Dictionary<System.String,Ballance2.Managers.CoreBridge.GameHandler> a1;
 			checkType(l,2,out a1);
-			self.LateInitHandlers(a1);
+			self.InitHandlers(a1);
 			pushValue(l,true);
 			return 1;
 		}
@@ -38,7 +38,7 @@ public class Lua_Ballance2_UI_BallanceUI_UIElement : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int LateInit(IntPtr l) {
+	static public int Init(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -52,7 +52,7 @@ public class Lua_Ballance2_UI_BallanceUI_UIElement : LuaObject {
 			Ballance2.UI.BallanceUI.UIElement self=(Ballance2.UI.BallanceUI.UIElement)checkSelf(l);
 			System.Xml.XmlNode a1;
 			checkType(l,2,out a1);
-			self.LateInit(a1);
+			self.Init(a1);
 			pushValue(l,true);
 			return 1;
 		}
@@ -2037,8 +2037,8 @@ public class Lua_Ballance2_UI_BallanceUI_UIElement : LuaObject {
 	[UnityEngine.Scripting.Preserve]
 	static public void reg(IntPtr l) {
 		getTypeTable(l,"Ballance2.UI.BallanceUI.UIElement");
-		addMember(l,LateInitHandlers);
-		addMember(l,LateInit);
+		addMember(l,InitHandlers);
+		addMember(l,Init);
 		addMember(l,SetEventHandler);
 		addMember(l,RemoveEventHandler);
 		addMember(l,SetCustomData);

@@ -1,0 +1,26 @@
+GameManager = Ballance2.GameManager
+GameLogger = Ballance2.GameLogger
+GameEventNames = Ballance2.Managers.CoreBridge.GameEventNames
+GameCloneUtils = Ballance2.Utils.GameCloneUtils
+ModManager = Ballance2.Managers.ModManager
+
+local TAG = "core.ui.Main"
+local gameModThis = nil
+
+-- 模块入口函数
+function ModEntry(thisGameMod)
+	gameModThis = thisGameMod
+	OnLoadAll()
+	return true
+end
+
+-- 模块卸载前函数
+function ModBeforeUnLoad(thisGameMod)
+	gameModThis = thisGameMod
+	return true
+end
+
+function OnLoadAll()
+
+	return true
+end

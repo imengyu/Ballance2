@@ -6,14 +6,13 @@ namespace SLua
     public partial class LuaDelegation : LuaObject
     {
 
-        static internal bool Lua_Ballance2_Managers_CoreBridge_GameHandlerDelegate(LuaFunction ld ,string a1,object[] a2) {
+        static internal Ballance2.Managers.CoreBridge.GameActionCallResult Lua_Ballance2_Managers_CoreBridge_GameActionHandlerDelegate(LuaFunction ld ,object[] a1) {
             IntPtr l = ld.L;
             int error = pushTry(l);
 
 			pushValue(l,a1);
-			pushValue(l,a2);
-			ld.pcall(2, error);
-			bool ret;
+			ld.pcall(1, error);
+			Ballance2.Managers.CoreBridge.GameActionCallResult ret;
 			checkType(l,error+1,out ret);
 			LuaDLL.lua_settop(l, error-1);
 			return ret;

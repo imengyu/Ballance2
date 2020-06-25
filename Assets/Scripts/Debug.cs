@@ -48,7 +48,7 @@ namespace Ballance2.Main
                });
 
             //DebugLinearLayout();
-            DebugPageGlobal();
+            //DebugPageGlobal();
 
             GameManager.UIManager.MaskBlackSet(false);
             GameLogger.Log(TAG, "Run End");
@@ -61,7 +61,7 @@ namespace Ballance2.Main
         {
             GameManager.UIManager.RegisterBallanceUIPage("main", PageMain.text,
                 new string[] { "btn.start:click" , "btn.quit:click" },
-                new GameHandlerDelegate[] {
+                new GameEventHandlerDelegate[] {
                     (evtName, param) => {
                         GameManager.UIManager.GotoUIPage("main.lz");
                         return false;
@@ -74,7 +74,7 @@ namespace Ballance2.Main
                 "Default");
             GameManager.UIManager.RegisterBallanceUIPage("main.lz", PageLightZone.text,
                 new string[] { "btn.back:click" },
-                new GameHandlerDelegate[] {
+                new GameEventHandlerDelegate[] {
                     (evtName, param) => {
                         GameManager.UIManager.BackUIPage();
                         return false;
@@ -91,7 +91,7 @@ namespace Ballance2.Main
         {
             GameManager.UIManager.RegisterBallanceUIPage("global.confirm", PageGlobalConfirm.text,
                 new string[] { "btn.ok:click", "btn.cancel:click" },
-                new GameHandlerDelegate[] {
+                new GameEventHandlerDelegate[] {
                     (evtName, param) => {
                         GameManager.UIManager.CloseUIPage("global.alert");
                         return false;
@@ -104,7 +104,7 @@ namespace Ballance2.Main
                 "Default");
             GameManager.UIManager.RegisterBallanceUIPage("global.alert", PageGlobalAlert.text,
                 new string[] { "btn.ok:click" },
-                new GameHandlerDelegate[] {
+                new GameEventHandlerDelegate[] {
                     (evtName, param) => {
                         GameManager.UIManager.CloseUIPage("global.alert");
                         return false;

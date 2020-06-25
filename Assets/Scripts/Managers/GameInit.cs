@@ -53,6 +53,10 @@ namespace Ballance2.Managers
         private bool IsGameInitUILoaded() { return loadedGameInitUI; }
         private bool IsGameInitAnimPlayend() { return IntroAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f; }
 
+        private void LoadGameInitUIProgressValue(float val)
+        {
+            UIProgressValue.sizeDelta = new Vector2(val * UIProgress.sizeDelta.x, UIProgressValue.sizeDelta.y);
+        }
         private void LoadGameInitBase()
         {
             ModManager = (ModManager)GameManager.GetManager(ModManager.TAG);
@@ -84,11 +88,6 @@ namespace Ballance2.Managers
 
             loadedGameInitUI = true;
         }
-        private void LoadGameInitUIProgressValue(float val)
-        {
-            UIProgressValue.sizeDelta = new Vector2(val * UIProgress.sizeDelta.x, UIProgressValue.sizeDelta.y);
-        }
-
         private IEnumerator GameInitModuls()
         {
             yield return new WaitUntil(IsGameInitUILoaded);
@@ -127,7 +126,7 @@ namespace Ballance2.Managers
             if (initEventHandledCount == 0)
             {
                 GameErrorManager.ThrowGameError(GameError.HandlerLost, "未找到 EVENT_GAME_INIT_FINISH 的下一步事件接收器\n此错误出现原因可能是配置不正确");
-                GameLogger.Warning(TAG, "None EVENT_GAME_INIT_FINISH handler was found, this game will not continue.");
+                GameLogger.Warning(TAG, "None EVENT_GAME_INIT_FINISH handler was found, the game will not continue.");
             }
             else
             {

@@ -82,16 +82,15 @@ namespace Ballance2.UI.BallanceUI.Element
             get { return text.text; }
             set
             {
-                if(text == null) text = GetComponent<Text>();
                 text.text = StringUtils.ReplaceBrToLine(value);
             }
         }
 
-        private new void Start()
+        protected override void OnInitElement()
         {
             text = GetComponent<Text>();
             contentSizeFitter = GetComponent<ContentSizeFitter>();
-            base.Start();
+            base.OnInitElement();
         }
     }
 }

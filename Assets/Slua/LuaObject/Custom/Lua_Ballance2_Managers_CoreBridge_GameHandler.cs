@@ -18,10 +18,20 @@ public class Lua_Ballance2_Managers_CoreBridge_GameHandler : LuaObject {
 			#endif
 			int argc = LuaDLL.lua_gettop(l);
 			Ballance2.Managers.CoreBridge.GameHandler o;
-			if(matchType(l,argc,2,typeof(string),typeof(Ballance2.Managers.CoreBridge.GameHandlerDelegate))){
+			if(matchType(l,argc,2,typeof(string),typeof(Ballance2.Managers.CoreBridge.GameActionHandlerDelegate))){
 				System.String a1;
 				checkType(l,2,out a1);
-				Ballance2.Managers.CoreBridge.GameHandlerDelegate a2;
+				Ballance2.Managers.CoreBridge.GameActionHandlerDelegate a2;
+				checkDelegate(l,3,out a2);
+				o=new Ballance2.Managers.CoreBridge.GameHandler(a1,a2);
+				pushValue(l,true);
+				pushValue(l,o);
+				return 2;
+			}
+			else if(matchType(l,argc,2,typeof(string),typeof(Ballance2.Managers.CoreBridge.GameEventHandlerDelegate))){
+				System.String a1;
+				checkType(l,2,out a1);
+				Ballance2.Managers.CoreBridge.GameEventHandlerDelegate a2;
 				checkDelegate(l,3,out a2);
 				o=new Ballance2.Managers.CoreBridge.GameHandler(a1,a2);
 				pushValue(l,true);
@@ -98,7 +108,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameHandler : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int Call(IntPtr l) {
+	static public int CallEventHandler(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -114,7 +124,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameHandler : LuaObject {
 			checkType(l,2,out a1);
 			System.Object[] a2;
 			checkParams(l,3,out a2);
-			var ret=self.Call(a1,a2);
+			var ret=self.CallEventHandler(a1,a2);
 			pushValue(l,true);
 			pushValue(l,ret);
 			return 2;
@@ -134,7 +144,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameHandler : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int CreateLuaGameHandler_s(IntPtr l) {
+	static public int CallActionHandler(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -145,46 +155,10 @@ public class Lua_Ballance2_Managers_CoreBridge_GameHandler : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			System.String a1;
-			checkType(l,1,out a1);
-			System.String a2;
-			checkType(l,2,out a2);
-			var ret=Ballance2.Managers.CoreBridge.GameHandler.CreateLuaGameHandler(a1,a2);
-			pushValue(l,true);
-			pushValue(l,ret);
-			return 2;
-		}
-		catch(Exception e) {
-			return error(l,e);
-		}
-		#if DEBUG
-		finally {
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.EndSample();
-			#else
-			Profiler.EndSample();
-			#endif
-		}
-		#endif
-	}
-	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	[UnityEngine.Scripting.Preserve]
-	static public int CreateKernelGameHandler_s(IntPtr l) {
-		try {
-			#if DEBUG
-			var method = System.Reflection.MethodBase.GetCurrentMethod();
-			string methodName = GetMethodName(method);
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.BeginSample(methodName);
-			#else
-			Profiler.BeginSample(methodName);
-			#endif
-			#endif
-			System.String a1;
-			checkType(l,1,out a1);
-			Ballance2.Managers.CoreBridge.GameHandlerDelegate a2;
-			checkDelegate(l,2,out a2);
-			var ret=Ballance2.Managers.CoreBridge.GameHandler.CreateKernelGameHandler(a1,a2);
+			Ballance2.Managers.CoreBridge.GameHandler self=(Ballance2.Managers.CoreBridge.GameHandler)checkSelf(l);
+			System.Object[] a1;
+			checkParams(l,2,out a1);
+			var ret=self.CallActionHandler(a1);
 			pushValue(l,true);
 			pushValue(l,ret);
 			return 2;
@@ -392,12 +366,12 @@ public class Lua_Ballance2_Managers_CoreBridge_GameHandler : LuaObject {
 	static public void reg(IntPtr l) {
 		getTypeTable(l,"Ballance2.Managers.CoreBridge.GameHandler");
 		addMember(l,Dispose);
-		addMember(l,Call);
-		addMember(l,CreateLuaGameHandler_s);
-		addMember(l,CreateKernelGameHandler_s);
+		addMember(l,CallEventHandler);
+		addMember(l,CallActionHandler);
 		addMember(l,"Name",get_Name,null,true);
 		addMember(l,"Type",get_Type,null,true);
-		addMember(l,"CSKernelHandler",null,null,true);
+		addMember(l,"DelegateActionHandler",null,null,true);
+		addMember(l,"DelegateEventHandler",null,null,true);
 		addMember(l,"LuaModulHandler",get_LuaModulHandler,null,true);
 		addMember(l,"LuaModulHandlerFunc",get_LuaModulHandlerFunc,null,true);
 		addMember(l,"LuaFunction",get_LuaFunction,null,true);

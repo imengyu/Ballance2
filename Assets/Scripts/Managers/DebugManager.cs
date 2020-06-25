@@ -195,7 +195,7 @@ namespace Ballance2.Managers
             DebugToolsItem.SetActive(false);
             CustomData customData = go.GetComponent<CustomData>();
             GameHandler callbackHandler = (GameHandler)customData.customData;
-            callbackHandler.Call("OnCustomDebugToolItemClick");
+            callbackHandler.CallEventHandler("OnCustomDebugToolItemClick");
         }
 
         #region 日志截取

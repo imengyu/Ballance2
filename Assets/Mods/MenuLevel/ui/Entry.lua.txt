@@ -30,7 +30,7 @@ end
 -- 模块卸载前函数
 function ModBeforeUnLoad(thisGameMod)
 	gameModThis = thisGameMod
-  
+	UnityEngine.Object.Destroy(goMenuLevel)
 	GameLogger.Log(TAG, "ModBeforeUnLoad !")
 	return true
 end

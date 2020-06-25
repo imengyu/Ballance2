@@ -6,10 +6,10 @@ namespace Ballance2.Managers.CoreBridge
     [SLua.CustomLuaClass]
     public class GameHandlerList : List<GameHandler>
     {
-        public void CallHandler(string evtName, params object[] parm)
+        public void CallEventHandler(string evtName, params object[] parm)
         {
             foreach(GameHandler h in this)
-                h.Call(evtName, parm);
+                h.CallEventHandler(evtName, parm);
         }
         public void Dispose()
         {

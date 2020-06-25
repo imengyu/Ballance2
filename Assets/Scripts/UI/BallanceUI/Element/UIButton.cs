@@ -43,6 +43,31 @@ namespace Ballance2.UI.BallanceUI.Element
                 Text = val;
         }
 
+        protected override void OnInitElement()
+        {
+            GetText();
+            clickEventHandler = new GameHandlerList();
+
+            EventTriggerListener eventTriggerListener = EventTriggerListener.Get(gameObject);
+            eventTriggerListener.onClick = (g) =>
+            {
+                foreach (GameHandler h in clickEventHandler)
+                    h.CallEventHandler("click", this, Name);
+            };
+
+            base.OnInitElement();
+        }
+        protected override void OnDestroyElement()
+        {
+            if (clickEventHandler != null)
+            {
+                clickEventHandler.Dispose();
+                clickEventHandler = null;
+            }
+
+            base.OnDestroyElement();
+        }
+
         private GameHandlerList clickEventHandler = null;
         private Text text;
 
@@ -63,29 +88,6 @@ namespace Ballance2.UI.BallanceUI.Element
             Transform textT = transform.Find("Text");
             if (textT != null)
                 text = textT.gameObject.GetComponent<Text>();
-        }
-        private new void Start()
-        {
-            clickEventHandler = new GameHandlerList();
-
-            EventTriggerListener eventTriggerListener = EventTriggerListener.Get(gameObject);
-            eventTriggerListener.onClick = (g) =>
-            {
-                foreach (GameHandler h in clickEventHandler)
-                    h.Call("click", this, Name);
-            };
-
-            base.Start();
-        }
-        private new void OnDestroy()
-        {
-            if (clickEventHandler != null)
-            {
-                clickEventHandler.Dispose();
-                clickEventHandler = null;
-            }
-
-            base.OnDestroy();
         }
     }
 }

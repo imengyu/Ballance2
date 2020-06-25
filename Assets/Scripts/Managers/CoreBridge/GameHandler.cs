@@ -2,7 +2,7 @@
 
 namespace Ballance2.Managers.CoreBridge
 {
-    [SLua.CustomLuaClass]
+    [CustomLuaClass]
     /// <summary>
     /// 游戏通用接收器
     /// </summary>
@@ -13,13 +13,23 @@ namespace Ballance2.Managers.CoreBridge
         /// </summary>
         /// <param name="name">接收器名称</param>
         /// <param name="gameHandlerDelegate">回调</param>
-        public GameHandler(string name, GameHandlerDelegate gameHandlerDelegate)
+        public GameHandler(string name, GameActionHandlerDelegate gameActionHandlerDelegate)
         {
             Name = name;
-            CSKernelHandler = gameHandlerDelegate;
+            DelegateActionHandler = gameActionHandlerDelegate;
             Type = GameHandlerType.CSKernel;
         }
-
+        /// <summary>
+        /// 创建游戏内部使用 Handler
+        /// </summary>
+        /// <param name="name">接收器名称</param>
+        /// <param name="gameHandlerDelegate">回调</param>
+        public GameHandler(string name, GameEventHandlerDelegate gameEventHandlerDelegate)
+        {
+            Name = name;
+            DelegateEventHandler = gameEventHandlerDelegate;
+            Type = GameHandlerType.CSKernel;
+        }
         /// <summary>
         /// 创建 LUA 层使用的 Handler
         /// </summary>
@@ -32,7 +42,6 @@ namespace Ballance2.Managers.CoreBridge
             LuaModulHandler = luaModulHandler;
             LuaModulHandlerFunc = new GameLuaHandler(luaModulHandler);
         }
-
         /// <summary>
         /// 创建 LUA 层使用的 Handler
         /// </summary>
@@ -46,21 +55,13 @@ namespace Ballance2.Managers.CoreBridge
             LuaSelf = self;
         }
 
-        public static GameHandler CreateLuaGameHandler(string name, string luaModulHandler)
-        {
-            return new GameHandler(name, luaModulHandler);
-        }
-        public static GameHandler CreateKernelGameHandler(string name, GameHandlerDelegate gameHandlerDelegate)
-        {
-            return new GameHandler(name, gameHandlerDelegate);
-        }
-
         /// <summary>
         /// 释放
         /// </summary>
         public void Dispose()
         {
-            CSKernelHandler = null;
+            DelegateActionHandler = null;
+            DelegateEventHandler = null;
             LuaModulHandlerFunc = null;
         }
 
@@ -70,11 +71,11 @@ namespace Ballance2.Managers.CoreBridge
         /// <param name="evtName">事件名称</param>
         /// <param name="pararms">参数</param>
         /// <returns>返回是否中断剩余事件分发/返回Action是否成功</returns>
-        public bool Call(string evtName, params object[] pararms)
+        public bool CallEventHandler(string evtName, params object[] pararms)
         {
             bool result = false;
             if (Type == GameHandlerType.CSKernel)
-                result = CSKernelHandler(evtName, pararms);
+                result = DelegateEventHandler(evtName, pararms);
             else if (Type == GameHandlerType.LuaModul)
                 result = LuaModulHandlerFunc.RunEventHandler(evtName, pararms);
             else if (Type == GameHandlerType.LuaFun)
@@ -91,6 +92,30 @@ namespace Ballance2.Managers.CoreBridge
             }
             return result;
         }
+        /// <summary>
+        /// 调用操作接收器
+        /// </summary>
+        /// <param name="pararms">参数</param>
+        /// <returns>返回是否中断剩余事件分发/返回Action是否成功</returns>
+        public GameActionCallResult CallActionHandler(params object[] pararms)
+        {
+            GameActionCallResult result = null;
+            object rso = null;
+            if (Type == GameHandlerType.CSKernel)
+                result = DelegateActionHandler(pararms);
+            else if (Type == GameHandlerType.LuaModul)
+                result = LuaModulHandlerFunc.RunActionHandler(pararms);
+            else if (Type == GameHandlerType.LuaFun)
+            {
+                if (LuaSelf != null) rso = LuaFunction.call(LuaSelf, pararms);
+                else rso = LuaFunction.call(pararms);
+                if (rso != null && rso is GameActionCallResult)
+                    result = rso as GameActionCallResult;
+            }
+            if (result == null)
+                return GameActionCallResult.CreateActionCallResult(false);
+            return result;
+        }
 
         /// <summary>
         /// 接收器名称
@@ -100,10 +125,10 @@ namespace Ballance2.Managers.CoreBridge
         /// 接收器类型
         /// </summary>
         public GameHandlerType Type { get; private set; }
-        /// <summary>
-        /// KernelHandler
-        /// </summary>
-        public GameHandlerDelegate CSKernelHandler { get; private set; }
+
+        public GameActionHandlerDelegate DelegateActionHandler { get; private set; }
+        public GameEventHandlerDelegate DelegateEventHandler { get; private set; }
+
         /// <summary>
         /// LUA Handler
         /// </summary>
@@ -127,7 +152,7 @@ namespace Ballance2.Managers.CoreBridge
         }
     }
 
-    [SLua.CustomLuaClass]
+    [CustomLuaClass]
     /// <summary>
     /// 通用接收器类型
     /// </summary>
@@ -144,12 +169,20 @@ namespace Ballance2.Managers.CoreBridge
         LuaFun
     }
 
-    [SLua.CustomLuaClass]
+    [CustomLuaClass]
     /// <summary>
-    /// 接收器内核回调
+    /// 事件接收器内核回调
     /// </summary>
     /// <param name="evtName">事件名称</param>
     /// <param name="pararms">参数</param>
     /// <returns>返回是否中断其他事件的分发</returns>
-    public delegate bool GameHandlerDelegate(string evtName, params object[] pararms);
+    public delegate bool GameEventHandlerDelegate(string evtName, params object[] pararms);
+    [CustomLuaClass]
+    /// <summary>
+    /// 操作接收器内核回调
+    /// </summary>
+    /// <param name="pararms">参数</param>
+    /// <returns>返回事件数据</returns>
+    public delegate GameActionCallResult GameActionHandlerDelegate(params object[] pararms);
+
 }

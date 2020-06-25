@@ -15,9 +15,9 @@
   <UILevButton name="btn.lev.12">Level 12</UILevButton>
   <UILevButton name="btn.lev.lz" >Light Zone</UILevButton>
 
-  <UISpace height="30" />
+  <UISpace height="20" />
   <UIMainButton name="btn.lev.custom" >自制关卡</UIMainButton>
-  <UISpace height="30" />
+  <UISpace height="15" />
 
   <UIButtonBack name="btn.back" text="返回" />
 </UIVertcialLinearLayout>
