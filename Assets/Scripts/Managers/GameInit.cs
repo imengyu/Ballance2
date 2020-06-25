@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
-using Ballance2.Managers.CoreBridge;
+using UnityEngine.UI;
 using System.Collections;
 using Ballance2.Utils;
-using UnityEngine.UI;
+using Ballance2.Managers.CoreBridge;
+using Ballance2.Config;
+using Ballance2.Managers.ModBase;
 
 namespace Ballance2.Managers
 {
@@ -24,6 +26,7 @@ namespace Ballance2.Managers
                 {
                     LoadGameInitBase();
                     StartCoroutine(LoadGameInitUI());
+                    InitVideoSettings();
                     return false;
                 });
             GameManager.GameMediator.RegisterEventHandler(
@@ -38,6 +41,8 @@ namespace Ballance2.Managers
 
         private ModManager ModManager;
         private SoundManager SoundManager;
+
+        #region GameInit Control
 
         private GameMod gameInitMod;
         private GameObject gameInitUI;
@@ -134,5 +139,40 @@ namespace Ballance2.Managers
                 gameInitUI.SetActive(false);
             }
         }
+
+        #endregion
+
+        #region Base Settings Control
+
+        private GameSettingsActuator GameSettings = null;
+        private Resolution[] resolutions = null;
+
+        private void InitVideoSettings()
+        {
+            resolutions = Screen.resolutions;
+
+            //设置更新事件
+            GameSettings = GameSettingsManager.GetSettings("core");
+            GameSettings.RegisterSettingsUpdateCallback("video", new GameHandler(TAG, OnVideoSettingsUpdated));
+            GameSettings.RequireSettingsLoad("video");
+        }
+
+        private bool OnVideoSettingsUpdated(string evtName, params object[] param)
+        {
+
+            int resolutionsSet = GameSettings.GetInt("video.resolution", 0);
+            bool fullScreen = GameSettings.GetBool("video.fullScreen", true);
+            int quality = GameSettings.GetInt("video.quality", 2);
+            int vSync = GameSettings.GetInt("video.vsync", 0);
+
+            Screen.SetResolution(resolutions[resolutionsSet].width, resolutions[resolutionsSet].height, true);
+            Screen.fullScreen = fullScreen;
+            QualitySettings.SetQualityLevel(quality, true);
+            QualitySettings.vSyncCount = vSync;
+
+            return true;
+        }
+
+        #endregion
     }
 }

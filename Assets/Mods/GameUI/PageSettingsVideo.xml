@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UIVertcialLinearLayout
+  gravity="Center"
+  layoutChildSpacing="15">
+  <UIText width="match_parent" lsyout_marginBottom="10">图像设置</UIText>
+  
+  <UIDropdown name="dropdown.resolution">屏幕分辨率</UIDropdown>
+  <UIToggleButton name="toggle.fullscreen">全屏</UIToggleButton>
+  <UIDropdown name="dropdown.quality" text="画面质量">
+    <Item>很差</Item>
+    <Item>差</Item>
+    <Item>普通</Item>
+    <Item>高</Item>
+    <Item>非常高</Item>
+    <Item>极高</Item>
+  </UIDropdown>
+  <UIDropdown name="dropdown.vsync" text="垂直同步">
+    <Item>关闭垂直同步</Item>
+    <Item>每一帧同步一次</Item>
+    <Item>每两帧同步一次</Item>
+  </UIDropdown>
+  <UIToggleButton name="toggle.cloud">显示云层</UIToggleButton>
+  
+  <UIButtonBack 
+    name="btn.back"
+    layout_marginTop="20"
+    >返回</UIButtonBack>
+</UIVertcialLinearLayout>

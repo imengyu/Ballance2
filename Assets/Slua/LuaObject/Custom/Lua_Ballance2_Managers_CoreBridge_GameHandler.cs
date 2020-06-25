@@ -178,6 +178,59 @@ public class Lua_Ballance2_Managers_CoreBridge_GameHandler : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int CreateLuaGameHandler_s(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			int argc = LuaDLL.lua_gettop(l);
+			if(argc==2){
+				System.String a1;
+				checkType(l,1,out a1);
+				System.String a2;
+				checkType(l,2,out a2);
+				var ret=Ballance2.Managers.CoreBridge.GameHandler.CreateLuaGameHandler(a1,a2);
+				pushValue(l,true);
+				pushValue(l,ret);
+				return 2;
+			}
+			else if(argc==3){
+				System.String a1;
+				checkType(l,1,out a1);
+				SLua.LuaFunction a2;
+				checkType(l,2,out a2);
+				SLua.LuaTable a3;
+				checkType(l,3,out a3);
+				var ret=Ballance2.Managers.CoreBridge.GameHandler.CreateLuaGameHandler(a1,a2,a3);
+				pushValue(l,true);
+				pushValue(l,ret);
+				return 2;
+			}
+			pushValue(l,false);
+			LuaDLL.lua_pushstring(l,"No matched override function CreateLuaGameHandler to call");
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int get_Name(IntPtr l) {
 		try {
 			#if DEBUG
@@ -368,6 +421,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameHandler : LuaObject {
 		addMember(l,Dispose);
 		addMember(l,CallEventHandler);
 		addMember(l,CallActionHandler);
+		addMember(l,CreateLuaGameHandler_s);
 		addMember(l,"Name",get_Name,null,true);
 		addMember(l,"Type",get_Type,null,true);
 		addMember(l,"DelegateActionHandler",null,null,true);

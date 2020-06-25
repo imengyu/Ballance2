@@ -10,11 +10,12 @@ namespace Ballance2.UI.Utils
     /// </summary>
     public class KeyListener : MonoBehaviour
     {
+        [SLua.CustomLuaClass]
         /// <summary>
         /// 事件回调
         /// </summary>
         /// <param name="downed">是否按下</param>
-        public delegate void VoidDelegate(bool downed);
+        public delegate void KeyDelegate(KeyCode key, bool downed);
 
         /// <summary>
         /// 从 指定 GameObject 创建键事件侦听器
@@ -34,7 +35,7 @@ namespace Ballance2.UI.Utils
             public KeyCode key;
             public bool downed = false;
             public bool has2key = false;
-            public KeyListener.VoidDelegate callBack;
+            public KeyDelegate callBack;
         }
 
         private List<KeyListenerItem> items = new List<KeyListenerItem>();
@@ -53,7 +54,7 @@ namespace Ballance2.UI.Utils
         /// <param name="key">键值。</param>
         /// <param name="key2">键值2。</param>
         /// <param name="callBack">回调函数。</param>
-        public void AddKeyListen(KeyCode key, KeyCode key2, KeyListener.VoidDelegate callBack)
+        public void AddKeyListen(KeyCode key, KeyCode key2, KeyDelegate callBack)
         {
             KeyListener.KeyListenerItem item = new KeyListener.KeyListenerItem();
             item.callBack = callBack;
@@ -67,7 +68,7 @@ namespace Ballance2.UI.Utils
         /// </summary>
         /// <param name="key">键值。</param>
         /// <param name="callBack">回调函数。</param>
-        public void AddKeyListen(KeyCode key, KeyListener.VoidDelegate callBack)
+        public void AddKeyListen(KeyCode key, KeyDelegate callBack)
         {
             KeyListener.KeyListenerItem item = new KeyListener.KeyListenerItem();
             item.callBack = callBack;
@@ -96,22 +97,22 @@ namespace Ballance2.UI.Utils
                         if (Input.GetKeyDown(items[i].key2) && !items[i].downed)
                         {
                             items[i].downed = true;
-                            items[i].callBack(true);
+                            items[i].callBack(items[i].key2, true);
                         }
                         else if (Input.GetKeyUp(items[i].key2) && items[i].downed)
                         {
-                            items[i].callBack(false);
+                            items[i].callBack(items[i].key2, false);
                             items[i].downed = false;
                         }
                     }
                     if (Input.GetKeyDown(items[i].key) && !items[i].downed)
                     {
                         items[i].downed = true;
-                        items[i].callBack(true);
+                        items[i].callBack(items[i].key, true);
                     }
                     else if (Input.GetKeyUp(items[i].key) && items[i].downed)
                     {
-                        items[i].callBack(false);
+                        items[i].callBack(items[i].key, false);
                         items[i].downed = false;
                     }
                 }

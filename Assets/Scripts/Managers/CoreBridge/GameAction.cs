@@ -80,7 +80,14 @@ namespace Ballance2.Managers.CoreBridge
         /// 参数：无
         /// </remarks>
         public const string ACTION_QUIT = "core.quit_game";
-
+        /// <summary>
+        /// 显示设置页面
+        /// </summary>
+        /// <remarks>
+        /// 参数：
+        /// [0] 关闭后返回的 UI 页
+        /// </remarks>
+        public const string ACTION_SHOW_SETTINGS = "core.ui.show_settings";
 
     }
 }

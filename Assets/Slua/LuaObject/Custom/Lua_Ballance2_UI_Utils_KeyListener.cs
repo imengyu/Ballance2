@@ -21,7 +21,7 @@ public class Lua_Ballance2_UI_Utils_KeyListener : LuaObject {
 				Ballance2.UI.Utils.KeyListener self=(Ballance2.UI.Utils.KeyListener)checkSelf(l);
 				UnityEngine.KeyCode a1;
 				a1 = (UnityEngine.KeyCode)LuaDLL.luaL_checkinteger(l, 2);
-				Ballance2.UI.Utils.KeyListener.VoidDelegate a2;
+				Ballance2.UI.Utils.KeyListener.KeyDelegate a2;
 				checkDelegate(l,3,out a2);
 				self.AddKeyListen(a1,a2);
 				pushValue(l,true);
@@ -33,7 +33,7 @@ public class Lua_Ballance2_UI_Utils_KeyListener : LuaObject {
 				a1 = (UnityEngine.KeyCode)LuaDLL.luaL_checkinteger(l, 2);
 				UnityEngine.KeyCode a2;
 				a2 = (UnityEngine.KeyCode)LuaDLL.luaL_checkinteger(l, 3);
-				Ballance2.UI.Utils.KeyListener.VoidDelegate a3;
+				Ballance2.UI.Utils.KeyListener.KeyDelegate a3;
 				checkDelegate(l,4,out a3);
 				self.AddKeyListen(a1,a2,a3);
 				pushValue(l,true);

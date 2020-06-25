@@ -449,7 +449,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameLuaObjectHost : LuaObject {
 			#endif
 			#endif
 			Ballance2.Managers.CoreBridge.GameLuaObjectHost self=(Ballance2.Managers.CoreBridge.GameLuaObjectHost)checkSelf(l);
-			Ballance2.Managers.CoreBridge.GameMod v;
+			Ballance2.Managers.ModBase.GameMod v;
 			checkType(l,2,out v);
 			self.GameMod=v;
 			pushValue(l,true);

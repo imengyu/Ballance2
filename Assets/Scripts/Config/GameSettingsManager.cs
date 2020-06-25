@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Ballance2.Managers.CoreBridge;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Ballance2.Config
 {
@@ -8,6 +10,8 @@ namespace Ballance2.Config
     [SLua.CustomLuaClass]
     public static class GameSettingsManager
     {
+        private static Dictionary<string, GameSettingsActuator> settingsActuators = new Dictionary<string, GameSettingsActuator>();
+
         /// <summary>
         /// 获取设置
         /// </summary>
@@ -15,7 +19,25 @@ namespace Ballance2.Config
         /// <returns></returns>
         public static GameSettingsActuator GetSettings(string packageName)
         {
-            return new GameSettingsActuator(packageName);
+            GameSettingsActuator gameSettingsActuator = null;
+            if (!settingsActuators.TryGetValue(packageName, out gameSettingsActuator))
+            {
+                gameSettingsActuator = new GameSettingsActuator(packageName);
+                settingsActuators.Add(packageName, gameSettingsActuator);
+            }
+            return gameSettingsActuator;
+        }
+
+        internal static void Init()
+        {
+
+        }
+        internal static void Destroy()
+        {
+            foreach(var key in settingsActuators.Keys)
+                settingsActuators[key].Destroy();
+            settingsActuators.Clear();
+            settingsActuators = null;
         }
     }
 
@@ -29,11 +51,11 @@ namespace Ballance2.Config
             basePackName = packageName;
         }
 
-        public void SetFloat(string key, int value)
+        public void SetInt(string key, int value)
         {
             PlayerPrefs.SetInt(basePackName + "." + key, value);
         }
-        public int GetFloat(string key, int defaultValue)
+        public int GetInt(string key, int defaultValue)
         {
             return PlayerPrefs.GetInt(basePackName + "." + key, defaultValue);
         }
@@ -63,6 +85,61 @@ namespace Ballance2.Config
         public bool GetBool(string key, bool defaultValue = false)
         {
             return bool.Parse(PlayerPrefs.GetString(basePackName + "." + key, defaultValue.ToString()));
+        }
+
+        private List<SettingUpdateCallbackData> settingUpdateCallbacks = new List<SettingUpdateCallbackData>();
+
+        private struct SettingUpdateCallbackData
+        {
+            public string groupName;
+            public GameHandler handler;
+
+            public SettingUpdateCallbackData(string groupName, GameHandler handler)
+            {
+                this.groupName = groupName;
+                this.handler = handler;
+            }
+        }
+
+        internal void Destroy()
+        {
+            if (settingUpdateCallbacks != null)
+            {
+                foreach (var v in settingUpdateCallbacks)
+                    v.handler.Dispose();
+                settingUpdateCallbacks.Clear();
+                settingUpdateCallbacks = null;
+            }
+        }
+
+        /// <summary>
+        /// 通知设置组加载更新
+        /// </summary>
+        /// <param name="groupName">组名称</param>
+        public void RequireSettingsLoad(string groupName)
+        {
+            foreach (var d in settingUpdateCallbacks)
+                if (d.groupName == groupName)
+                    if (d.handler.CallEventHandler("SettingsLoad")) break;
+        }
+        /// <summary>
+        /// 通知设置组更新
+        /// </summary>
+        /// <param name="groupName">组名称</param>
+        public void NotifySettingsUpdate(string groupName)
+        {
+            foreach (var d in settingUpdateCallbacks)
+                if (d.groupName == groupName)
+                    d.handler.CallEventHandler("SettingsUpdate");
+        }
+        /// <summary>
+        /// 注册设置组更新回调
+        /// </summary>
+        /// <param name="groupName">组名称</param>
+        /// <param name="handler">回调</param>
+        public void RegisterSettingsUpdateCallback(string groupName, GameHandler handler)
+        {
+            settingUpdateCallbacks.Add(new SettingUpdateCallbackData(groupName, handler));
         }
     }
 }

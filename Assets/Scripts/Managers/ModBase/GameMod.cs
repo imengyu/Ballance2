@@ -1,4 +1,5 @@
 ﻿using Ballance2.Config;
+using Ballance2.Managers.CoreBridge;
 using Ballance2.Utils;
 using SLua;
 using System;
@@ -9,7 +10,7 @@ using System.Xml;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Ballance2.Managers.CoreBridge
+namespace Ballance2.Managers.ModBase
 {
     /// <summary>
     /// 模组结构
@@ -619,6 +620,7 @@ namespace Ballance2.Managers.CoreBridge
         //初始化LUA虚拟机
         private void InitLuaState()
         {
+            requiredLuaFiles = new List<string>();
             ModLuaServer = new LuaServer(PackageName);
             ModLuaState = ModLuaServer.getLuaState();
             ModLuaServer.init(null, LuaStateInitFinished);
@@ -650,8 +652,20 @@ namespace Ballance2.Managers.CoreBridge
                 {
                     GameLogger.Log(TAG, "Run mod ModEntryCode {0} ", ModEntryCode);
 
-                    mainLuaCodeLoaded = true;
-                    ModLuaState.doString(lua.text);
+                    try
+                    {
+                        mainLuaCodeLoaded = true;
+                        ModLuaState.doString(lua.text, PackageName + ":Main");
+                        requiredLuaFiles.Add(ModEntryCode);
+                    }
+                    catch(Exception e)
+                    {
+                        GameLogger.Warning(TAG, (object)("模组 " + PackageName +  " 运行启动代码失败! " + e.Message));
+                        GameLogger.Exception(e);
+                        GameErrorManager.LastError = GameError.ModExecutionCodeRunFailed;
+                        return false;
+                    }
+
                     LuaFunction fModEntry = GetLuaFun("ModEntry");
                     if (fModEntry != null)
                     {
@@ -659,6 +673,7 @@ namespace Ballance2.Managers.CoreBridge
                         if (b is bool && !((bool)b))
                         {
                             GameLogger.Warning(TAG, "模组 {0} ModEntry 返回了错误", PackageName);
+                            GameErrorManager.LastError = GameError.ModExecutionCodeRunFailed;
                             return (bool)b;
                         }
                         return false;
@@ -666,7 +681,7 @@ namespace Ballance2.Managers.CoreBridge
                     else
                     {
                         GameLogger.Warning(TAG, "模组 {0} 未找到 ModEntry ", PackageName);
-                        GameErrorManager.LastError = GameError.AlredayRegistered;
+                        GameErrorManager.LastError = GameError.FunctionNotFound;
                     }
                 }
                 else
@@ -679,11 +694,49 @@ namespace Ballance2.Managers.CoreBridge
         }
         private void DestroyLuaState()
         {
+            if (requiredLuaFiles != null)
+            {
+                requiredLuaFiles = new List<string>();
+                requiredLuaFiles = null;
+            }
             if (ModLuaState != null)
             {
                 ModLuaState.Dispose();
                 ModLuaState = null;
             }
+        }
+
+        private List<string> requiredLuaFiles = null;
+
+        /// <summary>
+        /// 导入Lua文件到当前模组虚拟机中
+        /// </summary>
+        /// <param name="fileName">LUA文件名</param>
+        public bool RequireLuaFile(string fileName)
+        {
+            if (requiredLuaFiles.Contains(fileName))
+                return true;
+
+            TextAsset lua = GetTextAsset(fileName);
+            if (lua == null)
+                lua = GetTextAsset(fileName + ".lua.txt");
+            if (lua == null)
+                throw new MissingReferenceException("无法导入 Lua : " + fileName + " ,未找到该文件");
+
+            try
+            {
+                ModLuaState.doString(lua.text, PackageName + ":" + GamePathManager.GetFileNameWithoutExt(fileName));
+                requiredLuaFiles.Add(fileName);
+            }
+            catch (Exception e)
+            {
+                GameLogger.Warning(TAG, "Mod " + (object)(PackageName + " RequireLuaFile fialed ! " + e.Message));
+                GameLogger.Exception(e);
+                GameErrorManager.LastError = GameError.ModExecutionCodeRunFailed;
+                return false;
+            }
+
+            return true;
         }
 
         #region LUA 函数调用
@@ -804,131 +857,5 @@ namespace Ballance2.Managers.CoreBridge
 
     }
 
-    /// <summary>
-    /// 模组加载状态
-    /// </summary>
-    public enum GameModStatus
-    {
-        /// <summary>
-        /// 已注册但未初始化
-        /// </summary>
-        NotInitialize,
-        /// <summary>
-        /// 初始化成功
-        /// </summary>
-        InitializeSuccess,
-        /// <summary>
-        /// 正在加载
-        /// </summary>
-        Loading,
-        /// <summary>
-        /// 初始化失败
-        /// </summary>
-        InitializeFailed,
-        /// <summary>
-        /// 版本不兼容的模组
-        /// </summary>
-        BadMod,
-    }
-    /// <summary>
-    /// 模组类型
-    /// </summary>
-    public enum GameModType
-    {
-        NotSet,
-        /// <summary>
-        /// 仅资源包
-        /// </summary>
-        AssetPack,
-        /// <summary>
-        /// 代码模组和资源包
-        /// </summary>
-        ModPack,
-        /// <summary>
-        /// 关卡文件
-        /// </summary>
-        Level,
-    }
-    /// <summary>
-    /// 模组启动代码执行时机
-    /// </summary>
-    public enum GameModEntryCodeExecutionAt
-    {
-        /// <summary>
-        /// 手动
-        /// </summary>
-        Manual,
-        /// <summary>
-        /// 模组加载完毕后
-        /// </summary>
-        AfterLoaded,
-        /// <summary>
-        /// 游戏加载完毕时
-        /// </summary>
-        AtStart,
-        /// <summary>
-        /// 关卡加载时
-        /// </summary>
-        AtLevelLoading,
-        /// <summary>
-        /// 关卡加载完成时
-        /// </summary>
-        AfterLevelLoad,
-    }
-    
 
-    /// <summary>
-    /// 模组信息
-    /// </summary>
-    public struct GameModInfo
-    {
-        public GameModInfo(string name)
-        {
-            Name = name;
-            Author = "未知";
-            Introduction = "未填写介绍";
-            Logo = "";
-            Version = "未知";
-        }
-
-        public string Name;
-        public string Author;
-        public string Introduction;
-        public string Logo;
-        public string Version;
-    }
-    /// <summary>
-    /// 模组适配信息
-    /// </summary>
-    public struct GameCompatibilityInfo
-    {
-        public GameCompatibilityInfo(int mi, int t, int ma)
-        {
-            MinVersion = mi;
-            TargetVersion = t;
-            MaxVersion = ma;
-        }
-
-        public int MinVersion;
-        public int TargetVersion;
-        public int MaxVersion;
-    }
-    /// <summary>
-    /// 模组依赖信息
-    /// </summary>
-    public struct GameDependencyInfo
-    {
-        public GameDependencyInfo(string name, string mi)
-        {
-            MinVersion = mi;
-            PackageName = name;
-            Loaded = false;
-            MustLoad = false;
-        }
-
-        public string PackageName;
-        public string MinVersion;
-        public bool Loaded;
-        public bool MustLoad;
-    }
 }

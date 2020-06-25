@@ -15,17 +15,20 @@ public class Lua_Ballance2_Utils_GameError : LuaObject {
 		addMember(l,7,"Unregistered");
 		addMember(l,8,"ParamNotProvide");
 		addMember(l,9,"PrefabNotFound");
-		addMember(l,10,"InitializationFailed");
-		addMember(l,11,"BadAssetBundle");
-		addMember(l,12,"FileNotFound");
-		addMember(l,13,"ModConflict");
-		addMember(l,14,"ModDependenciesLoadFailed");
-		addMember(l,15,"ModCanNotRun");
-		addMember(l,16,"BadMod");
-		addMember(l,17,"NetworkError");
-		addMember(l,18,"NotInitialize");
-		addMember(l,19,"MustBeContainer");
-		addMember(l,20,"LayoutBuildFailed");
+		addMember(l,10,"AssetsNotFound");
+		addMember(l,11,"InitializationFailed");
+		addMember(l,12,"BadAssetBundle");
+		addMember(l,13,"FileNotFound");
+		addMember(l,14,"ModConflict");
+		addMember(l,15,"ModDependenciesLoadFailed");
+		addMember(l,16,"ModExecutionCodeRunFailed");
+		addMember(l,17,"ModCanNotRun");
+		addMember(l,18,"FunctionNotFound");
+		addMember(l,19,"BadMod");
+		addMember(l,20,"NetworkError");
+		addMember(l,21,"NotInitialize");
+		addMember(l,22,"MustBeContainer");
+		addMember(l,23,"LayoutBuildFailed");
 		LuaDLL.lua_pop(l, 1);
 	}
 }

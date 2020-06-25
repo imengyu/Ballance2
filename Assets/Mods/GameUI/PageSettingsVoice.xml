@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UIVertcialLinearLayout
+  gravity="Center"
+  layoutChildSpacing="20">
+  <UIText width="match_parent" lsyout_marginBottom="15">声音设置</UIText>
+
+  <UISlider name="slider.voice.main" text="主音量"></UISlider>
+  <UISlider name="slider.voice.background" text="背景音乐音量"></UISlider>
+  <UISlider name="slider.voice.ui" text="界面音量"></UISlider>
+  
+  <UIButtonBack 
+    name="btn.back"
+    layout_marginTop="20"
+    >返回</UIButtonBack>
+</UIVertcialLinearLayout>

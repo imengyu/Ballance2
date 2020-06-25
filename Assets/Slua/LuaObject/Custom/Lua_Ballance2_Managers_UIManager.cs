@@ -710,7 +710,7 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 			#endif
 			#endif
 			int argc = LuaDLL.lua_gettop(l);
-			if(matchType(l,argc,2,typeof(string),typeof(string),typeof(System.String[]),typeof(Ballance2.Managers.CoreBridge.GameEventHandlerDelegate[]),typeof(string))){
+			if(matchType(l,argc,2,typeof(string),typeof(string),typeof(System.String[]),typeof(Ballance2.Managers.CoreBridge.GameEventHandlerDelegate[]),typeof(string),typeof(System.String[]))){
 				Ballance2.Managers.UIManager self=(Ballance2.Managers.UIManager)checkSelf(l);
 				System.String a1;
 				checkType(l,2,out a1);
@@ -722,12 +722,14 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 				checkArray(l,5,out a4);
 				System.String a5;
 				checkType(l,6,out a5);
-				var ret=self.RegisterBallanceUIPage(a1,a2,a3,a4,a5);
+				System.String[] a6;
+				checkArray(l,7,out a6);
+				var ret=self.RegisterBallanceUIPage(a1,a2,a3,a4,a5,a6);
 				pushValue(l,true);
 				pushValue(l,ret);
 				return 2;
 			}
-			else if(matchType(l,argc,2,typeof(string),typeof(string),typeof(System.String[]),typeof(System.String[]),typeof(string))){
+			else if(matchType(l,argc,2,typeof(string),typeof(string),typeof(System.String[]),typeof(System.String[]),typeof(string),typeof(System.String[]))){
 				Ballance2.Managers.UIManager self=(Ballance2.Managers.UIManager)checkSelf(l);
 				System.String a1;
 				checkType(l,2,out a1);
@@ -739,12 +741,14 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 				checkArray(l,5,out a4);
 				System.String a5;
 				checkType(l,6,out a5);
-				var ret=self.RegisterBallanceUIPage(a1,a2,a3,a4,a5);
+				System.String[] a6;
+				checkArray(l,7,out a6);
+				var ret=self.RegisterBallanceUIPage(a1,a2,a3,a4,a5,a6);
 				pushValue(l,true);
 				pushValue(l,ret);
 				return 2;
 			}
-			else if(argc==7){
+			else if(argc==8){
 				Ballance2.Managers.UIManager self=(Ballance2.Managers.UIManager)checkSelf(l);
 				System.String a1;
 				checkType(l,2,out a1);
@@ -758,7 +762,9 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 				checkType(l,6,out a5);
 				System.String a6;
 				checkType(l,7,out a6);
-				var ret=self.RegisterBallanceUIPage(a1,a2,a3,a4,a5,a6);
+				System.String[] a7;
+				checkArray(l,8,out a7);
+				var ret=self.RegisterBallanceUIPage(a1,a2,a3,a4,a5,a6,a7);
 				pushValue(l,true);
 				pushValue(l,ret);
 				return 2;
@@ -994,97 +1000,6 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 			var ret=self.BackUIPage();
 			pushValue(l,true);
 			pushValue(l,ret);
-			return 2;
-		}
-		catch(Exception e) {
-			return error(l,e);
-		}
-		#if DEBUG
-		finally {
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.EndSample();
-			#else
-			Profiler.EndSample();
-			#endif
-		}
-		#endif
-	}
-	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	[UnityEngine.Scripting.Preserve]
-	static public int BuildLayoutByTemplate(IntPtr l) {
-		try {
-			#if DEBUG
-			var method = System.Reflection.MethodBase.GetCurrentMethod();
-			string methodName = GetMethodName(method);
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.BeginSample(methodName);
-			#else
-			Profiler.BeginSample(methodName);
-			#endif
-			#endif
-			int argc = LuaDLL.lua_gettop(l);
-			if(argc==4){
-				Ballance2.Managers.UIManager self=(Ballance2.Managers.UIManager)checkSelf(l);
-				System.String a1;
-				checkType(l,2,out a1);
-				System.String a2;
-				checkType(l,3,out a2);
-				System.Collections.Generic.Dictionary<System.String,Ballance2.Managers.CoreBridge.GameHandler> a3;
-				checkType(l,4,out a3);
-				var ret=self.BuildLayoutByTemplate(a1,a2,a3);
-				pushValue(l,true);
-				pushValue(l,ret);
-				return 2;
-			}
-			else if(matchType(l,argc,2,typeof(string),typeof(string),typeof(System.String[]),typeof(System.String[]))){
-				Ballance2.Managers.UIManager self=(Ballance2.Managers.UIManager)checkSelf(l);
-				System.String a1;
-				checkType(l,2,out a1);
-				System.String a2;
-				checkType(l,3,out a2);
-				System.String[] a3;
-				checkArray(l,4,out a3);
-				System.String[] a4;
-				checkArray(l,5,out a4);
-				var ret=self.BuildLayoutByTemplate(a1,a2,a3,a4);
-				pushValue(l,true);
-				pushValue(l,ret);
-				return 2;
-			}
-			else if(matchType(l,argc,2,typeof(string),typeof(string),typeof(System.String[]),typeof(Ballance2.Managers.CoreBridge.GameEventHandlerDelegate[]))){
-				Ballance2.Managers.UIManager self=(Ballance2.Managers.UIManager)checkSelf(l);
-				System.String a1;
-				checkType(l,2,out a1);
-				System.String a2;
-				checkType(l,3,out a2);
-				System.String[] a3;
-				checkArray(l,4,out a3);
-				Ballance2.Managers.CoreBridge.GameEventHandlerDelegate[] a4;
-				checkArray(l,5,out a4);
-				var ret=self.BuildLayoutByTemplate(a1,a2,a3,a4);
-				pushValue(l,true);
-				pushValue(l,ret);
-				return 2;
-			}
-			else if(argc==6){
-				Ballance2.Managers.UIManager self=(Ballance2.Managers.UIManager)checkSelf(l);
-				System.String a1;
-				checkType(l,2,out a1);
-				System.String a2;
-				checkType(l,3,out a2);
-				System.String[] a3;
-				checkArray(l,4,out a3);
-				SLua.LuaFunction[] a4;
-				checkArray(l,5,out a4);
-				SLua.LuaTable a5;
-				checkType(l,6,out a5);
-				var ret=self.BuildLayoutByTemplate(a1,a2,a3,a4,a5);
-				pushValue(l,true);
-				pushValue(l,ret);
-				return 2;
-			}
-			pushValue(l,false);
-			LuaDLL.lua_pushstring(l,"No matched override function BuildLayoutByTemplate to call");
 			return 2;
 		}
 		catch(Exception e) {
@@ -1741,6 +1656,37 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 		}
 		#endif
 	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_UILayoutBuilder(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.Managers.UIManager self=(Ballance2.Managers.UIManager)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.UILayoutBuilder);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
 	[UnityEngine.Scripting.Preserve]
 	static public void reg(IntPtr l) {
 		getTypeTable(l,"Ballance2.Managers.UIManager");
@@ -1770,7 +1716,6 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 		addMember(l,GotoUIPage);
 		addMember(l,CloseUIPage);
 		addMember(l,BackUIPage);
-		addMember(l,BuildLayoutByTemplate);
 		addMember(l,RegisterElementPrefab);
 		addMember(l,UnRegisterElementPrefab);
 		addMember(l,FindRegisterElementPrefab);
@@ -1788,6 +1733,7 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 		addMember(l,"UIRoot",get_UIRoot,set_UIRoot,true);
 		addMember(l,"UIFadeManager",get_UIFadeManager,set_UIFadeManager,true);
 		addMember(l,"UIRootRectTransform",get_UIRootRectTransform,null,true);
+		addMember(l,"UILayoutBuilder",get_UILayoutBuilder,null,true);
 		createTypeMetatable(l,null, typeof(Ballance2.Managers.UIManager),typeof(Ballance2.Managers.BaseManagerSingleton));
 	}
 }

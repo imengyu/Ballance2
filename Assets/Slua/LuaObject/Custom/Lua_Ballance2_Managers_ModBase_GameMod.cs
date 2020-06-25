@@ -2,7 +2,7 @@
 using SLua;
 using System.Collections.Generic;
 [UnityEngine.Scripting.Preserve]
-public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
+public class Lua_Ballance2_Managers_ModBase_GameMod : LuaObject {
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
 	static public int constructor(IntPtr l) {
@@ -16,14 +16,14 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod o;
+			Ballance2.Managers.ModBase.GameMod o;
 			System.String a1;
 			checkType(l,2,out a1);
 			Ballance2.Managers.ModManager a2;
 			checkType(l,3,out a2);
 			System.String a3;
 			checkType(l,4,out a3);
-			o=new Ballance2.Managers.CoreBridge.GameMod(a1,a2,a3);
+			o=new Ballance2.Managers.ModBase.GameMod(a1,a2,a3);
 			pushValue(l,true);
 			pushValue(l,o);
 			return 2;
@@ -54,7 +54,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			UnityEngine.MonoBehaviour a1;
 			checkType(l,2,out a1);
 			self.Load(a1);
@@ -87,7 +87,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			self.Destroy();
 			pushValue(l,true);
 			return 1;
@@ -118,7 +118,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			var ret=self.Run();
 			pushValue(l,true);
 			pushValue(l,ret);
@@ -150,7 +150,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			var ret=self.LoadInternal();
 			pushValue(l,true);
 			pushValue(l,ret);
@@ -182,7 +182,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			System.String a1;
 			checkType(l,2,out a1);
 			UnityEngine.GameObject a2;
@@ -221,7 +221,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			System.String a1;
 			checkType(l,2,out a1);
 			Ballance2.Managers.CoreBridge.GameLuaObjectHost a2;
@@ -257,7 +257,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			var ret=self.GetModEntryCodeExecuted();
 			pushValue(l,true);
 			pushValue(l,ret);
@@ -289,8 +289,42 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			var ret=self.RunModExecutionCode();
+			pushValue(l,true);
+			pushValue(l,ret);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int RequireLuaFile(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
+			System.String a1;
+			checkType(l,2,out a1);
+			var ret=self.RequireLuaFile(a1);
 			pushValue(l,true);
 			pushValue(l,ret);
 			return 2;
@@ -321,7 +355,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			System.String a1;
 			checkType(l,2,out a1);
 			var ret=self.GetLuaFun(a1);
@@ -357,7 +391,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			#endif
 			int argc = LuaDLL.lua_gettop(l);
 			if(argc==2){
-				Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+				Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 				System.String a1;
 				checkType(l,2,out a1);
 				self.CallLuaFun(a1);
@@ -365,7 +399,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 				return 1;
 			}
 			else if(matchType(l,argc,2,typeof(string),typeof(object[]))){
-				Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+				Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 				System.String a1;
 				checkType(l,2,out a1);
 				System.Object[] a2;
@@ -375,7 +409,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 				return 1;
 			}
 			else if(matchType(l,argc,2,typeof(string),typeof(string))){
-				Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+				Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 				System.String a1;
 				checkType(l,2,out a1);
 				System.String a2;
@@ -385,7 +419,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 				return 1;
 			}
 			else if(argc==4){
-				Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+				Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 				System.String a1;
 				checkType(l,2,out a1);
 				System.String a2;
@@ -426,7 +460,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			System.String a1;
 			checkType(l,2,out a1);
 			var ret=self.GetAsset<UnityEngine.Object>(a1);
@@ -460,7 +494,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			System.String a1;
 			checkType(l,2,out a1);
 			var ret=self.GetTextAsset(a1);
@@ -494,7 +528,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			System.String a1;
 			checkType(l,2,out a1);
 			var ret=self.GetPrefabAsset(a1);
@@ -528,7 +562,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.Uid);
 			return 2;
@@ -559,7 +593,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.PackagePath);
 			return 2;
@@ -590,7 +624,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.PackageName);
 			return 2;
@@ -621,7 +655,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.LoadFriendlyErrorExplain);
 			return 2;
@@ -652,7 +686,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.LoadError);
 			return 2;
@@ -683,7 +717,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushEnum(l,(int)self.LoadStatus);
 			return 2;
@@ -714,7 +748,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.AssetBundle);
 			return 2;
@@ -745,7 +779,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.TAG);
 			return 2;
@@ -776,7 +810,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.ModLogo);
 			return 2;
@@ -807,7 +841,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.ModInfo);
 			return 2;
@@ -838,7 +872,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.ModHasDefFile);
 			return 2;
@@ -869,7 +903,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.ModDefFile);
 			return 2;
@@ -900,7 +934,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushEnum(l,(int)self.ModType);
 			return 2;
@@ -931,7 +965,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.ModCompatibilityInfo);
 			return 2;
@@ -962,7 +996,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.ModDependencyInfo);
 			return 2;
@@ -993,7 +1027,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.ModDependencyAllLoaded);
 			return 2;
@@ -1024,7 +1058,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushEnum(l,(int)self.ModEntryCodeExecutionAt);
 			return 2;
@@ -1055,7 +1089,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.ModEntryCode);
 			return 2;
@@ -1086,7 +1120,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.ModLuaServer);
 			return 2;
@@ -1117,7 +1151,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameMod self=(Ballance2.Managers.CoreBridge.GameMod)checkSelf(l);
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.ModLuaState);
 			return 2;
@@ -1137,7 +1171,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 	}
 	[UnityEngine.Scripting.Preserve]
 	static public void reg(IntPtr l) {
-		getTypeTable(l,"Ballance2.Managers.CoreBridge.GameMod");
+		getTypeTable(l,"Ballance2.Managers.ModBase.GameMod");
 		addMember(l,Load);
 		addMember(l,Destroy);
 		addMember(l,Run);
@@ -1146,6 +1180,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 		addMember(l,FindLuaObject);
 		addMember(l,GetModEntryCodeExecuted);
 		addMember(l,RunModExecutionCode);
+		addMember(l,RequireLuaFile);
 		addMember(l,GetLuaFun);
 		addMember(l,CallLuaFun);
 		addMember(l,GetAsset);
@@ -1171,6 +1206,6 @@ public class Lua_Ballance2_Managers_CoreBridge_GameMod : LuaObject {
 		addMember(l,"ModEntryCode",get_ModEntryCode,null,true);
 		addMember(l,"ModLuaServer",get_ModLuaServer,null,true);
 		addMember(l,"ModLuaState",get_ModLuaState,null,true);
-		createTypeMetatable(l,constructor, typeof(Ballance2.Managers.CoreBridge.GameMod));
+		createTypeMetatable(l,constructor, typeof(Ballance2.Managers.ModBase.GameMod));
 	}
 }

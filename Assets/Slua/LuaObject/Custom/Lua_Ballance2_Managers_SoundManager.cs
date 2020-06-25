@@ -126,11 +126,28 @@ public class Lua_Ballance2_Managers_SoundManager : LuaObject {
 				pushValue(l,ret);
 				return 2;
 			}
-			else if(argc==6){
+			else if(matchType(l,argc,2,typeof(Ballance2.Managers.GameSoundType),typeof(UnityEngine.AudioClip),typeof(bool),typeof(bool),typeof(string))){
 				Ballance2.Managers.SoundManager self=(Ballance2.Managers.SoundManager)checkSelf(l);
 				Ballance2.Managers.GameSoundType a1;
 				a1 = (Ballance2.Managers.GameSoundType)LuaDLL.luaL_checkinteger(l, 2);
 				UnityEngine.AudioClip a2;
+				checkType(l,3,out a2);
+				System.Boolean a3;
+				checkType(l,4,out a3);
+				System.Boolean a4;
+				checkType(l,5,out a4);
+				System.String a5;
+				checkType(l,6,out a5);
+				var ret=self.RegisterSoundPlayer(a1,a2,a3,a4,a5);
+				pushValue(l,true);
+				pushValue(l,ret);
+				return 2;
+			}
+			else if(matchType(l,argc,2,typeof(Ballance2.Managers.GameSoundType),typeof(string),typeof(bool),typeof(bool),typeof(string))){
+				Ballance2.Managers.SoundManager self=(Ballance2.Managers.SoundManager)checkSelf(l);
+				Ballance2.Managers.GameSoundType a1;
+				a1 = (Ballance2.Managers.GameSoundType)LuaDLL.luaL_checkinteger(l, 2);
+				System.String a2;
 				checkType(l,3,out a2);
 				System.Boolean a3;
 				checkType(l,4,out a3);
@@ -230,6 +247,42 @@ public class Lua_Ballance2_Managers_SoundManager : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int PlayFastVoice(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.Managers.SoundManager self=(Ballance2.Managers.SoundManager)checkSelf(l);
+			System.String a1;
+			checkType(l,2,out a1);
+			Ballance2.Managers.GameSoundType a2;
+			a2 = (Ballance2.Managers.GameSoundType)LuaDLL.luaL_checkinteger(l, 3);
+			var ret=self.PlayFastVoice(a1,a2);
+			pushValue(l,true);
+			pushValue(l,ret);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int get_TAG(IntPtr l) {
 		try {
 			#if DEBUG
@@ -267,6 +320,7 @@ public class Lua_Ballance2_Managers_SoundManager : LuaObject {
 		addMember(l,RegisterSoundPlayer);
 		addMember(l,IsSoundPlayerRegistered);
 		addMember(l,DestroySoundPlayer);
+		addMember(l,PlayFastVoice);
 		addMember(l,"TAG",get_TAG,null,false);
 		createTypeMetatable(l,null, typeof(Ballance2.Managers.SoundManager),typeof(Ballance2.Managers.BaseManagerBindable));
 	}

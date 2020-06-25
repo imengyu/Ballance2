@@ -1,4 +1,5 @@
-﻿using Ballance2.Managers;
+﻿using Ballance2.Config;
+using Ballance2.Managers;
 using Ballance2.Managers.CoreBridge;
 using Ballance2.Utils;
 using SLua;
@@ -112,7 +113,7 @@ namespace Ballance2
 
         #region  游戏总体初始化例程
 
-        [SLua.CustomLuaClass]
+        [CustomLuaClass]
         /// <summary>
         /// 指定游戏状态模式
         /// </summary>
@@ -243,6 +244,7 @@ namespace Ballance2
                     //初始化各个管理器
                     GameMediator = (GameMediator)RegisterManager(typeof(GameMediator));
                     gameMediatorInitFinished = true;
+                    GameSettingsManager.Init();
                     UIManager = (UIManager)RegisterManager(typeof(UIManager));
                     RegisterManager(typeof(DebugManager));
                     RegisterManager(typeof(ModManager));
@@ -313,15 +315,10 @@ namespace Ballance2
 
             return result;
         }
-        internal static bool Destroy()
+        internal static void Destroy()
         {
-            UnityEngine.Debug.Log("[" + TAG + " ] Destroy game");
-            bool result = DestryAllManagers();
-            return result;
-        }
+            Debug.Log("[" + TAG + " ] Destroy game");
 
-        private static bool DestryAllManagers()
-        {
             bool b = false;
             if (managers != null)
             {
@@ -334,7 +331,8 @@ namespace Ballance2
                 managers.Clear();
                 managers = null;
             }
-            return b;
+
+            GameSettingsManager.Destroy();
         }
 
         /// <summary>
@@ -386,7 +384,9 @@ namespace Ballance2
                 GameRoot.transform.GetChild(i).gameObject.SetActive(false);
             GameBaseCamera.gameObject.SetActive(true);
         }
-
+        /// <summary>
+        /// 关闭 GameManager 产生的全局对话框（调试用）
+        /// </summary>
         public static void CloseGameManagerAlert()
         {
             UIManager.CloseWindow(UIManager.FindWindowById(gameManagerAlertDialogId));

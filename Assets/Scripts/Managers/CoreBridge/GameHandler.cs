@@ -56,6 +56,25 @@ namespace Ballance2.Managers.CoreBridge
         }
 
         /// <summary>
+        /// 创建 LUA 层使用的 Handler
+        /// </summary>
+        /// <param name="name">接收器名称</param>
+        /// <param name="luaModulHandler">LUA Handler （格式：模块名:Modul/lua虚拟脚本名字:主模块函数名称:附带参数）</param>
+        public static GameHandler CreateLuaGameHandler(string name, string luaModulHandler)
+        {
+            return new GameHandler(name, luaModulHandler);
+        }
+        /// <summary>
+        /// 创建 LUA 层使用的 Handler
+        /// </summary>
+        /// <param name="name">接收器名称</param>
+        /// <param name="luaFunction">LUA 函数</param>
+        public static GameHandler CreateLuaGameHandler(string name, LuaFunction luaFunction, LuaTable self = null)
+        {
+            return new GameHandler(name, luaFunction, self);
+        }
+
+        /// <summary>
         /// 释放
         /// </summary>
         public void Dispose()

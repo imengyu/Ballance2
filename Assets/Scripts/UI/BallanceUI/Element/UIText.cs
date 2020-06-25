@@ -1,6 +1,7 @@
 ﻿using Ballance2.Utils;
 using System;
 using System.Xml;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Ballance2.UI.BallanceUI.Element
@@ -71,6 +72,8 @@ namespace Ballance2.UI.BallanceUI.Element
             }
         }
 
+        [SerializeField, SetProperty("Text")]
+        private string textVal;
         private Text text;
         private ContentSizeFitter contentSizeFitter;
 
@@ -79,9 +82,10 @@ namespace Ballance2.UI.BallanceUI.Element
         /// </summary>
         public string Text
         {
-            get { return text.text; }
+            get { return textVal; }
             set
             {
+                textVal = value;
                 text.text = StringUtils.ReplaceBrToLine(value);
             }
         }

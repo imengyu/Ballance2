@@ -1,8 +1,14 @@
 GameManager = Ballance2.GameManager
 GameLogger = Ballance2.GameLogger
 GameEventNames = Ballance2.Managers.CoreBridge.GameEventNames
-GameCloneUtils = Ballance2.Utils.GameCloneUtils
+GameActionNames = Ballance2.Managers.CoreBridge.GameActionNames
+StringUtils = Ballance2.Utils.StringUtils
+GameSettingsManager = Ballance2.Config.GameSettingsManager
 ModManager = Ballance2.Managers.ModManager
+Screen = UnityEngine.Screen
+
+local UIManager = GameManager.UIManager
+local GameSettings = nil
 
 local TAG = "core.ui.Main"
 local gameModThis = nil
@@ -16,11 +22,150 @@ end
 
 -- 模块卸载前函数
 function ModBeforeUnLoad(thisGameMod)
-	gameModThis = thisGameMod
+  gameModThis = thisGameMod
 	return true
 end
 
 function OnLoadAll()
+  LoadGameSettings()
+  LoadGameSettingsUI()
+	return true
+end
+
+local resolutions = nil
+local screenWidth = Screen.width
+local screenHeight = Screen.height
+local currentResolutions = 0
+
+function LoadGameSettings()
+  GameSettings = GameSettingsManager.GetSettings("core")
+  resolutions = Screen.resolutions  
+end
+
+local pageSettings = nil
+local pageSettingsVideo = nil
+local pageSettingsControl = nil
+local pageSettingsVoice = nil
+
+local pageOld = nil
+
+function LoadGameSettingsUI()
+  
+  local pageSettingsXml = gameModThis:GetTextAsset("PageSettings.xml")
+  local pageSettingsVideoXml = gameModThis:GetTextAsset("PageSettingsVideo.xml")
+  local pageSettingsControlXml = gameModThis:GetTextAsset("PageSettingsContol.xml")
+  local pageSettingsVoiceXml = gameModThis:GetTextAsset("PageSettingsVoice.xml")
+
+  -- 设置
+  pageSettings = UIManager:RegisterBallanceUIPage("settings", pageSettingsXml, 
+    { "btn.settings.video:click","btn.settings.control:click","btn.settings.voice:click","btn.back:click" }, 
+    { 
+      function(evtName) UIManager:GotoUIPage(pageSettingsVideo.PagePath) end, 
+      function(evtName) UIManager:GotoUIPage(pageSettingsControl.PagePath) end, 
+      function(evtName) UIManager:GotoUIPage(pageSettingsVoice.PagePath) end, 
+      function(evtName) 
+        UIManager:CloseUIPage(pageSettings.PagePath)
+        if(not StringUtils.isNullOrEmpty(pageOld)) then
+          UIManager:GotoUIPage(pageOld)
+        end
+      end
+    }, 
+    nil, "Default", nil)
+  -- 设置 - 图像
+  pageSettingsVideo = UIManager:RegisterBallanceUIPage("settings.video", pageSettingsVideoXml, 
+    { 
+      "dropdown.resolution:valueChanged","dropdown.quality:valueChanged","toggle.fullscreen:checkedChanged",
+      "dropdown.vsync:valueChanged","toggle.cloud:checkedChanged","btn.back:click" 
+    }, 
+    { 
+      function(evtName, el, v) GameSettings:SetInt("video.resolution", v) end, 
+      function(evtName, el, v) GameSettings:SetInt("video.quality", v) end, 
+      function(evtName, el, v) GameSettings:SetBool("video.fullScreen", v) end, 
+      function(evtName, el, v) GameSettings:SetInt("video.vsync", v) end, 
+      function(evtName, el, v) GameSettings:SetBool("video.cloud", v) end, 
+      function(evtName) 
+        GameSettings:NotifySettingsUpdate("video")
+        UIManager:BackUIPage() 
+      end
+    }, 
+    nil,
+    "Default", 
+    {
+      "dropdown.quality:value:"..GameSettings:GetInt("video.quality", 2),
+      "dropdown.vsync:value:"..GameSettings:GetInt("video.vsync", 0),
+      "toggle.cloud:checked:"..GameSettings:GetInt("video.cloud", true),
+      "toggle.fullscreen:checked:"..GameSettings:GetBool("video.fullscreen", true)
+    }
+  )
+  --设置数据到页面上
+  local dropdown_resolution = pageSettingsVideo:FindElementByName("dropdown.resolution")
+  for i=1,#resolutions do
+    if(resolutions[i].width == screenWidth and resolutions[i].height == screenHeight) then
+      currentResolutions = i
+    end
+    dropdown_resolution.AddOption(resolutions[i].width.."x"..resolutions[i].height)
+  end
+  dropdown_resolution.SetProp("value", ""..currentResolutions)
+  -- 设置 - 控制
+  pageSettingsControl = UIManager:RegisterBallanceUIPage("settings.control", pageSettingsControlXml, 
+    { 
+      "key.front:keyChanged","key.back:keyChanged", "key.left:keyChanged",
+      "key.right:keyChanged","key.up:keyChanged", "key.roate:keyChanged","toggle.reverse_control:checkChanged",
+      "btn.back:click" 
+    },
+    {
+      function(evtName, el, v) GameSettings:SetString("control.key.front", v) end,
+      function(evtName, el, v) GameSettings:SetString("control.key.back", v) end,
+      function(evtName, el, v) GameSettings:SetString("control.key.left", v) end,
+      function(evtName, el, v) GameSettings:SetString("control.key.right", v) end,
+      function(evtName, el, v) GameSettings:SetString("control.key.up", v) end,
+      function(evtName, el, v) GameSettings:SetString("control.key.roate", v) end,
+      function(evtName, el, v) GameSettings:SetBool("control.reverse", v) end,
+      function(evtName) 
+        GameSettings:NotifySettingsUpdate("control")
+        UIManager:BackUIPage() 
+      end
+    }, 
+    nil,
+    "Default", 
+    {
+      "key.front:key:"..GameSettings:GetString("control.key.front", "None"),
+      "key.back:key:"..GameSettings:GetString("control.key.back", "None"),
+      "key.left:key:"..GameSettings:GetString("control.key.left", "None"),
+      "key.right:key:"..GameSettings:GetString("control.key.right", "None"),
+      "key.up:key:"..GameSettings:GetString("control.key.up", "None"),
+      "key.roate:key:"..GameSettings:GetString("control.key.roate", "None"),
+      "toggle.reverse_control:checked:"..GameSettings:GetBool("control.reverse", false),
+    }
+  )
+  -- 设置 - 声音
+  pageSettingsVoice = UIManager:RegisterBallanceUIPage("settings.voice", pageSettingsVoiceXml, 
+    { "slider.voice.main:valueChanged","slider.voice.background:valueChanged","slider.voice.ui:valueChanged","btn.back:click" }, 
+    { 
+      function(evtName, el, value) GameSettings:SetFloat("voice.main", value) end, 
+      function(evtName, el, value) GameSettings:SetFloat("voice.background", value) end, 
+      function(evtName, el, value) GameSettings:SetFloat("voice.ui", value) end, 
+      function(evtName) 
+        GameSettings:NotifySettingsUpdate("voice")
+        UIManager:BackUIPage() 
+      end
+    }, 
+    nil,
+    "Default",
+    {
+      "slider.voice.main:value"..GameSettings:GetFloat("voice.main", 100),
+      "slider.voice.background:value"..GameSettings:GetFloat("voice.background", 100),
+      "slider.voice.ui:value"..GameSettings:GetFloat("voice.ui", 100)
+    }
+  )
+
+  ------------------
+
+  -- 注册操作
+  GameManager.GameMediator:RegisterAction(GameActionNames.ACTION_SHOW_SETTINGS, "core.ui", function(oldPage)
+    pageOld = oldPage
+    UIManager:GotoUIPage(pageSettings.PagePath)
+  end, nil)
 
 	return true
 end

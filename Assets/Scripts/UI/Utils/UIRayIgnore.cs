@@ -9,6 +9,7 @@ using UnityEngine.EventSystems;
 
 namespace Ballance2.UI.Utils
 {
+    [SLua.CustomLuaClass]
     /// <summary>
     /// UI 穿透脚本 
     /// </summary>

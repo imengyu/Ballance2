@@ -3,12 +3,15 @@
 
 GameManager = Ballance2.GameManager
 GameLogger = Ballance2.GameLogger
+GameActionNames = Ballance2.Managers.CoreBridge.GameActionNames
 SkyBoxUtils = Ballance2.Utils.SkyBoxUtils
+GameSoundType = Ballance2.Managers.GameSoundType
 
 Vector3 = UnityEngine.Vector3
 Time = UnityEngine.Time
 
 local UIManager = GameManager.UIManager
+local SoundManager = Slua.As(GameManager.GetManager(Ballance2.Managers.SoundManager.TAG), Ballance2.Managers.SoundManager)
 local TAG = "MenuLevel:MainCamera"
 
 MenuLevel = {
@@ -37,6 +40,9 @@ MenuLevel = {
   pageAbout = nil,
   pageHighScore = nil,
   pageLightZone = nil,
+
+  soundMenuAtmo = nil,
+  soundMenuLoad = nil,
 }
 
 local thisMod = nil
@@ -104,7 +110,15 @@ function class_MenuLevel()
   
   -- 初始化音乐
   function MenuLevel:InitMusic() 
-
+    self.soundMenuAtmo = SoundManager:RegisterSoundPlayer(GameSoundType.Background, "core.assets.sounds:Menu_atmo.wav", false, true, "MenuAtmo")
+    self.soundMenuLoad = SoundManager:RegisterSoundPlayer(GameSoundType.UI, "core.assets.sounds:Menu_load.wav", false, true, "MenuLoad")
+    if(self.soundMenuAtmo == nil) then
+      GameLogger.Error(TAG, "soundMenuAtmo is null")
+    else
+      self.soundMenuAtmo.loop = true
+      self.soundMenuAtmo:Play()
+    end
+    
   end
   -- 初始化 UI
   function MenuLevel:InitUI() 
@@ -121,13 +135,12 @@ function class_MenuLevel()
         function(evtName) UIManager:GotoUIPage(self.pageStart.PagePath) end, 
         function(evtName) UIManager:GotoUIPage(self.pageHighScore.PagePath) end, 
         function(evtName) 
-          
+          GameManager.GameMediator:CallAction(GameActionNames.ACTION_SHOW_SETTINGS, { "main" })
         end, 
         function(evtName) UIManager:GotoUIPage(self.pageAbout.PagePath) end, 
         function(evtName) self.dialogQuitId = UIManager:GlobalConfirm("真的要退出游戏吗", "提示", "确定","取消") end
       }, 
-      self,
-      "Default")
+      self, "Default", nil)
 
     self.pageStart = UIManager:RegisterBallanceUIPage("main.start", pageStartXml, 
       { 
@@ -151,17 +164,16 @@ function class_MenuLevel()
         function(evtName) self:OnSwitchLz(true) end
       }, 
       self,
-      "Default")
+      "Default",
+      nil)
     self.pageAbout = UIManager:RegisterBallanceUIPage("main.about", pageAboutXml, 
       { "btn.back:click" }, 
       { function(evtName) UIManager:BackUIPage() end }, 
-      self,
-      "Default")
+      self, "Default", nil)
     self.pageHighScore = UIManager:RegisterBallanceUIPage("main.highscore", pageHighscoreXml, 
       { "btn.back:click" }, 
       { function(evtName) UIManager:BackUIPage() end }, 
-      self,
-      "Default")
+      self, "Default", nil)
     self.pageLightZone = UIManager:RegisterBallanceUIPage("main.start.lightzone", pageLightZoneXml, 
       { "btn.back:click" }, 
       { 
@@ -170,8 +182,7 @@ function class_MenuLevel()
           self:OnSwitchLz(false)
         end 
       }, 
-      self,
-      "None")
+      self, "None", nil)
 
     --
     UIManager:GotoUIPage(self.pageMain.PagePath)
@@ -208,6 +219,7 @@ function class_MenuLevel()
     end
   end
   function MenuLevel:OnLevelStart(lev) 
+    self.soundMenuLoad:Play()
     print("start level", lev)
   end
 

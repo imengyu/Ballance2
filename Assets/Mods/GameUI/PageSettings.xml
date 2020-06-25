@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <UIVertcialLinearLayout
   gravity="Center">
-  <UIMainButton name="btn.settings.video">视频设置</UIMainButton>
+  <UIText width="match_parent" lsyout_marginBottom="25">设置</UIText>
+  <UIMainButton name="btn.settings.video">图像设置</UIMainButton>
   <UIMainButton name="btn.settings.control">控制设置</UIMainButton>
   <UIMainButton name="btn.settings.voice">声音设置</UIMainButton>
   <UIButtonBack 

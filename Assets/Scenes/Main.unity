@@ -918,6 +918,18 @@ MonoBehaviour:
     Name: UIAlertWindow
   - Object: {fileID: 0}
     Name: UIConfirmWindow
+  - Object: {fileID: 5352273083917447746, guid: 854fda92669cf5d468ac8e856e69625b,
+      type: 3}
+    Name: UIToggleButton
+  - Object: {fileID: 8521440022661079561, guid: 90255c4f3a14a194eb5074a4aa895117,
+      type: 3}
+    Name: UIKeyChooseButton
+  - Object: {fileID: 6672190236789411206, guid: 1ff6b1ea6ba07c44b9650ac3c9dc5b12,
+      type: 3}
+    Name: UISlider
+  - Object: {fileID: 8614955473500828736, guid: ad6323f86822b224ba8e44acb79b9ab2,
+      type: 3}
+    Name: UIDropdown
   - Object: {fileID: 0}
     Name: 
   GameAssets:
@@ -949,8 +961,6 @@ MonoBehaviour:
     Name: font_consola
   - Object: {fileID: 12800000, guid: 18aa92448a5198c4d8f2cd72c194deef, type: 3}
     Name: font_ballance
-  - Object: {fileID: 24100000, guid: bfe2e6a33801b1b4aacf9b9b8ef3b89f, type: 2}
-    Name: BackgroundAudioMixer
   - Object: {fileID: 24100000, guid: c9acf9e2cf4485942b2bb045c3be0517, type: 2}
     Name: GameMainAudioMixer
   - Object: {fileID: 24100000, guid: 4e782ad91236a014d82897d3acc3dd1a, type: 2}

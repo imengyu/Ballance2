@@ -1,15 +1,16 @@
-﻿using Ballance2.Managers.CoreBridge;
+﻿using Ballance2.Config;
+using Ballance2.Managers.CoreBridge;
+using Ballance2.Managers.ModBase;
 using Ballance2.Utils;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Audio;
 
 namespace Ballance2.Managers
 {
+    /// <summary>
+    /// 声音管理器
+    /// </summary>
     [SLua.CustomLuaClass]
     public class SoundManager : BaseManagerBindable
     {
@@ -17,12 +18,15 @@ namespace Ballance2.Managers
 
         public SoundManager() : base(TAG, "Singleton") { }
 
+        private GameSettingsActuator GameSettings = null;
+
         public override bool InitManager()
         {
             audioSourcePrefab = GameManager.FindStaticPrefabs("AudioSource");
-            BackgroundAudioMixer = GameManager.FindStaticAssets<AudioMixer>("BackgroundAudioMixer");
-            GameMainAudioMixer = GameManager.FindStaticAssets<AudioMixer>("GameMainAudioMixer");
-            GameUIAudioMixer = GameManager.FindStaticAssets<AudioMixer>("GameUIAudioMixer");
+            fastPlayVoices = new Dictionary<string, AudioSource>();
+
+            InitGameAudioMixer();
+
             GameManager.GameMediator.RegisterEventHandler(
                 GameEventNames.EVENT_BASE_INIT_FINISHED, TAG, (e, p) =>
                 {
@@ -31,10 +35,29 @@ namespace Ballance2.Managers
                     return false;
                 }
             );
+
+            //设置更新事件
+            GameSettings = GameSettingsManager.GetSettings("core");
+            GameSettings.RegisterSettingsUpdateCallback("voice", new GameHandler(TAG, OnVoiceSettingsUpdated));
+            GameSettings.RequireSettingsLoad("voice");
             return true;
         }
         public override bool ReleaseManager()
         {
+            if(null != fastPlayVoices)
+            {
+                foreach (var v in fastPlayVoices)
+                    DestroySoundPlayer(v.Value);
+                fastPlayVoices.Clear();
+                fastPlayVoices = null;
+            }
+            if (null != audios)
+            {
+                for (int i = audios.Count - 1; i >= 0; i--)
+                    DestroySoundPlayer(audios[i].Audio);
+                audios.Clear();
+                audios = null;
+            }
             return true;
         }
 
@@ -48,9 +71,34 @@ namespace Ballance2.Managers
             public GameSoundType Type;
         }
 
-        private AudioMixer BackgroundAudioMixer;
+        #region AudioMixer
+
         private AudioMixer GameMainAudioMixer;
         private AudioMixer GameUIAudioMixer;
+
+        private AudioMixerGroup GameUIAudioMixerGroupMaster;
+
+        private AudioMixerGroup GameMainAudioMixerGroupMaster;
+        private AudioMixerGroup GameMainAudioMixerGroupBallEffect;
+        private AudioMixerGroup GameMainAudioMixerGroupModulEffect;
+        private AudioMixerGroup GameMainAudioMixerGroupBackgroundMusic;
+
+        private void InitGameAudioMixer()
+        {
+            GameMainAudioMixer = GameManager.FindStaticAssets<AudioMixer>("GameMainAudioMixer");
+            GameUIAudioMixer = GameManager.FindStaticAssets<AudioMixer>("GameUIAudioMixer");
+
+            GameUIAudioMixerGroupMaster = GameUIAudioMixer.FindMatchingGroups("Master")[0];
+
+            GameMainAudioMixerGroupMaster = GameUIAudioMixer.FindMatchingGroups("Master")[0];
+            GameMainAudioMixerGroupBallEffect = GameMainAudioMixer.FindMatchingGroups("Master/BallEffect")[0];
+            GameMainAudioMixerGroupModulEffect = GameMainAudioMixer.FindMatchingGroups("Master/ModulEffect")[0];
+            GameMainAudioMixerGroupBackgroundMusic = GameMainAudioMixer.FindMatchingGroups("Master/BackgroundMusic")[0];
+        }
+
+        #endregion
+
+        #region Sound Player
 
         /// <summary>
         /// 加载模组包中的音乐资源
@@ -77,8 +125,35 @@ namespace Ballance2.Managers
 
             AudioClip clip = mod.GetAsset<AudioClip>(names[1]);
             if (clip != null) clip.name = GamePathManager.GetFileNameWithoutExt(names[1]);
+            else
+            {
+                GameLogger.Warning(TAG, "未找到声音文件 {0} ，在模组包 {1}", assets, names[0]);
+                GameErrorManager.LastError = GameError.AssetsNotFound;
+            }
 
             return clip;
+        }
+        /// <summary>
+        /// 注册 SoundPlayer
+        /// </summary>
+        /// <param name="assets">音频资源字符串</param>
+        /// <returns></returns>
+        public AudioSource RegisterSoundPlayer(GameSoundType type, string assets, bool playOnAwake = false, bool activeStart = true, string name = "")
+        {
+            AudioClip audioClip = LoadAudioResource(assets);
+            if (audioClip == null)
+                return null;
+
+            AudioSource audioSource = Instantiate(audioSourcePrefab, gameObject.transform).AddComponent<AudioSource>();
+            audioSource.clip = audioClip;
+            audioSource.playOnAwake = playOnAwake;
+            audioSource.gameObject.name = "AudioSource_" + type + "_" + (name == "" ? GamePathManager.GetFileNameWithoutExt(audioClip.name) : name);
+
+            if (!activeStart)
+                audioSource.gameObject.SetActive(false);
+
+            RegisterAudioSource(type, audioSource);
+            return audioSource;
         }
         /// <summary>
         /// 注册 SoundPlayer
@@ -106,7 +181,7 @@ namespace Ballance2.Managers
         /// <returns></returns>
         public AudioSource RegisterSoundPlayer(GameSoundType type, AudioSource audioSource)
         {
-            if (!IsSoundPlayerRegistered(audioSource)) 
+            if (!IsSoundPlayerRegistered(audioSource))
                 RegisterAudioSource(type, audioSource);
             else GameErrorManager.LastError = GameError.AlredayRegistered;
             return audioSource;
@@ -125,45 +200,6 @@ namespace Ballance2.Managers
             }
             return false;
         }
-
-        private void RegisterAudioSource(GameSoundType type, AudioSource audioSource)
-        {
-            AudioGlobalControl audioGlobalControl = new AudioGlobalControl();
-            audioGlobalControl.Audio = audioSource;
-            audioGlobalControl.Type = type;
-
-            switch (type)
-            {
-                case GameSoundType.Background:
-                    audioSource.outputAudioMixerGroup = BackgroundAudioMixer.outputAudioMixerGroup;
-                    break;
-                case GameSoundType.GameEffect:
-                    break;
-                case GameSoundType.Normal:
-                    audioSource.outputAudioMixerGroup = GameMainAudioMixer.outputAudioMixerGroup;
-                    break;
-                case GameSoundType.UI:
-                    audioSource.outputAudioMixerGroup = GameUIAudioMixer.outputAudioMixerGroup;
-                    break;
-            }
-
-
-            audios.Add(audioGlobalControl);
-        }
-        private bool IsSoundPlayerRegistered(AudioSource audioSource, out AudioGlobalControl audioGlobalControl)
-        {
-            foreach (AudioGlobalControl a in audios)
-            {
-                if (a.Audio == audioSource)
-                {
-                    audioGlobalControl = a;
-                    return true;
-                }
-            }
-            audioGlobalControl = null;
-            return false;
-        }
-
         /// <summary>
         /// 销毁 SoundPlayer
         /// </summary>
@@ -186,9 +222,93 @@ namespace Ballance2.Managers
 
         }
 
+        private void RegisterAudioSource(GameSoundType type, AudioSource audioSource)
+        {
+            AudioGlobalControl audioGlobalControl = new AudioGlobalControl();
+            audioGlobalControl.Audio = audioSource;
+            audioGlobalControl.Type = type;
+
+            switch (type)
+            {
+                case GameSoundType.Background:
+                    audioSource.outputAudioMixerGroup = GameMainAudioMixerGroupBackgroundMusic;
+                    break;
+                case GameSoundType.BallEffect:
+                    audioSource.outputAudioMixerGroup = GameMainAudioMixerGroupBallEffect;
+                    break;
+                case GameSoundType.ModulEffect:
+                    audioSource.outputAudioMixerGroup = GameMainAudioMixerGroupModulEffect;
+                    break;
+                case GameSoundType.Normal:
+                    audioSource.outputAudioMixerGroup = GameMainAudioMixerGroupMaster;
+                    break;
+                case GameSoundType.UI:
+                    audioSource.outputAudioMixerGroup = GameUIAudioMixerGroupMaster;
+                    break;
+            }
+
+
+            audios.Add(audioGlobalControl);
+        }
+        private bool IsSoundPlayerRegistered(AudioSource audioSource, out AudioGlobalControl audioGlobalControl)
+        {
+            foreach (AudioGlobalControl a in audios)
+            {
+                if (a.Audio == audioSource)
+                {
+                    audioGlobalControl = a;
+                    return true;
+                }
+            }
+            audioGlobalControl = null;
+            return false;
+        }
+
+        #endregion
+
+        //加载声音设置
+        private bool OnVoiceSettingsUpdated(string evtName, params object[] param)
+        {
+            float volBackground = GameSettings.GetFloat("voice.background", 100);
+            float volMain = GameSettings.GetFloat("voice.main", 100);
+            float volUI = GameSettings.GetFloat("voice.ui", 100);
+
+            GameUIAudioMixer.SetFloat("UIMasterVolume", volUI / 100.0f);
+            GameMainAudioMixer.SetFloat("MasterVolume", volMain / 100.0f);
+            GameMainAudioMixer.SetFloat("BackgroundVolume", volBackground / 100.0f);
+
+            return true;
+        }
+
+        private Dictionary<string, AudioSource> fastPlayVoices = null;
+
+        /// <summary>
+        /// 快速播放一个短声音
+        /// </summary>
+        /// <param name="soundName">声音资源字符串</param>
+        /// <param name="type">声音类型</param>
+        /// <returns></returns>
+        public bool PlayFastVoice(string soundName, GameSoundType type)
+        {
+            string key = soundName + "@" + type;
+            AudioSource cache = null;
+            if(fastPlayVoices.TryGetValue(key, out cache))
+            {
+                cache.Play();
+                return true;
+            }
+            AudioClip audioClip = LoadAudioResource(soundName);
+            if (audioClip != null)
+                return false;
+
+            cache = RegisterSoundPlayer(type, audioClip, false, true, key);
+            cache.Play();
+            return true;
+        }
 
     }
 
+    [SLua.CustomLuaClass]
     /// <summary>
     /// 指定声音类型
     /// </summary>
@@ -199,9 +319,13 @@ namespace Ballance2.Managers
         /// </summary>
         Normal,
         /// <summary>
-        /// 游戏音效
+        /// 游戏音效 关于球的
         /// </summary>
-        GameEffect,
+        BallEffect,
+        /// <summary>
+        /// 游戏音效 关于模组的
+        /// </summary>
+        ModulEffect,
         /// <summary>
         /// UI 发出的声音
         /// </summary>

@@ -1,5 +1,5 @@
-﻿using SLua;
-using System.Collections.Generic;
+﻿using Ballance2.Managers.ModBase;
+using SLua;
 using UnityEngine;
 
 namespace Ballance2.Managers.CoreBridge

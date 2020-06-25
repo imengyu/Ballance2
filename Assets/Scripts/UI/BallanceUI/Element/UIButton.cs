@@ -5,6 +5,7 @@ using Ballance2.Managers.CoreBridge;
 using Ballance2.UI.Utils;
 using System.Xml;
 using Ballance2.Utils;
+using Ballance2.Managers;
 
 namespace Ballance2.UI.BallanceUI.Element
 {
@@ -15,7 +16,7 @@ namespace Ballance2.UI.BallanceUI.Element
 
         public UIButton()
         {
-            baseName = TAG;       
+            baseName = TAG;
         }
 
         public override void SetEventHandler(string name, GameHandler handler)
@@ -43,17 +44,16 @@ namespace Ballance2.UI.BallanceUI.Element
                 Text = val;
         }
 
+        private SoundManager soundManager = null;
+
         protected override void OnInitElement()
         {
             GetText();
             clickEventHandler = new GameHandlerList();
+            soundManager = (SoundManager)GameManager.GetManager(SoundManager.TAG);
 
             EventTriggerListener eventTriggerListener = EventTriggerListener.Get(gameObject);
-            eventTriggerListener.onClick = (g) =>
-            {
-                foreach (GameHandler h in clickEventHandler)
-                    h.CallEventHandler("click", this, Name);
-            };
+            eventTriggerListener.onClick = OnClick;
 
             base.OnInitElement();
         }
@@ -69,6 +69,17 @@ namespace Ballance2.UI.BallanceUI.Element
         }
 
         private GameHandlerList clickEventHandler = null;
+
+        private void OnClick(GameObject g)
+        {
+            foreach (GameHandler h in clickEventHandler)
+                h.CallEventHandler("click", this, Name);
+
+            soundManager.PlayFastVoice("core.assets.sounds:Menu_click.wav", GameSoundType.UI);
+        }
+
+        [SerializeField, SetProperty("Text")]
+        private string textVal;
         private Text text;
 
         /// <summary>
@@ -76,9 +87,10 @@ namespace Ballance2.UI.BallanceUI.Element
         /// </summary>
         public string Text
         {
-            get { return text.text; }
+            get { return textVal; }
             set
             {
+                textVal = value;
                 if (text == null) GetText();
                 text.text = StringUtils.ReplaceBrToLine(value);
             }

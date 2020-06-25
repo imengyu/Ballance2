@@ -5,11 +5,11 @@ GameManager = Ballance2.GameManager
 GameLogger = Ballance2.GameLogger
 GameEventNames = Ballance2.Managers.CoreBridge.GameEventNames
 GameCloneUtils = Ballance2.Utils.GameCloneUtils
-ModManager = Ballance2.Managers.ModManager
 
 local TAG = "core.scenes.menulevel.ui:Main"
 
-local ModManagerInstance = nil
+local ModManager = Slua.As(GameManager.GetManager(Ballance2.Managers.ModManager.TAG), Ballance2.Managers.ModManager)
+
 local gameModThis = nil
 local gameModBase = nil
 
@@ -21,8 +21,8 @@ function ModEntry(thisGameMod)
   gameModThis = thisGameMod
   
   GameManager.GameMediator:RegisterEventHandler(GameEventNames.EVENT_GAME_INIT_FINISH, TAG, TAG..":OnEnterMenuLevel")
-  ModManagerInstance = Slua.As(GameManager.GetManager(ModManager.TAG), ModManager)
-  gameModBase = ModManagerInstance:FindGameModByName("core.scenes.menulevel.base")
+  
+  gameModBase = ModManager:FindGameModByName("core.scenes.menulevel.base")
 
 	return true
 end

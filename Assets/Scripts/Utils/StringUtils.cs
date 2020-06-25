@@ -15,6 +15,24 @@ namespace Ballance2.Utils
     public static class StringUtils
     {
         /// <summary>
+        /// 字符串是否为空
+        /// </summary>
+        /// <param name="text">字符串</param>
+        /// <returns></returns>
+        public static bool isNullOrEmpty(string text)
+        {
+            return string.IsNullOrEmpty(text);
+        }
+        /// <summary>
+        /// 字符串是否为空或空白
+        /// </summary>
+        /// <param name="text">字符串</param>
+        /// <returns></returns>
+        public static bool IsNullOrWhiteSpace(string text)
+        {
+            return string.IsNullOrWhiteSpace(text);
+        }
+        /// <summary>
         /// 字符串是否是URL
         /// </summary>
         /// <param name="text">字符串</param>

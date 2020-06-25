@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace Ballance2.UI
 {
+    [SLua.CustomLuaClass]
     public class UICommonList : MonoBehaviour
     {
         void Start()
@@ -37,12 +38,12 @@ namespace Ballance2.UI
                     {
                         Destroy(li.itemObject);
                     }
-                    needRelayout = 30;
+                    needRelayout = 10;
                     break;
             }
         }
 
-        [Serializable]
+        [Serializable, SLua.CustomLuaClass]
         public class CommonListItem
         {
             public GameObject itemObject;
@@ -50,11 +51,10 @@ namespace Ballance2.UI
             public int id;
             public object data;
         }
-        [Serializable]
+        [Serializable, SLua.CustomLuaClass]
         public class CommonList : ObservableCollection<CommonListItem>
         {
         }
-
 
         private CommonList list = new CommonList();
         [SerializeField, SetProperty("ItemPrefab")]
@@ -87,7 +87,7 @@ namespace Ballance2.UI
             newItem.itemObject = GameCloneUtils.CloneNewObjectWithParent(ItemPrefab, rectTransform.transform);
             newItem.itemRectTransform = newItem.itemObject.GetComponent<RectTransform>();
             List.Add(newItem);
-            needRelayout = 30;
+            needRelayout = 10;
             return newItem;
         }
         public CommonListItem GetItem(int index)

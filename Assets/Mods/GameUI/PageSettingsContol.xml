@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UIVertcialLinearLayout
+  gravity="Center"
+  layoutChildSpacing="5">
+  <UIText width="match_parent" layout_marginBottom="15">控制设置</UIText>
+
+  <UIKeyChooseButton name="key.front" text="前进"></UIKeyChooseButton>
+  <UIKeyChooseButton name="key.back" text="后退"></UIKeyChooseButton>
+  <UIKeyChooseButton name="key.left" text="向左"></UIKeyChooseButton>
+  <UIKeyChooseButton name="key.right" text="向右"></UIKeyChooseButton>
+  <UIKeyChooseButton name="key.up" text="抬高视角"></UIKeyChooseButton>
+  <UIKeyChooseButton name="key.roate" text="旋转视角"></UIKeyChooseButton>
+  
+  <UIToggleButton layout_marginTop="5" name="toggle.reverse_control">反向控制</UIToggleButton>
+  <UIButtonBack 
+    name="btn.back"
+    layout_marginTop="20"
+    >返回</UIButtonBack>
+</UIVertcialLinearLayout>

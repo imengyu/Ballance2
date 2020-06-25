@@ -1,4 +1,5 @@
-﻿using SLua;
+﻿using Ballance2.Managers.ModBase;
+using SLua;
 
 namespace Ballance2.Managers.CoreBridge
 {

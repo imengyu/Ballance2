@@ -100,6 +100,10 @@ namespace Ballance2.Utils
         /// </summary>
         PrefabNotFound,
         /// <summary>
+        /// 未在资源包找到资源，可能是路径有误？
+        /// </summary>
+        AssetsNotFound,
+        /// <summary>
         /// 初始化失败
         /// </summary>
         InitializationFailed,
@@ -120,9 +124,17 @@ namespace Ballance2.Utils
         /// </summary>
         ModDependenciesLoadFailed,
         /// <summary>
+        /// 模组启动代码运行失败
+        /// </summary>
+        ModExecutionCodeRunFailed,
+        /// <summary>
         /// 模组不能运行
         /// </summary>
         ModCanNotRun,
+        /// <summary>
+        /// 目标函数未找到
+        /// </summary>
+        FunctionNotFound,
         /// <summary>
         /// 模组包版本不兼容
         /// </summary>

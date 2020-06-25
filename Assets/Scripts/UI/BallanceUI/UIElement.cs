@@ -14,8 +14,8 @@ namespace Ballance2.UI.BallanceUI
     {
         public void InitHandlers(Dictionary<string, GameHandler> gameHandlers)
         {
-            foreach (string key in gameHandlers.Keys)
-                SetEventHandler(key, gameHandlers[key]);
+            lateInitGameHandlers = gameHandlers;
+            lateInitHandlers = 20;
         }
         public void Init(XmlNode xml)
         {
@@ -28,7 +28,7 @@ namespace Ballance2.UI.BallanceUI
         /// <param name="name">事件名称</param>
         /// <param name="handler">接收器</param>
         public virtual void SetEventHandler(string name, GameHandler handler) {
-            //GameLogger.Log(Name, "SetEventHandler {0} {1}", name, handler.Name);
+            GameLogger.Log(Name, "SetEventHandler {0} {1}", name, handler.Name);
         }
         /// <summary>
         /// 移除事件接收器
@@ -36,7 +36,7 @@ namespace Ballance2.UI.BallanceUI
         /// <param name="name">事件名称</param>
         /// <param name="handler">接收器</param>
         public virtual void RemoveEventHandler(string name, GameHandler handler) {
-            //GameLogger.Log(Name, "RemoveEventHandler {0} {1}", name, handler.Name);
+            GameLogger.Log(Name, "RemoveEventHandler {0} {1}", name, handler.Name);
         }
 
         [SerializeField, SetProperty("AnchorX")]
@@ -543,7 +543,7 @@ namespace Ballance2.UI.BallanceUI
             SetProp(name, val);
         }
 
-        private bool startClled = false;
+        private int lateInitHandlers = 0;
 
         internal void DoCallStart()
         {
@@ -554,11 +554,15 @@ namespace Ballance2.UI.BallanceUI
             if(string.IsNullOrEmpty(name))
                 Name = baseName;
             RectTransform = GetComponent<RectTransform>();
-            startClled = true;
             OnInitElement();
         }
         void Update()
         {
+            if (lateInitHandlers > 0)
+            {
+                lateInitHandlers--;
+                if (lateInitHandlers == 0) InitGameHandler();
+            }
             OnUpdateElement();
         }
         void OnDestroy()
@@ -580,6 +584,17 @@ namespace Ballance2.UI.BallanceUI
             }
             if (this is UILayout) (this as UILayout).PostDoLayout();
             else DoResize();
+        }
+
+        private Dictionary<string, GameHandler> lateInitGameHandlers = null;
+        private void InitGameHandler()
+        {
+            if(lateInitGameHandlers != null)
+            {
+                foreach (string key in lateInitGameHandlers.Keys)
+                    SetEventHandler(key, lateInitGameHandlers[key]);
+                lateInitGameHandlers = null;
+            }
         }
 
         protected virtual void OnInitElement()
