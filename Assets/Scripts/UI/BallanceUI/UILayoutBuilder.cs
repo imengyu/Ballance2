@@ -89,6 +89,13 @@ namespace Ballance2.UI.BallanceUI
         /// <returns></returns>
         public UILayout BuildLayoutByTemplate(string name, string templateXml, Dictionary<string, GameHandler> handlers, string[] initialProps)
         {
+            if(string.IsNullOrEmpty(templateXml))
+            {
+                GameLogger.Error(TAG, "BuildLayoutByTemplate failed, templateXml is Empty");
+                GameErrorManager.LastError = GameError.ParamNotProvide;
+                return null;
+            }
+
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.LoadXml(templateXml);
             return BuildLayoutByTemplateInternal(name, xmlDocument.DocumentElement, handlers, null, null, initialProps);

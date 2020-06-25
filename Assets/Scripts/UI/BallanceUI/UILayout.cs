@@ -134,8 +134,7 @@ namespace Ballance2.UI.BallanceUI
         [SerializeField, SetProperty("Gravity")]
         private LayoutGravity gravity;
 
-        private int loopUpdate = 0;
-        private int layoutPendCount = 0;
+        private int loopUpdate = 30;
         private int layoutDelyCount = 0;
         private bool layoutLock = false;
 
@@ -159,6 +158,11 @@ namespace Ballance2.UI.BallanceUI
                 elements = null;
             }
             base.OnDestroyElement();
+        }
+        protected override void OnInitElement()
+        {
+            base.OnInitElement();
+            loopUpdate = 30;
         }
 
         public void LayoutUnLock() { layoutLock = false; }
