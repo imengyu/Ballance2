@@ -26,6 +26,7 @@ namespace Ballance2.Managers
                 {
                     LoadGameInitBase();
                     StartCoroutine(LoadGameInitUI());
+                    InitSettings();
                     InitVideoSettings();
                     return false;
                 });
@@ -39,6 +40,7 @@ namespace Ballance2.Managers
             return true;
         }
 
+        private DebugManager DebugManager;
         private ModManager ModManager;
         private SoundManager SoundManager;
 
@@ -66,6 +68,7 @@ namespace Ballance2.Managers
         {
             ModManager = (ModManager)GameManager.GetManager(ModManager.TAG);
             SoundManager = (SoundManager)GameManager.GetManager(SoundManager.TAG);
+            DebugManager = (DebugManager)GameManager.GetManager(DebugManager.TAG);
 
             IntroAudio = SoundManager.RegisterSoundPlayer(GameSoundType.UI, GameManager.FindStaticAssets<AudioClip>("IntroMusic"));
         }
@@ -73,13 +76,13 @@ namespace Ballance2.Managers
         {
             int modUid = ModManager.LoadGameMod(GamePathManager.GetResRealPath("core", "core.gameinit.ballance"), false);
             gameInitMod = ModManager.FindGameMod(modUid);
-            if (gameInitMod == null)
+            yield return StartCoroutine(gameInitMod.LoadInternal());
+
+            if (gameInitMod.LoadStatus !=  GameModStatus.InitializeSuccess)
             {
                 GameErrorManager.ThrowGameError(GameError.GameInitPartLoadFailed, "加载 GameInit 资源包失败 ");
                 StopAllCoroutines();
             }
-
-            yield return StartCoroutine(gameInitMod.LoadInternal());
 
             gameInitUI = GameManager.UIManager.InitViewToCanvas(gameInitMod.GetPrefabAsset("Assets/Mods/GameInit/UIGameInit.prefab"), "GameInitUI").gameObject;
 
@@ -112,13 +115,13 @@ namespace Ballance2.Managers
 
             int modUid = ModManager.LoadGameMod(GamePathManager.GetResRealPath("core", "core.gamepackages.ballance"), false);
             GameMod gamePackagesMod = ModManager.FindGameMod(modUid);
-            if (gamePackagesMod == null)
+            yield return StartCoroutine(gamePackagesMod.LoadInternal());
+
+            if (gamePackagesMod.LoadStatus != GameModStatus.InitializeSuccess)
             {
                 GameErrorManager.ThrowGameError(GameError.GameInitPartLoadFailed, "加载 GamePackages 资源包失败 ");
                 StopAllCoroutines();
             }
-
-            yield return StartCoroutine(gamePackagesMod.LoadInternal());
 
             yield return new WaitUntil(IsGameInitAnimPlayend);
 
@@ -146,10 +149,26 @@ namespace Ballance2.Managers
 
         private GameSettingsActuator GameSettings = null;
         private Resolution[] resolutions = null;
+        private int defaultResolution = 0;
 
+        private void InitSettings()
+        {
+            DebugManager.RegisterCommand("restsettings", (string keyword, string fullCmd, string[] args) =>
+            {
+                GameSettingsManager.ResetDefaultSettings();
+                return true;
+            }, 0, "[还原默认设置]");
+        }
         private void InitVideoSettings()
         {
             resolutions = Screen.resolutions;
+
+            for (int i = 0; i < resolutions.Length; i++)
+                if (resolutions[i].width == Screen.width && resolutions[i].height == Screen.height)
+                {
+                    defaultResolution = i;
+                    break;
+                }
 
             //设置更新事件
             GameSettings = GameSettingsManager.GetSettings("core");
@@ -159,9 +178,8 @@ namespace Ballance2.Managers
 
         private bool OnVideoSettingsUpdated(string evtName, params object[] param)
         {
-
-            int resolutionsSet = GameSettings.GetInt("video.resolution", 0);
-            bool fullScreen = GameSettings.GetBool("video.fullScreen", true);
+            int resolutionsSet = GameSettings.GetInt("video.resolution", defaultResolution);
+            bool fullScreen = GameSettings.GetBool("video.fullScreen", false);
             int quality = GameSettings.GetInt("video.quality", 2);
             int vSync = GameSettings.GetInt("video.vsync", 0);
 

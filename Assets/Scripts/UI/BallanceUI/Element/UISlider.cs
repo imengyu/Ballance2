@@ -95,7 +95,6 @@ namespace Ballance2.UI.BallanceUI.Element
             {
                 ValueText.text = v.ToString(valFormatText);
                 valueChangedEventHandler.CallEventHandler("valueChanged", this, v, ValueText);
-                soundManager.PlayFastVoice("core.assets.sounds:Menu_dong.wav", GameSoundType.UI);
             });
 
             valueChangedEventHandler = new GameHandlerList();

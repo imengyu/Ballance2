@@ -106,7 +106,7 @@ RectTransform:
   m_GameObject: {fileID: 3768048561716528878}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.83333, y: 0.83333, z: 1}
+  m_LocalScale: {x: 0.88, y: 0.88, z: 1}
   m_Children:
   - {fileID: 5615243628739306499}
   m_Father: {fileID: 0}
@@ -212,10 +212,13 @@ MonoBehaviour:
   anchorX: 0
   anchorY: 0
   minSize: {x: 0, y: 0}
+  maxSize: {x: 0, y: 0}
+  name: 
   layout_marginLeft: 0
   layout_marginTop: 0
   layout_marginRight: 0
   layout_marginBottom: 0
+  visibility: 0
   layout_centerHorizontal: 0
   layout_centerVertical: 0
   layout_centerInParent: 0
@@ -231,3 +234,4 @@ MonoBehaviour:
   layout_alignBottom: 
   layout_alignLeft: 
   layout_alignRight: 
+  textVal: 

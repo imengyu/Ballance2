@@ -56,8 +56,7 @@ namespace Ballance2.UI.BallanceUI.Layout
             RectTransform rectTransform = null;
             float startVal = 0;
             UIAnchor[] thisAnchor = UIAnchorPosUtils.GetUIAnchor(RectTransform);
-
-            
+       
             //需要布局子布局，
             for (int i = 0; i < Elements.Count; i++)
             {
@@ -68,6 +67,7 @@ namespace Ballance2.UI.BallanceUI.Layout
 
             //计算所有元素布局占用高度
             float allLayoutHeight = (Elements.Count - 1) * layoutChildSpacing;
+            //另外一个轴最高的元素高度
             float maxLayoutOtherHeight = 0;
             for (int i = 0; i < Elements.Count; i++)
             {
@@ -90,18 +90,21 @@ namespace Ballance2.UI.BallanceUI.Layout
                                 UIAnchorPosUtils.GetUIBottom(e.RectTransform));
                             UIAnchorPosUtils.SetUIRightTop(e.RectTransform, e.Layout_marginRight,
                                 UIAnchorPosUtils.GetUITop(e.RectTransform));
+                            
                         }
                         else
                         {
                             UIAnchorPosUtils.SetUIAnchor(e.RectTransform,
                                 UILayoutUtils.GravityToAnchor(Gravity, RectTransform.Axis.Horizontal),
                                 layoutReverse ? UIAnchor.Bottom : UIAnchor.Top);
-                            UIAnchorPosUtils.SetUIPivot(e.RectTransform,
+
+                            e.RectTransform.anchoredPosition = Vector2.zero;
+                        }
+
+                        UIAnchorPosUtils.SetUIPivot(e.RectTransform,
                                 UILayoutUtils.AnchorToPivot(
                                     layoutReverse ? UIAnchor.Bottom : UIAnchor.Top, RectTransform.Axis.Vertical),
                                     RectTransform.Axis.Vertical);
-                            e.RectTransform.anchoredPosition = Vector2.zero;
-                        }
 
                         e.DoResize();
 
@@ -125,12 +128,14 @@ namespace Ballance2.UI.BallanceUI.Layout
                             UIAnchorPosUtils.SetUIAnchor(e.RectTransform,
                                     layoutReverse ? UIAnchor.Right : UIAnchor.Left,
                                     UILayoutUtils.GravityToAnchor(Gravity, RectTransform.Axis.Vertical));
-                            UIAnchorPosUtils.SetUIPivot(e.RectTransform,
+                            
+                            e.RectTransform.anchoredPosition = Vector2.zero;
+                        }
+
+                        UIAnchorPosUtils.SetUIPivot(e.RectTransform,
                                     UILayoutUtils.AnchorToPivot(
                                         layoutReverse ? UIAnchor.Right : UIAnchor.Left, RectTransform.Axis.Horizontal),
                                         RectTransform.Axis.Horizontal);
-                            e.RectTransform.anchoredPosition = Vector2.zero;
-                        }
 
                         e.DoResize();
 
@@ -141,6 +146,7 @@ namespace Ballance2.UI.BallanceUI.Layout
                     
                 }
             }
+
             if (maxLayoutOtherHeight <= 0)
                 maxLayoutOtherHeight = layoutDirection == LayoutAxis.Vertical ? RectTransform.rect.width : RectTransform.rect.height;
 
@@ -170,16 +176,16 @@ namespace Ballance2.UI.BallanceUI.Layout
                 if (layoutDirection == LayoutAxis.Vertical)
                 {
                     if ((Gravity & LayoutGravity.CenterVertical) == LayoutGravity.CenterVertical)
-                        startVal -= RectTransform.rect.height / 2 - allLayoutHeight / 2;
+                        startVal -= (RectTransform.rect.height / 2 - allLayoutHeight / 2);
                     if ((Gravity & LayoutGravity.Bottom) == LayoutGravity.Bottom)
-                        startVal -= RectTransform.rect.height - allLayoutHeight;
+                        startVal -= (RectTransform.rect.height - allLayoutHeight);
                 }
                 else
                 {
                     if ((Gravity & LayoutGravity.CenterHorizontal) == LayoutGravity.CenterHorizontal)
-                        startVal += RectTransform.rect.width / 2 - allLayoutHeight / 2;
+                        startVal += (RectTransform.rect.width / 2 - allLayoutHeight / 2);
                     if ((Gravity & LayoutGravity.End) == LayoutGravity.End)
-                        startVal += RectTransform.rect.width - allLayoutHeight;
+                        startVal += (RectTransform.rect.width - allLayoutHeight);
                 }
             }
 

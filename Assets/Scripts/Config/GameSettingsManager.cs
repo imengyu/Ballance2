@@ -10,6 +10,8 @@ namespace Ballance2.Config
     [SLua.CustomLuaClass]
     public static class GameSettingsManager
     {
+        private const string TAG = "GameSettingsManager";
+
         private static Dictionary<string, GameSettingsActuator> settingsActuators = new Dictionary<string, GameSettingsActuator>();
 
         /// <summary>
@@ -26,6 +28,13 @@ namespace Ballance2.Config
                 settingsActuators.Add(packageName, gameSettingsActuator);
             }
             return gameSettingsActuator;
+        }
+        /// <summary>
+        /// 还原默认设置
+        /// </summary>
+        public static void ResetDefaultSettings()
+        {
+            PlayerPrefs.DeleteAll();
         }
 
         internal static void Init()
@@ -44,6 +53,7 @@ namespace Ballance2.Config
     [SLua.CustomLuaClass]
     public class GameSettingsActuator
     {
+        private const string TAG = "GameSettingsActuator";
         private string basePackName = "unknow";
 
         public GameSettingsActuator(string packageName)
@@ -128,6 +138,7 @@ namespace Ballance2.Config
         /// <param name="groupName">组名称</param>
         public void NotifySettingsUpdate(string groupName)
         {
+            GameLogger.Log(TAG + ":" + basePackName, "NotifySettingsUpdate for {0}", groupName);
             foreach (var d in settingUpdateCallbacks)
                 if (d.groupName == groupName)
                     d.handler.CallEventHandler("SettingsUpdate");

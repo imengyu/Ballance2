@@ -2,7 +2,7 @@
 <UIVertcialLinearLayout
   gravity="Center"
   layoutChildSpacing="5">
-  <UIText width="match_parent" layout_marginBottom="15">控制设置</UIText>
+  <UIText width="match_parent" layout_marginBottom="15" color="#fff">控制设置</UIText>
 
   <UIKeyChooseButton name="key.front" text="前进"></UIKeyChooseButton>
   <UIKeyChooseButton name="key.back" text="后退"></UIKeyChooseButton>

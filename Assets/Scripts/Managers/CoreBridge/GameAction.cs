@@ -88,6 +88,10 @@ namespace Ballance2.Managers.CoreBridge
         /// [0] 关闭后返回的 UI 页
         /// </remarks>
         public const string ACTION_SHOW_SETTINGS = "core.ui.show_settings";
-
+        /// <summary>
+        /// 加载关卡
+        /// </summary>
+        public const string ACTION_LOAD_LEVEL = "core.load_level";
+        
     }
 }

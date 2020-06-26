@@ -468,6 +468,7 @@ namespace Ballance2.Managers.ModBase
                 var shaderName = material.shader.name;
                 if (shaderName == "Standard")
                 {
+                    material.shader = standardShader;
 
                     _SrcBlend = material.renderQueue == 0 ? 0 : material.GetInt("_SrcBlend");
                     _DstBlend = material.renderQueue == 0 ? 0 : material.GetInt("_DstBlend");
@@ -475,7 +476,6 @@ namespace Ballance2.Managers.ModBase
                     if (_SrcBlend == (int)UnityEngine.Rendering.BlendMode.SrcAlpha
                         && _DstBlend == (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha)
                     {
-                        material.shader = standardShader;
                         material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
                         material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                         material.SetInt("_ZWrite", 0);

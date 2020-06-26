@@ -273,9 +273,9 @@ namespace Ballance2.Managers
             float volMain = GameSettings.GetFloat("voice.main", 100);
             float volUI = GameSettings.GetFloat("voice.ui", 100);
 
-            GameUIAudioMixer.SetFloat("UIMasterVolume", volUI / 100.0f);
-            GameMainAudioMixer.SetFloat("MasterVolume", volMain / 100.0f);
-            GameMainAudioMixer.SetFloat("BackgroundVolume", volBackground / 100.0f);
+            GameUIAudioMixer.SetFloat("UIMasterVolume", volUI <= 1 ? -60 : (20.0f * Mathf.Log10(volUI / 100.0f)));
+            GameMainAudioMixer.SetFloat("MasterVolume", volUI <= 1 ? -60 : (20.0f * Mathf.Log10(volMain / 100.0f)));
+            GameMainAudioMixer.SetFloat("BackgroundVolume", volUI <= 1 ? -60 : (20.0f * Mathf.Log10(volBackground / 100.0f)));
 
             return true;
         }

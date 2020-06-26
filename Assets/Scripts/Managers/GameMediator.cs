@@ -456,7 +456,13 @@ namespace Ballance2.Managers
         /// <returns></returns>
         public GameActionCallResult CallAction(GameAction action, params object[] param)
         {
+            GameErrorManager.LastError = GameError.None;
             GameActionCallResult result = null;
+
+            param = LuaUtils.LuaTableArrayToObjectArray(param);
+
+            GameLogger.Log(TAG, "CallAction {0} -> {1}", action.Name, StringUtils.ValueArrayToString(param));
+
             result = action.GameHandler.CallActionHandler(param);
             if (!result.Success)
                 GameLogger.Warning(TAG, "操作 {0} 执行失败 {1}", name, GameErrorManager.LastError);

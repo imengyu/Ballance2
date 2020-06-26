@@ -7,8 +7,10 @@ GameActionNames = Ballance2.Managers.CoreBridge.GameActionNames
 SkyBoxUtils = Ballance2.Utils.SkyBoxUtils
 GameSoundType = Ballance2.Managers.GameSoundType
 
+RenderSettings = UnityEngine.RenderSettings
 Vector3 = UnityEngine.Vector3
 Time = UnityEngine.Time
+Color = UnityEngine.Color
 
 local UIManager = GameManager.UIManager
 local SoundManager = Slua.As(GameManager.GetManager(Ballance2.Managers.SoundManager.TAG), Ballance2.Managers.SoundManager)
@@ -90,7 +92,7 @@ function class_MenuLevel()
 
     self:InitMusic()
     self:InitUI()
-
+    self:SetFog(false)
     
     UIManager:MaskBlackFadeOut(2)
 	end
@@ -198,6 +200,16 @@ function class_MenuLevel()
     end)
   end
 
+  function MenuLevel:SetFog(isLz) 
+    RenderSettings.fog = true
+    RenderSettings.fogDensity = 0.005
+    if(isLz) then
+      RenderSettings.fogColor = Color(0.180, 0.254, 0.301)
+    else
+      RenderSettings.fogColor = Color(0.745, 0.623, 0.384)
+    end
+  end
+
   function MenuLevel:OnSwitchLz(on) 
     if(on) 
     then
@@ -209,7 +221,7 @@ function class_MenuLevel()
       self.I_Zone:SetActive(true)
       self.skyBox.material = self.skyBoxNight
       self.runningLzLoop = true
-
+      self:SetFog(true)
     else
       UIManager:MaskBlackSet(true)
       UIManager:MaskBlackFadeOut(1)
@@ -219,11 +231,13 @@ function class_MenuLevel()
       self.I_Zone:SetActive(false)
       self.skyBox.material = self.skyBoxDay
       self.runningLzLoop = false
+      self:SetFog(false)
     end
   end
+
   function MenuLevel:OnLevelStart(lev) 
     self.soundMenuLoad:Play()
-    print("start level", lev)
+    GameManager.GameMediator:CallAction(GameActionNames.ACTION_LOAD_LEVEL, { lev })
   end
 
 

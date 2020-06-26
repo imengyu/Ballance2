@@ -2,10 +2,10 @@
 using SLua;
 using System.Collections.Generic;
 [UnityEngine.Scripting.Preserve]
-public class Lua_UnityEngine_MeshRenderer : LuaObject {
+public class Lua_Ballance2_Utils_LuaUtils : LuaObject {
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int get_additionalVertexStreams(IntPtr l) {
+	static public int constructor(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -16,9 +16,10 @@ public class Lua_UnityEngine_MeshRenderer : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			UnityEngine.MeshRenderer self=(UnityEngine.MeshRenderer)checkSelf(l);
+			Ballance2.Utils.LuaUtils o;
+			o=new Ballance2.Utils.LuaUtils();
 			pushValue(l,true);
-			pushValue(l,self.additionalVertexStreams);
+			pushValue(l,o);
 			return 2;
 		}
 		catch(Exception e) {
@@ -36,7 +37,7 @@ public class Lua_UnityEngine_MeshRenderer : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int set_additionalVertexStreams(IntPtr l) {
+	static public int LuaTableArrayToObjectArray_s(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -47,12 +48,12 @@ public class Lua_UnityEngine_MeshRenderer : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			UnityEngine.MeshRenderer self=(UnityEngine.MeshRenderer)checkSelf(l);
-			UnityEngine.Mesh v;
-			checkType(l,2,out v);
-			self.additionalVertexStreams=v;
+			System.Object[] a1;
+			checkArray(l,1,out a1);
+			var ret=Ballance2.Utils.LuaUtils.LuaTableArrayToObjectArray(a1);
 			pushValue(l,true);
-			return 1;
+			pushValue(l,ret);
+			return 2;
 		}
 		catch(Exception e) {
 			return error(l,e);
@@ -69,7 +70,7 @@ public class Lua_UnityEngine_MeshRenderer : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int get_subMeshStartIndex(IntPtr l) {
+	static public int BooleanToString_s(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -80,9 +81,11 @@ public class Lua_UnityEngine_MeshRenderer : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			UnityEngine.MeshRenderer self=(UnityEngine.MeshRenderer)checkSelf(l);
+			System.Boolean a1;
+			checkType(l,1,out a1);
+			var ret=Ballance2.Utils.LuaUtils.BooleanToString(a1);
 			pushValue(l,true);
-			pushValue(l,self.subMeshStartIndex);
+			pushValue(l,ret);
 			return 2;
 		}
 		catch(Exception e) {
@@ -98,12 +101,11 @@ public class Lua_UnityEngine_MeshRenderer : LuaObject {
 		}
 		#endif
 	}
-
 	[UnityEngine.Scripting.Preserve]
 	static public void reg(IntPtr l) {
-		getTypeTable(l,"UnityEngine.MeshRenderer");
-		addMember(l,"additionalVertexStreams",get_additionalVertexStreams,set_additionalVertexStreams,true);
-		addMember(l,"subMeshStartIndex",get_subMeshStartIndex,null,true);
-		createTypeMetatable(l,null, typeof(UnityEngine.MeshRenderer),typeof(UnityEngine.Renderer));
+		getTypeTable(l,"Ballance2.Utils.LuaUtils");
+		addMember(l,LuaTableArrayToObjectArray_s);
+		addMember(l,BooleanToString_s);
+		createTypeMetatable(l,constructor, typeof(Ballance2.Utils.LuaUtils));
 	}
 }

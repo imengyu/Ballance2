@@ -105,6 +105,8 @@ AudioMixerController:
     name: BackgroundVolume
   - guid: 4c241a6c993801349b976723614d4995
     name: MasterVolume
+  - guid: 61db23a51672e6645998824d85ad6114
+    name: MyExposedParam
   m_AudioMixerGroupViews:
   - guids:
     - 46c1d97fc1b21eb40b0308d2ef93bb36

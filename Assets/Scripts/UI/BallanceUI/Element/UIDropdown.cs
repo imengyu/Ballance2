@@ -36,13 +36,13 @@ namespace Ballance2.UI.BallanceUI.Element
         {
             base.SolveXml(xml);
 
-            if (!string.IsNullOrEmpty(xml.InnerXml))
-                Text = xml.InnerText;
             if(xml.ChildNodes.Count > 0)
             {
                 foreach (XmlNode n in xml.ChildNodes)
                     Dropdown.options.Add(new Dropdown.OptionData(n.InnerText));
             }
+            else if (!string.IsNullOrEmpty(xml.InnerXml))
+                Text = xml.InnerText;
         }
         protected override void SetProp(string name, string val)
         {

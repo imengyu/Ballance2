@@ -2,7 +2,7 @@
 <UIVertcialLinearLayout
   gravity="Center">
   <UILevButton 
-    layout_MarginTop="13"
+    layout_marginTop="13"
     name="btn.lev.1">Level 1</UILevButton>
   <UILevButton name="btn.lev.2">Level 2</UILevButton>
   <UILevButton name="btn.lev.3">Level 3</UILevButton>
@@ -22,6 +22,6 @@
   <UISpace height="15" />
 
   <UIButtonBack 
-     layout_MarginBottom="13"
+     layout_marginBottom="13"
     name="btn.back" text="返回" />
 </UIVertcialLinearLayout>

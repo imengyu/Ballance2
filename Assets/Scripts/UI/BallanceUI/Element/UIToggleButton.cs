@@ -65,8 +65,10 @@ namespace Ballance2.UI.BallanceUI.Element
             }
         }
 
-        private Sprite selectedSprite = null;
-        private Sprite normalSprite = null;
+        private Sprite selectedSpriteY = null;
+        private Sprite normalSpriteY = null;
+        private Sprite selectedSpriteN = null;
+        private Sprite normalSpriteN = null;
         private SoundManager soundManager = null;
 
         protected override void OnInitElement()
@@ -81,8 +83,13 @@ namespace Ballance2.UI.BallanceUI.Element
             UISmallButtonNoImage = transform.Find("UISmallButtonNo").gameObject.GetComponent<Image>();
             UISmallButtonYesImage = transform.Find("UISmallButtonYes").gameObject.GetComponent<Image>();
 
-            selectedSprite = UISmallButtonYes.spriteState.highlightedSprite;
-            normalSprite = UISmallButtonYesImage.sprite;
+            selectedSpriteY = UISmallButtonYes.spriteState.highlightedSprite;
+            normalSpriteY = UISmallButtonYesImage.sprite;
+            selectedSpriteN = UISmallButtonNo.spriteState.highlightedSprite;
+            normalSpriteN = UISmallButtonNoImage.sprite;
+
+            UISmallButtonNoImage.sprite = _Checked ? normalSpriteN : selectedSpriteN;
+            UISmallButtonYesImage.sprite = _Checked ? selectedSpriteY : normalSpriteY;
 
             clickEventHandler = new GameHandlerList();
             checkChangedEventHandler = new GameHandlerList();
@@ -195,8 +202,11 @@ namespace Ballance2.UI.BallanceUI.Element
                 if (_Checked != value)
                 {
                     _Checked = value;
-                    UISmallButtonNoImage.sprite = _Checked ? normalSprite : selectedSprite;
-                    UISmallButtonYesImage.sprite = _Checked ? selectedSprite : normalSprite;
+                    if (selectedSpriteY != null && normalSpriteN)
+                    {
+                        UISmallButtonNoImage.sprite = _Checked ? normalSpriteN : selectedSpriteN;
+                        UISmallButtonYesImage.sprite = _Checked ? selectedSpriteY : normalSpriteY;
+                    }
                     checkChangedEventHandler.CallEventHandler("checkChanged", this, value);
                 }
             }

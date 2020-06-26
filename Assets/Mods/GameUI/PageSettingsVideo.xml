@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <UIVertcialLinearLayout
   gravity="Center"
-  layoutChildSpacing="15">
-  <UIText width="match_parent" lsyout_marginBottom="10">图像设置</UIText>
+  layoutChildSpacing="10">
+  <UIText width="match_parent" lsyout_marginBottom="10" color="#fff">图像设置</UIText>
   
-  <UIDropdown name="dropdown.resolution">屏幕分辨率</UIDropdown>
+  <UIDropdown name="dropdown.resolution" text="屏幕分辨率"></UIDropdown>
   <UIToggleButton name="toggle.fullscreen">全屏</UIToggleButton>
   <UIDropdown name="dropdown.quality" text="画面质量">
     <Item>很差</Item>

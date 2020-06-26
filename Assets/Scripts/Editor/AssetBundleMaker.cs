@@ -15,7 +15,7 @@ public class AssetBundleMaker
     [DllImport("user32.dll")]
     static extern int MessageBoxW(System.IntPtr hWnd, [MarshalAs(UnmanagedType.LPWStr)]string titl, [MarshalAs(UnmanagedType.LPWStr)]string text, int flag);
 
-    [@MenuItem("AssetBundles/Build AssetBundle Test")]
+    ///[@MenuItem("AssetBundles/Build AssetBundle Test")]
     static void BuildABsPCTTestt()
     {
         Object[] selection2 = Selection.GetFiltered(typeof(Object), SelectionMode.DeepAssets);

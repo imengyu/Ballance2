@@ -6,9 +6,12 @@ StringUtils = Ballance2.Utils.StringUtils
 GameSettingsManager = Ballance2.Config.GameSettingsManager
 GameActionCallResult = Ballance2.Managers.CoreBridge.GameActionCallResult
 ModManager = Ballance2.Managers.ModManager
+GameSoundType = Ballance2.Managers.GameSoundType
+
 Screen = UnityEngine.Screen
 
 local UIManager = GameManager.UIManager
+local SoundManager = Slua.As(GameManager.GetManager(Ballance2.Managers.SoundManager.TAG), Ballance2.Managers.SoundManager)
 local GameSettings = nil
 
 local resolutions = nil
@@ -73,7 +76,7 @@ function LoadGameSettingsUI()
       "dropdown.quality:value:"..GameSettings:GetInt("video.quality", 2),
       "dropdown.vsync:value:"..GameSettings:GetInt("video.vsync", 0),
       "toggle.cloud:checked:"..(GameSettings:GetBool("video.cloud", true) and "true" or "false"),
-      "toggle.fullscreen:checked:"..(GameSettings:GetBool("video.fullscreen", true) and "true" or "false")
+      "toggle.fullscreen:checked:"..(GameSettings:GetBool("video.fullscreen", false) and "true" or "false")
     }
   )
   --设置数据到页面上
@@ -121,11 +124,21 @@ function LoadGameSettingsUI()
   pageSettingsVoice = UIManager:RegisterBallanceUIPage("settings.voice", pageSettingsVoiceXml, 
     { "slider.voice.main:valueChanged","slider.voice.background:valueChanged","slider.voice.ui:valueChanged","btn.back:click" }, 
     { 
-      function(evtName, el, value) GameSettings:SetFloat("voice.main", value) end, 
-      function(evtName, el, value) GameSettings:SetFloat("voice.background", value) end, 
-      function(evtName, el, value) GameSettings:SetFloat("voice.ui", value) end, 
-      function(evtName) 
+      function(evtName, el, value) 
+        GameSettings:SetFloat("voice.main", value) 
         GameSettings:NotifySettingsUpdate("voice")
+        SoundManager:PlayFastVoice("core.assets.sounds:Menu_dong.wav", GameSoundType.Normal);
+      end, 
+      function(evtName, el, value) 
+        GameSettings:SetFloat("voice.background", value) 
+        GameSettings:NotifySettingsUpdate("voice")
+      end, 
+      function(evtName, el, value) 
+        GameSettings:SetFloat("voice.ui", value) 
+        GameSettings:NotifySettingsUpdate("voice")
+        SoundManager:PlayFastVoice("core.assets.sounds:Menu_dong.wav", GameSoundType.UI);
+      end, 
+      function(evtName) 
         UIManager:BackUIPage() 
       end
     }, 
@@ -141,9 +154,8 @@ function LoadGameSettingsUI()
   ------------------
 
   -- 注册操作
-  GameManager.GameMediator:RegisterAction(GameActionNames.ACTION_SHOW_SETTINGS, "core.ui", function(oldPage)
-    pageOld = oldPage
-    print(oldPage)
+  GameManager.GameMediator:RegisterAction(GameActionNames.ACTION_SHOW_SETTINGS, "core.ui", function(p)
+    pageOld = p
     UIManager:GotoUIPage(pageSettings.PagePath)
     return GameActionCallResult.CreateActionCallResult(true, nil)
   end, nil)

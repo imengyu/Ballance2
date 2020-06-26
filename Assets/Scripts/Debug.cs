@@ -47,7 +47,7 @@ namespace Ballance2.Main
                    return false;
                });
 
-            //DebugLinearLayout();
+            DebugLinearLayout();
             //DebugPageGlobal();
 
             GameManager.UIManager.MaskBlackSet(false);
@@ -55,7 +55,7 @@ namespace Ballance2.Main
         }
 
         public TextAsset PageMain;
-        public TextAsset PageLightZone;
+        public TextAsset PageAbout;
 
         private void DebugLinearLayout()
         {
@@ -63,7 +63,7 @@ namespace Ballance2.Main
                 new string[] { "btn.start:click" , "btn.quit:click" },
                 new GameEventHandlerDelegate[] {
                     (evtName, param) => {
-                        GameManager.UIManager.GotoUIPage("main.lz");
+                        GameManager.UIManager.GotoUIPage("main.about");
                         return false;
                     },
                     (evtName, param) => {
@@ -72,7 +72,7 @@ namespace Ballance2.Main
                     }
                 },
                 "Default");
-            GameManager.UIManager.RegisterBallanceUIPage("main.lz", PageLightZone.text,
+            GameManager.UIManager.RegisterBallanceUIPage("main.about", PageAbout.text,
                 new string[] { "btn.back:click" },
                 new GameEventHandlerDelegate[] {
                     (evtName, param) => {

@@ -2,11 +2,11 @@
 <UIVertcialLinearLayout
   gravity="Center"
   layoutChildSpacing="20">
-  <UIText width="match_parent" lsyout_marginBottom="15">声音设置</UIText>
+  <UIText width="match_parent" lsyout_marginBottom="15" color="#fff">声音设置</UIText>
 
-  <UISlider name="slider.voice.main" text="主音量"></UISlider>
-  <UISlider name="slider.voice.background" text="背景音乐音量"></UISlider>
-  <UISlider name="slider.voice.ui" text="界面音量"></UISlider>
+  <UISlider name="slider.voice.main" text="主音量" minValue="0" maxValue="100"></UISlider>
+  <UISlider name="slider.voice.background" text="背景音乐音量" minValue="0" maxValue="100"></UISlider>
+  <UISlider name="slider.voice.ui" text="界面音量" minValue="0" maxValue="100"></UISlider>
   
   <UIButtonBack 
     name="btn.back"
