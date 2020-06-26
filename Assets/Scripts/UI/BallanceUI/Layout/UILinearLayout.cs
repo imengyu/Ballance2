@@ -57,6 +57,15 @@ namespace Ballance2.UI.BallanceUI.Layout
             float startVal = 0;
             UIAnchor[] thisAnchor = UIAnchorPosUtils.GetUIAnchor(RectTransform);
 
+            
+            //需要布局子布局，
+            for (int i = 0; i < Elements.Count; i++)
+            {
+                e = Elements[i];
+                if (e.Visibility != UIVisibility.Gone)
+                    if (e.IsLayout) (e as UILayout).DoLayout();
+            }
+
             //计算所有元素布局占用高度
             float allLayoutHeight = (Elements.Count - 1) * layoutChildSpacing;
             float maxLayoutOtherHeight = 0;
@@ -183,6 +192,7 @@ namespace Ballance2.UI.BallanceUI.Layout
                     if (e.Visibility != UIVisibility.Gone) //跳过隐藏元素
                     {
                         rectTransform = e.RectTransform;
+
                         if (layoutDirection == LayoutAxis.Vertical)
                         {
                             startVal -= e.Layout_marginTop;
@@ -229,10 +239,7 @@ namespace Ballance2.UI.BallanceUI.Layout
             }
 
             if (Parent != null)
-            {
-                DoResize();
                 Parent.DoLayout();
-            }
 
             base.OnLayout();
         }

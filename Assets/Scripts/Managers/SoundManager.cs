@@ -144,7 +144,7 @@ namespace Ballance2.Managers
             if (audioClip == null)
                 return null;
 
-            AudioSource audioSource = Instantiate(audioSourcePrefab, gameObject.transform).AddComponent<AudioSource>();
+            AudioSource audioSource = Instantiate(audioSourcePrefab, gameObject.transform).GetComponent<AudioSource>();
             audioSource.clip = audioClip;
             audioSource.playOnAwake = playOnAwake;
             audioSource.gameObject.name = "AudioSource_" + type + "_" + (name == "" ? GamePathManager.GetFileNameWithoutExt(audioClip.name) : name);
@@ -162,7 +162,7 @@ namespace Ballance2.Managers
         /// <returns></returns>
         public AudioSource RegisterSoundPlayer(GameSoundType type, AudioClip audioClip, bool playOnAwake = false, bool activeStart = true, string name = "")
         {
-            AudioSource audioSource = Instantiate(audioSourcePrefab, gameObject.transform).AddComponent<AudioSource>();
+            AudioSource audioSource = Instantiate(audioSourcePrefab, gameObject.transform).GetComponent<AudioSource>();
             audioSource.clip = audioClip;
             audioSource.playOnAwake = playOnAwake;
             audioSource.gameObject.name = "AudioSource_" + type + "_" + (name == "" ? GamePathManager.GetFileNameWithoutExt(audioClip.name) : name);
@@ -298,7 +298,7 @@ namespace Ballance2.Managers
                 return true;
             }
             AudioClip audioClip = LoadAudioResource(soundName);
-            if (audioClip != null)
+            if (audioClip == null)
                 return false;
 
             cache = RegisterSoundPlayer(type, audioClip, false, true, key);

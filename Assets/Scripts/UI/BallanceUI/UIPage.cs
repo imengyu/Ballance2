@@ -1,5 +1,7 @@
 ﻿using Ballance2.UI.BallanceUI.Element;
+using SLua;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Ballance2.UI.BallanceUI
 {
@@ -59,6 +61,29 @@ namespace Ballance2.UI.BallanceUI
             if (ContentContainer == null)
                 return null;
             return ContentContainer.FindElementByName(name);
+        }
+
+        public PageSwitchEvent onShow;
+        public PageSwitchEvent onHide;
+
+        public void OnShow()
+        {
+            if (onShow != null)
+                onShow.Invoke();
+        }
+        public void OnHide()
+        {
+            if (onHide != null)
+                onHide.Invoke();
+        }
+
+        [CustomLuaClass]
+        public class PageSwitchEvent : UnityEvent
+        {
+            public PageSwitchEvent()
+            {
+
+            }
         }
     }
 

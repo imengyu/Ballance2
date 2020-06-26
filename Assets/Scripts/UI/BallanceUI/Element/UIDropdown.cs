@@ -70,6 +70,7 @@ namespace Ballance2.UI.BallanceUI.Element
                 OnClick(gameObject);
             });
 
+            clickEventHandler = new GameHandlerList();
             valueChangedEventHandler = new GameHandlerList();
             base.OnInitElement();
         }
@@ -80,7 +81,11 @@ namespace Ballance2.UI.BallanceUI.Element
                 valueChangedEventHandler.Dispose();
                 valueChangedEventHandler = null;
             }
-
+            if (clickEventHandler != null)
+            {
+                clickEventHandler.Dispose();
+                clickEventHandler = null;
+            }
             base.OnDestroyElement();
         }
 

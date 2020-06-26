@@ -187,11 +187,9 @@ public class Lua_Ballance2_Managers_ModBase_GameMod : LuaObject {
 			checkType(l,2,out a1);
 			UnityEngine.GameObject a2;
 			checkType(l,3,out a2);
-			UnityEngine.TextAsset a3;
+			System.String a3;
 			checkType(l,4,out a3);
-			System.String a4;
-			checkType(l,5,out a4);
-			self.RegisterLuaObject(a1,a2,a3,a4);
+			self.RegisterLuaObject(a1,a2,a3);
 			pushValue(l,true);
 			return 1;
 		}
@@ -291,6 +289,40 @@ public class Lua_Ballance2_Managers_ModBase_GameMod : LuaObject {
 			#endif
 			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
 			var ret=self.RunModExecutionCode();
+			pushValue(l,true);
+			pushValue(l,ret);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int RequireLuaClass(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.Managers.ModBase.GameMod self=(Ballance2.Managers.ModBase.GameMod)checkSelf(l);
+			System.String a1;
+			checkType(l,2,out a1);
+			var ret=self.RequireLuaClass(a1);
 			pushValue(l,true);
 			pushValue(l,ret);
 			return 2;
@@ -1180,6 +1212,7 @@ public class Lua_Ballance2_Managers_ModBase_GameMod : LuaObject {
 		addMember(l,FindLuaObject);
 		addMember(l,GetModEntryCodeExecuted);
 		addMember(l,RunModExecutionCode);
+		addMember(l,RequireLuaClass);
 		addMember(l,RequireLuaFile);
 		addMember(l,GetLuaFun);
 		addMember(l,CallLuaFun);

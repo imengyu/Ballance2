@@ -146,11 +146,14 @@ namespace Ballance2.UI.BallanceUI.Layout
             for (int i = 0; i < Elements.Count; i++)
             {
                 e = Elements[i];
-                if (e.Visibility != UIVisibility.Gone 
-                    && e.Layout_above == null && e.Layout_alignBottom == null && e.Layout_alignLeft == null
+                if (e.Visibility != UIVisibility.Gone)
+                {
+                    if (e.IsLayout) (e as UILayout).DoLayout(); //如果是子布局，需要布局
+                    if (e.Layout_above == null && e.Layout_alignBottom == null && e.Layout_alignLeft == null
                         && e.Layout_alignRight == null && e.Layout_alignTop == null && e.Layout_below == null
                         && e.Layout_toLeftOf == null && e.Layout_toRightOf == null)
                         magEles.Add(e.Name, new ElementNode(e, 0, 0));
+                }
             }
             //引用
             for (int i = 0; i < Elements.Count; i++)

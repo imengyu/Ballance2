@@ -91,17 +91,21 @@ namespace Ballance2.UI.BallanceUI
         {
             if(string.IsNullOrEmpty(templateXml))
             {
-                GameLogger.Error(TAG, "BuildLayoutByTemplate failed, templateXml is Empty");
+                GameLogger.Error(TAG, "BuildLayoutByTemplate {0} failed, templateXml is Empty", name);
                 GameErrorManager.LastError = GameError.ParamNotProvide;
                 return null;
             }
 
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.LoadXml(templateXml);
-            return BuildLayoutByTemplateInternal(name, xmlDocument.DocumentElement, handlers, null, null, initialProps);
+
+            return BuildLayoutByTemplateInternal(name, xmlDocument.DocumentElement,
+                handlers, null, null, initialProps); 
         }
 
-        private UILayout BuildLayoutByTemplateInternal(string name, XmlNode templateXml, Dictionary<string, GameHandler> handlers, UILayout parent, UILayout root, string[] initialProps)
+        private UILayout BuildLayoutByTemplateInternal(string name, XmlNode templateXml, 
+            Dictionary<string, GameHandler> handlers, 
+            UILayout parent, UILayout root, string[] initialProps)
         {
             //实例化UI预制体
             string prefabName = templateXml.Name;
@@ -185,6 +189,9 @@ namespace Ballance2.UI.BallanceUI
             InitiazeChildElement(ilayout, handlers, initialProps);
             ilayout.LayoutUnLock();
             ilayout.PostDoLayout();
+
+            if (root == ilayout)
+                ilayout.DoLayout();
 
             return ilayout;
         }

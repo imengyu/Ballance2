@@ -77,6 +77,9 @@ function class_MenuLevel()
     self.I_Zone_SuDu_Innen = self.I_Zone.transform:Find("I_Zone_SuDu_Innen").gameObject
     self.I_Zone_NenLi_Innen = self.I_Zone.transform:Find("I_Zone_NenLi_Innen").gameObject
     self.I_Zone_LiLiang_Innen = self.I_Zone.transform:Find("I_Zone_LiLiang_Innen").gameObject
+    self.I_Zone_SuDu_Innen:GetComponent("OutlineHighlightPicker").onClick:AddListener(function() self:OnLevelStart("13") end)
+    self.I_Zone_LiLiang_Innen:GetComponent("OutlineHighlightPicker").onClick:AddListener(function() self:OnLevelStart("14") end)
+    self.I_Zone_NenLi_Innen:GetComponent("OutlineHighlightPicker").onClick:AddListener(function() self:OnLevelStart("15") end)
     --skybox
     self.skyBox = self.I_Camera:GetComponent("Skybox")
     self.skyBoxDay = SkyBoxUtils.MakeSkyBox("C")

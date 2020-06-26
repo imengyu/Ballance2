@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <UIVertcialLinearLayout
   gravity="Center">
-  <UILevButton name="btn.lev.1">Level 1</UILevButton>
+  <UILevButton 
+    layout_MarginTop="13"
+    name="btn.lev.1">Level 1</UILevButton>
   <UILevButton name="btn.lev.2">Level 2</UILevButton>
   <UILevButton name="btn.lev.3">Level 3</UILevButton>
   <UILevButton name="btn.lev.4">Level 4</UILevButton>
@@ -19,5 +21,7 @@
   <UIMainButton name="btn.lev.custom" >自制关卡</UIMainButton>
   <UISpace height="15" />
 
-  <UIButtonBack name="btn.back" text="返回" />
+  <UIButtonBack 
+     layout_MarginBottom="13"
+    name="btn.back" text="返回" />
 </UIVertcialLinearLayout>

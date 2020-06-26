@@ -112,7 +112,7 @@ namespace Ballance2.Managers.ModBase
             //路径处理
             if (!StringUtils.IsUrl(PackagePath)) {
                 //不是URL，处理路径至mod文件夹路径
-                if(!PackagePath.StartsWith(Application.streamingAssetsPath) && !GamePathManager.IsAbsolutePath(PackagePath))
+                if (!PackagePath.StartsWith(Application.streamingAssetsPath) && !GamePathManager.IsAbsolutePath(PackagePath))
                     PackagePath = GamePathManager.GetResRealPath("mod", PackagePath);
             }
 
@@ -167,20 +167,20 @@ namespace Ballance2.Managers.ModBase
                 }
 
                 //判断包名是否重复
-                if(ModHasDefFile)
+                if (ModHasDefFile)
                 {
                     GameMod otherNod = null;
                     GameMod[] allNameMod = ModManager.FindAllGameModByName(PackageName);
-                    if(allNameMod.Length > 1)
+                    if (allNameMod.Length > 1)
                     {
-                        foreach(GameMod m in allNameMod)
-                            if(m != this)
+                        foreach (GameMod m in allNameMod)
+                            if (m != this)
                             {
                                 otherNod = m;
                                 break;
                             }
 
-                        GameLogger.Warning(ModManager.TAG, "模组包 {0} ({1} )，包名与  {0} ({1}) 冲突", PackageName, 
+                        GameLogger.Warning(ModManager.TAG, "模组包 {0} ({1} )，包名与  {0} ({1}) 冲突", PackageName,
                             Uid, otherNod.PackagePath, otherNod.Uid);
 
                         GameErrorManager.LastError = GameError.ModConflict;
@@ -194,16 +194,16 @@ namespace Ballance2.Managers.ModBase
                 }
 
                 //获取图标
-                if(!string.IsNullOrEmpty(modInfo.Logo))
+                if (!string.IsNullOrEmpty(modInfo.Logo))
                 {
                     try {
                         Texture2D texture2D = GetAsset<Texture2D>(modInfo.Logo);
                         ModLogo = Sprite.Create(texture2D, new Rect(Vector2.zero, new Vector2(texture2D.width, texture2D.height)), new Vector2(0.5f, 0.5f));
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         ModLogo = null;
-                        GameLogger.Error(ModManager.TAG, "在加载模组包 {0} 的 Logo {1} 失败\n错误信息：{2}", 
+                        GameLogger.Error(ModManager.TAG, "在加载模组包 {0} 的 Logo {1} 失败\n错误信息：{2}",
                             PackageName, modInfo.Logo, e.ToString());
                     }
                 }
@@ -213,7 +213,7 @@ namespace Ballance2.Managers.ModBase
                 {
                     yield return ModManager.StartCoroutine(CheckAndLoadModDependencies());
 
-                    if(hasMustDependenciesLoadFailed)
+                    if (hasMustDependenciesLoadFailed)
                     {
                         GameErrorManager.LastError = GameError.ModDependenciesLoadFailed;
 
@@ -234,7 +234,7 @@ namespace Ballance2.Managers.ModBase
                 if (ModType == GameModType.ModPack)
                 {
                     //依赖需要全部加载
-                    if(ModDependencyAllLoaded)  InitLuaState();
+                    if (ModDependencyAllLoaded) InitLuaState();
                     else GameLogger.Warning(TAG, "模组包 {0} 的依赖项没有全部加载，因此模组包不能运行", PackageName);
                 }
 
@@ -333,7 +333,7 @@ namespace Ballance2.Managers.ModBase
         #region 模组信息读取
 
         private GameModInfo modInfo;
-        private GameCompatibilityInfo modCompatibilityInfo = 
+        private GameCompatibilityInfo modCompatibilityInfo =
             new GameCompatibilityInfo(GameConst.GameBulidVersion, GameConst.GameBulidVersion, GameConst.GameBulidVersion);
         private XmlDocument modDefXmlDoc = new XmlDocument();
         private List<GameDependencyInfo> modeDependencyInfos = new List<GameDependencyInfo>();
@@ -345,11 +345,11 @@ namespace Ballance2.Managers.ModBase
             modDefXmlDoc.LoadXml(ModDef.text);
 
             XmlNode nodeMod = modDefXmlDoc.SelectSingleNode("Mod");
-            foreach(XmlNode node in nodeMod.ChildNodes)
+            foreach (XmlNode node in nodeMod.ChildNodes)
             {
                 switch (node.Name)
                 {
-                    case "BaseInfo": ReadModDefBaseInfo(node);  break;
+                    case "BaseInfo": ReadModDefBaseInfo(node); break;
                     case "Compatibility": ReadModDefCompatibility(node); break;
                     case "ModType":
                         {
@@ -405,7 +405,7 @@ namespace Ballance2.Managers.ModBase
         {
             foreach (XmlAttribute attribute in nodeBaseInfo.Attributes)
             {
-                switch(attribute.Name)
+                switch (attribute.Name)
                 {
                     case "packageName":
                         PackageName = attribute.Value;
@@ -443,7 +443,7 @@ namespace Ballance2.Managers.ModBase
                             case "mustLoad": dependencyInfo.MustLoad = attribute.Value == "true"; break;
                         }
                     }
-                    if(!string.IsNullOrEmpty(dependencyInfo.PackageName))
+                    if (!string.IsNullOrEmpty(dependencyInfo.PackageName))
                         ModDependencyInfo.Add(dependencyInfo);
                 }
             }
@@ -525,9 +525,9 @@ namespace Ballance2.Managers.ModBase
                             yield return ModManager.StartCoroutine(m.LoadInternal());
                     }
                     else if (m != null && m.LoadStatus == GameModStatus.NotInitialize)//如果没有初始化则初始化
-                       yield return ModManager.StartCoroutine(m.LoadInternal());
+                        yield return ModManager.StartCoroutine(m.LoadInternal());
 
-                    if(m.LoadStatus != GameModStatus.InitializeSuccess 
+                    if (m.LoadStatus != GameModStatus.InitializeSuccess
                         && m.LoadStatus != GameModStatus.Loading)
                     {
                         //模组依赖加载失败
@@ -545,7 +545,7 @@ namespace Ballance2.Managers.ModBase
                         //如果设置了MinVersion，则还需要比较模组版本
                         if (!string.IsNullOrEmpty(d.MinVersion) && !string.IsNullOrEmpty(m.ModInfo.Version))
                         {
-                           if( StringUtils.CompareTwoVersion(m.ModInfo.Version, d.MinVersion) < 0)
+                            if (StringUtils.CompareTwoVersion(m.ModInfo.Version, d.MinVersion) < 0)
                             {
                                 GameLogger.Error(TAG, "加载模组包 {0} 的依赖项 {1} 发生错误，" +
                                     "需要最低版本 {}，当前版本", PackageName, d.PackageName, d.MinVersion, m.ModInfo.Version);
@@ -573,12 +573,11 @@ namespace Ballance2.Managers.ModBase
         /// <param name="gameObject">要附加的物体</param>
         /// <param name="script">脚本代码资源</param>
         /// <param name="scclassNameript">目标代码类名</param>
-        public void RegisterLuaObject(string name, GameObject gameObject, TextAsset script, string className)
+        public void RegisterLuaObject(string name, GameObject gameObject, string className)
         {
             GameLuaObjectHost newGameLuaObjectHost = gameObject.AddComponent<GameLuaObjectHost>();
             newGameLuaObjectHost.Name = name;
             newGameLuaObjectHost.GameMod = this;
-            newGameLuaObjectHost.LuaScript = script;
             newGameLuaObjectHost.LuaState = ModLuaState;
             newGameLuaObjectHost.LuaClassName = className;
             luaObjects.Add(newGameLuaObjectHost);
@@ -605,7 +604,7 @@ namespace Ballance2.Managers.ModBase
         //清除已释放的lua虚拟脚本
         internal void RemoveLuaObject(GameLuaObjectHost o)
         {
-            if(luaObjects != null)
+            if (luaObjects != null)
                 luaObjects.Remove(o);
         }
         /// <summary>
@@ -621,6 +620,7 @@ namespace Ballance2.Managers.ModBase
         private void InitLuaState()
         {
             requiredLuaFiles = new List<string>();
+            requiredLuaClasses = new Dictionary<string, LuaFunction>();
             ModLuaServer = new LuaServer(PackageName);
             ModLuaState = ModLuaServer.getLuaState();
             ModLuaServer.init(null, LuaStateInitFinished);
@@ -637,9 +637,9 @@ namespace Ballance2.Managers.ModBase
         /// <returns></returns>
         public bool RunModExecutionCode()
         {
-            if(!string.IsNullOrWhiteSpace(ModEntryCode))
+            if (!string.IsNullOrWhiteSpace(ModEntryCode))
             {
-                if(!luaStateInited)
+                if (!luaStateInited)
                 {
                     GameLogger.Warning(TAG, "Lua state not init, mod maybe cannot run");
                     GameErrorManager.LastError = GameError.ModCanNotRun;
@@ -658,9 +658,9 @@ namespace Ballance2.Managers.ModBase
                         ModLuaState.doString(lua.text, PackageName + ":Main");
                         requiredLuaFiles.Add(ModEntryCode);
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
-                        GameLogger.Warning(TAG, (object)("模组 " + PackageName +  " 运行启动代码失败! " + e.Message));
+                        GameLogger.Warning(TAG, (object)("模组 " + PackageName + " 运行启动代码失败! " + e.Message));
                         GameLogger.Exception(e);
                         GameErrorManager.LastError = GameError.ModExecutionCodeRunFailed;
                         return false;
@@ -696,8 +696,15 @@ namespace Ballance2.Managers.ModBase
         {
             if (requiredLuaFiles != null)
             {
-                requiredLuaFiles = new List<string>();
+                requiredLuaFiles.Clear();
                 requiredLuaFiles = null;
+            }
+            if (requiredLuaClasses != null)
+            {
+                foreach (var v in requiredLuaClasses)
+                    v.Value.Dispose();
+                requiredLuaClasses.Clear();
+                requiredLuaClasses = null;
             }
             if (ModLuaState != null)
             {
@@ -707,7 +714,47 @@ namespace Ballance2.Managers.ModBase
         }
 
         private List<string> requiredLuaFiles = null;
+        private Dictionary<string, LuaFunction> requiredLuaClasses = null;
 
+        /// <summary>
+        /// 导入 Lua 类
+        /// </summary>
+        /// <param name="className">类名</param>
+        /// <returns>类创建函数</returns>
+        public LuaFunction RequireLuaClass(string className)
+        {
+            LuaFunction classInit = null;
+            if (requiredLuaClasses.TryGetValue(className, out classInit))
+                return classInit;
+
+            TextAsset lua = GetTextAsset(className);
+            if (lua == null)
+                lua = GetTextAsset(className + ".lua.txt");
+            if (lua == null)
+                throw new MissingReferenceException(PackageName + " 无法导入 Lua class : " + className + " ,未找到该文件");
+
+            try
+            {
+                ModLuaState.doString(lua.text, PackageName + ":" + className);
+            }
+            catch (Exception e)
+            {
+                GameLogger.Exception(e);
+                GameErrorManager.LastError = GameError.ModExecutionCodeRunFailed;
+
+                throw new Exception(PackageName + " 无法导入 Lua class : " + e.Message);
+            }
+
+            classInit = ModLuaState.getFunction("class_" + className);
+            if (classInit == null)
+            {
+                throw new Exception(PackageName + " 无法导入 Lua class : " + 
+                    className + ", 未找到初始类函数: class_" + className);
+            }
+
+            requiredLuaClasses.Add(className, classInit);
+            return classInit;
+        }
         /// <summary>
         /// 导入Lua文件到当前模组虚拟机中
         /// </summary>
@@ -721,7 +768,7 @@ namespace Ballance2.Managers.ModBase
             if (lua == null)
                 lua = GetTextAsset(fileName + ".lua.txt");
             if (lua == null)
-                throw new MissingReferenceException("无法导入 Lua : " + fileName + " ,未找到该文件");
+                throw new MissingReferenceException(PackageName + " 无法导入 Lua : " + fileName + " ,未找到该文件");
 
             try
             {
@@ -730,10 +777,10 @@ namespace Ballance2.Managers.ModBase
             }
             catch (Exception e)
             {
-                GameLogger.Warning(TAG, "Mod " + (object)(PackageName + " RequireLuaFile fialed ! " + e.Message));
                 GameLogger.Exception(e);
                 GameErrorManager.LastError = GameError.ModExecutionCodeRunFailed;
-                return false;
+
+                throw new Exception(PackageName + " 无法导入 Lua class : " + e.Message);
             }
 
             return true;

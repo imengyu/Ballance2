@@ -18,6 +18,7 @@ namespace SLua {
 				Lua_Ballance2_Utils_StringUtils.reg,
 				Lua_Ballance2_UI_UICommonList.reg,
 				Lua_Ballance2_UI_Utils_EventTriggerListener.reg,
+				Lua_Ballance2_UI_Utils_OutlineHighlightPicker.reg,
 				Lua_Ballance2_UI_Utils_UIAnchorPosUtils.reg,
 				Lua_Ballance2_UI_Utils_UIPivot.reg,
 				Lua_Ballance2_UI_Utils_UIAnchor.reg,

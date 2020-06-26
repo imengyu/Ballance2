@@ -33,7 +33,7 @@ namespace Knife.PostProcessing
             setupPropertyBlock();
         }
 
-        void setupPropertyBlock()
+        public void setupPropertyBlock()
         {
             MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
             CachedRenderer.GetPropertyBlock(materialPropertyBlock);

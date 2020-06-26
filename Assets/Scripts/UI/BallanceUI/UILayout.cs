@@ -126,6 +126,7 @@ namespace Ballance2.UI.BallanceUI
 
         public UILayout()
         {
+            isLayout = true;
             elements = new List<UIElement>();
         }
 
@@ -136,6 +137,7 @@ namespace Ballance2.UI.BallanceUI
 
         private int loopUpdate = 30;
         private int layoutDelyCount = 0;
+        [SerializeField, SetProperty("LayoutLock")]
         private bool layoutLock = false;
 
         protected override void OnUpdateElement()
@@ -165,7 +167,13 @@ namespace Ballance2.UI.BallanceUI
             loopUpdate = 30;
         }
 
+        /// <summary>
+        /// 解锁布局
+        /// </summary>
         public void LayoutUnLock() { layoutLock = false; }
+        /// <summary>
+        /// 锁定布局
+        /// </summary>
         public void LayoutLock() { layoutLock = true;  }
         /// <summary>
         /// 发送布局消息（延迟布局）
@@ -186,7 +194,12 @@ namespace Ballance2.UI.BallanceUI
         /// <param name="startChildIndex"></param>
         public void DoLayout()
         {
-            OnLayout();
+            if (!layoutLock)
+            {
+                layoutLock = true;
+                OnLayout();
+                layoutLock = false;
+            }
             /*
             if (!layoutLock)
             {
@@ -209,6 +222,8 @@ namespace Ballance2.UI.BallanceUI
         /// </summary>
         /// <param name="element">目标元素</param>
         public virtual void ReInitElement(UIElement element) { }
+
+
 
         protected virtual void OnGravityChanged() { }
         protected virtual void OnLayout() { }
@@ -280,6 +295,7 @@ namespace Ballance2.UI.BallanceUI
         }
     }
 
+    [SLua.CustomLuaClass]
     /// <summary>
     /// 布局轴
     /// </summary>
@@ -294,6 +310,7 @@ namespace Ballance2.UI.BallanceUI
         /// </summary>
         Horizontal,
     }
+    [SLua.CustomLuaClass]
     /// <summary>
     /// 布局方式
     /// </summary>
@@ -312,6 +329,7 @@ namespace Ballance2.UI.BallanceUI
         /// </summary>
         Center,
     }
+    [SLua.CustomLuaClass]
     /// <summary>
     /// 布局对其
     /// </summary>

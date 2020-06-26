@@ -59,7 +59,12 @@ namespace Ballance2.UI.BallanceUI
         private float layout_marginBottom = 0;
 
         internal UILayout rootContainer;
+        protected bool isLayout = false;
 
+        /// <summary>
+        /// 当前元素是否是布局
+        /// </summary>
+        public bool IsLayout { get { return isLayout; } }
         /// <summary>
         /// 当前元素所属根布局
         /// </summary>

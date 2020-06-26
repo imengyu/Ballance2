@@ -690,6 +690,7 @@ namespace Ballance2.Managers
             if (p != null)
             {
                 p.gameObject.SetActive(false);
+                p.OnHide();
                 managedPages.Remove(p);
                 return true;
             }
@@ -716,11 +717,13 @@ namespace Ballance2.Managers
                         currentShowPage.gameObject.SetActive(false);
                         if (currentShowPage.PageBackground != null)
                             currentShowPage.PageBackground.SetActive(false);
+                        currentShowPage.OnHide();
                     }
                     p.gameObject.SetActive(true);
                     if (p.PageBackground != null)
                         p.PageBackground.SetActive(true);
                     currentShowPage = p;
+                    currentShowPage.OnShow();
 
                     GameLogger.Log(TAG, "GotoUIPage {0}", pagePath);
                 }
@@ -744,6 +747,7 @@ namespace Ballance2.Managers
             if (p != null)
             {
                 p.gameObject.SetActive(false);
+                p.OnHide();
                 if (p.PageBackground != null)
                     p.PageBackground.SetActive(false);
                 return true;

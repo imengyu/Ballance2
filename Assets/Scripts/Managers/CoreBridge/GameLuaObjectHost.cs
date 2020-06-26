@@ -14,7 +14,6 @@ namespace Ballance2.Managers.CoreBridge
 
         public LuaState LuaState { get; set; }
         public string LuaClassName;
-        public TextAsset LuaScript;
         public string Name;
         public GameMod GameMod { get; set; }
 
@@ -70,8 +69,7 @@ namespace Ballance2.Managers.CoreBridge
 
         private void LuaInit()
         {
-            LuaState.doString(LuaScript.text, Name + "_class_" + LuaClassName);
-            LuaFunction classInit = LuaState.getFunction("class_" + LuaClassName);
+            LuaFunction classInit = GameMod.RequireLuaClass(LuaClassName);
             if (classInit == null)
             {
                 GameLogger.Error(TAG + ":" + Name, "LuaObject {0} load error :  class not found : {1}", Name, LuaClassName);

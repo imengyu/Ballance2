@@ -60,7 +60,6 @@ namespace Ballance2.UI.BallanceUI.Element
         }
 
         private SoundManager soundManager = null;
-        private KeyListener keyListener = null;
 
         protected override void OnInitElement()
         {
