@@ -39,14 +39,21 @@ namespace Ballance2.UI.Utils
         }
 
         private List<KeyListenerItem> items = new List<KeyListenerItem>();
+        private int updateInterval = 0;
+        private bool isListenKey = false;
 
-        private int updateInterval = 5;
-
+        /// <summary>
+        /// 检测延迟
+        /// </summary>
         public int UpdateInterval
         {
             set { updateInterval = value; }
             get { return updateInterval;  }
         }
+        /// <summary>
+        /// 是否开启监听
+        /// </summary>
+        public bool IsListenKey { get { return isListenKey; } set { isListenKey = value; } }
 
         /// <summary>
         /// 添加侦听器侦听键。
@@ -86,34 +93,37 @@ namespace Ballance2.UI.Utils
         private int updateTick = 0;
         private void Update()
         {
-            if (updateTick < updateInterval) updateTick++;
-            else
+            if (isListenKey)
             {
-                updateTick = 0;
-                for (int i = 0; i < items.Count; i++)
+                if (updateTick < updateInterval) updateTick++;
+                else
                 {
-                    if (items[i].has2key)
+                    updateTick = 0;
+                    for (int i = 0; i < items.Count; i++)
                     {
-                        if (Input.GetKeyDown(items[i].key2) && !items[i].downed)
+                        if (items[i].has2key)
+                        {
+                            if (Input.GetKeyDown(items[i].key2) && !items[i].downed)
+                            {
+                                items[i].downed = true;
+                                items[i].callBack(items[i].key2, true);
+                            }
+                            else if (Input.GetKeyUp(items[i].key2) && items[i].downed)
+                            {
+                                items[i].callBack(items[i].key2, false);
+                                items[i].downed = false;
+                            }
+                        }
+                        if (Input.GetKeyDown(items[i].key) && !items[i].downed)
                         {
                             items[i].downed = true;
-                            items[i].callBack(items[i].key2, true);
+                            items[i].callBack(items[i].key, true);
                         }
-                        else if (Input.GetKeyUp(items[i].key2) && items[i].downed)
+                        else if (Input.GetKeyUp(items[i].key) && items[i].downed)
                         {
-                            items[i].callBack(items[i].key2, false);
+                            items[i].callBack(items[i].key, false);
                             items[i].downed = false;
                         }
-                    }
-                    if (Input.GetKeyDown(items[i].key) && !items[i].downed)
-                    {
-                        items[i].downed = true;
-                        items[i].callBack(items[i].key, true);
-                    }
-                    else if (Input.GetKeyUp(items[i].key) && items[i].downed)
-                    {
-                        items[i].callBack(items[i].key, false);
-                        items[i].downed = false;
                     }
                 }
             }

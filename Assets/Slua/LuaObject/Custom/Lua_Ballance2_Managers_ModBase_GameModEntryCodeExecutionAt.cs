@@ -4,7 +4,7 @@ using System.Collections.Generic;
 [UnityEngine.Scripting.Preserve]
 public class Lua_Ballance2_Managers_ModBase_GameModEntryCodeExecutionAt : LuaObject {
 	static public void reg(IntPtr l) {
-		getEnumTable(l,"Ballance2.Managers.ModBase.GameModEntryCodeExecutionAt");
+		getEnumTable(l,"Ballance2.ModBase.GameModEntryCodeExecutionAt");
 		addMember(l,0,"Manual");
 		addMember(l,1,"AfterLoaded");
 		addMember(l,2,"AtStart");

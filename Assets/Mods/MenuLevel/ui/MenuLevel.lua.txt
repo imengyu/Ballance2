@@ -3,7 +3,7 @@
 
 GameManager = Ballance2.GameManager
 GameLogger = Ballance2.GameLogger
-GameActionNames = Ballance2.Managers.CoreBridge.GameActionNames
+GameActionNames = Ballance2.CoreBridge.GameActionNames
 SkyBoxUtils = Ballance2.Utils.SkyBoxUtils
 GameSoundType = Ballance2.Managers.GameSoundType
 

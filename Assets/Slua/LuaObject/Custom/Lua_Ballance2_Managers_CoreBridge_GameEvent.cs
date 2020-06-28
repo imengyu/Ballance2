@@ -16,10 +16,10 @@ public class Lua_Ballance2_Managers_CoreBridge_GameEvent : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameEvent o;
+			Ballance2.CoreBridge.GameEvent o;
 			System.String a1;
 			checkType(l,2,out a1);
-			o=new Ballance2.Managers.CoreBridge.GameEvent(a1);
+			o=new Ballance2.CoreBridge.GameEvent(a1);
 			pushValue(l,true);
 			pushValue(l,o);
 			return 2;
@@ -50,7 +50,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameEvent : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameEvent self=(Ballance2.Managers.CoreBridge.GameEvent)checkSelf(l);
+			Ballance2.CoreBridge.GameEvent self=(Ballance2.CoreBridge.GameEvent)checkSelf(l);
 			self.Dispose();
 			pushValue(l,true);
 			return 1;
@@ -81,7 +81,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameEvent : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameEvent self=(Ballance2.Managers.CoreBridge.GameEvent)checkSelf(l);
+			Ballance2.CoreBridge.GameEvent self=(Ballance2.CoreBridge.GameEvent)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.EventName);
 			return 2;
@@ -112,7 +112,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameEvent : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameEvent self=(Ballance2.Managers.CoreBridge.GameEvent)checkSelf(l);
+			Ballance2.CoreBridge.GameEvent self=(Ballance2.CoreBridge.GameEvent)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.EventHandlers);
 			return 2;
@@ -132,10 +132,10 @@ public class Lua_Ballance2_Managers_CoreBridge_GameEvent : LuaObject {
 	}
 	[UnityEngine.Scripting.Preserve]
 	static public void reg(IntPtr l) {
-		getTypeTable(l,"Ballance2.Managers.CoreBridge.GameEvent");
+		getTypeTable(l,"Ballance2.CoreBridge.GameEvent");
 		addMember(l,Dispose);
 		addMember(l,"EventName",get_EventName,null,true);
 		addMember(l,"EventHandlers",get_EventHandlers,null,true);
-		createTypeMetatable(l,constructor, typeof(Ballance2.Managers.CoreBridge.GameEvent));
+		createTypeMetatable(l,constructor, typeof(Ballance2.CoreBridge.GameEvent));
 	}
 }

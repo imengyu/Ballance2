@@ -1,5 +1,5 @@
 ﻿using Ballance2.Managers;
-using Ballance2.Managers.ModBase;
+using Ballance2.ModBase;
 using UnityEngine;
 
 namespace Ballance2.Utils

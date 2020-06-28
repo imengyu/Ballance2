@@ -1,5 +1,6 @@
 ﻿using Ballance2.Config;
-using Ballance2.Managers.CoreBridge;
+using Ballance2.CoreBridge;
+using Ballance2.Managers;
 using Ballance2.Utils;
 using SLua;
 using System;
@@ -10,7 +11,7 @@ using System.Xml;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Ballance2.Managers.ModBase
+namespace Ballance2.ModBase
 {
     /// <summary>
     /// 模组结构

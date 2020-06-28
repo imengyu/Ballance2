@@ -16,14 +16,14 @@ public class Lua_Ballance2_Managers_ModBase_GameCompatibilityInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameCompatibilityInfo o;
+			Ballance2.ModBase.GameCompatibilityInfo o;
 			System.Int32 a1;
 			checkType(l,2,out a1);
 			System.Int32 a2;
 			checkType(l,3,out a2);
 			System.Int32 a3;
 			checkType(l,4,out a3);
-			o=new Ballance2.Managers.ModBase.GameCompatibilityInfo(a1,a2,a3);
+			o=new Ballance2.ModBase.GameCompatibilityInfo(a1,a2,a3);
 			pushValue(l,true);
 			pushValue(l,o);
 			return 2;
@@ -54,7 +54,7 @@ public class Lua_Ballance2_Managers_ModBase_GameCompatibilityInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameCompatibilityInfo self;
+			Ballance2.ModBase.GameCompatibilityInfo self;
 			checkValueType(l,1,out self);
 			pushValue(l,true);
 			pushValue(l,self.MinVersion);
@@ -86,7 +86,7 @@ public class Lua_Ballance2_Managers_ModBase_GameCompatibilityInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameCompatibilityInfo self;
+			Ballance2.ModBase.GameCompatibilityInfo self;
 			checkValueType(l,1,out self);
 			System.Int32 v;
 			checkType(l,2,out v);
@@ -121,7 +121,7 @@ public class Lua_Ballance2_Managers_ModBase_GameCompatibilityInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameCompatibilityInfo self;
+			Ballance2.ModBase.GameCompatibilityInfo self;
 			checkValueType(l,1,out self);
 			pushValue(l,true);
 			pushValue(l,self.TargetVersion);
@@ -153,7 +153,7 @@ public class Lua_Ballance2_Managers_ModBase_GameCompatibilityInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameCompatibilityInfo self;
+			Ballance2.ModBase.GameCompatibilityInfo self;
 			checkValueType(l,1,out self);
 			System.Int32 v;
 			checkType(l,2,out v);
@@ -188,7 +188,7 @@ public class Lua_Ballance2_Managers_ModBase_GameCompatibilityInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameCompatibilityInfo self;
+			Ballance2.ModBase.GameCompatibilityInfo self;
 			checkValueType(l,1,out self);
 			pushValue(l,true);
 			pushValue(l,self.MaxVersion);
@@ -220,7 +220,7 @@ public class Lua_Ballance2_Managers_ModBase_GameCompatibilityInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameCompatibilityInfo self;
+			Ballance2.ModBase.GameCompatibilityInfo self;
 			checkValueType(l,1,out self);
 			System.Int32 v;
 			checkType(l,2,out v);
@@ -244,10 +244,10 @@ public class Lua_Ballance2_Managers_ModBase_GameCompatibilityInfo : LuaObject {
 	}
 	[UnityEngine.Scripting.Preserve]
 	static public void reg(IntPtr l) {
-		getTypeTable(l,"Ballance2.Managers.ModBase.GameCompatibilityInfo");
+		getTypeTable(l,"Ballance2.ModBase.GameCompatibilityInfo");
 		addMember(l,"MinVersion",get_MinVersion,set_MinVersion,true);
 		addMember(l,"TargetVersion",get_TargetVersion,set_TargetVersion,true);
 		addMember(l,"MaxVersion",get_MaxVersion,set_MaxVersion,true);
-		createTypeMetatable(l,constructor, typeof(Ballance2.Managers.ModBase.GameCompatibilityInfo),typeof(System.ValueType));
+		createTypeMetatable(l,constructor, typeof(Ballance2.ModBase.GameCompatibilityInfo),typeof(System.ValueType));
 	}
 }

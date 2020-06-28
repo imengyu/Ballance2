@@ -1,4 +1,4 @@
-﻿using Ballance2.Managers.CoreBridge;
+﻿using Ballance2.CoreBridge;
 using Ballance2.Utils;
 using SLua;
 using System.Collections.Generic;
@@ -466,6 +466,7 @@ namespace Ballance2.Managers
             result = action.GameHandler.CallActionHandler(param);
             if (!result.Success)
                 GameLogger.Warning(TAG, "操作 {0} 执行失败 {1}", name, GameErrorManager.LastError);
+
             return result;
         }
 

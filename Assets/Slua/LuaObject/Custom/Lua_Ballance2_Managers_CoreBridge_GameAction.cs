@@ -16,12 +16,12 @@ public class Lua_Ballance2_Managers_CoreBridge_GameAction : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameAction o;
+			Ballance2.CoreBridge.GameAction o;
 			System.String a1;
 			checkType(l,2,out a1);
-			Ballance2.Managers.CoreBridge.GameHandler a2;
+			Ballance2.CoreBridge.GameHandler a2;
 			checkType(l,3,out a2);
-			o=new Ballance2.Managers.CoreBridge.GameAction(a1,a2);
+			o=new Ballance2.CoreBridge.GameAction(a1,a2);
 			pushValue(l,true);
 			pushValue(l,o);
 			return 2;
@@ -52,7 +52,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameAction : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameAction self=(Ballance2.Managers.CoreBridge.GameAction)checkSelf(l);
+			Ballance2.CoreBridge.GameAction self=(Ballance2.CoreBridge.GameAction)checkSelf(l);
 			self.Dispose();
 			pushValue(l,true);
 			return 1;
@@ -83,7 +83,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameAction : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameAction self=(Ballance2.Managers.CoreBridge.GameAction)checkSelf(l);
+			Ballance2.CoreBridge.GameAction self=(Ballance2.CoreBridge.GameAction)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.Name);
 			return 2;
@@ -114,7 +114,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameAction : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameAction self=(Ballance2.Managers.CoreBridge.GameAction)checkSelf(l);
+			Ballance2.CoreBridge.GameAction self=(Ballance2.CoreBridge.GameAction)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.GameHandler);
 			return 2;
@@ -134,10 +134,10 @@ public class Lua_Ballance2_Managers_CoreBridge_GameAction : LuaObject {
 	}
 	[UnityEngine.Scripting.Preserve]
 	static public void reg(IntPtr l) {
-		getTypeTable(l,"Ballance2.Managers.CoreBridge.GameAction");
+		getTypeTable(l,"Ballance2.CoreBridge.GameAction");
 		addMember(l,Dispose);
 		addMember(l,"Name",get_Name,null,true);
 		addMember(l,"GameHandler",get_GameHandler,null,true);
-		createTypeMetatable(l,constructor, typeof(Ballance2.Managers.CoreBridge.GameAction));
+		createTypeMetatable(l,constructor, typeof(Ballance2.CoreBridge.GameAction));
 	}
 }

@@ -403,7 +403,7 @@ public class Lua_Ballance2_Config_GameSettingsActuator : LuaObject {
 			Ballance2.Config.GameSettingsActuator self=(Ballance2.Config.GameSettingsActuator)checkSelf(l);
 			System.String a1;
 			checkType(l,2,out a1);
-			Ballance2.Managers.CoreBridge.GameHandler a2;
+			Ballance2.CoreBridge.GameHandler a2;
 			checkType(l,3,out a2);
 			self.RegisterSettingsUpdateCallback(a1,a2);
 			pushValue(l,true);

@@ -16,10 +16,10 @@ public class Lua_Ballance2_Managers_ModBase_GameModInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameModInfo o;
+			Ballance2.ModBase.GameModInfo o;
 			System.String a1;
 			checkType(l,2,out a1);
-			o=new Ballance2.Managers.ModBase.GameModInfo(a1);
+			o=new Ballance2.ModBase.GameModInfo(a1);
 			pushValue(l,true);
 			pushValue(l,o);
 			return 2;
@@ -50,7 +50,7 @@ public class Lua_Ballance2_Managers_ModBase_GameModInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameModInfo self;
+			Ballance2.ModBase.GameModInfo self;
 			checkValueType(l,1,out self);
 			pushValue(l,true);
 			pushValue(l,self.Name);
@@ -82,7 +82,7 @@ public class Lua_Ballance2_Managers_ModBase_GameModInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameModInfo self;
+			Ballance2.ModBase.GameModInfo self;
 			checkValueType(l,1,out self);
 			System.String v;
 			checkType(l,2,out v);
@@ -117,7 +117,7 @@ public class Lua_Ballance2_Managers_ModBase_GameModInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameModInfo self;
+			Ballance2.ModBase.GameModInfo self;
 			checkValueType(l,1,out self);
 			pushValue(l,true);
 			pushValue(l,self.Author);
@@ -149,7 +149,7 @@ public class Lua_Ballance2_Managers_ModBase_GameModInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameModInfo self;
+			Ballance2.ModBase.GameModInfo self;
 			checkValueType(l,1,out self);
 			System.String v;
 			checkType(l,2,out v);
@@ -184,7 +184,7 @@ public class Lua_Ballance2_Managers_ModBase_GameModInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameModInfo self;
+			Ballance2.ModBase.GameModInfo self;
 			checkValueType(l,1,out self);
 			pushValue(l,true);
 			pushValue(l,self.Introduction);
@@ -216,7 +216,7 @@ public class Lua_Ballance2_Managers_ModBase_GameModInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameModInfo self;
+			Ballance2.ModBase.GameModInfo self;
 			checkValueType(l,1,out self);
 			System.String v;
 			checkType(l,2,out v);
@@ -251,7 +251,7 @@ public class Lua_Ballance2_Managers_ModBase_GameModInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameModInfo self;
+			Ballance2.ModBase.GameModInfo self;
 			checkValueType(l,1,out self);
 			pushValue(l,true);
 			pushValue(l,self.Logo);
@@ -283,7 +283,7 @@ public class Lua_Ballance2_Managers_ModBase_GameModInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameModInfo self;
+			Ballance2.ModBase.GameModInfo self;
 			checkValueType(l,1,out self);
 			System.String v;
 			checkType(l,2,out v);
@@ -318,7 +318,7 @@ public class Lua_Ballance2_Managers_ModBase_GameModInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameModInfo self;
+			Ballance2.ModBase.GameModInfo self;
 			checkValueType(l,1,out self);
 			pushValue(l,true);
 			pushValue(l,self.Version);
@@ -350,7 +350,7 @@ public class Lua_Ballance2_Managers_ModBase_GameModInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameModInfo self;
+			Ballance2.ModBase.GameModInfo self;
 			checkValueType(l,1,out self);
 			System.String v;
 			checkType(l,2,out v);
@@ -374,12 +374,12 @@ public class Lua_Ballance2_Managers_ModBase_GameModInfo : LuaObject {
 	}
 	[UnityEngine.Scripting.Preserve]
 	static public void reg(IntPtr l) {
-		getTypeTable(l,"Ballance2.Managers.ModBase.GameModInfo");
+		getTypeTable(l,"Ballance2.ModBase.GameModInfo");
 		addMember(l,"Name",get_Name,set_Name,true);
 		addMember(l,"Author",get_Author,set_Author,true);
 		addMember(l,"Introduction",get_Introduction,set_Introduction,true);
 		addMember(l,"Logo",get_Logo,set_Logo,true);
 		addMember(l,"Version",get_Version,set_Version,true);
-		createTypeMetatable(l,constructor, typeof(Ballance2.Managers.ModBase.GameModInfo),typeof(System.ValueType));
+		createTypeMetatable(l,constructor, typeof(Ballance2.ModBase.GameModInfo),typeof(System.ValueType));
 	}
 }

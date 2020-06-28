@@ -710,7 +710,7 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 			#endif
 			#endif
 			int argc = LuaDLL.lua_gettop(l);
-			if(matchType(l,argc,2,typeof(string),typeof(string),typeof(System.String[]),typeof(Ballance2.Managers.CoreBridge.GameEventHandlerDelegate[]),typeof(string),typeof(System.String[]))){
+			if(matchType(l,argc,2,typeof(string),typeof(string),typeof(System.String[]),typeof(Ballance2.CoreBridge.GameEventHandlerDelegate[]),typeof(string),typeof(System.String[]))){
 				Ballance2.Managers.UIManager self=(Ballance2.Managers.UIManager)checkSelf(l);
 				System.String a1;
 				checkType(l,2,out a1);
@@ -718,7 +718,7 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 				checkType(l,3,out a2);
 				System.String[] a3;
 				checkArray(l,4,out a3);
-				Ballance2.Managers.CoreBridge.GameEventHandlerDelegate[] a4;
+				Ballance2.CoreBridge.GameEventHandlerDelegate[] a4;
 				checkArray(l,5,out a4);
 				System.String a5;
 				checkType(l,6,out a5);

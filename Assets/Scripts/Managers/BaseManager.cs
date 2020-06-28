@@ -8,6 +8,14 @@ namespace Ballance2.Managers
     /// </summary>
     public class BaseManager : MonoBehaviour
     {
+        internal bool initialized = false;
+
+        /// <summary>
+        /// 获取是否初始化
+        /// </summary>
+        public bool Initialized { get { return initialized; } }
+
+        [SLua.DoNotToLua]
         /// <summary>
         /// 当管理器第一次初始化时（场景进入）
         /// </summary>
@@ -16,6 +24,7 @@ namespace Ballance2.Managers
         {
             return false;
         }
+        [SLua.DoNotToLua]
         /// <summary>
         /// 当管理器卸载时（场景卸载）
         /// </summary>
@@ -24,6 +33,7 @@ namespace Ballance2.Managers
         {
             return false;
         }
+        [SLua.DoNotToLua]
         /// <summary>
         /// 当管理器需要重载数据时（场景重载）
         /// </summary>
@@ -62,6 +72,15 @@ namespace Ballance2.Managers
 
         private new string name = "";
 
+        public override bool InitManager()
+        {
+            return base.InitManager();
+        }
+        public override bool ReleaseManager()
+        {
+            return base.ReleaseManager();
+        }
+
         public override bool GetIsSingleton() { return true; }
         public override string GetName()
         {
@@ -88,6 +107,15 @@ namespace Ballance2.Managers
             this.name = name;
             this.subName = subName;
             this.isSingleton = subName == "Singleton";
+        }
+
+        public override bool InitManager()
+        {
+            return base.InitManager();
+        }
+        public override bool ReleaseManager()
+        {
+            return base.ReleaseManager();
         }
 
         private new string name = "";

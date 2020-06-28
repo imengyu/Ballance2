@@ -1,7 +1,7 @@
 GameManager = Ballance2.GameManager
 GameLogger = Ballance2.GameLogger
-GameEventNames = Ballance2.Managers.CoreBridge.GameEventNames
-GameActionNames = Ballance2.Managers.CoreBridge.GameActionNames
+GameEventNames = Ballance2.CoreBridge.GameEventNames
+GameActionNames = Ballance2.CoreBridge.GameActionNames
 ModManager = Ballance2.Managers.ModManager
 
 local UIManager = GameManager.UIManager

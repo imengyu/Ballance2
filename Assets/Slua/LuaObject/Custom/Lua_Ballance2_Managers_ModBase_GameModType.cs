@@ -4,7 +4,7 @@ using System.Collections.Generic;
 [UnityEngine.Scripting.Preserve]
 public class Lua_Ballance2_Managers_ModBase_GameModType : LuaObject {
 	static public void reg(IntPtr l) {
-		getEnumTable(l,"Ballance2.Managers.ModBase.GameModType");
+		getEnumTable(l,"Ballance2.ModBase.GameModType");
 		addMember(l,0,"NotSet");
 		addMember(l,1,"AssetPack");
 		addMember(l,2,"ModPack");

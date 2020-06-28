@@ -57,7 +57,7 @@ public class Lua_Ballance2_UI_BallanceUI_UILayoutBuilder : LuaObject {
 				checkType(l,2,out a1);
 				System.String a2;
 				checkType(l,3,out a2);
-				System.Collections.Generic.Dictionary<System.String,Ballance2.Managers.CoreBridge.GameHandler> a3;
+				System.Collections.Generic.Dictionary<System.String,Ballance2.CoreBridge.GameHandler> a3;
 				checkType(l,4,out a3);
 				System.String[] a4;
 				checkArray(l,5,out a4);
@@ -83,7 +83,7 @@ public class Lua_Ballance2_UI_BallanceUI_UILayoutBuilder : LuaObject {
 				pushValue(l,ret);
 				return 2;
 			}
-			else if(matchType(l,argc,2,typeof(string),typeof(string),typeof(System.String[]),typeof(Ballance2.Managers.CoreBridge.GameEventHandlerDelegate[]),typeof(System.String[]))){
+			else if(matchType(l,argc,2,typeof(string),typeof(string),typeof(System.String[]),typeof(Ballance2.CoreBridge.GameEventHandlerDelegate[]),typeof(System.String[]))){
 				Ballance2.UI.BallanceUI.UILayoutBuilder self=(Ballance2.UI.BallanceUI.UILayoutBuilder)checkSelf(l);
 				System.String a1;
 				checkType(l,2,out a1);
@@ -91,7 +91,7 @@ public class Lua_Ballance2_UI_BallanceUI_UILayoutBuilder : LuaObject {
 				checkType(l,3,out a2);
 				System.String[] a3;
 				checkArray(l,4,out a3);
-				Ballance2.Managers.CoreBridge.GameEventHandlerDelegate[] a4;
+				Ballance2.CoreBridge.GameEventHandlerDelegate[] a4;
 				checkArray(l,5,out a4);
 				System.String[] a5;
 				checkArray(l,6,out a5);

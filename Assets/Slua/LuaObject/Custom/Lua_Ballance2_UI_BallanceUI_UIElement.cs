@@ -17,7 +17,7 @@ public class Lua_Ballance2_UI_BallanceUI_UIElement : LuaObject {
 			#endif
 			#endif
 			Ballance2.UI.BallanceUI.UIElement self=(Ballance2.UI.BallanceUI.UIElement)checkSelf(l);
-			System.Collections.Generic.Dictionary<System.String,Ballance2.Managers.CoreBridge.GameHandler> a1;
+			System.Collections.Generic.Dictionary<System.String,Ballance2.CoreBridge.GameHandler> a1;
 			checkType(l,2,out a1);
 			self.InitHandlers(a1);
 			pushValue(l,true);
@@ -85,7 +85,7 @@ public class Lua_Ballance2_UI_BallanceUI_UIElement : LuaObject {
 			Ballance2.UI.BallanceUI.UIElement self=(Ballance2.UI.BallanceUI.UIElement)checkSelf(l);
 			System.String a1;
 			checkType(l,2,out a1);
-			Ballance2.Managers.CoreBridge.GameHandler a2;
+			Ballance2.CoreBridge.GameHandler a2;
 			checkType(l,3,out a2);
 			self.SetEventHandler(a1,a2);
 			pushValue(l,true);
@@ -120,7 +120,7 @@ public class Lua_Ballance2_UI_BallanceUI_UIElement : LuaObject {
 			Ballance2.UI.BallanceUI.UIElement self=(Ballance2.UI.BallanceUI.UIElement)checkSelf(l);
 			System.String a1;
 			checkType(l,2,out a1);
-			Ballance2.Managers.CoreBridge.GameHandler a2;
+			Ballance2.CoreBridge.GameHandler a2;
 			checkType(l,3,out a2);
 			self.RemoveEventHandler(a1,a2);
 			pushValue(l,true);

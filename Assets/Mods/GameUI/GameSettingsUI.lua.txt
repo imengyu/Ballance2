@@ -1,10 +1,10 @@
 GameManager = Ballance2.GameManager
 GameLogger = Ballance2.GameLogger
-GameEventNames = Ballance2.Managers.CoreBridge.GameEventNames
-GameActionNames = Ballance2.Managers.CoreBridge.GameActionNames
+GameEventNames = Ballance2.CoreBridge.GameEventNames
+GameActionNames = Ballance2.CoreBridge.GameActionNames
 StringUtils = Ballance2.Utils.StringUtils
 GameSettingsManager = Ballance2.Config.GameSettingsManager
-GameActionCallResult = Ballance2.Managers.CoreBridge.GameActionCallResult
+GameActionCallResult = Ballance2.CoreBridge.GameActionCallResult
 ModManager = Ballance2.Managers.ModManager
 GameSoundType = Ballance2.Managers.GameSoundType
 
@@ -100,7 +100,7 @@ function LoadGameSettingsUI()
       function(evtName, el, v) GameSettings:SetString("control.key.back", v) end,
       function(evtName, el, v) GameSettings:SetString("control.key.left", v) end,
       function(evtName, el, v) GameSettings:SetString("control.key.right", v) end,
-      function(evtName, el, v) GameSettings:SetString("control.key.up", v) end,
+      function(evtName, el, v) GameSettings:SetString("control.key.up_cam", v) end,
       function(evtName, el, v) GameSettings:SetString("control.key.roate", v) end,
       function(evtName, el, v) GameSettings:SetBool("control.reverse", v) end,
       function(evtName) 
@@ -115,7 +115,7 @@ function LoadGameSettingsUI()
       "key.back:key:"..GameSettings:GetString("control.key.back", "None"),
       "key.left:key:"..GameSettings:GetString("control.key.left", "None"),
       "key.right:key:"..GameSettings:GetString("control.key.right", "None"),
-      "key.up:key:"..GameSettings:GetString("control.key.up", "None"),
+      "key.up:key:"..GameSettings:GetString("control.key.up_cam", "None"),
       "key.roate:key:"..GameSettings:GetString("control.key.roate", "None"),
       "toggle.reverse_control:checked:"..(GameSettings:GetBool("control.reverse", false) and "true" or "false"),
     }

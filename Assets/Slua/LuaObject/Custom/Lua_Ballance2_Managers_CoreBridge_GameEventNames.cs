@@ -17,7 +17,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameEventNames : LuaObject {
 			#endif
 			#endif
 			pushValue(l,true);
-			pushValue(l,Ballance2.Managers.CoreBridge.GameEventNames.EVENT_BASE_INIT_FINISHED);
+			pushValue(l,Ballance2.CoreBridge.GameEventNames.EVENT_BASE_INIT_FINISHED);
 			return 2;
 		}
 		catch(Exception e) {
@@ -47,7 +47,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameEventNames : LuaObject {
 			#endif
 			#endif
 			pushValue(l,true);
-			pushValue(l,Ballance2.Managers.CoreBridge.GameEventNames.EVENT_BASE_MANAGER_INIT_FINISHED);
+			pushValue(l,Ballance2.CoreBridge.GameEventNames.EVENT_BASE_MANAGER_INIT_FINISHED);
 			return 2;
 		}
 		catch(Exception e) {
@@ -77,7 +77,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameEventNames : LuaObject {
 			#endif
 			#endif
 			pushValue(l,true);
-			pushValue(l,Ballance2.Managers.CoreBridge.GameEventNames.EVENT_GLOBAL_ALERT_CLOSE);
+			pushValue(l,Ballance2.CoreBridge.GameEventNames.EVENT_GLOBAL_ALERT_CLOSE);
 			return 2;
 		}
 		catch(Exception e) {
@@ -107,7 +107,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameEventNames : LuaObject {
 			#endif
 			#endif
 			pushValue(l,true);
-			pushValue(l,Ballance2.Managers.CoreBridge.GameEventNames.EVENT_BEFORE_GAME_QUIT);
+			pushValue(l,Ballance2.CoreBridge.GameEventNames.EVENT_BEFORE_GAME_QUIT);
 			return 2;
 		}
 		catch(Exception e) {
@@ -137,7 +137,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameEventNames : LuaObject {
 			#endif
 			#endif
 			pushValue(l,true);
-			pushValue(l,Ballance2.Managers.CoreBridge.GameEventNames.EVENT_GAME_INIT_ENTRY);
+			pushValue(l,Ballance2.CoreBridge.GameEventNames.EVENT_GAME_INIT_ENTRY);
 			return 2;
 		}
 		catch(Exception e) {
@@ -167,7 +167,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameEventNames : LuaObject {
 			#endif
 			#endif
 			pushValue(l,true);
-			pushValue(l,Ballance2.Managers.CoreBridge.GameEventNames.EVENT_GAME_INIT_FINISH);
+			pushValue(l,Ballance2.CoreBridge.GameEventNames.EVENT_GAME_INIT_FINISH);
 			return 2;
 		}
 		catch(Exception e) {
@@ -197,7 +197,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameEventNames : LuaObject {
 			#endif
 			#endif
 			pushValue(l,true);
-			pushValue(l,Ballance2.Managers.CoreBridge.GameEventNames.EVENT_MOD_LOAD_SUCCESS);
+			pushValue(l,Ballance2.CoreBridge.GameEventNames.EVENT_MOD_LOAD_SUCCESS);
 			return 2;
 		}
 		catch(Exception e) {
@@ -227,7 +227,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameEventNames : LuaObject {
 			#endif
 			#endif
 			pushValue(l,true);
-			pushValue(l,Ballance2.Managers.CoreBridge.GameEventNames.EVENT_MOD_LOAD_FAILED);
+			pushValue(l,Ballance2.CoreBridge.GameEventNames.EVENT_MOD_LOAD_FAILED);
 			return 2;
 		}
 		catch(Exception e) {
@@ -257,7 +257,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameEventNames : LuaObject {
 			#endif
 			#endif
 			pushValue(l,true);
-			pushValue(l,Ballance2.Managers.CoreBridge.GameEventNames.EVENT_MOD_REGISTERED);
+			pushValue(l,Ballance2.CoreBridge.GameEventNames.EVENT_MOD_REGISTERED);
 			return 2;
 		}
 		catch(Exception e) {
@@ -287,7 +287,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameEventNames : LuaObject {
 			#endif
 			#endif
 			pushValue(l,true);
-			pushValue(l,Ballance2.Managers.CoreBridge.GameEventNames.EVENT_MOD_UNLOAD);
+			pushValue(l,Ballance2.CoreBridge.GameEventNames.EVENT_MOD_UNLOAD);
 			return 2;
 		}
 		catch(Exception e) {
@@ -305,7 +305,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameEventNames : LuaObject {
 	}
 	[UnityEngine.Scripting.Preserve]
 	static public void reg(IntPtr l) {
-		getTypeTable(l,"Ballance2.Managers.CoreBridge.GameEventNames");
+		getTypeTable(l,"Ballance2.CoreBridge.GameEventNames");
 		addMember(l,"EVENT_BASE_INIT_FINISHED",get_EVENT_BASE_INIT_FINISHED,null,false);
 		addMember(l,"EVENT_BASE_MANAGER_INIT_FINISHED",get_EVENT_BASE_MANAGER_INIT_FINISHED,null,false);
 		addMember(l,"EVENT_GLOBAL_ALERT_CLOSE",get_EVENT_GLOBAL_ALERT_CLOSE,null,false);
@@ -316,6 +316,6 @@ public class Lua_Ballance2_Managers_CoreBridge_GameEventNames : LuaObject {
 		addMember(l,"EVENT_MOD_LOAD_FAILED",get_EVENT_MOD_LOAD_FAILED,null,false);
 		addMember(l,"EVENT_MOD_REGISTERED",get_EVENT_MOD_REGISTERED,null,false);
 		addMember(l,"EVENT_MOD_UNLOAD",get_EVENT_MOD_UNLOAD,null,false);
-		createTypeMetatable(l,null, typeof(Ballance2.Managers.CoreBridge.GameEventNames));
+		createTypeMetatable(l,null, typeof(Ballance2.CoreBridge.GameEventNames));
 	}
 }

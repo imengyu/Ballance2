@@ -19,7 +19,7 @@ public class Lua_Ballance2_UI_BallanceUI_Element_UISlider : LuaObject {
 			Ballance2.UI.BallanceUI.Element.UISlider self=(Ballance2.UI.BallanceUI.Element.UISlider)checkSelf(l);
 			System.String a1;
 			checkType(l,2,out a1);
-			Ballance2.Managers.CoreBridge.GameHandler a2;
+			Ballance2.CoreBridge.GameHandler a2;
 			checkType(l,3,out a2);
 			self.SetEventHandler(a1,a2);
 			pushValue(l,true);
@@ -54,7 +54,7 @@ public class Lua_Ballance2_UI_BallanceUI_Element_UISlider : LuaObject {
 			Ballance2.UI.BallanceUI.Element.UISlider self=(Ballance2.UI.BallanceUI.Element.UISlider)checkSelf(l);
 			System.String a1;
 			checkType(l,2,out a1);
-			Ballance2.Managers.CoreBridge.GameHandler a2;
+			Ballance2.CoreBridge.GameHandler a2;
 			checkType(l,3,out a2);
 			self.RemoveEventHandler(a1,a2);
 			pushValue(l,true);

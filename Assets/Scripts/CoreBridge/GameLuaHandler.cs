@@ -1,7 +1,8 @@
-﻿using Ballance2.Managers.ModBase;
+﻿using Ballance2.Managers;
+using Ballance2.ModBase;
 using SLua;
 
-namespace Ballance2.Managers.CoreBridge
+namespace Ballance2.CoreBridge
 {
     /// <summary>
     /// Lua 接收器 Handler

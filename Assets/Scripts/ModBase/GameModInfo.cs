@@ -1,4 +1,4 @@
-﻿namespace Ballance2.Managers.ModBase
+﻿namespace Ballance2.ModBase
 {
     [SLua.CustomLuaClass]
     /// <summary>
@@ -73,6 +73,20 @@
         /// 关卡加载完成时
         /// </summary>
         AfterLevelLoad,
+    }
+    /// <summary>
+    /// 模组加载范围
+    /// </summary>
+    [SLua.CustomLuaClass]
+    public enum GameModLoadScope
+    {
+        Game,
+        Core,
+        Menu,
+
+
+
+
     }
 
     [SLua.CustomLuaClass]

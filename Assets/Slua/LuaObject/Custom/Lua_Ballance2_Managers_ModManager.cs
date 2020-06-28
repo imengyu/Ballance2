@@ -396,9 +396,9 @@ public class Lua_Ballance2_Managers_ModManager : LuaObject {
 				pushValue(l,ret);
 				return 2;
 			}
-			else if(matchType(l,argc,2,typeof(Ballance2.Managers.ModBase.GameMod))){
+			else if(matchType(l,argc,2,typeof(Ballance2.ModBase.GameMod))){
 				Ballance2.Managers.ModManager self=(Ballance2.Managers.ModManager)checkSelf(l);
-				Ballance2.Managers.ModBase.GameMod a1;
+				Ballance2.ModBase.GameMod a1;
 				checkType(l,2,out a1);
 				var ret=self.UnLoadGameMod(a1);
 				pushValue(l,true);

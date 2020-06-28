@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Ballance2.Managers.CoreBridge
+namespace Ballance2.CoreBridge
 {
     [SLua.CustomLuaClass]
     /// <summary>

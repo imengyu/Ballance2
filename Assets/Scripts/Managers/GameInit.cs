@@ -2,9 +2,11 @@
 using UnityEngine.UI;
 using System.Collections;
 using Ballance2.Utils;
-using Ballance2.Managers.CoreBridge;
+using Ballance2.CoreBridge;
 using Ballance2.Config;
-using Ballance2.Managers.ModBase;
+using Ballance2.ModBase;
+using Ballance2.GameCore;
+using Ballance2.CoreGame.Managers;
 
 namespace Ballance2.Managers
 {
@@ -122,6 +124,18 @@ namespace Ballance2.Managers
                 GameErrorManager.ThrowGameError(GameError.GameInitPartLoadFailed, "加载 GamePackages 资源包失败 ");
                 StopAllCoroutines();
             }
+
+            //加载游戏内核管理器
+            GameManager.RegisterManager(typeof(LevelLoader), false);
+
+            BallManager ballManager = GameManager.FindStaticPrefabs("BallManager").GetComponent<BallManager>();
+            CamManager camManager = GameManager.FindStaticPrefabs("CamManager").GetComponent<CamManager>();
+        
+            GameManager.RegisterManager(ballManager, false);
+            GameManager.RegisterManager(camManager, false);
+
+            //初始化管理器
+            GameManager.RequestAllManagerInitialization();
 
             yield return new WaitUntil(IsGameInitAnimPlayend);
 

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Ballance2.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ballance2.Managers.CoreBridge
+namespace Ballance2.CoreBridge
 {
     /// <summary>
     /// 全局操作
@@ -54,7 +55,7 @@ namespace Ballance2.Managers.CoreBridge
         public GameActionCallResult(bool success, object[] returnParams)
         {
             Success = success;
-            ReturnParams = returnParams;
+            ReturnParams = LuaUtils.LuaTableArrayToObjectArray(returnParams);
         }
 
         /// <summary>
@@ -92,6 +93,9 @@ namespace Ballance2.Managers.CoreBridge
         /// 加载关卡
         /// </summary>
         public const string ACTION_LOAD_LEVEL = "core.load_level";
-        
+        /// <summary>
+        /// 卸载关卡
+        /// </summary>
+        public const string ACTION_UNLOAD_LEVEL = "core.unload_level";
     }
 }

@@ -7,6 +7,8 @@ namespace Ballance2.Utils
     {
         public static object[] LuaTableArrayToObjectArray(object[] param)
         {
+            if (param == null)
+                return null;
             if (param.Length == 1 && param[0] is LuaTable)
             {
                 LuaTable arr = param[0] as LuaTable;
@@ -15,7 +17,8 @@ namespace Ballance2.Utils
                     arrFixed[i] = arr[i + 1];
                 return arrFixed;
             }
-            else return param;
+            else
+                return param;
         }
         public static string BooleanToString(bool param)
         {

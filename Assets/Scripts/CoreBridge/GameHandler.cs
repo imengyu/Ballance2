@@ -1,6 +1,6 @@
 ﻿using SLua;
 
-namespace Ballance2.Managers.CoreBridge
+namespace Ballance2.CoreBridge
 {
     [CustomLuaClass]
     /// <summary>

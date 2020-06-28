@@ -83,7 +83,7 @@ public class Lua_Ballance2_Managers_DebugManager : LuaObject {
 			Ballance2.Managers.DebugManager self=(Ballance2.Managers.DebugManager)checkSelf(l);
 			System.String a1;
 			checkType(l,2,out a1);
-			Ballance2.Managers.CoreBridge.GameHandler a2;
+			Ballance2.CoreBridge.GameHandler a2;
 			checkType(l,3,out a2);
 			self.AddCustomDebugToolItem(a1,a2);
 			pushValue(l,true);

@@ -16,7 +16,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameLuaObjectHost : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameLuaObjectHost self=(Ballance2.Managers.CoreBridge.GameLuaObjectHost)checkSelf(l);
+			Ballance2.CoreBridge.GameLuaObjectHost self=(Ballance2.CoreBridge.GameLuaObjectHost)checkSelf(l);
 			var ret=self.GetLuaClass();
 			pushValue(l,true);
 			pushValue(l,ret);
@@ -48,7 +48,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameLuaObjectHost : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameLuaObjectHost self=(Ballance2.Managers.CoreBridge.GameLuaObjectHost)checkSelf(l);
+			Ballance2.CoreBridge.GameLuaObjectHost self=(Ballance2.CoreBridge.GameLuaObjectHost)checkSelf(l);
 			System.String a1;
 			checkType(l,2,out a1);
 			var ret=self.GetLuaFun(a1);
@@ -84,7 +84,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameLuaObjectHost : LuaObject {
 			#endif
 			int argc = LuaDLL.lua_gettop(l);
 			if(argc==2){
-				Ballance2.Managers.CoreBridge.GameLuaObjectHost self=(Ballance2.Managers.CoreBridge.GameLuaObjectHost)checkSelf(l);
+				Ballance2.CoreBridge.GameLuaObjectHost self=(Ballance2.CoreBridge.GameLuaObjectHost)checkSelf(l);
 				System.String a1;
 				checkType(l,2,out a1);
 				self.CallLuaFun(a1);
@@ -92,7 +92,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameLuaObjectHost : LuaObject {
 				return 1;
 			}
 			else if(argc==3){
-				Ballance2.Managers.CoreBridge.GameLuaObjectHost self=(Ballance2.Managers.CoreBridge.GameLuaObjectHost)checkSelf(l);
+				Ballance2.CoreBridge.GameLuaObjectHost self=(Ballance2.CoreBridge.GameLuaObjectHost)checkSelf(l);
 				System.String a1;
 				checkType(l,2,out a1);
 				System.Object[] a2;
@@ -132,7 +132,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameLuaObjectHost : LuaObject {
 			#endif
 			#endif
 			pushValue(l,true);
-			pushValue(l,Ballance2.Managers.CoreBridge.GameLuaObjectHost.TAG);
+			pushValue(l,Ballance2.CoreBridge.GameLuaObjectHost.TAG);
 			return 2;
 		}
 		catch(Exception e) {
@@ -161,7 +161,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameLuaObjectHost : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameLuaObjectHost self=(Ballance2.Managers.CoreBridge.GameLuaObjectHost)checkSelf(l);
+			Ballance2.CoreBridge.GameLuaObjectHost self=(Ballance2.CoreBridge.GameLuaObjectHost)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.LuaClassName);
 			return 2;
@@ -192,7 +192,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameLuaObjectHost : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameLuaObjectHost self=(Ballance2.Managers.CoreBridge.GameLuaObjectHost)checkSelf(l);
+			Ballance2.CoreBridge.GameLuaObjectHost self=(Ballance2.CoreBridge.GameLuaObjectHost)checkSelf(l);
 			System.String v;
 			checkType(l,2,out v);
 			self.LuaClassName=v;
@@ -225,7 +225,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameLuaObjectHost : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameLuaObjectHost self=(Ballance2.Managers.CoreBridge.GameLuaObjectHost)checkSelf(l);
+			Ballance2.CoreBridge.GameLuaObjectHost self=(Ballance2.CoreBridge.GameLuaObjectHost)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.Name);
 			return 2;
@@ -256,7 +256,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameLuaObjectHost : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameLuaObjectHost self=(Ballance2.Managers.CoreBridge.GameLuaObjectHost)checkSelf(l);
+			Ballance2.CoreBridge.GameLuaObjectHost self=(Ballance2.CoreBridge.GameLuaObjectHost)checkSelf(l);
 			System.String v;
 			checkType(l,2,out v);
 			self.Name=v;
@@ -289,7 +289,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameLuaObjectHost : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameLuaObjectHost self=(Ballance2.Managers.CoreBridge.GameLuaObjectHost)checkSelf(l);
+			Ballance2.CoreBridge.GameLuaObjectHost self=(Ballance2.CoreBridge.GameLuaObjectHost)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.LuaState);
 			return 2;
@@ -320,7 +320,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameLuaObjectHost : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameLuaObjectHost self=(Ballance2.Managers.CoreBridge.GameLuaObjectHost)checkSelf(l);
+			Ballance2.CoreBridge.GameLuaObjectHost self=(Ballance2.CoreBridge.GameLuaObjectHost)checkSelf(l);
 			SLua.LuaState v;
 			checkType(l,2,out v);
 			self.LuaState=v;
@@ -353,7 +353,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameLuaObjectHost : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameLuaObjectHost self=(Ballance2.Managers.CoreBridge.GameLuaObjectHost)checkSelf(l);
+			Ballance2.CoreBridge.GameLuaObjectHost self=(Ballance2.CoreBridge.GameLuaObjectHost)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.GameMod);
 			return 2;
@@ -384,8 +384,8 @@ public class Lua_Ballance2_Managers_CoreBridge_GameLuaObjectHost : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameLuaObjectHost self=(Ballance2.Managers.CoreBridge.GameLuaObjectHost)checkSelf(l);
-			Ballance2.Managers.ModBase.GameMod v;
+			Ballance2.CoreBridge.GameLuaObjectHost self=(Ballance2.CoreBridge.GameLuaObjectHost)checkSelf(l);
+			Ballance2.ModBase.GameMod v;
 			checkType(l,2,out v);
 			self.GameMod=v;
 			pushValue(l,true);
@@ -417,7 +417,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameLuaObjectHost : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameLuaObjectHost self=(Ballance2.Managers.CoreBridge.GameLuaObjectHost)checkSelf(l);
+			Ballance2.CoreBridge.GameLuaObjectHost self=(Ballance2.CoreBridge.GameLuaObjectHost)checkSelf(l);
 			pushValue(l,true);
 			pushValue(l,self.LuaSelf);
 			return 2;
@@ -437,7 +437,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameLuaObjectHost : LuaObject {
 	}
 	[UnityEngine.Scripting.Preserve]
 	static public void reg(IntPtr l) {
-		getTypeTable(l,"Ballance2.Managers.CoreBridge.GameLuaObjectHost");
+		getTypeTable(l,"Ballance2.CoreBridge.GameLuaObjectHost");
 		addMember(l,GetLuaClass);
 		addMember(l,GetLuaFun);
 		addMember(l,CallLuaFun);
@@ -447,6 +447,6 @@ public class Lua_Ballance2_Managers_CoreBridge_GameLuaObjectHost : LuaObject {
 		addMember(l,"LuaState",get_LuaState,set_LuaState,true);
 		addMember(l,"GameMod",get_GameMod,set_GameMod,true);
 		addMember(l,"LuaSelf",get_LuaSelf,null,true);
-		createTypeMetatable(l,null, typeof(Ballance2.Managers.CoreBridge.GameLuaObjectHost),typeof(UnityEngine.MonoBehaviour));
+		createTypeMetatable(l,null, typeof(Ballance2.CoreBridge.GameLuaObjectHost),typeof(UnityEngine.MonoBehaviour));
 	}
 }

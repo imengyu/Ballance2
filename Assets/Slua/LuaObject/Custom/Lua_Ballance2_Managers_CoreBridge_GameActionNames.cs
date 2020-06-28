@@ -17,7 +17,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameActionNames : LuaObject {
 			#endif
 			#endif
 			pushValue(l,true);
-			pushValue(l,Ballance2.Managers.CoreBridge.GameActionNames.ACTION_QUIT);
+			pushValue(l,Ballance2.CoreBridge.GameActionNames.ACTION_QUIT);
 			return 2;
 		}
 		catch(Exception e) {
@@ -47,7 +47,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameActionNames : LuaObject {
 			#endif
 			#endif
 			pushValue(l,true);
-			pushValue(l,Ballance2.Managers.CoreBridge.GameActionNames.ACTION_SHOW_SETTINGS);
+			pushValue(l,Ballance2.CoreBridge.GameActionNames.ACTION_SHOW_SETTINGS);
 			return 2;
 		}
 		catch(Exception e) {
@@ -77,7 +77,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameActionNames : LuaObject {
 			#endif
 			#endif
 			pushValue(l,true);
-			pushValue(l,Ballance2.Managers.CoreBridge.GameActionNames.ACTION_LOAD_LEVEL);
+			pushValue(l,Ballance2.CoreBridge.GameActionNames.ACTION_LOAD_LEVEL);
 			return 2;
 		}
 		catch(Exception e) {
@@ -95,10 +95,10 @@ public class Lua_Ballance2_Managers_CoreBridge_GameActionNames : LuaObject {
 	}
 	[UnityEngine.Scripting.Preserve]
 	static public void reg(IntPtr l) {
-		getTypeTable(l,"Ballance2.Managers.CoreBridge.GameActionNames");
+		getTypeTable(l,"Ballance2.CoreBridge.GameActionNames");
 		addMember(l,"ACTION_QUIT",get_ACTION_QUIT,null,false);
 		addMember(l,"ACTION_SHOW_SETTINGS",get_ACTION_SHOW_SETTINGS,null,false);
 		addMember(l,"ACTION_LOAD_LEVEL",get_ACTION_LOAD_LEVEL,null,false);
-		createTypeMetatable(l,null, typeof(Ballance2.Managers.CoreBridge.GameActionNames));
+		createTypeMetatable(l,null, typeof(Ballance2.CoreBridge.GameActionNames));
 	}
 }

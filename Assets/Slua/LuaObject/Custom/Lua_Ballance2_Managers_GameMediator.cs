@@ -192,7 +192,7 @@ public class Lua_Ballance2_Managers_GameMediator : LuaObject {
 				Ballance2.Managers.GameMediator self=(Ballance2.Managers.GameMediator)checkSelf(l);
 				System.String a1;
 				checkType(l,2,out a1);
-				Ballance2.Managers.CoreBridge.GameEvent a2;
+				Ballance2.CoreBridge.GameEvent a2;
 				var ret=self.IsGlobalEventRegistered(a1,out a2);
 				pushValue(l,true);
 				pushValue(l,ret);
@@ -264,9 +264,9 @@ public class Lua_Ballance2_Managers_GameMediator : LuaObject {
 			#endif
 			#endif
 			int argc = LuaDLL.lua_gettop(l);
-			if(matchType(l,argc,2,typeof(Ballance2.Managers.CoreBridge.GameEvent),typeof(string),typeof(object[]))){
+			if(matchType(l,argc,2,typeof(Ballance2.CoreBridge.GameEvent),typeof(string),typeof(object[]))){
 				Ballance2.Managers.GameMediator self=(Ballance2.Managers.GameMediator)checkSelf(l);
-				Ballance2.Managers.CoreBridge.GameEvent a1;
+				Ballance2.CoreBridge.GameEvent a1;
 				checkType(l,2,out a1);
 				System.String a2;
 				checkType(l,3,out a2);
@@ -334,13 +334,13 @@ public class Lua_Ballance2_Managers_GameMediator : LuaObject {
 				pushValue(l,ret);
 				return 2;
 			}
-			else if(matchType(l,argc,2,typeof(string),typeof(string),typeof(Ballance2.Managers.CoreBridge.GameEventHandlerDelegate))){
+			else if(matchType(l,argc,2,typeof(string),typeof(string),typeof(Ballance2.CoreBridge.GameEventHandlerDelegate))){
 				Ballance2.Managers.GameMediator self=(Ballance2.Managers.GameMediator)checkSelf(l);
 				System.String a1;
 				checkType(l,2,out a1);
 				System.String a2;
 				checkType(l,3,out a2);
-				Ballance2.Managers.CoreBridge.GameEventHandlerDelegate a3;
+				Ballance2.CoreBridge.GameEventHandlerDelegate a3;
 				checkDelegate(l,4,out a3);
 				var ret=self.RegisterEventHandler(a1,a2,a3);
 				pushValue(l,true);
@@ -393,7 +393,7 @@ public class Lua_Ballance2_Managers_GameMediator : LuaObject {
 			Ballance2.Managers.GameMediator self=(Ballance2.Managers.GameMediator)checkSelf(l);
 			System.String a1;
 			checkType(l,2,out a1);
-			Ballance2.Managers.CoreBridge.GameHandler a2;
+			Ballance2.CoreBridge.GameHandler a2;
 			checkType(l,3,out a2);
 			self.UnRegisterEventHandler(a1,a2);
 			pushValue(l,true);
@@ -430,7 +430,7 @@ public class Lua_Ballance2_Managers_GameMediator : LuaObject {
 				Ballance2.Managers.GameMediator self=(Ballance2.Managers.GameMediator)checkSelf(l);
 				System.String a1;
 				checkType(l,2,out a1);
-				Ballance2.Managers.CoreBridge.GameHandler a2;
+				Ballance2.CoreBridge.GameHandler a2;
 				checkType(l,3,out a2);
 				var ret=self.RegisterAction(a1,a2);
 				pushValue(l,true);
@@ -443,7 +443,7 @@ public class Lua_Ballance2_Managers_GameMediator : LuaObject {
 				checkType(l,2,out a1);
 				System.String a2;
 				checkType(l,3,out a2);
-				Ballance2.Managers.CoreBridge.GameActionHandlerDelegate a3;
+				Ballance2.CoreBridge.GameActionHandlerDelegate a3;
 				checkDelegate(l,4,out a3);
 				var ret=self.RegisterAction(a1,a2,a3);
 				pushValue(l,true);
@@ -542,7 +542,7 @@ public class Lua_Ballance2_Managers_GameMediator : LuaObject {
 				Ballance2.Managers.GameMediator self=(Ballance2.Managers.GameMediator)checkSelf(l);
 				System.String a1;
 				checkType(l,2,out a1);
-				Ballance2.Managers.CoreBridge.GameAction a2;
+				Ballance2.CoreBridge.GameAction a2;
 				var ret=self.IsActionRegistered(a1,out a2);
 				pushValue(l,true);
 				pushValue(l,ret);
@@ -625,9 +625,9 @@ public class Lua_Ballance2_Managers_GameMediator : LuaObject {
 				pushValue(l,ret);
 				return 2;
 			}
-			else if(matchType(l,argc,2,typeof(Ballance2.Managers.CoreBridge.GameAction),typeof(object[]))){
+			else if(matchType(l,argc,2,typeof(Ballance2.CoreBridge.GameAction),typeof(object[]))){
 				Ballance2.Managers.GameMediator self=(Ballance2.Managers.GameMediator)checkSelf(l);
-				Ballance2.Managers.CoreBridge.GameAction a1;
+				Ballance2.CoreBridge.GameAction a1;
 				checkType(l,2,out a1);
 				System.Object[] a2;
 				checkParams(l,3,out a2);

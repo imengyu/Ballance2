@@ -38,14 +38,22 @@ namespace Ballance2.Utils
             stringBuilder.Append("\n");
 
             //打印堆栈
-            var stacktrace = new StackTrace();
+            var stacktrace = new StackTrace(1);
             for (var i = 0; i < stacktrace.FrameCount; i++)
             {
+                var frame = stacktrace.GetFrame(i);
                 var method = stacktrace.GetFrame(i).GetMethod();
                 stringBuilder.Append("\n[");
                 stringBuilder.Append(i);
                 stringBuilder.Append("] ");
                 stringBuilder.Append(method.Name);
+                stringBuilder.Append("\n");
+                stringBuilder.Append(frame.GetFileName());
+                stringBuilder.Append(" (");
+                stringBuilder.Append(frame.GetFileLineNumber());
+                stringBuilder.Append(":");
+                stringBuilder.Append(frame.GetFileColumnNumber());
+                stringBuilder.Append(")");
             }
 
             GameManager.ForceInterruptGame();
@@ -147,6 +155,18 @@ namespace Ballance2.Utils
         /// 未初始化
         /// </summary>
         NotInitialize,
+        /// <summary>
+        /// 未加载
+        /// </summary>
+        NotLoad,
+        /// <summary>
+        /// 加载或卸载序列正在进行，请稍后操作
+        /// </summary>
+        InProgress,
+        /// <summary>
+        /// 已经加载
+        /// </summary>
+        AlredayLoaded,
         /// <summary>
         /// 实例化根必须是容器
         /// </summary>

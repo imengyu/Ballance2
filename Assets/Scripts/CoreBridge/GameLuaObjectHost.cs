@@ -1,8 +1,8 @@
-﻿using Ballance2.Managers.ModBase;
+﻿using Ballance2.ModBase;
 using SLua;
 using UnityEngine;
 
-namespace Ballance2.Managers.CoreBridge
+namespace Ballance2.CoreBridge
 {
     /// <summary>
     /// 简易 Lua 脚本承载组件

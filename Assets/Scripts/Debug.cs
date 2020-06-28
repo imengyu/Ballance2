@@ -1,5 +1,5 @@
 ﻿using Ballance2.Managers;
-using Ballance2.Managers.CoreBridge;
+using Ballance2.CoreBridge;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

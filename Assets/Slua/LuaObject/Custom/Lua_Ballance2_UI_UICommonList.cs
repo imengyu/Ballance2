@@ -354,7 +354,7 @@ public class Lua_Ballance2_UI_UICommonList : LuaObject {
 			#endif
 			#endif
 			Ballance2.UI.UICommonList self=(Ballance2.UI.UICommonList)checkSelf(l);
-			Ballance2.Managers.CoreBridge.GameHandler v;
+			Ballance2.CoreBridge.GameHandler v;
 			checkType(l,2,out v);
 			self.ItemUpdateHandler=v;
 			pushValue(l,true);

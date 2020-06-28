@@ -1,6 +1,6 @@
 ﻿using Ballance2.Config;
 using Ballance2.Managers;
-using Ballance2.Managers.CoreBridge;
+using Ballance2.CoreBridge;
 using Ballance2.Utils;
 using SLua;
 using System;
@@ -47,48 +47,83 @@ namespace Ballance2
             return GetManager(name, "Singleton");
         }
         /// <summary>
-        /// 注册自定义管理器
+        /// 注册自定义管理器（创建新实例并注册）
         /// </summary>
         /// <param name="classInstance">实例</param>
+        /// <param name="initializeNow">是否立即初始化</param>
         /// <returns></returns>
-        public static BaseManager RegisterManager(Type classType)
+        public static BaseManager RegisterManager(Type classType, bool initializeNow = true)
         {
            BaseManager classInstance = (BaseManager)GameCloneUtils.CreateEmptyObjectWithParent(
                GameRoot.transform, classType.Name).AddComponent(classType);
-
-            string name = classInstance.GetName();
+            classInstance.name = classInstance.GetName();
+            return RegisterManager(classInstance, initializeNow);
+        }
+        /// <summary>
+        /// 注册管理器（已创建实例注册）
+        /// </summary>
+        /// <param name="baseManager">管理器类</param>
+        /// <param name="initializeNow">是否立即初始化</param>
+        /// <returns></returns>
+        public static BaseManager RegisterManager(BaseManager baseManager, bool initializeNow)
+        {
+            string name = baseManager.GetName();
             if (GetManager(name) != null)
             {
-                if (classInstance.GetIsSingleton())
+                if (baseManager.GetIsSingleton())
                 {
                     GameLogger.Warning(TAG, "RegisterManager 失败，管理器 {0} 已注册", name);
                     GameErrorManager.LastError = GameError.AlredayRegistered;
                     return null;
                 }
-                else if(GetManager(name, classInstance.GetSubName()) != null)
+                else if (GetManager(name, baseManager.GetSubName()) != null)
                 {
-                    GameLogger.Warning(TAG, "RegisterManager 失败，管理器 {0}:{1} 已注册", name, classInstance.GetSubName());
+                    GameLogger.Warning(TAG, "RegisterManager 失败，管理器 {0}:{1} 已注册", name, baseManager.GetSubName());
                     GameErrorManager.LastError = GameError.AlredayRegistered;
                     return null;
                 }
             }
-            managers.Add(classInstance);
-            GameLogger.Log(TAG, "Manager registered : {0}:{1}", classInstance.GetName(), classInstance.GetSubName());
-
-            if (!classInstance.InitManager())
+            if (baseManager.gameObject.name != baseManager.GetName())
             {
-                GameLogger.Warning(TAG, "RegisterManager 失败，管理器 {0} 初始化失败", name);
+                baseManager.gameObject.name = baseManager.GetName();
+                baseManager.transform.SetParent(GameRoot.transform);
+            }
+
+            managers.Add(baseManager);
+            GameLogger.Log(TAG, "Manager registered : {0}:{1}", baseManager.GetName(), baseManager.GetSubName());
+
+            if (initializeNow)
+                RequestManagerInitialization(baseManager);
+
+            return baseManager;
+        }
+        /// <summary>
+        /// 请求所有管理器初始化
+        /// </summary>
+        public static void RequestAllManagerInitialization()
+        {
+            foreach (BaseManager m in managers)
+                if (m.initialized == false)
+                    RequestManagerInitialization(m);
+        }
+        /// <summary>
+        /// 请求管理器初始化
+        /// </summary>
+        /// <param name="manager">目标管理器</param>
+        public static void RequestManagerInitialization(BaseManager manager)
+        {
+            if (!manager.InitManager())
+            {
+                GameLogger.Warning(TAG, "RegisterManager 失败，管理器 {0}:{1} 初始化失败", manager.GetName(), manager.GetSubName());
                 GameErrorManager.LastError = GameError.InitializationFailed;
-                return null;
             }
             else
             {
+                manager.initialized = true;
                 if (GameMediator != null)
-                    GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_BASE_MANAGER_INIT_FINISHED, "*", classInstance.GetName(), classInstance.GetSubName());
+                    GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_BASE_MANAGER_INIT_FINISHED, "*", manager.GetName(), manager.GetSubName());
             }
-            return classInstance;
         }
-        
         /// <summary>
         /// 手动释放管理器
         /// </summary>
@@ -130,7 +165,15 @@ namespace Ballance2
             /// <summary>
             /// 调试时使用的最小化加载模式
             /// </summary>
-            MinimumLoad,
+            MinimumDebug,
+            /// <summary>
+            /// 加载器调试
+            /// </summary>
+            LoaderDebug,
+            /// <summary>
+            /// 内核调试
+            /// </summary>
+            CoreDebug,
             /// <summary>
             /// 关卡模式
             /// </summary>
@@ -250,7 +293,7 @@ namespace Ballance2
                     RegisterManager(typeof(ModManager));
                     RegisterManager(typeof(SoundManager));
                     
-                    if (Mode != GameMode.MinimumLoad)
+                    if (Mode != GameMode.MinimumDebug)
                     {
                         //游戏加载器
                         RegisterManager(typeof(GameInit));
@@ -263,7 +306,7 @@ namespace Ballance2
                     GameLogger.Log(TAG, "All manager initialization complete");
                     GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_BASE_INIT_FINISHED, "*", null);
 
-                    if (Mode == GameMode.MinimumLoad)
+                    if (Mode == GameMode.MinimumDebug)
                     {
                         GameLogger.Log(TAG, "MinimumLoad Break");
                         gameManagerAlertDialogId = UIManager.GlobalAlertWindow("MinimumLoad<br/>当前是最小加载模式。", "提示", "关闭");

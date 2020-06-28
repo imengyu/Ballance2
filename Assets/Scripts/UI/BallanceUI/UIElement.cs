@@ -1,4 +1,4 @@
-﻿using Ballance2.Managers.CoreBridge;
+﻿using Ballance2.CoreBridge;
 using Ballance2.UI.Utils;
 using System.Collections.Generic;
 using System.Xml;

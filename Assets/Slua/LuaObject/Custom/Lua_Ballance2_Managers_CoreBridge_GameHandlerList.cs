@@ -16,8 +16,8 @@ public class Lua_Ballance2_Managers_CoreBridge_GameHandlerList : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameHandlerList o;
-			o=new Ballance2.Managers.CoreBridge.GameHandlerList();
+			Ballance2.CoreBridge.GameHandlerList o;
+			o=new Ballance2.CoreBridge.GameHandlerList();
 			pushValue(l,true);
 			pushValue(l,o);
 			return 2;
@@ -48,7 +48,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameHandlerList : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameHandlerList self=(Ballance2.Managers.CoreBridge.GameHandlerList)checkSelf(l);
+			Ballance2.CoreBridge.GameHandlerList self=(Ballance2.CoreBridge.GameHandlerList)checkSelf(l);
 			System.String a1;
 			checkType(l,2,out a1);
 			System.Object[] a2;
@@ -83,7 +83,7 @@ public class Lua_Ballance2_Managers_CoreBridge_GameHandlerList : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.CoreBridge.GameHandlerList self=(Ballance2.Managers.CoreBridge.GameHandlerList)checkSelf(l);
+			Ballance2.CoreBridge.GameHandlerList self=(Ballance2.CoreBridge.GameHandlerList)checkSelf(l);
 			self.Dispose();
 			pushValue(l,true);
 			return 1;
@@ -103,9 +103,9 @@ public class Lua_Ballance2_Managers_CoreBridge_GameHandlerList : LuaObject {
 	}
 	[UnityEngine.Scripting.Preserve]
 	static public void reg(IntPtr l) {
-		getTypeTable(l,"Ballance2.Managers.CoreBridge.GameHandlerList");
+		getTypeTable(l,"Ballance2.CoreBridge.GameHandlerList");
 		addMember(l,CallEventHandler);
 		addMember(l,Dispose);
-		createTypeMetatable(l,constructor, typeof(Ballance2.Managers.CoreBridge.GameHandlerList),typeof(System.Collections.Generic.List<Ballance2.Managers.CoreBridge.GameHandler>));
+		createTypeMetatable(l,constructor, typeof(Ballance2.CoreBridge.GameHandlerList),typeof(System.Collections.Generic.List<Ballance2.CoreBridge.GameHandler>));
 	}
 }

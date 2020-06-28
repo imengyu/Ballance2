@@ -16,12 +16,12 @@ public class Lua_Ballance2_Managers_ModBase_GameDependencyInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameDependencyInfo o;
+			Ballance2.ModBase.GameDependencyInfo o;
 			System.String a1;
 			checkType(l,2,out a1);
 			System.String a2;
 			checkType(l,3,out a2);
-			o=new Ballance2.Managers.ModBase.GameDependencyInfo(a1,a2);
+			o=new Ballance2.ModBase.GameDependencyInfo(a1,a2);
 			pushValue(l,true);
 			pushValue(l,o);
 			return 2;
@@ -52,7 +52,7 @@ public class Lua_Ballance2_Managers_ModBase_GameDependencyInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameDependencyInfo self;
+			Ballance2.ModBase.GameDependencyInfo self;
 			checkValueType(l,1,out self);
 			pushValue(l,true);
 			pushValue(l,self.PackageName);
@@ -84,7 +84,7 @@ public class Lua_Ballance2_Managers_ModBase_GameDependencyInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameDependencyInfo self;
+			Ballance2.ModBase.GameDependencyInfo self;
 			checkValueType(l,1,out self);
 			System.String v;
 			checkType(l,2,out v);
@@ -119,7 +119,7 @@ public class Lua_Ballance2_Managers_ModBase_GameDependencyInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameDependencyInfo self;
+			Ballance2.ModBase.GameDependencyInfo self;
 			checkValueType(l,1,out self);
 			pushValue(l,true);
 			pushValue(l,self.MinVersion);
@@ -151,7 +151,7 @@ public class Lua_Ballance2_Managers_ModBase_GameDependencyInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameDependencyInfo self;
+			Ballance2.ModBase.GameDependencyInfo self;
 			checkValueType(l,1,out self);
 			System.String v;
 			checkType(l,2,out v);
@@ -186,7 +186,7 @@ public class Lua_Ballance2_Managers_ModBase_GameDependencyInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameDependencyInfo self;
+			Ballance2.ModBase.GameDependencyInfo self;
 			checkValueType(l,1,out self);
 			pushValue(l,true);
 			pushValue(l,self.Loaded);
@@ -218,7 +218,7 @@ public class Lua_Ballance2_Managers_ModBase_GameDependencyInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameDependencyInfo self;
+			Ballance2.ModBase.GameDependencyInfo self;
 			checkValueType(l,1,out self);
 			System.Boolean v;
 			checkType(l,2,out v);
@@ -253,7 +253,7 @@ public class Lua_Ballance2_Managers_ModBase_GameDependencyInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameDependencyInfo self;
+			Ballance2.ModBase.GameDependencyInfo self;
 			checkValueType(l,1,out self);
 			pushValue(l,true);
 			pushValue(l,self.MustLoad);
@@ -285,7 +285,7 @@ public class Lua_Ballance2_Managers_ModBase_GameDependencyInfo : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.ModBase.GameDependencyInfo self;
+			Ballance2.ModBase.GameDependencyInfo self;
 			checkValueType(l,1,out self);
 			System.Boolean v;
 			checkType(l,2,out v);
@@ -309,11 +309,11 @@ public class Lua_Ballance2_Managers_ModBase_GameDependencyInfo : LuaObject {
 	}
 	[UnityEngine.Scripting.Preserve]
 	static public void reg(IntPtr l) {
-		getTypeTable(l,"Ballance2.Managers.ModBase.GameDependencyInfo");
+		getTypeTable(l,"Ballance2.ModBase.GameDependencyInfo");
 		addMember(l,"PackageName",get_PackageName,set_PackageName,true);
 		addMember(l,"MinVersion",get_MinVersion,set_MinVersion,true);
 		addMember(l,"Loaded",get_Loaded,set_Loaded,true);
 		addMember(l,"MustLoad",get_MustLoad,set_MustLoad,true);
-		createTypeMetatable(l,constructor, typeof(Ballance2.Managers.ModBase.GameDependencyInfo),typeof(System.ValueType));
+		createTypeMetatable(l,constructor, typeof(Ballance2.ModBase.GameDependencyInfo),typeof(System.ValueType));
 	}
 }
