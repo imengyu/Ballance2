@@ -9,6 +9,9 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Ballance2.Managers
 {
@@ -119,8 +122,18 @@ namespace Ballance2.Managers
 
             string pathInMods = GamePathManager.GetResRealPath("mod", packageName + ".ballance");
             string pathInCore = GamePathManager.GetResRealPath("core", packageName + ".ballance");
-            if (File.Exists(pathInMods)) mod = new GameMod(pathInMods, this, packageName);
-            else if(File.Exists(pathInCore)) mod = new GameMod(pathInCore, this, packageName);
+
+            string pathInEditorMods = GamePathManager.DEBUG_MOD_FOLDER + "/" + packageName;
+            if (false) { }
+#if UNITY_EDITOR
+            //编辑器直接加载模组
+            else if (GameManager.AssetsPreferEditor && AssetDatabase.IsValidFolder(pathInEditorMods))
+                mod = LoadModInEditor(pathInEditorMods, packageName);
+#endif
+            else if (File.Exists(pathInMods)) mod = new GameMod(pathInMods, this, packageName);
+            else if (File.Exists(pathInCore)) mod = new GameMod(pathInCore, this, packageName);
+            else if (GameManager.AssetsPreferEditor == false && AssetDatabase.IsValidFolder(pathInEditorMods))
+                mod = LoadModInEditor(pathInEditorMods, packageName);
             else
             {
                 GameLogger.Warning(TAG, "无法通过包名加载模组包 {0} ，未找到文件", packageName);
@@ -217,7 +230,7 @@ namespace Ballance2.Managers
             if (mod == null)
             {
                 GameLogger.Warning(TAG, "无法卸载模组 (UID: {0}) ，因为没有加载", modUid);
-                GameErrorManager.LastError = GameError.Unregistered;
+                GameErrorManager.LastError = GameError.NotRegistered;
                 return false;
             }
 
@@ -238,7 +251,7 @@ namespace Ballance2.Managers
             if (mod == null)
             {
                 GameLogger.Warning(TAG, "无法卸载模组 (UID: {0}) ，因为没有加载", packageName);
-                GameErrorManager.LastError = GameError.Unregistered;
+                GameErrorManager.LastError = GameError.NotRegistered;
                 return false;
             }
             return mod.LoadStatus == GameModStatus.Loading;
@@ -266,7 +279,7 @@ namespace Ballance2.Managers
             if (m == null)
             {
                 GameLogger.Warning(TAG, "无法初始化模组包 (UID: {0}) ，因为没有加载", modUid);
-                GameErrorManager.LastError = GameError.Unregistered;
+                GameErrorManager.LastError = GameError.NotRegistered;
                 return false;
             }
 
@@ -285,7 +298,7 @@ namespace Ballance2.Managers
             if (m == null)
             {
                 GameLogger.Warning(TAG, "无法执行化模组包 (UID: {0}) ，因为没有加载", modUid);
-                GameErrorManager.LastError = GameError.Unregistered;
+                GameErrorManager.LastError = GameError.NotRegistered;
                 return false;
             }
 
@@ -297,6 +310,23 @@ namespace Ballance2.Managers
             return false;
         }
 
+        private GameMod LoadModInEditor(string pathInEditorMods, string packageName)
+        {
+            GameMod mod = null;
+            TextAsset modDef = AssetDatabase.LoadAssetAtPath<TextAsset>(pathInEditorMods + "/ModDef.xml");
+            if (modDef == null)
+            {
+                GameLogger.Warning(TAG, "模组无效 {0} ，未找到 ModDef.xml ", pathInEditorMods);
+                GameErrorManager.LastError = GameError.FileNotFound;
+                return null;
+            }
+
+            mod = new GameMod(pathInEditorMods, this, packageName);
+            mod.IsEditorPack = true;
+            mod.ForceLoadEditorPack(modDef);
+
+            return mod;
+        }
         internal void OnModLoadFinished(GameMod m)
         {
             if (m.LoadStatus == GameModStatus.InitializeSuccess)
@@ -310,7 +340,9 @@ namespace Ballance2.Managers
             if (onUpdateCurrentLoadingModCallback != null)
                 onUpdateCurrentLoadingModCallback.Invoke(m);
         }
+
         private System.Action<GameMod> onUpdateCurrentLoadingModCallback = null;
+
         internal void RegisterOnUpdateCurrentLoadingModCallback(System.Action<GameMod> callback)
         {
             onUpdateCurrentLoadingModCallback = callback;

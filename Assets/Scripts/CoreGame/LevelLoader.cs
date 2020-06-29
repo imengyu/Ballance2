@@ -85,6 +85,10 @@ namespace Ballance2.GameCore
             return false;
         }
 
+        internal void StartDebugLevelLoader(string levelFile)
+        {
+
+        }
     }
 
     [SLua.CustomLuaClass]

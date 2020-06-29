@@ -12,6 +12,10 @@ namespace Ballance2.Utils
     public static class GamePathManager
     {
         /// <summary>
+        /// 调试模组包存放路径
+        /// </summary>
+        public const string DEBUG_MOD_FOLDER = "Assets/Mods";
+        /// <summary>
         /// 调试路径（当前目录）<c>（您在调试时请将其更改为自己项目存放目录）</c>
         /// </summary>
         public const string DEBUG_PATH = "E:/Programming/GameProject/Ballance2/Debug/";
@@ -39,12 +43,12 @@ namespace Ballance2.Utils
         /// <param name="path">路径</param>
         public static bool IsAbsolutePath(string path)
         {
-#if UNITY_EDITOR || UNITY_STANDALONE
+#if (UNITY_EDITOR && UNITY_EDITOR_WIN) || UNITY_STANDALONE_WIN
             if (path.Length > 2)
                 return path[1] == ':' && ((path.Length > 3 && path[2] == '\\' && path[3] == '\\') || path[2] == '/');
-#elif UNITY_ANDROID || UNITY_LINUX
+#elif (UNITY_EDITOR && UNITY_EDITOR_OSX) || UNITY_ANDROID || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX
             return path.StartsWith("/");
-#elif UNITY_IOS || UNITY_OSX
+#elif UNITY_IOS
             return path.StartsWith("/");
 #endif
             return false;
@@ -69,8 +73,17 @@ namespace Ballance2.Utils
             if (type == "" && pathorname.Contains(":"))
                 type = spbuf[0].ToLower();
 
-            if (type == "level")
-                return GetLevelRealPath(pathbuf);
+            if (type == "gameinit")
+            {
+#if UNITY_EDITOR
+                return DEBUG_PATH + "core/core.gameinit.txt";
+#elif UNITY_STANDALONE || UNITY_ANDROID
+                    return Application.dataPath + "/core/GameInit.txt";
+#elif UNITY_IOS
+                    return Application.streamingAssetsPath + "/core/GameInit.txt";
+#endif
+            }
+            else if (type == "level") return GetLevelRealPath(pathbuf);
             else if (type == "mod")
             {
                 if (pathbuf.Contains(":"))

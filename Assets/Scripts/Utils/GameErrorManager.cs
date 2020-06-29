@@ -98,7 +98,7 @@ namespace Ballance2.Utils
         /// <summary>
         /// 部件、模组、模块未注册
         /// </summary>
-        Unregistered,
+        NotRegistered,
         /// <summary>
         /// 参数未提供
         /// </summary>

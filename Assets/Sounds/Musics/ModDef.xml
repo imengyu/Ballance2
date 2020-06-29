@@ -4,7 +4,7 @@
     <Name>Ballance Music Pack</Name>
     <Author>mengyu</Author>
     <Introduction>基础背景音乐资源包</Introduction>
-    <Logo>Assets/Sounds/Musics/ModLogo.jpg</Logo>
+    <Logo>ModLogo.jpg</Logo>
     <Version>1.0</Version>
   </BaseInfo>
   <ModType>AssetPack</ModType>

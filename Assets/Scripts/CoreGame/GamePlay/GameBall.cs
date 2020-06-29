@@ -1,9 +1,5 @@
 ﻿using Ballance2.Config;
 using Ballance2.CoreGame.Managers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace Ballance2.CoreGame.GamePlay
@@ -54,7 +50,11 @@ namespace Ballance2.CoreGame.GamePlay
         /// <summary>
         /// 球管理器
         /// </summary>
-        public BallManager BallManager { get; private set; }
+        public BallManager BallManager { get; internal set; }
+        /// <summary>
+        /// 摄像机管理器
+        /// </summary>
+        public CamManager CamManager { get; internal set; }
 
         public GameObject Pieces;
         public string TypeName;
@@ -75,17 +75,7 @@ namespace Ballance2.CoreGame.GamePlay
         public ForceMode ForceMode = ForceMode.Force;
 
         private bool isOnFloor = false;
-        private bool debug = false;
         private Vector3 oldSpeed;
-
-        private void Start()
-        {
-            BallManager = (BallManager)GameManager.GetManager(BallManager.TAG);
-            debug = BallManager.IsBallDebug;
-        }
-        private void Update()
-        {
-        }
 
         private void OnCollisionEnter(Collision collision)
         {
@@ -129,7 +119,7 @@ namespace Ballance2.CoreGame.GamePlay
         /// 在指定位置激活球
         /// </summary>
         /// <param name="posWorld">球位置（世界坐标）</param>
-        public void Active(Vector3 posWorld)
+        public virtual void Active(Vector3 posWorld)
         {
             gameObject.transform.position = posWorld;
             if (Rigidbody != null)
@@ -143,7 +133,7 @@ namespace Ballance2.CoreGame.GamePlay
         /// <summary>
         /// 清除速度
         /// </summary>
-        public void RemoveSpeed()
+        public virtual void RemoveSpeed()
         {
             if (Rigidbody != null)
             {
@@ -166,7 +156,7 @@ namespace Ballance2.CoreGame.GamePlay
         /// <summary>
         /// 开始控制
         /// </summary>
-        public void StartControll()
+        public virtual void StartControll()
         {
             Rigidbody.isKinematic = false;
             Rigidbody.WakeUp();
@@ -175,7 +165,7 @@ namespace Ballance2.CoreGame.GamePlay
         /// 结束控制
         /// </summary>
         /// <param name="hide">是否隐藏球</param>
-        public void EndControll(bool hide)
+        public virtual void EndControll(bool hide)
         {
             Rigidbody.Sleep();
             Rigidbody.isKinematic = true;
@@ -187,7 +177,7 @@ namespace Ballance2.CoreGame.GamePlay
         /// <summary>
         /// 开始抛掷碎片
         /// </summary>
-        public void ThrowPieces()
+        public virtual void ThrowPieces()
         {
             if (Pieces != null)
             {
@@ -197,7 +187,7 @@ namespace Ballance2.CoreGame.GamePlay
         /// <summary>
         /// 恢复碎片
         /// </summary>
-        public void RecoverPieces()
+        public virtual void RecoverPieces()
         {
             if (Pieces != null)
             {
@@ -208,7 +198,7 @@ namespace Ballance2.CoreGame.GamePlay
         /// <summary>
         /// 推动
         /// </summary>
-        public void BallPush()
+        public virtual void BallPush()
         {
             if (BallManager.IsControlling)
             {
@@ -235,19 +225,19 @@ namespace Ballance2.CoreGame.GamePlay
                 if (currentBallPushType != BallPushType.None)
                 {
                     if ((currentBallPushType & BallPushType.Forward) == BallPushType.Forward)
-                        Rigidbody.AddForce(BallManager.thisVector3Fornt * PushForce, ForceMode);
+                        Rigidbody.AddForce(CamManager.thisVector3Fornt * PushForce, ForceMode);
                     else if ((currentBallPushType & BallPushType.Back) == BallPushType.Back)
-                        Rigidbody.AddForce(BallManager.thisVector3Back * PushForce, ForceMode);
+                        Rigidbody.AddForce(CamManager.thisVector3Back * PushForce, ForceMode);
                     if ((currentBallPushType & BallPushType.Left) == BallPushType.Left)
-                        Rigidbody.AddForce(BallManager.thisVector3Left * PushForce, ForceMode);
+                        Rigidbody.AddForce(CamManager.thisVector3Left * PushForce, ForceMode);
                     else if ((currentBallPushType & BallPushType.Right) == BallPushType.Right)
-                        Rigidbody.AddForce(BallManager.thisVector3Right * PushForce, ForceMode);
+                        Rigidbody.AddForce(CamManager.thisVector3Right * PushForce, ForceMode);
 
                     //调试模式可以上下飞行
-                    if (debug)
+                    if (BallManager.IsBallDebug)
                     {
                         if ((currentBallPushType & BallPushType.Up) == BallPushType.Up) //上
-                            Rigidbody.AddForce(Vector3.up * PushForce * 2f, ForceMode);
+                            Rigidbody.AddForce(Vector3.up * PushForce * 1.5f, ForceMode);
                         else if ((currentBallPushType & BallPushType.Down) == BallPushType.Down)    //下
                             Rigidbody.AddForce(Vector3.down * PushForce * 0.5f, ForceMode);
                     }

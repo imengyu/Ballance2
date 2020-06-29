@@ -97,5 +97,9 @@ namespace Ballance2.CoreBridge
         /// 卸载关卡
         /// </summary>
         public const string ACTION_UNLOAD_LEVEL = "core.unload_level";
+        /// <summary>
+        /// 打开编辑器编辑关卡
+        /// </summary>
+        public const string ACTION_EDIT_LEVEL = "core.edit_level";
     }
 }

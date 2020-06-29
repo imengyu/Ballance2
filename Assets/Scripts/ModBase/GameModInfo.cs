@@ -74,19 +74,20 @@
         /// </summary>
         AfterLevelLoad,
     }
-    /// <summary>
-    /// 模组加载范围
-    /// </summary>
     [SLua.CustomLuaClass]
-    public enum GameModLoadScope
+    /// <summary>
+    /// 模组代码类型
+    /// </summary>
+    public enum GameModCodeType
     {
-        Game,
-        Core,
-        Menu,
-
-
-
-
+        /// <summary>
+        /// Lua 脚本（默认）
+        /// </summary>
+        Lua,
+        /// <summary>
+        /// C# dll （仅momo可用，il2cpp使用此模块会报错）
+        /// </summary>
+        CSharp,
     }
 
     [SLua.CustomLuaClass]

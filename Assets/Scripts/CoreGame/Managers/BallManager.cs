@@ -3,6 +3,7 @@ using Ballance2.CoreBridge;
 using Ballance2.CoreGame.GamePlay;
 using Ballance2.Managers;
 using Ballance2.UI.Utils;
+using Ballance2.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -160,7 +161,7 @@ namespace Ballance2.CoreGame.Managers
             keyFront2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), GameSettings.GetString("control.key.front2", "W"));
             keyUp = (KeyCode)System.Enum.Parse(typeof(KeyCode), GameSettings.GetString("control.key.up", "Q"));
             keyDown = (KeyCode)System.Enum.Parse(typeof(KeyCode), GameSettings.GetString("control.key.down", "E"));
-            keyBack = (KeyCode)System.Enum.Parse(typeof(KeyCode), GameSettings.GetString("control.key.back", "BackArrow"));
+            keyBack = (KeyCode)System.Enum.Parse(typeof(KeyCode), GameSettings.GetString("control.key.back", "DownArrow"));
             keyBack2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), GameSettings.GetString("control.key.back2", "S"));
             keyLeft = (KeyCode)System.Enum.Parse(typeof(KeyCode), GameSettings.GetString("control.key.left", "LeftArrow"));
             keyLeft2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), GameSettings.GetString("control.key.left2", "A"));
@@ -291,18 +292,31 @@ namespace Ballance2.CoreGame.Managers
         /// <param name="name">球类型名称</param>
         /// <param name="ball">附加了GameBall组件的球实例</param>
         /// <param name="pieces">球碎片组</param>
-        public void RegisterBall(string name, GameBall ball, GameObject pieces)
+        public bool RegisterBall(string name, GameBall ball, GameObject pieces)
         {
-            if (ball != null)
+            if (ball == null)
             {
-                ball.TypeName = name;
-                ball.Pieces = pieces;
-                BallTypes.Add(ball);
-
-                if (ball.gameObject.activeSelf) ball.gameObject.SetActive(false);
-                if (pieces.activeSelf) pieces.SetActive(false);
+                GameLogger.Log(TAG, "要注册的球 {0} 为空", name);
+                GameErrorManager.LastError = GameError.ParamNotProvide;
+                return false;
             }
-            else Debug.LogError("[GameBalls] 要注册的球 " + name + " 为 null");
+            if (GetRegisteredBall(name) != null)
+            {
+                GameLogger.Log(TAG, "球 {0} 已经注册", name);
+                GameErrorManager.LastError = GameError.AlredayRegistered;
+                return false;
+            }
+
+            ball.TypeName = name;
+            ball.Pieces = pieces;
+            ball.BallManager = this;
+            ball.CamManager = CamManager;
+            BallTypes.Add(ball);
+
+            if (ball.gameObject.activeSelf) ball.gameObject.SetActive(false);
+            if (pieces.activeSelf) pieces.SetActive(false);
+
+            return true;
         }
         /// <summary>
         /// 取消注册球
@@ -312,7 +326,11 @@ namespace Ballance2.CoreGame.Managers
         {
             GameBall targetBall = GetRegisteredBall(name);
             if (targetBall != null) BallTypes.Remove(targetBall);
-            else Debug.LogWarning("[GameBalls] 无法取消注册球 " + name + " ，因为它没有注册");
+            else
+            {
+                GameLogger.Log(TAG, "无法取消注册球 {0} 因为它没有注册", name);
+                GameErrorManager.LastError = GameError.NotRegistered;
+            }
         }
         /// <summary>
         /// 获取已注册的球
@@ -357,7 +375,7 @@ namespace Ballance2.CoreGame.Managers
         #region Key Events
 
         //按键侦听器
-        private KeyListener keyListener = new KeyListener();
+        private KeyListener keyListener = null;
         private bool shiftPressed = false;
 
         //一些按键事件
@@ -538,7 +556,7 @@ namespace Ballance2.CoreGame.Managers
         private Vector3 ballSmoothMoveTarget;
         private Vector3 ballSmoothMoveVelocityTarget;
         private float ballSmoothMoveTime = 0.2f;
-        [SerializeField, SetProperty("pushType")]
+        [SerializeField, SetProperty("PushType")]
         private BallPushType pushType = BallPushType.None;
 
         public bool IsSmoothMove() { return isBallSmoothMove; }

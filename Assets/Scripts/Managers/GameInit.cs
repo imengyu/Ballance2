@@ -7,6 +7,7 @@ using Ballance2.Config;
 using Ballance2.ModBase;
 using Ballance2.GameCore;
 using Ballance2.CoreGame.Managers;
+using UnityEngine.Networking;
 
 namespace Ballance2.Managers
 {
@@ -34,7 +35,7 @@ namespace Ballance2.Managers
                 });
             GameManager.GameMediator.RegisterEventHandler(
                 GameEventNames.EVENT_GAME_INIT_ENTRY, TAG, (e, p) =>
-                { StartCoroutine(GameInitModuls()); return false; });
+                { StartCoroutine(GameInitCore()); return false; });
             return true;
         }
         public override bool ReleaseManager()
@@ -73,6 +74,8 @@ namespace Ballance2.Managers
             DebugManager = (DebugManager)GameManager.GetManager(DebugManager.TAG);
 
             IntroAudio = SoundManager.RegisterSoundPlayer(GameSoundType.UI, GameManager.FindStaticAssets<AudioClip>("IntroMusic"));
+
+            GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_GAME_INIT_FINISH);
         }
         private IEnumerator LoadGameInitUI()
         {
@@ -80,13 +83,13 @@ namespace Ballance2.Managers
             gameInitMod = ModManager.FindGameMod(modUid);
             yield return StartCoroutine(gameInitMod.LoadInternal());
 
-            if (gameInitMod.LoadStatus !=  GameModStatus.InitializeSuccess)
+            if (gameInitMod.LoadStatus != GameModStatus.InitializeSuccess)
             {
                 GameErrorManager.ThrowGameError(GameError.GameInitPartLoadFailed, "加载 GameInit 资源包失败 ");
                 StopAllCoroutines();
             }
 
-            gameInitUI = GameManager.UIManager.InitViewToCanvas(gameInitMod.GetPrefabAsset("Assets/Mods/GameInit/UIGameInit.prefab"), "GameInitUI").gameObject;
+            gameInitUI = GameManager.UIManager.InitViewToCanvas(gameInitMod.GetPrefabAsset("UIGameInit.prefab"), "GameInitUI").gameObject;
 
             GameManager.UIManager.MaskBlackSet(false);
 
@@ -98,53 +101,135 @@ namespace Ballance2.Managers
 
             loadedGameInitUI = true;
         }
-        private IEnumerator GameInitModuls()
+
+        //加载模块
+        private IEnumerator GameInitCore()
         {
             yield return new WaitUntil(IsGameInitUILoaded);
 
-            //播放音乐
-            IntroAudio.Play();
-
-            GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_GAME_INIT_FINISH);
-            ModManager.RegisterOnUpdateCurrentLoadingModCallback((m) =>
+            //播放音乐和动画
+            if (GameManager.Mode == GameMode.Game)
             {
-                LoadGameInitUIProgressValue((ModManager.GetLoadedModCount() + 1) / 
-                    (float)ModManager.GetAllModCount());
-                UIProgressText.text = m.PackagePath;
-            });
-            
-            UIProgressText.text = "Loading";
-
-            int modUid = ModManager.LoadGameMod(GamePathManager.GetResRealPath("core", "core.gamepackages.ballance"), false);
-            GameMod gamePackagesMod = ModManager.FindGameMod(modUid);
-            yield return StartCoroutine(gamePackagesMod.LoadInternal());
-
-            if (gamePackagesMod.LoadStatus != GameModStatus.InitializeSuccess)
-            {
-                GameErrorManager.ThrowGameError(GameError.GameInitPartLoadFailed, "加载 GamePackages 资源包失败 ");
-                StopAllCoroutines();
+                IntroAnimator.Play("IntroAnimation");
+                IntroAudio.Play();
             }
 
-            //加载游戏内核管理器
-            GameManager.RegisterManager(typeof(LevelLoader), false);
+            UIProgressText.text = "Loading";
 
-            BallManager ballManager = GameManager.FindStaticPrefabs("BallManager").GetComponent<BallManager>();
-            CamManager camManager = GameManager.FindStaticPrefabs("CamManager").GetComponent<CamManager>();
-        
+            //加载 core.gameinit.txt 获得要加载的模块
+            string gameInitTxt = "";
+#if UNITY_EDITOR
+            TextAsset gameInitEditorAsset = null;
+            if (GameManager.AssetsPreferEditor
+                && (gameInitEditorAsset =
+                UnityEditor.AssetDatabase.LoadAssetAtPath<TextAsset>(
+                    GamePathManager.DEBUG_MODS_PATH + "/core.gameinit.txt")) != null)
+                gameInitTxt = gameInitEditorAsset.text;
+#else
+            if(false) { }
+#endif
+            else
+            {
+                //加载 gameinit
+                string gameinit_txt_path = GamePathManager.GetResRealPath("gameinit", "");
+                UnityWebRequest request = UnityWebRequest.Get(gameinit_txt_path);
+                yield return request.SendWebRequest();
+
+                if (!string.IsNullOrEmpty(request.error))
+                {
+                    GameErrorManager.ThrowGameError(GameError.GameInitReadFailed, "加载 GameInit.txt  " + gameinit_txt_path + " 时发生错误：" + request.error);
+                    yield break;
+                }
+
+                gameInitTxt = request.downloadHandler.text;
+            }
+
+            //加载包
+            yield return StartCoroutine(GameInitPackages(gameInitTxt));
+
+            UIProgressText.text = "Loading";
+
+            //加载游戏内核管理器
+            LevelLoader levelLoader = (LevelLoader)GameManager.RegisterManager(typeof(LevelLoader), false);
+            LevelManager levelManager = (LevelManager)GameManager.RegisterManager(typeof(LevelManager), false);
+
+            BallManager ballManager = GameCloneUtils.CloneNewObjectWithParent(
+                GameManager.FindStaticPrefabs("BallManager"), GameManager.GameRoot.transform).GetComponent<BallManager>();
+            CamManager camManager = GameCloneUtils.CloneNewObjectWithParent(
+                GameManager.FindStaticPrefabs("CamManager"), GameManager.GameRoot.transform).GetComponent<CamManager>();
+
             GameManager.RegisterManager(ballManager, false);
             GameManager.RegisterManager(camManager, false);
 
             //初始化管理器
             GameManager.RequestAllManagerInitialization();
-
-            yield return new WaitUntil(IsGameInitAnimPlayend);
-
             //初始化模组启动代码（游戏初始化完成）
             ModManager.ExecuteModEntryCodeAtStart();
 
+            //正常情况下，等待动画播放完成
+            if(GameManager.Mode == GameMode.Game)
+                yield return new WaitUntil(IsGameInitAnimPlayend);
+            
+            //模式
+            switch (GameManager.Mode)
+            {
+                case GameMode.Game: GameInitContinueGoGame();  break;
+                case GameMode.LoaderDebug: levelLoader.StartDebugLevelLoader(Main.Main.Instance.LevelDebugTarget); break;
+                case GameMode.CoreDebug: levelManager.StartDebugCore(Main.Main.Instance.CoreDebugBase); break;
+                case GameMode.Level:
+                    GameManager.GameMediator.CallAction(GameActionNames.ACTION_LOAD_LEVEL, Main.Main.Instance.LevelDebugTarget);
+                    break;
+                case GameMode.LevelEditor:
+                    LevelEditor levelEditor = (LevelEditor)GameManager.RegisterManager(typeof(LevelEditor), false);
+                    levelEditor.StartDebugLevelEditor(Main.Main.Instance.LevelDebugTarget);
+                    break;
+            }                
+        }
+        private IEnumerator GameInitPackages(string GameInitTable)
+        {
+            StringSpliter sp = new StringSpliter(GameInitTable, '\n');
+            if (sp.Count >= 1)
+            {
+                int loadedCount = 0;
+                string[] args = null;
+                foreach (string ar in sp.Result)
+                {
+                    if (ar.StartsWith(":")) continue;
+
+                    bool required = false;
+                    string packageName = "";
+                    args = ar.Split(':');
+
+                    if(args.Length >= 3) {
+                        required = args[1] == "Required";
+                        packageName = args[0];
+                    }
+
+                    //状态
+                    loadedCount++;
+                    LoadGameInitUIProgressValue(loadedCount / (float)sp.Count);
+                    UIProgressText.text = "Loading " + packageName;
+
+                    //加载
+                    int modUid = ModManager.LoadGameModByPackageName(packageName, false);
+                    GameMod mod = ModManager.FindGameMod(modUid);
+                    //等待加载
+                    yield return StartCoroutine(mod.LoadInternal());
+
+                    if (mod.LoadStatus == GameModStatus.InitializeSuccess)
+                        continue;
+                    else if (required)
+                        GameErrorManager.ThrowGameError(GameError.GameInitPartLoadFailed, "加载模块  " + packageName + " 时发生错误");
+                    else GameLogger.Warning(TAG, "加载模块  {0} 时发生错误", packageName);
+                }
+            }
+        }
+
+        private void GameInitContinueGoGame()
+        {
             int initEventHandledCount = GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_FINISH, "*");
             GameManager.GameMediator.UnRegisterGlobalEvent(GameEventNames.EVENT_GAME_INIT_FINISH);
-           
+
             if (initEventHandledCount == 0)
             {
                 GameErrorManager.ThrowGameError(GameError.HandlerLost, "未找到 EVENT_GAME_INIT_FINISH 的下一步事件接收器\n此错误出现原因可能是配置不正确");

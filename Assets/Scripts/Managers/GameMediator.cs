@@ -75,7 +75,7 @@ namespace Ballance2.Managers
             else
             {
                 GameLogger.Warning(TAG, "事件 {0} 未注册", evtName);
-                GameErrorManager.LastError = GameError.Unregistered;
+                GameErrorManager.LastError = GameError.NotRegistered;
             }
         }
         /// <summary>
@@ -169,7 +169,7 @@ namespace Ballance2.Managers
             else
             {
                 GameLogger.Warning(TAG, "事件 {0} 未注册", evtName);
-                GameErrorManager.LastError = GameError.Unregistered;
+                GameErrorManager.LastError = GameError.NotRegistered;
             }
             return handledCount;
         }
@@ -224,7 +224,7 @@ namespace Ballance2.Managers
             else
             {
                 GameLogger.Warning(TAG, "事件 {0} 未注册", evtName);
-                GameErrorManager.LastError = GameError.Unregistered;
+                GameErrorManager.LastError = GameError.NotRegistered;
             }
             return null;
         }
@@ -256,7 +256,7 @@ namespace Ballance2.Managers
             else
             {
                 GameLogger.Warning(TAG, "事件 {0} 未注册", evtName);
-                GameErrorManager.LastError = GameError.Unregistered;
+                GameErrorManager.LastError = GameError.NotRegistered;
             }
             return null;
         }
@@ -287,7 +287,7 @@ namespace Ballance2.Managers
             else
             {
                 GameLogger.Warning(TAG, "事件 {0} 未注册", evtName);
-                GameErrorManager.LastError = GameError.Unregistered;
+                GameErrorManager.LastError = GameError.NotRegistered;
             }
             return null;
         }
@@ -312,7 +312,7 @@ namespace Ballance2.Managers
             else
             {
                 GameLogger.Warning(TAG, "事件 {0} 未注册", evtName);
-                GameErrorManager.LastError = GameError.Unregistered;
+                GameErrorManager.LastError = GameError.NotRegistered;
             }
         }
 
@@ -379,7 +379,7 @@ namespace Ballance2.Managers
             else
             {
                 GameLogger.Warning(TAG, "操作 {0} 未注册", name);
-                GameErrorManager.LastError = GameError.Unregistered;
+                GameErrorManager.LastError = GameError.NotRegistered;
             }
         }
         /// <summary>
@@ -444,7 +444,7 @@ namespace Ballance2.Managers
             else
             {
                 GameLogger.Warning(TAG, "操作 {0} 未注册", name);
-                GameErrorManager.LastError = GameError.Unregistered;
+                GameErrorManager.LastError = GameError.NotRegistered;
             }
             return result;
         }

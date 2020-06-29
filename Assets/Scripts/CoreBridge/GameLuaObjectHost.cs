@@ -17,54 +17,57 @@ namespace Ballance2.CoreBridge
         public string Name;
         public GameMod GameMod { get; set; }
 
+        /// <summary>
+        /// lua self
+        /// </summary>
         public LuaTable LuaSelf { get { return self; } }
 
-        private LuaTable self;
-        private LuaFunction update;
-        private LuaFunction start;
-        private LuaFunction awake;
-        private LuaFunction onGUI;
-        private LuaFunction onDestory;
-        private LuaFunction onCollisionEnter;
-        private LuaFunction onCollisionExit;
-        private LuaFunction onCollisionStay;
+        private LuaTable self = null;
+        private LuaVoidDelegate update = null;
+        private LuaStartDelegate start = null;
+        private LuaVoidDelegate awake = null;
+        private LuaVoidDelegate onGUI = null;
+        private LuaVoidDelegate onDestory = null;
+        private LuaCollisionDelegate onCollisionEnter = null;
+        private LuaCollisionDelegate onCollisionExit = null;
+        private LuaCollisionDelegate onCollisionStay = null;
 
         private void Start()
         {
             LuaInit();
-            if (start != null) start.call(self, gameObject);
+            if (start != null) start(self, gameObject);
         }
         private void Awake()
         {
-            if (awake != null) awake.call(self);
+            if (awake != null) awake(self);
         }
         private void Update()
         {
-            if (update != null) update.call(self);
+            if (update != null) update(self);
         }
 
         private void OnDestroy()
         {
-            if (onDestory != null) onDestory.call(self);
+            if (onDestory != null) onDestory(self);
             StopLuaEvents();
             GameMod.RemoveLuaObject(this);
         }
         private void OnGUI()
         {
-            if (onGUI != null) onGUI.call(self);
+            if (onGUI != null) onGUI(self);
         }
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (onCollisionEnter != null) onCollisionEnter.call(self, collision);
+            if (onCollisionEnter != null) onCollisionEnter(self, collision);
         }
         private void OnCollisionExit(Collision collision)
         {
-            if (onCollisionExit != null) onCollisionExit.call(self, collision);
+            if (onCollisionExit != null) onCollisionExit(self, collision);
         }
         private void OnCollisionStay(Collision collision)
         {
-            if (onCollisionStay != null) onCollisionStay.call(self, collision);
+            if (onCollisionStay != null) onCollisionStay(self, collision);
         }
 
         private void LuaInit()
@@ -86,22 +89,38 @@ namespace Ballance2.CoreBridge
                 return;
             }
 
-            start = self["Start"] as LuaFunction;
-            update = self["Update"] as LuaFunction;
-            awake = self["Awake"] as LuaFunction;
-            onGUI = self["OnGUI"] as LuaFunction;
-            onDestory = self["OnDestroy"] as LuaFunction;
-            onCollisionEnter = self["OnCollisionEnter"] as LuaFunction;
-            onCollisionExit = self["OnCollisionExit"] as LuaFunction;
-            onCollisionStay = self["OnCollisionStay"] as LuaFunction;
+            InitLuaEvents();
+        }
+        private void InitLuaEvents()
+        {
+            LuaFunction fun = null;
+
+            fun = self["Start"] as LuaFunction;
+            if (fun != null) start = fun.cast<LuaStartDelegate>();
+
+            fun = self["Update"] as LuaFunction;
+            if (fun != null) update = fun.cast<LuaVoidDelegate>();
+
+            fun = self["Awake"] as LuaFunction;
+            if (fun != null) awake = fun.cast<LuaVoidDelegate>();
+
+            fun = self["OnGUI"] as LuaFunction;
+            if (fun != null) onGUI = fun.cast<LuaVoidDelegate>();
+
+            fun = self["OnGUI"] as LuaFunction;
+            if (fun != null) onGUI = fun.cast<LuaVoidDelegate>();
+
+            fun = self["OnCollisionEnter"] as LuaFunction;
+            if (fun != null) onCollisionEnter = fun.cast<LuaCollisionDelegate>();
+
+            fun = self["OnCollisionExit"] as LuaFunction;
+            if (fun != null) onCollisionExit = fun.cast<LuaCollisionDelegate>();
+
+            fun = self["onCollisionStay"] as LuaFunction;
+            if (fun != null) onCollisionStay = fun.cast<LuaCollisionDelegate>();
         }
         private void StopLuaEvents()
         {
-            if (update != null) update.Dispose();
-            if (start != null) start.Dispose();
-            if (awake != null) awake.Dispose();
-            if (onGUI != null) onGUI.Dispose();
-            if (onDestory != null) onDestory.Dispose();
             update = null;
             start = null;
             awake = null;

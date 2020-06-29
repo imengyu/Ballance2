@@ -65,12 +65,92 @@ public class Lua_Ballance2_GameManager : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			System.Type a1;
-			checkType(l,1,out a1);
-			var ret=Ballance2.GameManager.RegisterManager(a1);
-			pushValue(l,true);
-			pushValue(l,ret);
+			int argc = LuaDLL.lua_gettop(l);
+			if(matchType(l,argc,1,typeof(System.Type),typeof(bool))){
+				System.Type a1;
+				checkType(l,1,out a1);
+				System.Boolean a2;
+				checkType(l,2,out a2);
+				var ret=Ballance2.GameManager.RegisterManager(a1,a2);
+				pushValue(l,true);
+				pushValue(l,ret);
+				return 2;
+			}
+			else if(matchType(l,argc,1,typeof(Ballance2.Managers.BaseManager),typeof(bool))){
+				Ballance2.Managers.BaseManager a1;
+				checkType(l,1,out a1);
+				System.Boolean a2;
+				checkType(l,2,out a2);
+				var ret=Ballance2.GameManager.RegisterManager(a1,a2);
+				pushValue(l,true);
+				pushValue(l,ret);
+				return 2;
+			}
+			pushValue(l,false);
+			LuaDLL.lua_pushstring(l,"No matched override function RegisterManager to call");
 			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int RequestAllManagerInitialization_s(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.GameManager.RequestAllManagerInitialization();
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int RequestManagerInitialization_s(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.Managers.BaseManager a1;
+			checkType(l,1,out a1);
+			Ballance2.GameManager.RequestManagerInitialization(a1);
+			pushValue(l,true);
+			return 1;
 		}
 		catch(Exception e) {
 			return error(l,e);
@@ -656,6 +736,130 @@ public class Lua_Ballance2_GameManager : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int get_AssetsPreferEditor(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			pushValue(l,true);
+			pushValue(l,Ballance2.GameManager.AssetsPreferEditor);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_AssetsPreferEditor(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			bool v;
+			checkType(l,2,out v);
+			Ballance2.GameManager.AssetsPreferEditor=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_BreakAtStart(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			pushValue(l,true);
+			pushValue(l,Ballance2.GameManager.BreakAtStart);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_BreakAtStart(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			bool v;
+			checkType(l,2,out v);
+			Ballance2.GameManager.BreakAtStart=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int get_PrefabEmpty(IntPtr l) {
 		try {
 			#if DEBUG
@@ -779,6 +983,8 @@ public class Lua_Ballance2_GameManager : LuaObject {
 		getTypeTable(l,"Ballance2.GameManager");
 		addMember(l,GetManager_s);
 		addMember(l,RegisterManager_s);
+		addMember(l,RequestAllManagerInitialization_s);
+		addMember(l,RequestManagerInitialization_s);
 		addMember(l,DestroyManager_s);
 		addMember(l,IsGameBaseInitFinished_s);
 		addMember(l,IsGameMediatorInitFinished_s);
@@ -796,6 +1002,8 @@ public class Lua_Ballance2_GameManager : LuaObject {
 		addMember(l,"GamePrefab",get_GamePrefab,null,false);
 		addMember(l,"GameMainLuaState",get_GameMainLuaState,set_GameMainLuaState,false);
 		addMember(l,"GameAssets",get_GameAssets,null,false);
+		addMember(l,"AssetsPreferEditor",get_AssetsPreferEditor,set_AssetsPreferEditor,false);
+		addMember(l,"BreakAtStart",get_BreakAtStart,set_BreakAtStart,false);
 		addMember(l,"PrefabEmpty",get_PrefabEmpty,null,false);
 		addMember(l,"PrefabUIEmpty",get_PrefabUIEmpty,null,false);
 		addMember(l,"UIManager",get_UIManager,null,false);

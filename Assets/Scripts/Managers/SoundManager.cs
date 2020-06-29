@@ -113,7 +113,7 @@ namespace Ballance2.Managers
             if (mod == null)
             {
                 GameLogger.Warning(TAG, "无法加载声音文件 {0} ，因为未找到模组包 {1}", assets, names[0]);
-                GameErrorManager.LastError = GameError.Unregistered;
+                GameErrorManager.LastError = GameError.NotRegistered;
                 return null;
             }
             if (mod.LoadStatus != GameModStatus.InitializeSuccess)
@@ -216,7 +216,7 @@ namespace Ballance2.Managers
             }
             else
             {
-                GameErrorManager.LastError = GameError.Unregistered;
+                GameErrorManager.LastError = GameError.NotRegistered;
                 return false;
             }
 

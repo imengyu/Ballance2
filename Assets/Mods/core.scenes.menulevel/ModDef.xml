@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mod>
+  <BaseInfo packageName="core.scenes.menulevel">
+    <Name>MenuLevel</Name>
+    <Author>mengyu</Author>
+    <Introduction>MenuLevel Base Pack</Introduction>
+    <Logo>ModLogo.png</Logo>
+    <Version>1.0</Version>
+    <Dependencies>
+      <Package name="core.scenes.menulevel.ui" minVer="1.0" mustLoad="true" ></Package>
+    </Dependencies>
+  </BaseInfo>
+  <Compatibility>
+    <MinVersion>1</MinVersion>
+    <TargetVersion>1</TargetVersion>
+  </Compatibility>
+  <ModType>AssetPack</ModType>
+</Mod>

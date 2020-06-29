@@ -12,7 +12,7 @@ public class Lua_Ballance2_Utils_GameError : LuaObject {
 		addMember(l,4,"GameInitPartLoadFailed");
 		addMember(l,5,"HandlerLost");
 		addMember(l,6,"AlredayRegistered");
-		addMember(l,7,"Unregistered");
+		addMember(l,7,"NotRegistered");
 		addMember(l,8,"ParamNotProvide");
 		addMember(l,9,"PrefabNotFound");
 		addMember(l,10,"AssetsNotFound");
@@ -27,8 +27,11 @@ public class Lua_Ballance2_Utils_GameError : LuaObject {
 		addMember(l,19,"BadMod");
 		addMember(l,20,"NetworkError");
 		addMember(l,21,"NotInitialize");
-		addMember(l,22,"MustBeContainer");
-		addMember(l,23,"LayoutBuildFailed");
+		addMember(l,22,"NotLoad");
+		addMember(l,23,"InProgress");
+		addMember(l,24,"AlredayLoaded");
+		addMember(l,25,"MustBeContainer");
+		addMember(l,26,"LayoutBuildFailed");
 		LuaDLL.lua_pop(l, 1);
 	}
 }

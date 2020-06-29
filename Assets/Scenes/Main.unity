@@ -849,7 +849,10 @@ MonoBehaviour:
   GameRoot: {fileID: 1368830292}
   GameCanvas: {fileID: 1928318315}
   BreakAtStart: 0
+  AssetsPreferEditor: 0
   TargetFrameRate: 60
+  LevelDebugTarget: 
+  CoreDebugBase: {fileID: 0}
   GamePrefab:
   - Object: {fileID: 730401858883282320, guid: c00cb89e507c3c84e82463508143638e, type: 3}
     Name: PrefabEmpty
@@ -931,6 +934,12 @@ MonoBehaviour:
   - Object: {fileID: 8614955473500828736, guid: ad6323f86822b224ba8e44acb79b9ab2,
       type: 3}
     Name: UIDropdown
+  - Object: {fileID: 1199595254221935677, guid: 73dfec99a61947645a8990faef8ef6dd,
+      type: 3}
+    Name: BallManager
+  - Object: {fileID: 6483853944594940411, guid: 7fc58413d8b0bd641bc0c52e31274721,
+      type: 3}
+    Name: CamManager
   - Object: {fileID: 0}
     Name: 
   GameAssets:

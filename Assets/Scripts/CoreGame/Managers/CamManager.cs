@@ -27,6 +27,7 @@ namespace Ballance2.CoreGame.Managers
         public override bool InitManager()
         {
             BallManager = (BallManager)GameManager.GetManager(BallManager.TAG);
+            ballCamera.gameObject.SetActive(false);
             return true;
         }
         public override bool ReleaseManager()

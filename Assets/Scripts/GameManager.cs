@@ -42,7 +42,7 @@ namespace Ballance2
         /// </summary>
         /// <param name="name">标识符名称</param>
         /// <returns></returns>
-        public static BaseManager GetManager(string name) 
+        public static BaseManager GetManager(string name)
         {
             return GetManager(name, "Singleton");
         }
@@ -54,8 +54,8 @@ namespace Ballance2
         /// <returns></returns>
         public static BaseManager RegisterManager(Type classType, bool initializeNow = true)
         {
-           BaseManager classInstance = (BaseManager)GameCloneUtils.CreateEmptyObjectWithParent(
-               GameRoot.transform, classType.Name).AddComponent(classType);
+            BaseManager classInstance = (BaseManager)GameCloneUtils.CreateEmptyObjectWithParent(
+                GameRoot.transform, classType.Name).AddComponent(classType);
             classInstance.name = classInstance.GetName();
             return RegisterManager(classInstance, initializeNow);
         }
@@ -148,42 +148,6 @@ namespace Ballance2
 
         #region  游戏总体初始化例程
 
-        [CustomLuaClass]
-        /// <summary>
-        /// 指定游戏状态模式
-        /// </summary>
-        public enum GameMode
-        {
-            /// <summary>
-            /// 未知
-            /// </summary>
-            None,
-            /// <summary>
-            /// 普通游戏状态，此状态包括 主界面 以及 Level
-            /// </summary>
-            Game,
-            /// <summary>
-            /// 调试时使用的最小化加载模式
-            /// </summary>
-            MinimumDebug,
-            /// <summary>
-            /// 加载器调试
-            /// </summary>
-            LoaderDebug,
-            /// <summary>
-            /// 内核调试
-            /// </summary>
-            CoreDebug,
-            /// <summary>
-            /// 关卡模式
-            /// </summary>
-            Level,
-            /// <summary>
-            /// 关卡编辑器模式
-            /// </summary>
-            LevelEditor,
-        }
-
         /// <summary>
         /// 获取当前游戏状态模式
         /// </summary>
@@ -216,6 +180,14 @@ namespace Ballance2
         /// 静态资源引入
         /// </summary>
         public static List<GameAssetsInfo> GameAssets { get; private set; }
+        /// <summary>
+        /// 资源优先选择 Editor 中的资源（仅 Editor 有效）
+        /// </summary>
+        public static bool AssetsPreferEditor { get; set; }
+        /// <summary>
+        /// 在开始时暂停（通常用于调试）
+        /// </summary>
+        public static bool BreakAtStart { get { return gameBreakAtStart; } set { gameBreakAtStart = value; } }
 
         [Serializable]
         public class GameObjectInfo
@@ -258,7 +230,7 @@ namespace Ballance2
             return gameMediatorInitFinished;
         }
 
-        internal static bool Init(GameMode mode, GameObject gameRoot, GameObject gameCanvas,  List<GameObjectInfo> gamePrefab, List<GameAssetsInfo> gameAssets, bool breakAtStart)
+        internal static bool Init(GameMode mode, GameObject gameRoot, GameObject gameCanvas,  List<GameObjectInfo> gamePrefab, List<GameAssetsInfo> gameAssets)
         {
             bool result = false;
 
@@ -271,7 +243,6 @@ namespace Ballance2
             InitStaticPrefab();
             GameBaseCamera = GameObject.Find("GameBaseCamera").GetComponent<Camera>();
             GameManagerObject = GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, TAG);
-            gameBreakAtStart = breakAtStart;
             managers = new List<BaseManager>();
             
             //错误提示
@@ -500,5 +471,57 @@ namespace Ballance2
         public static GameMediator GameMediator { get; private set; }
 
         #endregion
+    }
+
+    [CustomLuaClass]
+    /// <summary>
+    /// 指定游戏状态模式
+    /// </summary>
+    public enum GameMode
+    {
+        /// <summary>
+        /// 未知
+        /// </summary>
+        None,
+        /// <summary>
+        /// 普通游戏状态，此状态包括 主界面 以及 Level
+        /// </summary>
+        Game,
+        /// <summary>
+        /// 关卡模式
+        /// </summary>
+        Level,
+        /// <summary>
+        /// 关卡编辑器模式
+        /// </summary>
+        LevelEditor,
+        /// <summary>
+        /// 调试时使用的最小化加载模式
+        /// </summary>
+        MinimumDebug,
+        /// <summary>
+        /// 加载器调试
+        /// </summary>
+        LoaderDebug,
+        /// <summary>
+        /// 内核调试
+        /// </summary>
+        CoreDebug,
+
+    }
+
+    [CustomLuaClass]
+    /// <summary>
+    /// 指定游戏状态当前工作模式
+    /// </summary>
+    public enum GameCurrentWorkMode
+    {
+        None,
+        Intro,
+        Level,
+        LevelLoader,
+        LevelEditor,
+        LevelViewer,
+        MenuLevel,
     }
 }

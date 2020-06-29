@@ -696,7 +696,7 @@ namespace Ballance2.Managers
             }
             else
             {
-                GameErrorManager.LastError = GameError.Unregistered;
+                GameErrorManager.LastError = GameError.NotRegistered;
                 return false;
             }
         }
@@ -732,7 +732,7 @@ namespace Ballance2.Managers
             else
             {
                 GameLogger.Warning(TAG, "GotoUIPage 未找到指定页 {0}", pagePath);
-                GameErrorManager.LastError = GameError.Unregistered;
+                GameErrorManager.LastError = GameError.NotRegistered;
                 return false;
             }
         }
@@ -754,7 +754,7 @@ namespace Ballance2.Managers
             }
             else
             {
-                GameErrorManager.LastError = GameError.Unregistered;
+                GameErrorManager.LastError = GameError.NotRegistered;
                 return false;
             }
         }
@@ -792,7 +792,7 @@ namespace Ballance2.Managers
                     else
                     {
                         GameLogger.Log(TAG, "BackUIPage 未找到上级页 {0}", pagePath);
-                        GameErrorManager.LastError = GameError.Unregistered;
+                        GameErrorManager.LastError = GameError.NotRegistered;
                     }
                 }
             }
@@ -862,7 +862,7 @@ namespace Ballance2.Managers
                     return true;
                 }
             }
-            GameErrorManager.LastError = GameError.Unregistered;
+            GameErrorManager.LastError = GameError.NotRegistered;
             return false;
         }
         /// <summary>
@@ -929,7 +929,7 @@ namespace Ballance2.Managers
                     pagePrefabs.RemoveAt(i);
                 }
             }
-            GameErrorManager.LastError = GameError.Unregistered;
+            GameErrorManager.LastError = GameError.NotRegistered;
             return true;
         }
         /// <summary>
@@ -976,7 +976,7 @@ namespace Ballance2.Managers
                     return true;
                 }
             }
-            GameErrorManager.LastError = GameError.Unregistered;
+            GameErrorManager.LastError = GameError.NotRegistered;
             return false;
         }
         /// <summary>

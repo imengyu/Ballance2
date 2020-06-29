@@ -26,7 +26,7 @@ namespace Ballance2.Main
         {
             yield return new WaitForSeconds(1f);
 
-            if(GameManager.Mode != GameManager.GameMode.MinimumLoad)
+            if(GameManager.Mode != GameMode.MinimumDebug)
             {
                 yield break;
             }
