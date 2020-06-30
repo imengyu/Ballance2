@@ -210,8 +210,8 @@ namespace Ballance2.Managers
             if (IsSoundPlayerRegistered(assets, out audioGlobalControl))
             {
                 audios.Remove(audioGlobalControl);
-                Destroy(audioGlobalControl.Audio.gameObject);
-                Destroy(audioGlobalControl.Audio);
+                if (audioGlobalControl.Audio.gameObject != null)
+                    Destroy(audioGlobalControl.Audio.gameObject);
                 return true;
             }
             else

@@ -193,7 +193,7 @@ function class_MenuLevel()
     UIManager:GotoUIPage(self.pageMain.PagePath)
 
     -- 对话框事件
-    GameManager.GameMediator:RegisterEventHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, TAG, function(id, confirm)
+    GameManager.GameMediator:RegisterEventHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, TAG, function(evtName, id, confirm)
       if(id == self.dialogQuitId) then
         if(confirm) then GameManager:QuitGame() else UIManager:GotoUIPage(self.pageMain.PagePath) end
       end

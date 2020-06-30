@@ -150,11 +150,11 @@ namespace Ballance2.UI.Utils
 
         public static float GetUIRight(RectTransform rectTransform)
         {
-            return rectTransform.offsetMax.x;
+            return -rectTransform.offsetMax.x;
         }
         public static float GetUITop(RectTransform rectTransform)
         {
-            return rectTransform.offsetMax.y;
+            return -rectTransform.offsetMax.y;
         }
         public static float GetUILeft(RectTransform rectTransform)
         {

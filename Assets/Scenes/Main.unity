@@ -845,7 +845,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d14feeec1976b4c47a2cce229386e5fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GameMode: 1
+  GameMode: 4
   GameRoot: {fileID: 1368830292}
   GameCanvas: {fileID: 1928318315}
   BreakAtStart: 0

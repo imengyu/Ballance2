@@ -166,7 +166,6 @@ namespace Ballance2.UI.BallanceUI.Layout
                     RectTransform.sizeDelta = new Vector2(allLayoutHeight, heightAutoWarp ? maxLayoutOtherHeight : RectTransform.sizeDelta.y);
                 else if (thisAnchor[0] != UIAnchor.Stretch)
                     RectTransform.sizeDelta = new Vector2(MinSize.x, heightAutoWarp ? maxLayoutOtherHeight : RectTransform.sizeDelta.y);
-                GameLogger.Log(Name, "allLayoutHeight: {0}\nheightAutoWarp: {1}\nmaxLayoutOtherHeight : {2}", allLayoutHeight, heightAutoWarp, maxLayoutOtherHeight);
             }
 
             DoResize();

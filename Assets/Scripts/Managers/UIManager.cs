@@ -174,6 +174,7 @@ namespace Ballance2.Managers
                 new GameEventHandlerDelegate[] {
                     (evtName, param) => {
                         OnGlobalDialogClicked("alert", true, windowId, oldPagePath);
+                        DestroyUIPage("global.alert." + windowId);
                         return true;
                     },
                 }, "Default");
@@ -205,10 +206,12 @@ namespace Ballance2.Managers
                 new GameEventHandlerDelegate[] {
                     (evtName, param) => {
                         OnGlobalDialogClicked("confirm", true, windowId, oldPagePath);
+                        DestroyUIPage("global.confirm." + windowId);
                         return true;
                     },
                     (evtName, param) => {
                         OnGlobalDialogClicked("confirm", false, windowId, oldPagePath);
+                        DestroyUIPage("global.confirm." + windowId);
                         return true;
                     }
                 }, "Default");
