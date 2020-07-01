@@ -1,10 +1,4 @@
-﻿using Knife.PostProcessing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace Ballance2.UI.Utils
@@ -12,27 +6,26 @@ namespace Ballance2.UI.Utils
     [SLua.CustomLuaClass]
     public class OutlineHighlightPicker : MonoBehaviour
     {
-        public OutlineRegister OutlineRegister;
+        public QuickOutline QuickOutline;
 
         public Color NormalColor = Color.blue;
         public Color EnterColor = Color.red;
 
         private void Start()
         {
-            OutlineRegister = GetComponent<OutlineRegister>();
+            if (QuickOutline == null)
+                QuickOutline = GetComponent<QuickOutline>();
         }
 
         public Button.ButtonClickedEvent onClick;
 
         void OnMouseEnter()
         {
-            OutlineRegister.OutlineTint = NormalColor;
-            OutlineRegister.setupPropertyBlock();
+            QuickOutline.OutlineColor = EnterColor;
         }
         void OnMouseExit()
         {
-            OutlineRegister.OutlineTint = EnterColor;
-            OutlineRegister.setupPropertyBlock();
+            QuickOutline.OutlineColor = NormalColor;
         }
         void OnMouseDown()
         {

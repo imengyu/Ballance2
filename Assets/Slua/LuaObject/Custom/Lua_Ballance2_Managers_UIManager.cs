@@ -1734,6 +1734,6 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 		addMember(l,"UIFadeManager",get_UIFadeManager,set_UIFadeManager,true);
 		addMember(l,"UIRootRectTransform",get_UIRootRectTransform,null,true);
 		addMember(l,"UILayoutBuilder",get_UILayoutBuilder,null,true);
-		createTypeMetatable(l,null, typeof(Ballance2.Managers.UIManager),typeof(Ballance2.Managers.BaseManagerSingleton));
+		createTypeMetatable(l,null, typeof(Ballance2.Managers.UIManager),typeof(Ballance2.Managers.BaseManager));
 	}
 }

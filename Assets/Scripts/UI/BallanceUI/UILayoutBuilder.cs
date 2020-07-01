@@ -135,7 +135,11 @@ namespace Ballance2.UI.BallanceUI
             UIAnchorPosUtils.SetUIPivot(ilayout.RectTransform, UIPivot.TopCenter);
             ilayout.RectTransform.anchoredPosition = Vector2.zero;
 
-            if (root == null) root = ilayout;
+            if (root == null)
+            {
+                root = ilayout;
+                root.IsRootLayout = true;
+            }
 
             GameObject newEle = null;
             UIElement uIElement = null;

@@ -76,6 +76,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0
     - _GlossyReflections: 1
+    - _InvFade: 1
     - _LightingEnabled: 1
     - _Metallic: 0
     - _Mode: 4
@@ -94,3 +95,4 @@ Material:
     - _Color: {r: 0.023264349, g: 0.6415094, b: 0, a: 0.5372549}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
+    - _TintColor: {r: 0.10355973, g: 0.745283, b: 0, a: 0.68235296}

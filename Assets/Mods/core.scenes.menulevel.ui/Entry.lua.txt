@@ -8,7 +8,7 @@ GameCloneUtils = Ballance2.Utils.GameCloneUtils
 
 local TAG = "core.scenes.menulevel.ui:Main"
 
-local ModManager = Slua.As(GameManager.GetManager(Ballance2.Managers.ModManager.TAG), Ballance2.Managers.ModManager)
+local ModManager = Slua.As(GameManager.GetManager("ModManager"), Ballance2.Interfaces.IModManager)
 
 local gameModThis = nil
 local gameModBase = nil

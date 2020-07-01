@@ -1,5 +1,6 @@
 ﻿using Ballance2.Config;
 using Ballance2.CoreBridge;
+using Ballance2.Interfaces;
 using Ballance2.ModBase;
 using Ballance2.Utils;
 using System.Collections.Generic;
@@ -11,8 +12,7 @@ namespace Ballance2.Managers
     /// <summary>
     /// 声音管理器
     /// </summary>
-    [SLua.CustomLuaClass]
-    public class SoundManager : BaseManagerBindable
+    public class SoundManager : BaseManager, ISoundManager
     {
         public const string TAG = "SoundManager";
 
@@ -113,7 +113,7 @@ namespace Ballance2.Managers
             if (mod == null)
             {
                 GameLogger.Warning(TAG, "无法加载声音文件 {0} ，因为未找到模组包 {1}", assets, names[0]);
-                GameErrorManager.LastError = GameError.NotRegistered;
+                GameErrorManager.LastError = GameError.NotRegister;
                 return null;
             }
             if (mod.LoadStatus != GameModStatus.InitializeSuccess)
@@ -216,7 +216,7 @@ namespace Ballance2.Managers
             }
             else
             {
-                GameErrorManager.LastError = GameError.NotRegistered;
+                GameErrorManager.LastError = GameError.NotRegister;
                 return false;
             }
 
@@ -274,8 +274,8 @@ namespace Ballance2.Managers
             float volUI = GameSettings.GetFloat("voice.ui", 100);
 
             GameUIAudioMixer.SetFloat("UIMasterVolume", volUI <= 1 ? -60 : (20.0f * Mathf.Log10(volUI / 100.0f)));
-            GameMainAudioMixer.SetFloat("MasterVolume", volUI <= 1 ? -60 : (20.0f * Mathf.Log10(volMain / 100.0f)));
-            GameMainAudioMixer.SetFloat("BackgroundVolume", volUI <= 1 ? -60 : (20.0f * Mathf.Log10(volBackground / 100.0f)));
+            GameMainAudioMixer.SetFloat("MasterVolume", volMain <= 1 ? -60 : (20.0f * Mathf.Log10(volMain / 100.0f)));
+            GameMainAudioMixer.SetFloat("BackgroundVolume", volBackground <= 1 ? -60 : (20.0f * Mathf.Log10(volBackground / 100.0f)));
 
             return true;
         }
@@ -305,34 +305,5 @@ namespace Ballance2.Managers
             cache.Play();
             return true;
         }
-
-    }
-
-    [SLua.CustomLuaClass]
-    /// <summary>
-    /// 指定声音类型
-    /// </summary>
-    public enum GameSoundType
-    {
-        /// <summary>
-        /// 普通声音
-        /// </summary>
-        Normal,
-        /// <summary>
-        /// 游戏音效 关于球的
-        /// </summary>
-        BallEffect,
-        /// <summary>
-        /// 游戏音效 关于模组的
-        /// </summary>
-        ModulEffect,
-        /// <summary>
-        /// UI 发出的声音
-        /// </summary>
-        UI,
-        /// <summary>
-        /// 背景音乐
-        /// </summary>
-        Background,
     }
 }

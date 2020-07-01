@@ -25,13 +25,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6483853943425503252}
-  m_LocalRotation: {x: 0.92387956, y: -0, z: -0, w: 0.38268343}
-  m_LocalPosition: {x: 0, y: 15, z: 15}
+  m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
+  m_LocalPosition: {x: 0, y: 15, z: -15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 6483853944050536278}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 135, y: 0, z: 0}
+  m_Father: {fileID: 6483853945354760611}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
 --- !u!20 &6483853943425503255
 Camera:
   m_ObjectHideFlags: 0
@@ -111,7 +111,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6483853945354760611}
-  - {fileID: 6483853943425503253}
   m_Father: {fileID: 6483853944594940412}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -190,12 +189,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57b9693fecaf4d1478a94af2a3b2b73f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _thisVector3Right: {x: 1, y: 0, z: 0}
+  _thisVector3Left: {x: -1, y: 0, z: 0}
+  _thisVector3Fornt: {x: 0, y: 0, z: 1}
+  _thisVector3Back: {x: 0, y: 0, z: -1}
   animationCurveCamera:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0.0018761181
-      value: 0.10224944
+      time: 0
+      value: 0.1
       inSlope: 1.0453146
       outSlope: 1.0453146
       tangentMode: 0
@@ -203,17 +206,26 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0.2113203
     - serializedVersion: 3
-      time: 0.50843334
-      value: 0.8333102
-      inSlope: -0.020248346
-      outSlope: -0.020248346
+      time: 0.1369143
+      value: 0.5677852
+      inSlope: 2.5242555
+      outSlope: 2.5242555
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.33333334
+      outWeight: 0.14528798
     - serializedVersion: 3
-      time: 1.0056152
-      value: 0.07833099
+      time: 0.6416426
+      value: 0.8543765
+      inSlope: -0.9411417
+      outSlope: -0.9411417
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.2789611
+    - serializedVersion: 3
+      time: 1
+      value: 0.06
       inSlope: -1.344916
       outSlope: -1.344916
       tangentMode: 0
@@ -227,8 +239,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
-      value: 0
+      time: -0.0037384033
+      value: 0.123413086
       inSlope: 2
       outSlope: 2
       tangentMode: 0
@@ -236,17 +248,17 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.5043166
-      value: 0.86410993
-      inSlope: -0.39137188
-      outSlope: -0.39137188
+      time: 0.4388998
+      value: 0.66605234
+      inSlope: -2.7722657
+      outSlope: -2.7722657
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.33333334
+      outWeight: 0.15527526
     - serializedVersion: 3
-      time: 0.9999428
-      value: 0.004044771
+      time: 1.0017958
+      value: 0.1767948
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -279,7 +291,7 @@ MonoBehaviour:
       outWeight: 0.33333334
     - serializedVersion: 3
       time: 0.99816895
-      value: 0.069664
+      value: 0.22330475
       inSlope: -2.115126
       outSlope: -2.115126
       tangentMode: 0
@@ -294,45 +306,49 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
-      inSlope: 1.4460534
-      outSlope: 1.4460534
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.4953271
-      value: 0.71626943
-      inSlope: 0.16667742
-      outSlope: 0.16667742
-      tangentMode: 34
+      value: 0.05
+      inSlope: 1.5538433
+      outSlope: 1.5538433
+      tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.33333334
+      outWeight: 0.17339866
     - serializedVersion: 3
-      time: 1.001831
-      value: 0.15268326
-      inSlope: -1.1126986
-      outSlope: -1.1126986
-      tangentMode: 34
+      time: 0.51355237
+      value: 0.55512965
+      inSlope: 3.1520765
+      outSlope: 3.1520765
+      tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
+      inWeight: 0.12118404
+      outWeight: 0.09317779
+    - serializedVersion: 3
+      time: 1
+      value: 0.02
+      inSlope: -2.453403
+      outSlope: -2.453403
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.099555746
+      outWeight: 0.31267747
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   cameraRoteValue: 0
+  cameraLeaveFarMaxOffest: 15
   cameraMaxRoteingOffest: 5
-  cameraCurRoteingOffest: 1
-  cameraSpaceMaxOffest: 30
+  cameraCurRoteingOffestX: 1
+  cameraCurRoteingOffestY: 1
+  cameraSpaceMaxOffest: 26
   cameraSpaceOffest: 5
   camFollowSpeed: 0.2
   camFollowSpeed2: 0.1
-  ballCamMoveY: {fileID: 6483853944495367109}
+  ballCamMoveY: {fileID: 6483853945354760610}
   ballCamera: {fileID: 6483853943425503255}
   ballCamFollowHost: {fileID: 6483853944050536277}
   ballCamFollowTarget: {fileID: 6483853944495367109}
+  cameraNeedRoteingValueX: 0
+  cameraRoteingRealValueX: 0
 --- !u!1 &6483853945354760610
 GameObject:
   m_ObjectHideFlags: 0
@@ -359,7 +375,8 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 6483853943425503253}
   m_Father: {fileID: 6483853944050536278}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

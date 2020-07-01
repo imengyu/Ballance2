@@ -51,8 +51,10 @@ namespace Ballance2.UI.BallanceUI
         public Text UIWindowTitleText;
         public RectTransform UIWindowClientArea;
         public RectTransform UIWindowTitle;
+        public UISizeDrag UISizeDrag;
 
         private UIManager UIManager;
+        private Vector2 minSize = Vector2.zero;
 
         void Awake()
         {
@@ -79,6 +81,15 @@ namespace Ballance2.UI.BallanceUI
             UIWindowRectTransform.sizeDelta = new Vector2(w, h);
         }
         /// <summary>
+        /// 设置窗口最小大小
+        /// </summary>
+        /// <param name="w">宽</param>
+        /// <param name="h">高</param>
+        public void SetMinSize(float w, float h)
+        {
+            minSize = new Vector2(w, h);
+        }
+        /// <summary>
         /// 设置窗口位置
         /// </summary>
         /// <param name="x">X</param>
@@ -94,6 +105,14 @@ namespace Ballance2.UI.BallanceUI
         public Vector2 GetSize()
         {
             return UIWindowRectTransform.sizeDelta;
+        }
+        /// <summary>
+        /// 获取窗口最小大小
+        /// </summary>
+        /// <returns></returns>
+        public Vector2 GetMinSize()
+        {
+            return minSize;
         }
         /// <summary>
         /// 获取窗口位置
@@ -141,6 +160,14 @@ namespace Ballance2.UI.BallanceUI
             return UIWindowRectTransform;
         }
 
+        /// <summary>
+        /// 窗口是否可以拖动改变大小
+        /// </summary>
+        public bool CanResize
+        {
+            get { return UISizeDrag.gameObject.activeSelf; }
+            set { UISizeDrag.gameObject.SetActive(value); }
+        }
         /// <summary>
         /// 窗口是否可以拖动
         /// </summary>
@@ -263,8 +290,10 @@ namespace Ballance2.UI.BallanceUI
         void SetVisible(bool visible);
         void Destroy();
         void SetSize(float w, float h);
+        void SetMinSize(float w, float h);
         void SetPos(float x, float y);
         Vector2 GetSize();
+        Vector2 GetMinSize();
         Vector2 GetPos();
         RectTransform SetView(RectTransform view);
         RectTransform GetView();

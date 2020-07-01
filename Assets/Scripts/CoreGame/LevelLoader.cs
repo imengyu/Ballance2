@@ -1,14 +1,14 @@
 ﻿using Ballance2.CoreBridge;
+using Ballance2.CoreGame.Interfaces;
 using Ballance2.Managers;
 using Ballance2.Utils;
 
 namespace Ballance2.GameCore
 {
-    [SLua.CustomLuaClass]
     /// <summary>
     /// 关卡加载器
     /// </summary>
-    public class LevelLoader : BaseManagerBindable
+    public class LevelLoader : BaseManager, ILevelLoader
     {
         public const string TAG = "LevelLoader";
 
@@ -21,6 +21,10 @@ namespace Ballance2.GameCore
         {
             GameManager.GameMediator.RegisterAction(GameActionNames.ACTION_LOAD_LEVEL, 
                 TAG, OnCallLoadLevel);
+            GameManager.GameMediator.RegisterAction(GameActionNames.ACTION_UNLOAD_LEVEL,
+                TAG, OnCallLoadLevel);
+            GameManager.GameMediator.RegisterAction(GameActionNames.ACTION_DEBUG_LEVEL_LOADER,
+                TAG, OnCallStartDebugLevelLoader);
             return true;
         }
         public override bool ReleaseManager()
@@ -66,6 +70,11 @@ namespace Ballance2.GameCore
                 return GameActionCallResult.CreateActionCallResult(false);
             }
         }
+        private GameActionCallResult OnCallStartDebugLevelLoader(params object[] param)
+        {
+            StartDebugLevelLoader((string)param[0]);
+            return GameActionCallResult.CreateActionCallResult(true);
+        }
 
         /// <summary>
         /// 关卡加载状态
@@ -85,7 +94,7 @@ namespace Ballance2.GameCore
             return false;
         }
 
-        internal void StartDebugLevelLoader(string levelFile)
+        private void StartDebugLevelLoader(string levelFile)
         {
 
         }

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1033962705385035835}
   - component: {fileID: 6991803851607233102}
   - component: {fileID: 197040516065230887}
+  - component: {fileID: 2514232011083865015}
   m_Layer: 0
   m_Name: Ball_Paper_piece11
   m_TagString: Untagged
@@ -94,6 +95,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -8279556039434216623, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &2514232011083865015
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 197040516065230886}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &276038225374611279
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,6 +123,7 @@ GameObject:
   - component: {fileID: 8380791419606098245}
   - component: {fileID: 6887007912360772269}
   - component: {fileID: 276038225374611276}
+  - component: {fileID: 6995610146955219036}
   m_Layer: 0
   m_Name: Ball_Wood_piece10
   m_TagString: Untagged
@@ -188,6 +206,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 6830611582895501885, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &6995610146955219036
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 276038225374611279}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &445729806033645593
 GameObject:
   m_ObjectHideFlags: 0
@@ -200,6 +234,7 @@ GameObject:
   - component: {fileID: 6010575452443404555}
   - component: {fileID: 7596144053829828555}
   - component: {fileID: 445729806033645590}
+  - component: {fileID: 4015710495477542035}
   m_Layer: 0
   m_Name: Ball_Paper_piece01
   m_TagString: Untagged
@@ -282,6 +317,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -8473886193133409326, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &4015710495477542035
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 445729806033645593}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &743103947644769152
 GameObject:
   m_ObjectHideFlags: 0
@@ -294,6 +345,7 @@ GameObject:
   - component: {fileID: 417465604441725827}
   - component: {fileID: 1963535534775413822}
   - component: {fileID: 743103947644769153}
+  - component: {fileID: 9048746280122716829}
   m_Layer: 0
   m_Name: Ball_Wood_piece04
   m_TagString: Untagged
@@ -376,6 +428,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -7111966104710212824, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &9048746280122716829
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 743103947644769152}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &784672741836966326
 GameObject:
   m_ObjectHideFlags: 0
@@ -388,6 +456,7 @@ GameObject:
   - component: {fileID: 632888607610697767}
   - component: {fileID: 3059942104780064531}
   - component: {fileID: 784672741836966327}
+  - component: {fileID: 7352201316486440262}
   m_Layer: 0
   m_Name: Ball_Wood_piece03
   m_TagString: Untagged
@@ -470,6 +539,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -8128276286396082021, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &7352201316486440262
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 784672741836966326}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1026537439585563592
 GameObject:
   m_ObjectHideFlags: 0
@@ -482,6 +567,7 @@ GameObject:
   - component: {fileID: 1135459091742067534}
   - component: {fileID: 6864050933833844889}
   - component: {fileID: 1026537439585563593}
+  - component: {fileID: 961319469853536591}
   m_Layer: 0
   m_Name: Ball_Wood_piece05
   m_TagString: Untagged
@@ -564,6 +650,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 3086256861349407952, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &961319469853536591
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1026537439585563592}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1115216866196630301
 GameObject:
   m_ObjectHideFlags: 0
@@ -576,6 +678,7 @@ GameObject:
   - component: {fileID: 1769024943932539381}
   - component: {fileID: 1469079462800918036}
   - component: {fileID: 1115216866196630298}
+  - component: {fileID: 6972470516958455296}
   m_Layer: 0
   m_Name: Ball_Stone_piece08
   m_TagString: Untagged
@@ -659,6 +762,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -3990990715021982765, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &6972470516958455296
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1115216866196630301}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1173761664984071024
 GameObject:
   m_ObjectHideFlags: 0
@@ -671,6 +790,7 @@ GameObject:
   - component: {fileID: 1563049418152905026}
   - component: {fileID: 8851079392938862569}
   - component: {fileID: 1173761664984071025}
+  - component: {fileID: 5837539663288305929}
   m_Layer: 0
   m_Name: Ball_Paper_piece15
   m_TagString: Untagged
@@ -753,6 +873,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 5193130452129097195, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &5837539663288305929
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1173761664984071024}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1198676614069344115
 GameObject:
   m_ObjectHideFlags: 0
@@ -765,6 +901,7 @@ GameObject:
   - component: {fileID: 2191890882923144366}
   - component: {fileID: 5075148134593658028}
   - component: {fileID: 1198676614069344112}
+  - component: {fileID: 967662526808127034}
   m_Layer: 0
   m_Name: Ball_Wood_piece06
   m_TagString: Untagged
@@ -847,6 +984,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -6657215477636198830, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &967662526808127034
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1198676614069344115}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1199595254221935677
 GameObject:
   m_ObjectHideFlags: 0
@@ -1178,9 +1331,9 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1199595254845188275}
   serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_Mass: 0.2
+  m_Drag: 0.6
+  m_AngularDrag: 0.1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -1198,9 +1351,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b476e5e834fe1d4ca9af66a39b67307, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Pieces: {fileID: 0}
+  Pieces: {fileID: 1199595254817708727}
   TypeName: 
-  Rigidbody: {fileID: 0}
+  Rigidbody: {fileID: 1199595254845188273}
   PushForce: 3
   UseFallForce: 0
   UseAutoCloseFallForce: 1
@@ -1318,6 +1471,7 @@ GameObject:
   - component: {fileID: 4718662756054789023}
   - component: {fileID: 5171947867915824480}
   - component: {fileID: 1340451379502334068}
+  - component: {fileID: 4449628607282751803}
   m_Layer: 0
   m_Name: Ball_Paper_piece03
   m_TagString: Untagged
@@ -1400,6 +1554,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -1133215689435445413, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &4449628607282751803
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1340451379502334071}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1491488051155658108
 GameObject:
   m_ObjectHideFlags: 0
@@ -1412,6 +1582,7 @@ GameObject:
   - component: {fileID: 2648677941140437737}
   - component: {fileID: 5404935522970934490}
   - component: {fileID: 1491488051155658109}
+  - component: {fileID: 2230642752615727829}
   m_Layer: 0
   m_Name: Ball_Paper_piece17
   m_TagString: Untagged
@@ -1494,6 +1665,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -3131111515317336431, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &2230642752615727829
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1491488051155658108}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1542553020060249068
 GameObject:
   m_ObjectHideFlags: 0
@@ -1506,6 +1693,7 @@ GameObject:
   - component: {fileID: 4816229215800073881}
   - component: {fileID: 7588767890448045897}
   - component: {fileID: 1542553020060249069}
+  - component: {fileID: 148168287207257006}
   m_Layer: 0
   m_Name: Ball_Stone_piece16
   m_TagString: Untagged
@@ -1589,6 +1777,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -3837535005703273732, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &148168287207257006
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1542553020060249068}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1740755234924316807
 GameObject:
   m_ObjectHideFlags: 0
@@ -1601,6 +1805,7 @@ GameObject:
   - component: {fileID: 7004028167052368199}
   - component: {fileID: 6747058633154812331}
   - component: {fileID: 1740755234924316804}
+  - component: {fileID: 5372706218538844905}
   m_Layer: 0
   m_Name: Ball_Wood_piece02
   m_TagString: Untagged
@@ -1683,6 +1888,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 1226929747439321972, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &5372706218538844905
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1740755234924316807}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1741623419322535526
 GameObject:
   m_ObjectHideFlags: 0
@@ -1695,6 +1916,7 @@ GameObject:
   - component: {fileID: 2270466707652008358}
   - component: {fileID: 2363998000258028876}
   - component: {fileID: 1741623419322535527}
+  - component: {fileID: 8008015685185919188}
   m_Layer: 0
   m_Name: Ball_Paper_piece02
   m_TagString: Untagged
@@ -1777,6 +1999,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 865974375164283520, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &8008015685185919188
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1741623419322535526}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1842615393625880507
 GameObject:
   m_ObjectHideFlags: 0
@@ -1789,6 +2027,7 @@ GameObject:
   - component: {fileID: 9122972006799161917}
   - component: {fileID: 4788919614850525627}
   - component: {fileID: 1842615393625880504}
+  - component: {fileID: 7096878967219296258}
   m_Layer: 0
   m_Name: Ball_Stone_piece04
   m_TagString: Untagged
@@ -1872,6 +2111,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 721485066968256853, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &7096878967219296258
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1842615393625880507}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1852044863069611094
 GameObject:
   m_ObjectHideFlags: 0
@@ -1884,6 +2139,7 @@ GameObject:
   - component: {fileID: 775115316115261668}
   - component: {fileID: 4164473936937186720}
   - component: {fileID: 1852044863069611095}
+  - component: {fileID: 4894588905946988694}
   m_Layer: 0
   m_Name: Ball_Wood_piece07
   m_TagString: Untagged
@@ -1966,6 +2222,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -2634796472990037323, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &4894588905946988694
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1852044863069611094}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &2253756162865953755
 GameObject:
   m_ObjectHideFlags: 0
@@ -1978,6 +2250,7 @@ GameObject:
   - component: {fileID: 1874522288179585442}
   - component: {fileID: 7470652737857957227}
   - component: {fileID: 2253756162865953752}
+  - component: {fileID: 287692970915269837}
   m_Layer: 0
   m_Name: Ball_Wood_piece14
   m_TagString: Untagged
@@ -2060,6 +2333,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 2279808389334901857, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &287692970915269837
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2253756162865953755}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &2343699480779008543
 GameObject:
   m_ObjectHideFlags: 0
@@ -2150,7 +2439,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2343699480779008543}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 0.9
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -2183,10 +2472,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b476e5e834fe1d4ca9af66a39b67307, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Pieces: {fileID: 0}
+  Pieces: {fileID: 1199595254885999771}
   TypeName: 
-  Rigidbody: {fileID: 0}
-  PushForce: 3
+  Rigidbody: {fileID: 2343699480779008541}
+  PushForce: 12
   UseFallForce: 0
   UseAutoCloseFallForce: 1
   FallForce: 10
@@ -2210,6 +2499,7 @@ GameObject:
   - component: {fileID: 6314145616107730349}
   - component: {fileID: 8421199904283550052}
   - component: {fileID: 2663626849411544594}
+  - component: {fileID: 2924886003540002677}
   m_Layer: 0
   m_Name: Ball_Paper_piece09
   m_TagString: Untagged
@@ -2292,6 +2582,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -1776702922847350901, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &2924886003540002677
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2663626849411544597}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &2800496164250932216
 GameObject:
   m_ObjectHideFlags: 0
@@ -2304,6 +2610,7 @@ GameObject:
   - component: {fileID: 9020888332605975584}
   - component: {fileID: 2196187214768032720}
   - component: {fileID: 2800496164250932217}
+  - component: {fileID: 6423257328344336522}
   m_Layer: 0
   m_Name: Ball_Paper_piece04
   m_TagString: Untagged
@@ -2386,6 +2693,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 5452378255291640120, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &6423257328344336522
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2800496164250932216}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &2951650358787185617
 GameObject:
   m_ObjectHideFlags: 0
@@ -2398,6 +2721,7 @@ GameObject:
   - component: {fileID: 3338386662383072858}
   - component: {fileID: 1446691134229368228}
   - component: {fileID: 2951650358787185646}
+  - component: {fileID: 2212968851969364783}
   m_Layer: 0
   m_Name: Ball_Paper_piece10
   m_TagString: Untagged
@@ -2480,6 +2804,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -1849907655312032369, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &2212968851969364783
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2951650358787185617}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &2976060002123166112
 GameObject:
   m_ObjectHideFlags: 0
@@ -2492,6 +2832,7 @@ GameObject:
   - component: {fileID: 9110149981047770449}
   - component: {fileID: 2940849174033822497}
   - component: {fileID: 2976060002123166113}
+  - component: {fileID: 5928845699405896018}
   m_Layer: 0
   m_Name: Ball_Wood_piece11
   m_TagString: Untagged
@@ -2574,6 +2915,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -7208856363533844945, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &5928845699405896018
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2976060002123166112}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &3330756327391744662
 GameObject:
   m_ObjectHideFlags: 0
@@ -2586,6 +2943,7 @@ GameObject:
   - component: {fileID: 1218876179884386050}
   - component: {fileID: 5201918106821433246}
   - component: {fileID: 3330756327391744663}
+  - component: {fileID: 5492723990200652194}
   m_Layer: 0
   m_Name: Ball_Stone_piece13
   m_TagString: Untagged
@@ -2669,6 +3027,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 3198755849122229665, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &5492723990200652194
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3330756327391744662}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &3774863549362987627
 GameObject:
   m_ObjectHideFlags: 0
@@ -2681,6 +3055,7 @@ GameObject:
   - component: {fileID: 4075674457426098103}
   - component: {fileID: 2662232890716978550}
   - component: {fileID: 3774863549362987624}
+  - component: {fileID: 3040869781957511901}
   m_Layer: 0
   m_Name: Ball_Stone_piece01
   m_TagString: Untagged
@@ -2764,6 +3139,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -452158168091208316, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &3040869781957511901
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3774863549362987627}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &3944946480649177419
 GameObject:
   m_ObjectHideFlags: 0
@@ -2776,6 +3167,7 @@ GameObject:
   - component: {fileID: 726801527788671313}
   - component: {fileID: 4979068434756407570}
   - component: {fileID: 3944946480649177416}
+  - component: {fileID: 1871695138588533881}
   m_Layer: 0
   m_Name: Ball_Paper_piece16
   m_TagString: Untagged
@@ -2858,6 +3250,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 6472911843762810053, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &1871695138588533881
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3944946480649177419}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &3994560841584642571
 GameObject:
   m_ObjectHideFlags: 0
@@ -2870,6 +3278,7 @@ GameObject:
   - component: {fileID: 2057034302968386112}
   - component: {fileID: 8757861099820277437}
   - component: {fileID: 3994560841584642568}
+  - component: {fileID: 3358511530876695362}
   m_Layer: 0
   m_Name: Ball_Stone_piece07
   m_TagString: Untagged
@@ -2953,6 +3362,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 2309858317139499908, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &3358511530876695362
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3994560841584642571}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &4532879499876483983
 GameObject:
   m_ObjectHideFlags: 0
@@ -2965,6 +3390,7 @@ GameObject:
   - component: {fileID: 2763015754627942624}
   - component: {fileID: 1918853233116741943}
   - component: {fileID: 4532879499876483980}
+  - component: {fileID: 8986381487675563205}
   m_Layer: 0
   m_Name: Ball_Stone_piece17
   m_TagString: Untagged
@@ -3048,6 +3474,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -721877850667342451, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &8986381487675563205
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4532879499876483983}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &4554320434863444824
 GameObject:
   m_ObjectHideFlags: 0
@@ -3060,6 +3502,7 @@ GameObject:
   - component: {fileID: 1136049296430179674}
   - component: {fileID: 2094019827557836612}
   - component: {fileID: 4554320434863444825}
+  - component: {fileID: 547307908632686667}
   m_Layer: 0
   m_Name: Ball_Wood_piece08
   m_TagString: Untagged
@@ -3142,6 +3585,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 7853432270459280399, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &547307908632686667
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4554320434863444824}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &4737323553809556298
 GameObject:
   m_ObjectHideFlags: 0
@@ -3154,6 +3613,7 @@ GameObject:
   - component: {fileID: 700816541386137694}
   - component: {fileID: 4723703364090253820}
   - component: {fileID: 4737323553809556299}
+  - component: {fileID: 7774133845247293219}
   m_Layer: 0
   m_Name: Ball_Paper_piece13
   m_TagString: Untagged
@@ -3236,6 +3696,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -7176302451669184896, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &7774133845247293219
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4737323553809556298}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &4883875756670622760
 GameObject:
   m_ObjectHideFlags: 0
@@ -3248,6 +3724,7 @@ GameObject:
   - component: {fileID: 2317451609279796448}
   - component: {fileID: 3641815950398687974}
   - component: {fileID: 4883875756670622761}
+  - component: {fileID: 7678300462718192617}
   m_Layer: 0
   m_Name: Ball_Stone_piece14
   m_TagString: Untagged
@@ -3331,6 +3808,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -8647287029377712854, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &7678300462718192617
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4883875756670622760}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &4892841703542585739
 GameObject:
   m_ObjectHideFlags: 0
@@ -3343,6 +3836,7 @@ GameObject:
   - component: {fileID: 4029034548754357220}
   - component: {fileID: 6368237325641841949}
   - component: {fileID: 4892841703542585736}
+  - component: {fileID: 248713253313313898}
   m_Layer: 0
   m_Name: Ball_Stone_piece10
   m_TagString: Untagged
@@ -3426,6 +3920,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -6146092811422425381, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &248713253313313898
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4892841703542585739}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6031503100787806275
 GameObject:
   m_ObjectHideFlags: 0
@@ -3532,6 +4042,7 @@ GameObject:
   - component: {fileID: 4837489037643564876}
   - component: {fileID: 841077976543698799}
   - component: {fileID: 6167255284971046198}
+  - component: {fileID: 3493540987400056102}
   m_Layer: 0
   m_Name: Ball_Stone_piece11
   m_TagString: Untagged
@@ -3615,6 +4126,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -4084994576177616166, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &3493540987400056102
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6167255284971046201}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6185728510368513096
 GameObject:
   m_ObjectHideFlags: 0
@@ -3627,6 +4154,7 @@ GameObject:
   - component: {fileID: 2922870879475858895}
   - component: {fileID: 3978658212254115570}
   - component: {fileID: 6185728510368513097}
+  - component: {fileID: 4707001222949943682}
   m_Layer: 0
   m_Name: Ball_Paper_piece12
   m_TagString: Untagged
@@ -3709,6 +4237,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -9128403161289413849, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &4707001222949943682
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6185728510368513096}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6274128871423941672
 GameObject:
   m_ObjectHideFlags: 0
@@ -3721,6 +4265,7 @@ GameObject:
   - component: {fileID: 8005702752238883559}
   - component: {fileID: 299393050582899254}
   - component: {fileID: 6274128871423941673}
+  - component: {fileID: 7044999341959132946}
   m_Layer: 0
   m_Name: Ball_Paper_piece07
   m_TagString: Untagged
@@ -3803,6 +4348,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -3783372447430678206, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &7044999341959132946
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6274128871423941672}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6643746455599683223
 GameObject:
   m_ObjectHideFlags: 0
@@ -3815,6 +4376,7 @@ GameObject:
   - component: {fileID: 8194489401331230120}
   - component: {fileID: 5129544525427937641}
   - component: {fileID: 6643746455599683220}
+  - component: {fileID: 2668481222564755951}
   m_Layer: 0
   m_Name: Ball_Stone_piece12
   m_TagString: Untagged
@@ -3898,6 +4460,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 3969967805968435226, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &2668481222564755951
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6643746455599683223}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6765645689935248788
 GameObject:
   m_ObjectHideFlags: 0
@@ -3910,6 +4488,7 @@ GameObject:
   - component: {fileID: 1866371495142507915}
   - component: {fileID: 9018321820559585272}
   - component: {fileID: 6765645689935248789}
+  - component: {fileID: 5315695583788409983}
   m_Layer: 0
   m_Name: Ball_Wood_piece01
   m_TagString: Untagged
@@ -3992,6 +4571,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 3257556394028559578, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &5315695583788409983
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6765645689935248788}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6800340855041674492
 GameObject:
   m_ObjectHideFlags: 0
@@ -4004,6 +4599,7 @@ GameObject:
   - component: {fileID: 780227196918432099}
   - component: {fileID: 1703251706721000921}
   - component: {fileID: 6800340855041674493}
+  - component: {fileID: 1089597006917647810}
   m_Layer: 0
   m_Name: Ball_Paper_piece18
   m_TagString: Untagged
@@ -4086,6 +4682,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 7784190868918901489, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &1089597006917647810
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6800340855041674492}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6918949518422609494
 GameObject:
   m_ObjectHideFlags: 0
@@ -4098,6 +4710,7 @@ GameObject:
   - component: {fileID: 7145662279482442629}
   - component: {fileID: 6369672228677599081}
   - component: {fileID: 6918949518422609495}
+  - component: {fileID: 6831363628365372916}
   m_Layer: 0
   m_Name: Ball_Paper_piece14
   m_TagString: Untagged
@@ -4180,6 +4793,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -5556432626603105353, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &6831363628365372916
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6918949518422609494}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &7027249104384075789
 GameObject:
   m_ObjectHideFlags: 0
@@ -4192,6 +4821,7 @@ GameObject:
   - component: {fileID: 6614188652787003950}
   - component: {fileID: 8320873949751412375}
   - component: {fileID: 7027249104384075786}
+  - component: {fileID: 3376631937702045819}
   m_Layer: 0
   m_Name: Ball_Paper_piece08
   m_TagString: Untagged
@@ -4274,6 +4904,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 5604502105514012343, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &3376631937702045819
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7027249104384075789}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &7214866662531672008
 GameObject:
   m_ObjectHideFlags: 0
@@ -4286,6 +4932,7 @@ GameObject:
   - component: {fileID: 5380709379853140587}
   - component: {fileID: 3023868793835676427}
   - component: {fileID: 7214866662531672009}
+  - component: {fileID: 8163561760658033121}
   m_Layer: 0
   m_Name: Ball_Stone_piece05
   m_TagString: Untagged
@@ -4369,6 +5016,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -5026445629794398206, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &8163561760658033121
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7214866662531672008}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &7368073068956619314
 GameObject:
   m_ObjectHideFlags: 0
@@ -4381,6 +5044,7 @@ GameObject:
   - component: {fileID: 3920793372338887342}
   - component: {fileID: 8689148531868291704}
   - component: {fileID: 7368073068956619315}
+  - component: {fileID: 7798511483207538154}
   m_Layer: 0
   m_Name: Ball_Wood_piece15
   m_TagString: Untagged
@@ -4463,6 +5127,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 3778930868562878322, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &7798511483207538154
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7368073068956619314}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &7490852923867106413
 GameObject:
   m_ObjectHideFlags: 0
@@ -4475,6 +5155,7 @@ GameObject:
   - component: {fileID: 451206735494024053}
   - component: {fileID: 5703474856162687029}
   - component: {fileID: 7490852923867106410}
+  - component: {fileID: 2007895870001592624}
   m_Layer: 0
   m_Name: Ball_Wood_piece12
   m_TagString: Untagged
@@ -4557,6 +5238,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 8201911869009444674, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &2007895870001592624
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7490852923867106413}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &7511204147397011441
 GameObject:
   m_ObjectHideFlags: 0
@@ -4569,6 +5266,7 @@ GameObject:
   - component: {fileID: 8039957130520223800}
   - component: {fileID: 3587754533726694386}
   - component: {fileID: 7511204147397011342}
+  - component: {fileID: 6834028481247873473}
   m_Layer: 0
   m_Name: Ball_Wood_piece16
   m_TagString: Untagged
@@ -4651,6 +5349,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4310120654876150120, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &6834028481247873473
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7511204147397011441}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &7545386956665335753
 GameObject:
   m_ObjectHideFlags: 0
@@ -4663,6 +5377,7 @@ GameObject:
   - component: {fileID: 6596920702504294162}
   - component: {fileID: 8398012668566496085}
   - component: {fileID: 7545386956665335750}
+  - component: {fileID: 5469114571048440983}
   m_Layer: 0
   m_Name: Ball_Paper_piece06
   m_TagString: Untagged
@@ -4745,6 +5460,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -7188613470725210680, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &5469114571048440983
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7545386956665335753}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &7568819807051869090
 GameObject:
   m_ObjectHideFlags: 0
@@ -4757,6 +5488,7 @@ GameObject:
   - component: {fileID: 8409870234429792570}
   - component: {fileID: 456837188686717097}
   - component: {fileID: 7568819807051869091}
+  - component: {fileID: 2642474026597241774}
   m_Layer: 0
   m_Name: Ball_Wood_piece13
   m_TagString: Untagged
@@ -4839,6 +5571,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -3427839922472415978, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &2642474026597241774
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7568819807051869090}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &7714135634342904738
 GameObject:
   m_ObjectHideFlags: 0
@@ -4851,6 +5599,7 @@ GameObject:
   - component: {fileID: 1093653659590084022}
   - component: {fileID: 8323023244566648033}
   - component: {fileID: 7714135634342904739}
+  - component: {fileID: 9059768685931511145}
   m_Layer: 0
   m_Name: Ball_Stone_piece02
   m_TagString: Untagged
@@ -4934,6 +5683,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 6388047723426572682, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &9059768685931511145
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7714135634342904738}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &7746672261690006231
 GameObject:
   m_ObjectHideFlags: 0
@@ -4946,6 +5711,7 @@ GameObject:
   - component: {fileID: 1777899909417725494}
   - component: {fileID: 6136692043709031683}
   - component: {fileID: 7746672261690006228}
+  - component: {fileID: 1081750143342270976}
   m_Layer: 0
   m_Name: Ball_Wood_piece09
   m_TagString: Untagged
@@ -5028,6 +5794,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -2461252583377704188, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &1081750143342270976
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7746672261690006231}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &8099717264120554190
 GameObject:
   m_ObjectHideFlags: 0
@@ -5040,6 +5822,7 @@ GameObject:
   - component: {fileID: 1441058728117783174}
   - component: {fileID: 1220024498550053412}
   - component: {fileID: 8099717264120554191}
+  - component: {fileID: 3919460066399841004}
   m_Layer: 0
   m_Name: Ball_Stone_piece06
   m_TagString: Untagged
@@ -5123,6 +5906,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 3837540868867745206, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &3919460066399841004
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8099717264120554190}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &8113623628980517230
 GameObject:
   m_ObjectHideFlags: 0
@@ -5135,6 +5934,7 @@ GameObject:
   - component: {fileID: 762409403051987519}
   - component: {fileID: 3709307956629874619}
   - component: {fileID: 8113623628980517231}
+  - component: {fileID: 2484025929333866501}
   m_Layer: 0
   m_Name: Ball_Stone_piece09
   m_TagString: Untagged
@@ -5218,6 +6018,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -2276033283929049220, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &2484025929333866501
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8113623628980517230}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &8322054640977957069
 GameObject:
   m_ObjectHideFlags: 0
@@ -5309,6 +6125,7 @@ GameObject:
   - component: {fileID: 8436743287461553073}
   - component: {fileID: 1674069528264794451}
   - component: {fileID: 8496791093350811208}
+  - component: {fileID: 3500387004471882050}
   m_Layer: 0
   m_Name: Ball_Stone_piece03
   m_TagString: Untagged
@@ -5392,6 +6209,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -7617184587431434989, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &3500387004471882050
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8496791093350811211}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &8551332378953920579
 GameObject:
   m_ObjectHideFlags: 0
@@ -5576,7 +6409,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8618135650371243679}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 10
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -5609,9 +6442,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b476e5e834fe1d4ca9af66a39b67307, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Pieces: {fileID: 0}
+  Pieces: {fileID: 1199595255419123941}
   TypeName: 
-  Rigidbody: {fileID: 0}
+  Rigidbody: {fileID: 8618135650371243677}
   PushForce: 3
   UseFallForce: 0
   UseAutoCloseFallForce: 1
@@ -5636,6 +6469,7 @@ GameObject:
   - component: {fileID: 648870371336660715}
   - component: {fileID: 1908719172999669307}
   - component: {fileID: 9084482953774425296}
+  - component: {fileID: 2526844655496534651}
   m_Layer: 0
   m_Name: Ball_Paper_piece05
   m_TagString: Untagged
@@ -5718,6 +6552,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -7812086533289933107, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &2526844655496534651
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9084482953774425299}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &9148859718104348045
 GameObject:
   m_ObjectHideFlags: 0
@@ -5730,6 +6580,7 @@ GameObject:
   - component: {fileID: 2913637637909923474}
   - component: {fileID: 5991730783473585395}
   - component: {fileID: 9148859718104348042}
+  - component: {fileID: 8878095377315723888}
   m_Layer: 0
   m_Name: Ball_Stone_piece15
   m_TagString: Untagged
@@ -5813,6 +6664,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -8664988843339621907, guid: db8f920ffd8800f408b8dfd1780b0fb9, type: 3}
+--- !u!54 &8878095377315723888
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9148859718104348045}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0.3
+  m_AngularDrag: 0.2
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &1199595255269793944
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5882,15 +6749,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbe911314b6a34f44b5a43edff36b35f, type: 3}
---- !u!198 &92868727249227514 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 1291475478346428002, guid: bbe911314b6a34f44b5a43edff36b35f,
-    type: 3}
-  m_PrefabInstance: {fileID: 1199595255269793944}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2116088874850231157 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1006565622060090349, guid: bbe911314b6a34f44b5a43edff36b35f,
+    type: 3}
+  m_PrefabInstance: {fileID: 1199595255269793944}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &92868727249227514 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 1291475478346428002, guid: bbe911314b6a34f44b5a43edff36b35f,
     type: 3}
   m_PrefabInstance: {fileID: 1199595255269793944}
   m_PrefabAsset: {fileID: 0}

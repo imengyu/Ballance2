@@ -1,6 +1,6 @@
 core.assets.musics:Game:Optional
 core.assets.skys:Game:Optional
-core.assets.sounds:Game:Optional
+core.assets.sounds:Game,GameCore:Optional
 core.gameinit:GameBase:Required
 core.gameui:GameBase:Required
 core.scenes.menulevel:MenuLevel:Required

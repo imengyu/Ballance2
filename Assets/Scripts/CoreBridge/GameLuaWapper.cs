@@ -22,5 +22,6 @@ namespace Ballance2.CoreBridge
     public delegate void LuaVector3Delegate(LuaTable self, Vector3 vector3);
     [CustomLuaClass]
     public delegate void LuaBoolDelegate(LuaTable self, bool b);
-
+    [CustomLuaClass]
+    public delegate bool LuaReturnBoolDelegate(LuaTable self);
 }

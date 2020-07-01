@@ -1,6 +1,8 @@
 ﻿using Ballance2.Config;
 using Ballance2.CoreBridge;
 using Ballance2.CoreGame.GamePlay;
+using Ballance2.CoreGame.Interfaces;
+using Ballance2.Interfaces;
 using Ballance2.Managers;
 using Ballance2.UI.Utils;
 using Ballance2.Utils;
@@ -10,11 +12,10 @@ using UnityEngine;
 
 namespace Ballance2.CoreGame.Managers
 {
-    [SLua.CustomLuaClass]
     /// <summary>
     /// 球管理器
     /// </summary>
-    public class BallManager : BaseManagerBindable
+    public class BallManager : BaseManager, IBallManager
     {
         public const string TAG = "BallManager";
 
@@ -28,6 +29,7 @@ namespace Ballance2.CoreGame.Managers
             keyListener = gameObject.AddComponent<KeyListener>();
 
             InitSettings();
+            InitActions();
             InitMisc();
             InitBalls();
             return true;
@@ -63,19 +65,19 @@ namespace Ballance2.CoreGame.Managers
         /// <summary>
         /// 当前球的名称
         /// </summary>
-        public string CurrentBallName { get; private set; }
+        public string CurrentBallName { get; protected set; }
         /// <summary>
         /// 当前球
         /// </summary>
-        public GameBall CurrentBall { get; private set; }
+        public GameBall CurrentBall { get; protected set; }
         /// <summary>
         /// 获取球是否调试
         /// </summary>
-        public bool IsBallDebug { get { return debug; } }
+        public virtual bool IsBallDebug { get { return debug; } }
         /// <summary>
         /// 获取是否控制反转
         /// </summary>
-        public bool IsReverseControl { get { return reverseControl; } }
+        public virtual bool IsReverseControl { get { return reverseControl; } }
 
         #region 设置变量
 
@@ -105,8 +107,8 @@ namespace Ballance2.CoreGame.Managers
 
         #endregion
 
-        private SoundManager SoundManager;
-        private CamManager CamManager;
+        private ISoundManager SoundManager;
+        private ICamManager CamManager;
 
         private void InitSettings()
         {
@@ -121,7 +123,7 @@ namespace Ballance2.CoreGame.Managers
         }
         private void InitBalls()
         {
-            CamManager = (CamManager)GameManager.GetManager(CamManager.TAG);
+            CamManager = (ICamManager)GameManager.GetManager("CamManager");
 
             pushType = BallPushType.None;
 
@@ -148,11 +150,14 @@ namespace Ballance2.CoreGame.Managers
         }
         private void InitMisc()
         {
-            SoundManager = (SoundManager)GameManager.GetManager(SoundManager.TAG);
-
+            SoundManager = (ISoundManager)GameManager.GetManager("SoundManager");
             Misc_Lightning = SoundManager.RegisterSoundPlayer(GameSoundType.BallEffect, "core.assets.sounds:Misc_Lightning.wav");
+        }
+        private void InitActions()
+        {
 
         }
+
 
         //设置加载
         private bool OnControlSettingsChanged(string evtName, params object[] param)
@@ -177,7 +182,7 @@ namespace Ballance2.CoreGame.Managers
             return true;
         }
 
-        private void Update()
+        protected void Update()
         {
 #if UNITY_EDITOR
             //调试所用代码
@@ -258,15 +263,15 @@ namespace Ballance2.CoreGame.Managers
                 else isBallSmoothMove = false;
             }
         }
-        private void FixedUpdate()
+        protected void FixedUpdate()
         {
-            if (IsControlling)
+            if (isBallControl)
                 BallPush();
         }
 
         private Rect line = new Rect(10, 35, 300, 20);
 
-        private void OnGUI()
+        protected void OnGUI()
         {
             if (debug && CurrentBall != null)
             {
@@ -292,7 +297,7 @@ namespace Ballance2.CoreGame.Managers
         /// <param name="name">球类型名称</param>
         /// <param name="ball">附加了GameBall组件的球实例</param>
         /// <param name="pieces">球碎片组</param>
-        public bool RegisterBall(string name, GameBall ball, GameObject pieces)
+        public virtual bool RegisterBall(string name, GameBall ball, GameObject pieces)
         {
             if (ball == null)
             {
@@ -322,14 +327,14 @@ namespace Ballance2.CoreGame.Managers
         /// 取消注册球
         /// </summary>
         /// <param name="name">球类型名称</param>
-        public void UnRegisterBall(string name)
+        public virtual void UnRegisterBall(string name)
         {
             GameBall targetBall = GetRegisteredBall(name);
             if (targetBall != null) BallTypes.Remove(targetBall);
             else
             {
                 GameLogger.Log(TAG, "无法取消注册球 {0} 因为它没有注册", name);
-                GameErrorManager.LastError = GameError.NotRegistered;
+                GameErrorManager.LastError = GameError.NotRegister;
             }
         }
         /// <summary>
@@ -337,7 +342,7 @@ namespace Ballance2.CoreGame.Managers
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public GameBall GetRegisteredBall(string name)
+        public virtual GameBall GetRegisteredBall(string name)
         {
             foreach (GameBall b in BallTypes)
             {
@@ -353,14 +358,14 @@ namespace Ballance2.CoreGame.Managers
         /// <summary>
         /// 开始控制球
         /// </summary>
-        public void StartControll()
+        public virtual void StartControll()
         {
             IsControlling = true;
         }
         /// <summary>
         /// 停止控制球
         /// </summary>
-        public void EndControll()
+        public virtual void EndControll()
         {
             IsControlling = false;
         }
@@ -501,10 +506,11 @@ namespace Ballance2.CoreGame.Managers
         /// </summary>
         /// <param name="smallToBig">是否由小变大。</param>
         /// <param name="lightEnd">是否在之后闪一下。</param>
-        public void PlayLighting(bool smallToBig = false, bool lightEnd = false)
+        public virtual void PlayLighting(bool smallToBig = false, bool lightEnd = false)
         {
             //播放闪电声音
-            Misc_Lightning.Play();
+            if (Misc_Lightning != null)
+                Misc_Lightning.Play();
 
             lighing = true;
 
@@ -559,12 +565,10 @@ namespace Ballance2.CoreGame.Managers
         [SerializeField, SetProperty("PushType")]
         private BallPushType pushType = BallPushType.None;
 
-        public bool IsSmoothMove() { return isBallSmoothMove; }
-
         /// <summary>
         /// 获取设置是否可以控制球
         /// </summary>
-        public bool IsControlling
+        public virtual bool IsControlling
         {
             get { return isBallControl; }
             set
@@ -593,13 +597,17 @@ namespace Ballance2.CoreGame.Managers
         /// <summary>
         /// 获取当前球推动方向
         /// </summary>
-        public BallPushType PushType { get { return pushType; } }
+        public virtual BallPushType PushType { get { return pushType; } }
 
+        /// <summary>
+        /// 获取当前球是否正在平滑移动
+        /// </summary>
+        public virtual bool IsSmoothMove() { return isBallSmoothMove; }
         /// <summary>
         /// 指定球速度清零。
         /// </summary>
         /// <param name="ball">指定球</param>
-        public void RemoveBallSpeed(GameBall ball)
+        public virtual void RemoveBallSpeed(GameBall ball)
         {
             if (ball != null)
                 ball.RemoveSpeed();
@@ -608,7 +616,7 @@ namespace Ballance2.CoreGame.Managers
         /// 添加球推动方向
         /// </summary>
         /// <param name="t"></param>
-        public void AddBallPush(BallPushType t)
+        public virtual void AddBallPush(BallPushType t)
         {
             if ((pushType & t) != t)
             {
@@ -619,7 +627,7 @@ namespace Ballance2.CoreGame.Managers
         /// 去除球推动方向
         /// </summary>
         /// <param name="t"></param>
-        public void RemoveBallPush(BallPushType t)
+        public virtual void RemoveBallPush(BallPushType t)
         {
             if ((pushType & t) == t)
             {
@@ -630,14 +638,14 @@ namespace Ballance2.CoreGame.Managers
         /// 设置球下次激活的位置。
         /// </summary>
         /// <param name="pos">下次激活的位置</param>
-        public void RecoverSetPos(Vector3 pos)
+        public virtual void RecoverSetPos(Vector3 pos)
         {
             nextRecoverBallPos = pos;
         }
         /// <summary>
         /// 重新设置默认球位置并激活
         /// </summary>
-        public void RecoverBallDef()
+        public virtual void RecoverBallDef()
         {
             RecoverBall(nextRecoverBallPos);
         }
@@ -645,7 +653,7 @@ namespace Ballance2.CoreGame.Managers
         /// 重新设置指定球位置并激活
         /// </summary>
         /// <param name="pos">球名字</param>
-        public void RecoverBall(Vector3 pos)
+        public virtual void RecoverBall(Vector3 pos)
         {
             if (CurrentBall != null)
             {
@@ -656,7 +664,7 @@ namespace Ballance2.CoreGame.Managers
         /// <summary>
         /// 激活默认球
         /// </summary>
-        public void ActiveBallDef()
+        public virtual void ActiveBallDef()
         {
             if (CurrentBall != null)
                 ActiveBall(CurrentBall.TypeName);
@@ -666,7 +674,7 @@ namespace Ballance2.CoreGame.Managers
         /// 激活指定的球
         /// </summary>
         /// <param name="type">球名字</param>
-        public void ActiveBall(string type)
+        public virtual void ActiveBall(string type)
         {
             RecoverBallDef();
             GameBall ball = GetRegisteredBall(type);
@@ -685,7 +693,7 @@ namespace Ballance2.CoreGame.Managers
         /// <summary>
         /// 清除已激活的球
         /// </summary>
-        public void ClearBall()
+        public virtual void ClearBall()
         {
             IsControlling = false;
             if (CurrentBall != null)
@@ -703,7 +711,7 @@ namespace Ballance2.CoreGame.Managers
         /// 抛出指定球碎片
         /// </summary>
         /// <param name="type">球类型</param>
-        public void ThrowPieces(string type)
+        public virtual void ThrowPieces(string type)
         {
             GameBall ball = GetRegisteredBall(type);
             if (ball != null) ball.ThrowPieces();
@@ -712,7 +720,7 @@ namespace Ballance2.CoreGame.Managers
         /// 抛出指定球碎片
         /// </summary>
         /// <param name="ball">球</param>
-        public void ThrowPieces(GameBall ball)
+        public virtual void ThrowPieces(GameBall ball)
         {
             if (ball != null) ball.ThrowPieces();
         }
@@ -720,7 +728,7 @@ namespace Ballance2.CoreGame.Managers
         /// 恢复指定球碎片
         /// </summary>
         /// <param name="ball">球</param>
-        public void RecoverPieces(GameBall ball)
+        public virtual void RecoverPieces(GameBall ball)
         {
             if (ball != null) ball.RecoverPieces();
         }
@@ -729,7 +737,7 @@ namespace Ballance2.CoreGame.Managers
         /// </summary>
         /// <param name="pos">指定位置。</param>
         /// <param name="off">动画平滑时间</param>
-        public void SmoothMoveBallToPos(Vector3 pos, float off = 2f)
+        public virtual void SmoothMoveBallToPos(Vector3 pos, float off = 2f)
         {
             if (CurrentBall != null)
             {
@@ -758,7 +766,7 @@ namespace Ballance2.CoreGame.Managers
         /// <summary>
         /// 播放烟雾
         /// </summary>
-        public void PlaySmoke()
+        public virtual void PlaySmoke()
         {
             Ball_Smoke.Play();
         }

@@ -5,6 +5,7 @@ using Ballance2.UI.Utils;
 using System.Xml;
 using Ballance2.Utils;
 using Ballance2.Managers;
+using Ballance2.Interfaces;
 
 namespace Ballance2.UI.BallanceUI.Element
 {
@@ -65,15 +66,14 @@ namespace Ballance2.UI.BallanceUI.Element
             }
         }
 
-        private Sprite selectedSpriteY = null;
-        private Sprite normalSpriteY = null;
-        private Sprite selectedSpriteN = null;
-        private Sprite normalSpriteN = null;
-        private SoundManager soundManager = null;
+        public Sprite selectedSprite = null;
+        public Sprite normalSprite = null;
+
+        private ISoundManager soundManager = null;
 
         protected override void OnInitElement()
         {
-            soundManager = (SoundManager)GameManager.GetManager(SoundManager.TAG);
+            soundManager = (ISoundManager)GameManager.GetManager("SoundManager");
 
             ButtonText = transform.Find("Text").gameObject.GetComponent<Text>();
             UISmallButtonNoText = transform.Find("UISmallButtonNo/Text").gameObject.GetComponent<Text>();
@@ -83,13 +83,8 @@ namespace Ballance2.UI.BallanceUI.Element
             UISmallButtonNoImage = transform.Find("UISmallButtonNo").gameObject.GetComponent<Image>();
             UISmallButtonYesImage = transform.Find("UISmallButtonYes").gameObject.GetComponent<Image>();
 
-            selectedSpriteY = UISmallButtonYes.spriteState.highlightedSprite;
-            normalSpriteY = UISmallButtonYesImage.sprite;
-            selectedSpriteN = UISmallButtonNo.spriteState.highlightedSprite;
-            normalSpriteN = UISmallButtonNoImage.sprite;
-
-            UISmallButtonNoImage.sprite = _Checked ? normalSpriteN : selectedSpriteN;
-            UISmallButtonYesImage.sprite = _Checked ? selectedSpriteY : normalSpriteY;
+            UISmallButtonNoImage.sprite = _Checked ? normalSprite : selectedSprite;
+            UISmallButtonYesImage.sprite = _Checked ? selectedSprite : normalSprite;
 
             clickEventHandler = new GameHandlerList();
             checkChangedEventHandler = new GameHandlerList();
@@ -202,11 +197,8 @@ namespace Ballance2.UI.BallanceUI.Element
                 if (_Checked != value)
                 {
                     _Checked = value;
-                    if (selectedSpriteY != null && normalSpriteN)
-                    {
-                        UISmallButtonNoImage.sprite = _Checked ? normalSpriteN : selectedSpriteN;
-                        UISmallButtonYesImage.sprite = _Checked ? selectedSpriteY : normalSpriteY;
-                    }
+                    UISmallButtonNoImage.sprite = _Checked ? normalSprite : selectedSprite;
+                    UISmallButtonYesImage.sprite = _Checked ? selectedSprite : normalSprite;
                     checkChangedEventHandler.CallEventHandler("checkChanged", this, value);
                 }
             }

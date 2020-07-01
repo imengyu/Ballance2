@@ -6,6 +6,7 @@ using System.Xml;
 using Ballance2.Utils;
 using Ballance2.Managers;
 using UnityEngine.EventSystems;
+using Ballance2.Interfaces;
 
 namespace Ballance2.UI.BallanceUI.Element
 {
@@ -59,11 +60,11 @@ namespace Ballance2.UI.BallanceUI.Element
             }
         }
 
-        private SoundManager soundManager = null;
+        private ISoundManager soundManager = null;
 
         protected override void OnInitElement()
         {
-            soundManager = (SoundManager)GameManager.GetManager(SoundManager.TAG);
+            soundManager = (ISoundManager)GameManager.GetManager("SoundManager");
 
             LeftText = transform.Find("LeftText").gameObject.GetComponent<Text>();
             RightText = transform.Find("RightText").gameObject.GetComponent<Text>();

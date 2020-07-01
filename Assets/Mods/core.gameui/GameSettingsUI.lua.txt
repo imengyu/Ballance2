@@ -5,13 +5,13 @@ GameActionNames = Ballance2.CoreBridge.GameActionNames
 StringUtils = Ballance2.Utils.StringUtils
 GameSettingsManager = Ballance2.Config.GameSettingsManager
 GameActionCallResult = Ballance2.CoreBridge.GameActionCallResult
-ModManager = Ballance2.Managers.ModManager
-GameSoundType = Ballance2.Managers.GameSoundType
+GameSoundType = Ballance2.Interfaces.GameSoundType
 
 Screen = UnityEngine.Screen
+QualitySettings = UnityEngine.QualitySettings
 
 local UIManager = GameManager.UIManager
-local SoundManager = Slua.As(GameManager.GetManager(Ballance2.Managers.SoundManager.TAG), Ballance2.Managers.SoundManager)
+local SoundManager = Slua.As(GameManager.GetManager("SoundManager"), Ballance2.Interfaces.ISoundManager)
 local GameSettings = nil
 
 local resolutions = nil
@@ -56,13 +56,24 @@ function LoadGameSettingsUI()
   -- 设置 - 图像
   pageSettingsVideo = UIManager:RegisterBallanceUIPage("settings.video", pageSettingsVideoXml, 
     { 
-      "dropdown.resolution:valueChanged","dropdown.quality:valueChanged","toggle.fullscreen:checkedChanged",
-      "dropdown.vsync:valueChanged","toggle.cloud:checkedChanged","btn.back:click" 
+      "dropdown.resolution:valueChanged","dropdown.quality:valueChanged","toggle.fullscreen:checkChanged",
+      "dropdown.vsync:valueChanged","toggle.cloud:checkChanged","btn.back:click" 
     }, 
     { 
-      function(evtName, el, v) GameSettings:SetInt("video.resolution", v) end, 
-      function(evtName, el, v) GameSettings:SetInt("video.quality", v) end, 
-      function(evtName, el, v) GameSettings:SetBool("video.fullScreen", v) end, 
+      function(evtName, el, v) 
+        GameSettings:SetInt("video.resolution", v)
+        GameSettings:NotifySettingsUpdate("video")
+      end, 
+      function(evtName, el, v) 
+        GameSettings:SetInt("video.quality", v) 
+        GameSettings:NotifySettingsUpdate("video")
+      end, 
+      function(evtName, el, v) 
+        GameSettings:SetBool("video.fullScreen", v) 
+        print(v)
+        print(v and "true" or "false")
+        GameSettings:NotifySettingsUpdate("video")
+      end, 
       function(evtName, el, v) GameSettings:SetInt("video.vsync", v) end, 
       function(evtName, el, v) GameSettings:SetBool("video.cloud", v) end, 
       function(evtName) 
@@ -73,10 +84,10 @@ function LoadGameSettingsUI()
     nil,
     "Default", 
     {
-      "dropdown.quality:value:"..GameSettings:GetInt("video.quality", 2),
-      "dropdown.vsync:value:"..GameSettings:GetInt("video.vsync", 0),
+      "dropdown.quality:value:"..GameSettings:GetInt("video.quality", QualitySettings.GetQualityLevel()),
+      "dropdown.vsync:value:"..GameSettings:GetInt("video.vsync", QualitySettings.vSyncCount),
       "toggle.cloud:checked:"..(GameSettings:GetBool("video.cloud", true) and "true" or "false"),
-      "toggle.fullscreen:checked:"..(GameSettings:GetBool("video.fullscreen", false) and "true" or "false")
+      "toggle.fullscreen:checked:"..(GameSettings:GetBool("video.fullScreen", Screen.fullScreen) and "true" or "false")
     }
   )
   --设置数据到页面上
@@ -145,9 +156,9 @@ function LoadGameSettingsUI()
     nil,
     "Default",
     {
-      "slider.voice.main:value"..GameSettings:GetFloat("voice.main", 100),
-      "slider.voice.background:value"..GameSettings:GetFloat("voice.background", 100),
-      "slider.voice.ui:value"..GameSettings:GetFloat("voice.ui", 100)
+      "slider.voice.main:value:"..GameSettings:GetFloat("voice.main", 100),
+      "slider.voice.background:value:"..GameSettings:GetFloat("voice.background", 100),
+      "slider.voice.ui:value:"..GameSettings:GetFloat("voice.ui", 100)
     }
   )
 

@@ -2,9 +2,9 @@
 <UIVertcialLinearLayout
   gravity="Center">
   <UIText width="match_parent" layout_marginBottom="25" color="#fff">设置</UIText>
-  <UIMainButton name="btn.settings.video">图像设置</UIMainButton>
-  <UIMainButton name="btn.settings.control">控制设置</UIMainButton>
-  <UIMainButton name="btn.settings.voice">声音设置</UIMainButton>
+  <UIMenuButton name="btn.settings.video">图像设置</UIMenuButton>
+  <UIMenuButton name="btn.settings.control">控制设置</UIMenuButton>
+  <UIMenuButton name="btn.settings.voice">声音设置</UIMenuButton>
   <UIButtonBack 
     name="btn.back"
     layout_marginTop="20"

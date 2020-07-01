@@ -9,6 +9,7 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
+using Ballance2.Interfaces;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -18,8 +19,7 @@ namespace Ballance2.Managers
     /// <summary>
     /// 模组管理器
     /// </summary>
-    [SLua.CustomLuaClass]
-    public class ModManager : BaseManagerBindable
+    public class ModManager : BaseManager, IModManager
     {
         public const string TAG = "ModManager";
 
@@ -132,8 +132,10 @@ namespace Ballance2.Managers
 #endif
             else if (File.Exists(pathInMods)) mod = new GameMod(pathInMods, this, packageName);
             else if (File.Exists(pathInCore)) mod = new GameMod(pathInCore, this, packageName);
+#if UNITY_EDITOR
             else if (GameManager.AssetsPreferEditor == false && AssetDatabase.IsValidFolder(pathInEditorMods))
                 mod = LoadModInEditor(pathInEditorMods, packageName);
+#endif
             else
             {
                 GameLogger.Warning(TAG, "无法通过包名加载模组包 {0} ，未找到文件", packageName);
@@ -230,7 +232,7 @@ namespace Ballance2.Managers
             if (mod == null)
             {
                 GameLogger.Warning(TAG, "无法卸载模组 (UID: {0}) ，因为没有加载", modUid);
-                GameErrorManager.LastError = GameError.NotRegistered;
+                GameErrorManager.LastError = GameError.NotRegister;
                 return false;
             }
 
@@ -251,7 +253,7 @@ namespace Ballance2.Managers
             if (mod == null)
             {
                 GameLogger.Warning(TAG, "无法卸载模组 (UID: {0}) ，因为没有加载", packageName);
-                GameErrorManager.LastError = GameError.NotRegistered;
+                GameErrorManager.LastError = GameError.NotRegister;
                 return false;
             }
             return mod.LoadStatus == GameModStatus.Loading;
@@ -279,7 +281,7 @@ namespace Ballance2.Managers
             if (m == null)
             {
                 GameLogger.Warning(TAG, "无法初始化模组包 (UID: {0}) ，因为没有加载", modUid);
-                GameErrorManager.LastError = GameError.NotRegistered;
+                GameErrorManager.LastError = GameError.NotRegister;
                 return false;
             }
 
@@ -298,7 +300,7 @@ namespace Ballance2.Managers
             if (m == null)
             {
                 GameLogger.Warning(TAG, "无法执行化模组包 (UID: {0}) ，因为没有加载", modUid);
-                GameErrorManager.LastError = GameError.NotRegistered;
+                GameErrorManager.LastError = GameError.NotRegister;
                 return false;
             }
 
@@ -312,6 +314,7 @@ namespace Ballance2.Managers
 
         private GameMod LoadModInEditor(string pathInEditorMods, string packageName)
         {
+#if UNITY_EDITOR
             GameMod mod = null;
             TextAsset modDef = AssetDatabase.LoadAssetAtPath<TextAsset>(pathInEditorMods + "/ModDef.xml");
             if (modDef == null)
@@ -324,8 +327,10 @@ namespace Ballance2.Managers
             mod = new GameMod(pathInEditorMods, this, packageName);
             mod.IsEditorPack = true;
             mod.ForceLoadEditorPack(modDef);
-
             return mod;
+#else
+            throw new System.Exception("LoadModInEditor can only use in editor mode!");
+#endif
         }
         internal void OnModLoadFinished(GameMod m)
         {
@@ -334,25 +339,13 @@ namespace Ballance2.Managers
             else
                 GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_MOD_LOAD_FAILED, "*", m.Uid, m, m.LoadFriendlyErrorExplain);
         }
-        internal void OnUpdateCurrentLoadingMod(GameMod m)
-        {
-            _CurrentLoadingMod = m;
-            if (onUpdateCurrentLoadingModCallback != null)
-                onUpdateCurrentLoadingModCallback.Invoke(m);
-        }
 
-        private System.Action<GameMod> onUpdateCurrentLoadingModCallback = null;
-
-        internal void RegisterOnUpdateCurrentLoadingModCallback(System.Action<GameMod> callback)
-        {
-            onUpdateCurrentLoadingModCallback = callback;
-        }
-        internal void ExecuteModEntryCodeAtStart()
+        public void ExecuteModEntry(GameModEntryCodeExecutionAt at)
         {
             foreach (GameMod m in gameMods)
             {
                 if (m.ModType == GameModType.ModPack
-                    && m.ModEntryCodeExecutionAt == GameModEntryCodeExecutionAt.AtStart
+                    && m.ModEntryCodeExecutionAt == at
                     && !m.GetModEntryCodeExecuted())
                     m.RunModExecutionCode();
             }
@@ -363,7 +356,7 @@ namespace Ballance2.Managers
         #region 模组包管理调试
 
         private UIManager UIManager;
-        private DebugManager DebugManager;
+        private IDebugManager DebugManager;
         private UIWindow modManageWindow;
         private RectTransform modManagerView;
         private UICommonList modList;
@@ -377,7 +370,7 @@ namespace Ballance2.Managers
         private void InitModDebug()
         {
             UIManager = (UIManager)GameManager.GetManager(UIManager.TAG);
-            DebugManager = (DebugManager)GameManager.GetManager(DebugManager.TAG);
+            DebugManager = (IDebugManager)GameManager.GetManager("DebugManager");
             DebugManager.RegisterCommand("loadmod", OnCommandLoadMod, 1, "[packagePath:string] [initialize:true/false] 加载模组 [模组完整路径] [是否立即初始化]");
             DebugManager.RegisterCommand("unloadmod", OnCommandUnLoadMod, 1, "[packageUid:int]  加载模组 [模组UID]");
             DebugManager.RegisterCommand("initmod", OnCommandInitializeMod, 1, "[packageUid:int]  初始化模组 [模组UID]");
@@ -397,6 +390,7 @@ namespace Ballance2.Managers
             modManagerView = GameCloneUtils.CloneNewObjectWithParent(GameManager.FindStaticPrefabs("UIModManagement"), UIManager.UIRoot.transform).GetComponent<RectTransform>();
             modManageWindow = UIManager.CreateWindow("模组管理", modManagerView);
             modManageWindow.SetSize(500, 300);
+            modManageWindow.SetMinSize(400, 250);
             modManageWindow.CloseAsHide = true;
             modManageWindow.Hide();
             modList = modManagerView.transform.Find("UIScrollView/Viewport/Content").gameObject.GetComponent<UICommonList>();

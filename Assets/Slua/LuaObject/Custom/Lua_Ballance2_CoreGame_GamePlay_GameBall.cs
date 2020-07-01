@@ -1263,7 +1263,7 @@ public class Lua_Ballance2_CoreGame_GamePlay_GameBall : LuaObject {
 			#endif
 			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
 			pushValue(l,true);
-			pushValue(l,self.BallManager);
+			pushInterface(l,self.BallManager, typeof(Ballance2.CoreGame.Interfaces.IBallManager));
 			return 2;
 		}
 		catch(Exception e) {
@@ -1294,7 +1294,7 @@ public class Lua_Ballance2_CoreGame_GamePlay_GameBall : LuaObject {
 			#endif
 			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
 			pushValue(l,true);
-			pushValue(l,self.CamManager);
+			pushInterface(l,self.CamManager, typeof(Ballance2.CoreGame.Interfaces.ICamManager));
 			return 2;
 		}
 		catch(Exception e) {

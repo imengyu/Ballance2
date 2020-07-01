@@ -138,7 +138,6 @@ namespace Ballance2.Config
         /// <param name="groupName">组名称</param>
         public void NotifySettingsUpdate(string groupName)
         {
-            GameLogger.Log(TAG + ":" + basePackName, "NotifySettingsUpdate for {0}", groupName);
             foreach (var d in settingUpdateCallbacks)
                 if (d.groupName == groupName)
                     d.handler.CallEventHandler("SettingsUpdate");

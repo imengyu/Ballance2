@@ -121,9 +121,6 @@ namespace Ballance2.ModBase
 
             GameLogger.Log(ModManager.TAG, "Initialize mod package {0} , Full path : {1}", PackageName, PackagePath);
 
-            //当前
-            ModManager.OnUpdateCurrentLoadingMod(this);
-
             //请求
             UnityWebRequest request = null;
 
@@ -524,7 +521,8 @@ namespace Ballance2.ModBase
         /// </summary>
         private void FixBundleShader()
         {
-            if(AssetBundle == null)
+#if UNITY_EDITOR //editor 模式下修复一下透明shader
+            if (AssetBundle == null)
                 return;
 
             var materials = AssetBundle.LoadAllAssets<Material>();
@@ -558,6 +556,7 @@ namespace Ballance2.ModBase
                     }
                 }
             }
+#endif
         }
         /// <summary>
         /// 加载模组依赖
@@ -625,8 +624,6 @@ namespace Ballance2.ModBase
                             }
                         }
                     }
-
-                    ModManager.OnUpdateCurrentLoadingMod(this);
                 }
             }
         }
@@ -1018,6 +1015,4 @@ namespace Ballance2.ModBase
         #endregion
 
     }
-
-
 }

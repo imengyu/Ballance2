@@ -94,9 +94,17 @@ namespace Ballance2.CoreBridge
         /// </summary>
         public const string ACTION_LOAD_LEVEL = "core.load_level";
         /// <summary>
+        /// 调试关卡编辑器
+        /// </summary>
+        public const string ACTION_DEBUG_LEVEL_LOADER = "core.debug_level_loader";
+        /// <summary>
         /// 卸载关卡
         /// </summary>
         public const string ACTION_UNLOAD_LEVEL = "core.unload_level";
+        /// <summary>
+        /// 调试内核
+        /// </summary>
+        public const string ACTION_DEBUG_CORE = "core.debug";
         /// <summary>
         /// 打开编辑器编辑关卡
         /// </summary>

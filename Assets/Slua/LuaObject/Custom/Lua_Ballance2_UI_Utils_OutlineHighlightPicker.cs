@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Lua_Ballance2_UI_Utils_OutlineHighlightPicker : LuaObject {
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int get_OutlineRegister(IntPtr l) {
+	static public int get_QuickOutline(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -18,7 +18,7 @@ public class Lua_Ballance2_UI_Utils_OutlineHighlightPicker : LuaObject {
 			#endif
 			Ballance2.UI.Utils.OutlineHighlightPicker self=(Ballance2.UI.Utils.OutlineHighlightPicker)checkSelf(l);
 			pushValue(l,true);
-			pushValue(l,self.OutlineRegister);
+			pushValue(l,self.QuickOutline);
 			return 2;
 		}
 		catch(Exception e) {
@@ -36,7 +36,7 @@ public class Lua_Ballance2_UI_Utils_OutlineHighlightPicker : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int set_OutlineRegister(IntPtr l) {
+	static public int set_QuickOutline(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -48,9 +48,9 @@ public class Lua_Ballance2_UI_Utils_OutlineHighlightPicker : LuaObject {
 			#endif
 			#endif
 			Ballance2.UI.Utils.OutlineHighlightPicker self=(Ballance2.UI.Utils.OutlineHighlightPicker)checkSelf(l);
-			Knife.PostProcessing.OutlineRegister v;
+			QuickOutline v;
 			checkType(l,2,out v);
-			self.OutlineRegister=v;
+			self.QuickOutline=v;
 			pushValue(l,true);
 			return 1;
 		}
@@ -262,7 +262,7 @@ public class Lua_Ballance2_UI_Utils_OutlineHighlightPicker : LuaObject {
 	[UnityEngine.Scripting.Preserve]
 	static public void reg(IntPtr l) {
 		getTypeTable(l,"Ballance2.UI.Utils.OutlineHighlightPicker");
-		addMember(l,"OutlineRegister",get_OutlineRegister,set_OutlineRegister,true);
+		addMember(l,"QuickOutline",get_QuickOutline,set_QuickOutline,true);
 		addMember(l,"NormalColor",get_NormalColor,set_NormalColor,true);
 		addMember(l,"EnterColor",get_EnterColor,set_EnterColor,true);
 		addMember(l,"onClick",get_onClick,set_onClick,true);

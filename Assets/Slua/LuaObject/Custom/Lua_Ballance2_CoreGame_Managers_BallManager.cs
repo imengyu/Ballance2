@@ -1931,6 +1931,6 @@ public class Lua_Ballance2_CoreGame_Managers_BallManager : LuaObject {
 		addMember(l,"IsReverseControl",get_IsReverseControl,null,true);
 		addMember(l,"IsControlling",get_IsControlling,set_IsControlling,true);
 		addMember(l,"PushType",get_PushType,null,true);
-		createTypeMetatable(l,null, typeof(Ballance2.CoreGame.Managers.BallManager),typeof(Ballance2.Managers.BaseManagerBindable));
+		createTypeMetatable(l,null, typeof(Ballance2.CoreGame.Managers.BallManager),typeof(Ballance2.Managers.BaseManager));
 	}
 }

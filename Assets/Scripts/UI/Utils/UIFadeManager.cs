@@ -10,6 +10,7 @@ using UnityEngine.UI;
 
 namespace Ballance2.UI.Utils
 {
+    [SLua.CustomLuaClass]
     /// <summary>
     /// 渐变自管理类
     /// </summary>
@@ -37,6 +38,8 @@ namespace Ballance2.UI.Utils
                                     fadeObject.material.color = new Color(fadeObject.material.color.r, fadeObject.material.color.g, fadeObject.material.color.b, fadeObject.alpha);
                                 else if (fadeObject.image != null)
                                     fadeObject.image.color = new Color(fadeObject.image.color.r, fadeObject.image.color.g, fadeObject.image.color.b, fadeObject.alpha);
+                                else if (fadeObject.text != null)
+                                    fadeObject.text.color = new Color(fadeObject.text.color.r, fadeObject.text.color.g, fadeObject.text.color.b, fadeObject.alpha);
                             }
                             else fadeObject.runEnd = true;
                         }
@@ -49,6 +52,8 @@ namespace Ballance2.UI.Utils
                                     fadeObject.material.color = new Color(fadeObject.material.color.r, fadeObject.material.color.g, fadeObject.material.color.b, fadeObject.alpha);
                                 else if (fadeObject.image != null)
                                     fadeObject.image.color = new Color(fadeObject.image.color.r, fadeObject.image.color.g, fadeObject.image.color.b, fadeObject.alpha);
+                                else if (fadeObject.text != null)
+                                    fadeObject.text.color = new Color(fadeObject.text.color.r, fadeObject.text.color.g, fadeObject.text.color.b, fadeObject.alpha);
                             }
                             else
                             {
@@ -65,17 +70,20 @@ namespace Ballance2.UI.Utils
             }
         }
 
+        [SLua.CustomLuaClass]
         public enum FadeType
         {
             None,
             FadeIn,
             FadeOut,
         }
+        [SLua.CustomLuaClass]
         public class FadeObject
         {
             public GameObject gameObject;
             public Material material;
             public Image image;
+            public Text text;
             public float alpha;
             public float timeInSecond;
             public bool endReactive;
@@ -97,6 +105,15 @@ namespace Ballance2.UI.Utils
             foreach (FadeObject o in fadeObjects)
             {
                 if (o.image == image && fadeType == o.fadeType)
+                    return o;
+            }
+            return null;
+        }
+        private FadeObject FindFadeObjectByText(Text text, FadeType fadeType)
+        {
+            foreach (FadeObject o in fadeObjects)
+            {
+                if (o.text == text && fadeType == o.fadeType)
                     return o;
             }
             return null;
@@ -213,6 +230,68 @@ namespace Ballance2.UI.Utils
             }
             return null;
         }
-        
+
+        /// <summary>
+        /// 运行淡出动画
+        /// </summary>
+        /// <param name="gameObject">执行对象</param>
+        /// <param name="timeInSecond">执行时间</param>
+        /// <param name="hidden">执行完毕是否将对象设置为不激活</param>
+        /// <param name="material">执行材质</param>
+        public FadeObject AddFadeOut(Text text, float timeInSecond, bool hidden)
+        {
+            if (text != null)
+            {
+                FadeObject fadeObject = FindFadeObjectByText(text, FadeType.FadeOut);
+                if (fadeObject != null)
+                    fadeObjects.Remove(fadeObject);
+
+                fadeObject = new FadeObject();
+                fadeObject.gameObject = text.gameObject;
+                fadeObject.timeInSecond = timeInSecond;
+                fadeObject.alpha = 1;
+                fadeObject.material = null;
+                fadeObject.text = text;
+                fadeObject.fadeType = FadeType.FadeOut;
+                fadeObject.endReactive = hidden;
+                fadeObjects.Add(fadeObject);
+
+                text.color = new Color(text.color.r, text.color.g, text.color.b, 1);
+                return fadeObject;
+            }
+            return null;
+        }
+        /// <summary>
+        /// 运行淡入动画
+        /// </summary>
+        /// <param name="gameObject">执行对象</param>
+        /// <param name="timeInSecond">执行时间</param>
+        /// <param name="material">执行材质</param>
+        public FadeObject AddFadeIn(Text text, float timeInSecond)
+        {
+            if (text != null)
+            {
+                FadeObject fadeObject = FindFadeObjectByText(text, FadeType.FadeIn);
+                if (fadeObject != null)
+                    fadeObjects.Remove(fadeObject);
+
+                fadeObject = new FadeObject();
+                fadeObject.gameObject = text.gameObject;
+                fadeObject.timeInSecond = timeInSecond;
+                fadeObject.alpha = 0;
+                fadeObject.material = null;
+                fadeObject.text = text;
+                fadeObject.fadeType = FadeType.FadeIn;
+                fadeObjects.Add(fadeObject);
+
+                text.color = new Color(text.color.r, text.color.g, text.color.b, 0);
+                if (!text.gameObject.activeSelf)
+                    text.gameObject.SetActive(true);
+                return fadeObject;
+            }
+            return null;
+        }
+
+
     }
 }

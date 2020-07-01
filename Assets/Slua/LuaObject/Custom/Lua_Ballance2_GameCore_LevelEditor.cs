@@ -103,6 +103,6 @@ public class Lua_Ballance2_GameCore_LevelEditor : LuaObject {
 		addMember(l,InitManager);
 		addMember(l,ReleaseManager);
 		addMember(l,"TAG",get_TAG,null,false);
-		createTypeMetatable(l,null, typeof(Ballance2.GameCore.LevelEditor),typeof(Ballance2.Managers.BaseManagerBindable));
+		createTypeMetatable(l,null, typeof(Ballance2.GameCore.LevelEditor),typeof(Ballance2.Managers.BaseManager));
 	}
 }

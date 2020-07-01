@@ -1,0 +1,386 @@
+fileFormatVersion: 2
+guid: 8262cfd0a35c4fe4b87e07209fd3a7a2
+ModelImporter:
+  serializedVersion: 19300
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Columns_beige_fade
+    second: {fileID: 2100000, guid: c14f89c348f44b049b9128a6d6b29d5e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Colums_beige
+    second: {fileID: 2100000, guid: a6e276860c964a54b9c710d78ce4a2ac, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Colums_blue
+    second: {fileID: 2100000, guid: d48e28f8de54c5c44bc5029ec6a0f680, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Floor_Side
+    second: {fileID: 2100000, guid: 257cdd69f7a64e34e89e68b54abcf577, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Floor_Top_Boderless
+    second: {fileID: 2100000, guid: b92e12be6ea90a74592f8a7c918264d3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Floor_Top_Border
+    second: {fileID: 2100000, guid: 356eecf0ff33cd44eaa25b65217d481b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Floor_Top_Checkpoint
+    second: {fileID: 2100000, guid: 7513b9f5ee0adae43964c14e3956ead4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Floor_Top_Flat
+    second: {fileID: 2100000, guid: 11e0bf7199e4f4d4595913177b1e98e0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Floor_Top_Profile
+    second: {fileID: 2100000, guid: 2605141658211bb48a747d259e7deb21, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Floor_Top_ProfileFlat
+    second: {fileID: 2100000, guid: 9884a6c482a3c724cb96be6a9f2c44cd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Floor_Trafo_Stone
+    second: {fileID: 2100000, guid: 681acad201343f3409c424f7a52064e9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Floor_Trafo_Wood
+    second: {fileID: 2100000, guid: 60cc2fa0e207abe43b138ca7fd591bb8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Floor_Wood
+    second: {fileID: 2100000, guid: ab53f3a2b5403d449adad466dfeefda3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Laterne_Glas
+    second: {fileID: 2100000, guid: d398c4a834c085e43a24adc66e1e618d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Laterne_Metal
+    second: {fileID: 2100000, guid: 22cf12e2ca0b6104a8c5d4d51e5a7c86, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Laterne_Schatten
+    second: {fileID: 2100000, guid: 8da38676442be5e48b826df6a51a8397, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Laterne_Verlauf
+    second: {fileID: 2100000, guid: ee81b71dece5cad4489fae530ceb9b31, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Misc_MetalButtons
+    second: {fileID: 2100000, guid: 3f4251d6b9177754db83aa5bdcd36710, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Misc_Schelle
+    second: {fileID: 2100000, guid: e8a10e700dbdb9e45883bb444e22b713, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Modul01_Floor
+    second: {fileID: 2100000, guid: d1d9eaa5d792e764aaf0070952564bc6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Modul_13_Wood
+    second: {fileID: 2100000, guid: c5245199f19253f4bb79eeca779bf5ac, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Rail
+    second: {fileID: 2100000, guid: 8058b82d492495344a75bd12c7b0bbe3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stick_Bottom
+    second: {fileID: 2100000, guid: 4e0ffe008e12a1c44b81cea15d82f686, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stick_Green
+    second: {fileID: 2100000, guid: 1bd0bdeb285592c438e44097622f3f7f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stick_Rail
+    second: {fileID: 2100000, guid: 057b8f069a379b24bac0ef1845092f2d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stick_Red
+    second: {fileID: 2100000, guid: b9c6c41dfd0b28841a1a92f8119c883e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stick_Stripes
+    second: {fileID: 2100000, guid: 3fd1fc3bea62a294c8fc64d1a251833a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TowerRail
+    second: {fileID: 2100000, guid: b4ef5bb158b1ab4458a61f2295763708, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TowerRoof
+    second: {fileID: 2100000, guid: f0eb7b86323976f4388f7fc8c87decc1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TowerRoof_Brim
+    second: {fileID: 2100000, guid: cad78de832ddb854a84346609871a93c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Tower_Floor_Side
+    second: {fileID: 2100000, guid: 489938fd278618642aedd88e3473c923, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Tower_Floor_Top_Flat_illu
+    second: {fileID: 2100000, guid: c7c10cc203595fa478ebb03a2b6aabe8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: _level1SkyLayer
+    second: {fileID: 2100000, guid: 726f7aa80ce0fd848a103d9d7f8df9f3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: default
+    second: {fileID: 2100000, guid: 4c2c288a51896ec49a3a9d189b955319, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Ball_Stone
+    second: {fileID: 2800000, guid: ee0dca061ee8f6b45a6174c85a3c381d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Ball_Wood
+    second: {fileID: 2800000, guid: 4dea17334aeccf5468ed36befbb26c37, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Brick
+    second: {fileID: 2800000, guid: 2a19d89285fc82b4dbaab4067f180fb7, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Column_beige
+    second: {fileID: 2800000, guid: 47d79c4c748c5914ea3ee2c9f9f3e5e9, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Column_beige_fade
+    second: {fileID: 2800000, guid: 175f2e9f98f4f93439ce6c2c1df9c516, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Column_blue
+    second: {fileID: 2800000, guid: 9b96f6abfa9dae64697bf66390c56ea5, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Floor_Side
+    second: {fileID: 2800000, guid: 6a583e2eba0ab4c43ba556f24eb5e955, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Floor_Top_Border
+    second: {fileID: 2800000, guid: 2b5f4fe13ba061240b294bd296d3b5f7, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Floor_Top_Borderless
+    second: {fileID: 2800000, guid: a92743058a5cefc44896ac61cfc6773a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Floor_Top_Checkpoint
+    second: {fileID: 2800000, guid: a95bd6f4117d6f8468e5ce55f8676210, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Floor_Top_Flat
+    second: {fileID: 2800000, guid: ec0de153943c7774393af20bad6f311a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Floor_Top_Profil
+    second: {fileID: 2800000, guid: 6fc38a51da5ba784a830d1d8771be02d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Floor_Top_ProfilFlat
+    second: {fileID: 2800000, guid: dfdcbcf2cc29b7248af87e0aba83eade, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Laterne_Glas
+    second: {fileID: 2800000, guid: abfe338ef36c8674d9c7322fc2081ba0, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Laterne_Schatten
+    second: {fileID: 2800000, guid: 888afa120cd47a548aeabc9788bbabff, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Laterne_Verlauf
+    second: {fileID: 2800000, guid: 21b52ca55db6b734a9e8cbe38dcfaf47, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Metal_stained
+    second: {fileID: 2800000, guid: b8e637d1589645a4793ff200c6a8a9f1, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Modul11_13_Wood
+    second: {fileID: 2800000, guid: 2760b112313f04a46afb2a053210c8bc, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Rail_Environment
+    second: {fileID: 2800000, guid: 212ed664a2c4aab4f8dfe522dcc6c9e2, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Stick_Bottom
+    second: {fileID: 2800000, guid: 7d515b1d3e7a32e41b2858561b24f291, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Stick_Stripes
+    second: {fileID: 2800000, guid: 385c246d188a0c74ea1afa319627115d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Tower_Roof
+    second: {fileID: 2800000, guid: 17a0b0b72f652fd4e90d092a228a432d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wood_Metal
+    second: {fileID: 2800000, guid: c20ae610873e36f429c4891eed31ceb8, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wood_Panel
+    second: {fileID: 2800000, guid: 67945aef2d812984fb5cec64a794266d, type: 3}
+  materials:
+    materialImportMode: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

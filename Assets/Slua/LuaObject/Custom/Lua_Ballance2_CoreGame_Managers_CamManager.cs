@@ -698,70 +698,8 @@ public class Lua_Ballance2_CoreGame_Managers_CamManager : LuaObject {
 		}
 		#endif
 	}
-	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	[UnityEngine.Scripting.Preserve]
-	static public int get_cameraCurRoteingOffest(IntPtr l) {
-		try {
-			#if DEBUG
-			var method = System.Reflection.MethodBase.GetCurrentMethod();
-			string methodName = GetMethodName(method);
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.BeginSample(methodName);
-			#else
-			Profiler.BeginSample(methodName);
-			#endif
-			#endif
-			Ballance2.CoreGame.Managers.CamManager self=(Ballance2.CoreGame.Managers.CamManager)checkSelf(l);
-			pushValue(l,true);
-			pushValue(l,self.cameraCurRoteingOffest);
-			return 2;
-		}
-		catch(Exception e) {
-			return error(l,e);
-		}
-		#if DEBUG
-		finally {
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.EndSample();
-			#else
-			Profiler.EndSample();
-			#endif
-		}
-		#endif
-	}
-	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	[UnityEngine.Scripting.Preserve]
-	static public int set_cameraCurRoteingOffest(IntPtr l) {
-		try {
-			#if DEBUG
-			var method = System.Reflection.MethodBase.GetCurrentMethod();
-			string methodName = GetMethodName(method);
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.BeginSample(methodName);
-			#else
-			Profiler.BeginSample(methodName);
-			#endif
-			#endif
-			Ballance2.CoreGame.Managers.CamManager self=(Ballance2.CoreGame.Managers.CamManager)checkSelf(l);
-			System.Single v;
-			checkType(l,2,out v);
-			self.cameraCurRoteingOffest=v;
-			pushValue(l,true);
-			return 1;
-		}
-		catch(Exception e) {
-			return error(l,e);
-		}
-		#if DEBUG
-		finally {
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.EndSample();
-			#else
-			Profiler.EndSample();
-			#endif
-		}
-		#endif
-	}
+
+
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
 	static public int get_cameraSpaceMaxOffest(IntPtr l) {
@@ -1609,7 +1547,7 @@ public class Lua_Ballance2_CoreGame_Managers_CamManager : LuaObject {
 		addMember(l,"animationCurveCameraMoveYDown",get_animationCurveCameraMoveYDown,set_animationCurveCameraMoveYDown,true);
 		addMember(l,"cameraRoteValue",get_cameraRoteValue,set_cameraRoteValue,true);
 		addMember(l,"cameraMaxRoteingOffest",get_cameraMaxRoteingOffest,set_cameraMaxRoteingOffest,true);
-		addMember(l,"cameraCurRoteingOffest",get_cameraCurRoteingOffest,set_cameraCurRoteingOffest,true);
+	
 		addMember(l,"cameraSpaceMaxOffest",get_cameraSpaceMaxOffest,set_cameraSpaceMaxOffest,true);
 		addMember(l,"cameraSpaceOffest",get_cameraSpaceOffest,set_cameraSpaceOffest,true);
 		addMember(l,"camFollowSpeed",get_camFollowSpeed,set_camFollowSpeed,true);
@@ -1625,6 +1563,6 @@ public class Lua_Ballance2_CoreGame_Managers_CamManager : LuaObject {
 		addMember(l,"CamFollowTarget",get_CamFollowTarget,set_CamFollowTarget,true);
 		addMember(l,"IsFollowCam",get_IsFollowCam,set_IsFollowCam,true);
 		addMember(l,"IsLookingBall",get_IsLookingBall,set_IsLookingBall,true);
-		createTypeMetatable(l,null, typeof(Ballance2.CoreGame.Managers.CamManager),typeof(Ballance2.Managers.BaseManagerBindable));
+		createTypeMetatable(l,null, typeof(Ballance2.CoreGame.Managers.CamManager),typeof(Ballance2.Managers.BaseManager));
 	}
 }

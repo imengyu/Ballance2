@@ -78,9 +78,9 @@ namespace Ballance2.Utils
 #if UNITY_EDITOR
                 return DEBUG_PATH + "core/core.gameinit.txt";
 #elif UNITY_STANDALONE || UNITY_ANDROID
-                    return Application.dataPath + "/core/GameInit.txt";
+                    return Application.dataPath + "/core/core.gameinit.txt";
 #elif UNITY_IOS
-                    return Application.streamingAssetsPath + "/core/GameInit.txt";
+                    return Application.streamingAssetsPath + "/core/core.gameinit.txt";
 #endif
             }
             else if (type == "level") return GetLevelRealPath(pathbuf);

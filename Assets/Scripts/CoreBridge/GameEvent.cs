@@ -122,6 +122,13 @@ namespace Ballance2.CoreBridge
         /// </remarks>
         public const string EVENT_MOD_UNLOAD = "e:mod:mod_unload";
 
-
+        /// <summary>
+        /// 屏幕分辨率变化
+        /// </summary>
+        /// <remarks>
+        /// 事件参数：
+        /// 【0】Vector2 屏幕大小
+        /// </remarks>
+        public const string EVENT_SCREEN_SIZE_CHANGED = "e:core:screen_size_changed";
     }
 }

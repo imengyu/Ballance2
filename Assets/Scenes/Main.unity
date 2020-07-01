@@ -410,7 +410,7 @@ GameObject:
   - component: {fileID: 202051304}
   m_Layer: 0
   m_Name: EventSystem
-  m_TagString: Untagged
+  m_TagString: Basement
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -710,7 +710,7 @@ GameObject:
   - component: {fileID: 961672583}
   m_Layer: 0
   m_Name: GameBaseCamera
-  m_TagString: Untagged
+  m_TagString: Basement
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -746,8 +746,8 @@ Camera:
   m_GameObject: {fileID: 961672581}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -828,7 +828,7 @@ GameObject:
   - component: {fileID: 1202931502}
   m_Layer: 0
   m_Name: Mian
-  m_TagString: Untagged
+  m_TagString: Main
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -845,14 +845,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d14feeec1976b4c47a2cce229386e5fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GameMode: 4
+  GameMode: 6
   GameRoot: {fileID: 1368830292}
   GameCanvas: {fileID: 1928318315}
   BreakAtStart: 0
   AssetsPreferEditor: 0
   TargetFrameRate: 60
-  LevelDebugTarget: 
-  CoreDebugBase: {fileID: 0}
+  LevelDebugTarget: level01
+  CoreDebugBase: {fileID: 2894737038254625379, guid: 9f6ff65e74b874346b9dfb3f015e29ce,
+    type: 3}
   GamePrefab:
   - Object: {fileID: 730401858883282320, guid: c00cb89e507c3c84e82463508143638e, type: 3}
     Name: PrefabEmpty
@@ -864,7 +865,8 @@ MonoBehaviour:
   - Object: {fileID: 7795733834177401997, guid: 4211aeed85e699d4ba0a6aa5a131b090,
       type: 3}
     Name: UIWindow
-  - Object: {fileID: 301038999698601659, guid: b9c2561802b1f1547a7246cbe936606c, type: 3}
+  - Object: {fileID: 5625170157120440623, guid: 68f5b7128a849434c94d65daa1996269,
+      type: 3}
     Name: UIDebugWindow
   - Object: {fileID: 6989919991561276472, guid: 70451ea6b0df68c44ac10ebb360b2eff,
       type: 3}
@@ -893,6 +895,9 @@ MonoBehaviour:
   - Object: {fileID: 8503982214463881749, guid: b4808262f874bd8408d8d609ad86a488,
       type: 3}
     Name: UIMainButton
+  - Object: {fileID: 8503982214463881749, guid: aedf1f5a57d342c4eaa0008f3dce1993,
+      type: 3}
+    Name: UIMenuButton
   - Object: {fileID: 3091033571328104410, guid: 16271e27266ca9941affb6dca8c3dac2,
       type: 3}
     Name: UILevButton
@@ -920,7 +925,8 @@ MonoBehaviour:
   - Object: {fileID: 1953235002799851516, guid: 8884140c80a43a4479b60b1d28067253,
       type: 3}
     Name: UIAlertWindow
-  - Object: {fileID: 0}
+  - Object: {fileID: 5201288512610855020, guid: c129967611dab884e95feb51221921a5,
+      type: 3}
     Name: UIConfirmWindow
   - Object: {fileID: 5352273083917447746, guid: 854fda92669cf5d468ac8e856e69625b,
       type: 3}
@@ -940,6 +946,12 @@ MonoBehaviour:
   - Object: {fileID: 6483853944594940411, guid: 7fc58413d8b0bd641bc0c52e31274721,
       type: 3}
     Name: CamManager
+  - Object: {fileID: 5133952862187469398, guid: 8a28c7ddbcfcf3b43878945cc56cafdb,
+      type: 3}
+    Name: UIErrorAlertDialog
+  - Object: {fileID: 2165626818818230809, guid: 627f4d1c169898349a34fbbcaae00c11,
+      type: 3}
+    Name: UIToast
   - Object: {fileID: 0}
     Name: 
   GameAssets:
@@ -981,6 +993,16 @@ MonoBehaviour:
     Name: PageGlobalConfirm
   - Object: {fileID: 4900000, guid: a0e11e3ab1529c546858ced9ae395f1d, type: 3}
     Name: PageGlobalAlert
+  - Object: {fileID: 21300000, guid: e59b8cffc4a0fd448b055062bd98b062, type: 3}
+    Name: ico_error_big
+  - Object: {fileID: 21300000, guid: fe27db0aa2114074ca47ca2aa3a4ee49, type: 3}
+    Name: ico_info_big
+  - Object: {fileID: 21300000, guid: 29b633d0a3a33b04c9aa05c10a37536f, type: 3}
+    Name: ico_warn_big
+  - Object: {fileID: 21300000, guid: 785910e964b2b5e449e58342ac12f59d, type: 3}
+    Name: ico_success_big
+  - Object: {fileID: 21300000, guid: 22cb813f062cde54b90c67659082a550, type: 3}
+    Name: ico_warning2_big
   - Object: {fileID: 0}
     Name: 
 --- !u!4 &1202931503
@@ -1173,7 +1195,7 @@ GameObject:
   - component: {fileID: 1368830293}
   m_Layer: 0
   m_Name: GameRoot
-  m_TagString: Untagged
+  m_TagString: Basement
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1635,7 +1657,7 @@ GameObject:
   - component: {fileID: 1802348769}
   m_Layer: 0
   m_Name: Debug
-  m_TagString: Untagged
+  m_TagString: Main
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1684,7 +1706,7 @@ GameObject:
   - component: {fileID: 1928318316}
   m_Layer: 5
   m_Name: GameCanvas
-  m_TagString: Untagged
+  m_TagString: Basement
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

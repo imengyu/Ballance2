@@ -97,6 +97,46 @@ namespace Ballance2
 
             return baseManager;
         }
+
+        /// <summary>
+        /// 替换管理器
+        /// </summary>
+        /// <param name="newClass">新的管理器实例</param>
+        /// <param name="oldName">要替换的管理器名称</param>
+        /// <returns></returns>
+        public static BaseManager ReplaceManager(BaseManager newClass, string oldName)
+        {
+            return ReplaceManager(newClass, oldName, "Singleton");
+        }
+        /// <summary>
+        /// 替换管理器
+        /// </summary>
+        /// <param name="newClass">新的管理器实例</param>
+        /// <param name="oldName">要替换的管理器名称</param>
+        /// <param name="subName">要替换的管理器子名称</param>
+        /// <returns></returns>
+        public static BaseManager ReplaceManager(BaseManager newClass, string oldName, string subName)
+        {
+            BaseManager old = GetManager(oldName, subName);
+            if(old == null)
+            {
+                GameLogger.Warning(TAG, "ReplaceManager 失败，管理器 {0}:{1} 未注册", oldName, subName);
+                GameErrorManager.LastError = GameError.NotRegister;
+                return null;
+            }
+            if(newClass.GetName() != oldName || newClass.GetSubName() != subName)
+            {
+                GameLogger.Warning(TAG, "ReplaceManager 失败，要替换的管理器 {0}:{1} 与 传入的管理器名称不符", oldName, subName);
+                GameErrorManager.LastError = GameError.ModConflict;
+                return null;
+            }
+
+            managers.Remove(old);
+            managers.Add(newClass);
+
+            return old;
+        }
+
         /// <summary>
         /// 请求所有管理器初始化
         /// </summary>
@@ -141,6 +181,7 @@ namespace Ballance2
                     return true;
                 }
             GameLogger.Warning(TAG, "DestroyManager 失败，管理器 {0} 未注册", name);
+            GameErrorManager.LastError = GameError.NotRegister;
             return false;
         }
 

@@ -30,6 +30,14 @@ namespace Ballance2.UI.BallanceUI
         private UILayout layoutContainer = null;
 
         /// <summary>
+        /// 页的模板名称
+        /// </summary>
+        public string PagePrefabName { get; set; }
+        /// <summary>
+        /// 页的背景模板名称
+        /// </summary>
+        public string PageBackgroundPrefabName { get; set; }
+        /// <summary>
         /// 页路径
         /// </summary>
         public string PagePath { get { return pagePath; } set { pagePath = value; }  }

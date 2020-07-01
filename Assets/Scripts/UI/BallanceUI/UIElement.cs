@@ -62,6 +62,10 @@ namespace Ballance2.UI.BallanceUI
         protected bool isLayout = false;
 
         /// <summary>
+        /// 当前元素是否是根布局
+        /// </summary>
+        public bool IsRootLayout { get; set; }
+        /// <summary>
         /// 当前元素是否是布局
         /// </summary>
         public bool IsLayout { get { return isLayout; } }

@@ -1,5 +1,4 @@
-﻿using Ballance2.Config;
-using Ballance2.CoreGame.Managers;
+﻿using Ballance2.CoreGame.Interfaces;
 using UnityEngine;
 
 namespace Ballance2.CoreGame.GamePlay
@@ -13,27 +12,27 @@ namespace Ballance2.CoreGame.GamePlay
         /// <summary>
         /// 前
         /// </summary>
-        Forward = 2,
+        Forward = 0x2,
         /// <summary>
         /// 后
         /// </summary>
-        Back = 4,
+        Back = 0x4,
         /// <summary>
         /// 左
         /// </summary>
-        Left = 8,
+        Left = 0x8,
         /// <summary>
         /// 右
         /// </summary>
-        Right = 16,
+        Right = 0x10,
         /// <summary>
         /// 上
         /// </summary>
-        Up = 32,
+        Up = 0x20,
         /// <summary>
         /// 下
         /// </summary>
-        Down = 64,
+        Down = 0x40,
 
         ForwardLeft = Forward | Left,
         ForwardRight = Forward | Right,
@@ -50,11 +49,11 @@ namespace Ballance2.CoreGame.GamePlay
         /// <summary>
         /// 球管理器
         /// </summary>
-        public BallManager BallManager { get; internal set; }
+        public IBallManager BallManager { get; internal set; }
         /// <summary>
         /// 摄像机管理器
         /// </summary>
-        public CamManager CamManager { get; internal set; }
+        public ICamManager CamManager { get; internal set; }
 
         public GameObject Pieces;
         public string TypeName;
@@ -146,7 +145,13 @@ namespace Ballance2.CoreGame.GamePlay
         /// 获取球是否在地面上
         /// </summary>
         public bool IsOnFloor { get { return isOnFloor; } }
+        /// <summary>
+        /// 当前球触碰的物体
+        /// </summary>
         public string CurrentColObject { get; private set; }
+        /// <summary>
+        /// 当前球触碰的物体所在层
+        /// </summary>
         public int CurrentColObjectLayout { get; private set; }
         public float FinalFallForce { get; private set; }
         public float FinalPushForce { get; private set; }
@@ -202,7 +207,6 @@ namespace Ballance2.CoreGame.GamePlay
         {
             if (BallManager.IsControlling)
             {
-                //
                 //自动压力
                 if (UseFallForce)
                 {
@@ -219,6 +223,7 @@ namespace Ballance2.CoreGame.GamePlay
                 }
 
                 //球速度控制
+
 
                 //获取 ballsManager 的球推动类型。
                 BallPushType currentBallPushType = BallManager.PushType;

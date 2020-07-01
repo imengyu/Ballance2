@@ -1,20 +1,21 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 using System.Collections;
 using Ballance2.Utils;
 using Ballance2.CoreBridge;
 using Ballance2.Config;
 using Ballance2.ModBase;
 using Ballance2.GameCore;
-using Ballance2.CoreGame.Managers;
-using UnityEngine.Networking;
+using Ballance2.Interfaces;
+using Ballance2.CoreGame.Interfaces;
 
 namespace Ballance2.Managers
 {
     /// <summary>
     /// 游戏初始化管理器
     /// </summary>
-    public class GameInit : BaseManagerBindable
+    public class GameInit : BaseManager
     {
         public const string TAG = "GameInit";
 
@@ -43,9 +44,9 @@ namespace Ballance2.Managers
             return true;
         }
 
-        private DebugManager DebugManager;
-        private ModManager ModManager;
-        private SoundManager SoundManager;
+        private IDebugManager DebugManager;
+        private IModManager ModManager;
+        private ISoundManager SoundManager;
 
         #region GameInit Control
 
@@ -69,9 +70,9 @@ namespace Ballance2.Managers
         }
         private void LoadGameInitBase()
         {
-            ModManager = (ModManager)GameManager.GetManager(ModManager.TAG);
-            SoundManager = (SoundManager)GameManager.GetManager(SoundManager.TAG);
-            DebugManager = (DebugManager)GameManager.GetManager(DebugManager.TAG);
+            ModManager = (IModManager)GameManager.GetManager("ModManager");
+            SoundManager = (ISoundManager)GameManager.GetManager("SoundManager");
+            DebugManager = (IDebugManager)GameManager.GetManager("DebugManager");
 
             IntroAudio = SoundManager.RegisterSoundPlayer(GameSoundType.UI, GameManager.FindStaticAssets<AudioClip>("IntroMusic"));
 
@@ -102,6 +103,8 @@ namespace Ballance2.Managers
             loadedGameInitUI = true;
         }
 
+        private LoadMask currentLoadMask = LoadMask.None;
+
         //加载模块
         private IEnumerator GameInitCore()
         {
@@ -112,6 +115,17 @@ namespace Ballance2.Managers
             {
                 IntroAnimator.Play("IntroAnimation");
                 IntroAudio.Play();
+            }
+
+            //选择加载包模式
+            switch (GameManager.Mode)
+            {
+                case GameMode.Game: currentLoadMask = LoadMask.Game;  break;
+                case GameMode.Level: currentLoadMask = LoadMask.Level | LoadMask.LevelLoader;  break;
+                case GameMode.LevelEditor: currentLoadMask = LoadMask.LevelEditor | LoadMask.Level;  break;
+                case GameMode.MinimumDebug: currentLoadMask = LoadMask.GameBase; break;
+                case GameMode.LoaderDebug: currentLoadMask = LoadMask.Level | LoadMask.LevelLoader; break;
+                case GameMode.CoreDebug: currentLoadMask = LoadMask.GameCore;  break;
             }
 
             UIProgressText.text = "Loading";
@@ -150,40 +164,50 @@ namespace Ballance2.Managers
             UIProgressText.text = "Loading";
 
             //加载游戏内核管理器
-            LevelLoader levelLoader = (LevelLoader)GameManager.RegisterManager(typeof(LevelLoader), false);
-            LevelManager levelManager = (LevelManager)GameManager.RegisterManager(typeof(LevelManager), false);
+            GameManager.RegisterManager(typeof(LevelLoader), false);
+            GameManager.RegisterManager(typeof(LevelManager), false);
 
-            BallManager ballManager = GameCloneUtils.CloneNewObjectWithParent(
-                GameManager.FindStaticPrefabs("BallManager"), GameManager.GameRoot.transform).GetComponent<BallManager>();
-            CamManager camManager = GameCloneUtils.CloneNewObjectWithParent(
-                GameManager.FindStaticPrefabs("CamManager"), GameManager.GameRoot.transform).GetComponent<CamManager>();
+            IBallManager ballManager = GameCloneUtils.CloneNewObjectWithParent(
+                GameManager.FindStaticPrefabs("BallManager"), 
+                GameManager.GameRoot.transform).GetComponent<IBallManager>();
+            ICamManager camManager = GameCloneUtils.CloneNewObjectWithParent(
+                GameManager.FindStaticPrefabs("CamManager"), 
+                GameManager.GameRoot.transform).GetComponent<ICamManager>();
 
-            GameManager.RegisterManager(ballManager, false);
-            GameManager.RegisterManager(camManager, false);
-
-            //初始化管理器
-            GameManager.RequestAllManagerInitialization();
-            //初始化模组启动代码（游戏初始化完成）
-            ModManager.ExecuteModEntryCodeAtStart();
+            GameManager.RegisterManager((BaseManager)ballManager, false);
+            GameManager.RegisterManager((BaseManager)camManager, false);
 
             //正常情况下，等待动画播放完成
             if(GameManager.Mode == GameMode.Game)
                 yield return new WaitUntil(IsGameInitAnimPlayend);
-            
+
+            //初始化管理器
+            GameManager.RequestAllManagerInitialization();
+            //初始化模组启动代码（游戏初始化完成）
+            ModManager.ExecuteModEntry(GameModEntryCodeExecutionAt.AtStart);
+
             //模式
             switch (GameManager.Mode)
             {
                 case GameMode.Game: GameInitContinueGoGame();  break;
-                case GameMode.LoaderDebug: levelLoader.StartDebugLevelLoader(Main.Main.Instance.LevelDebugTarget); break;
-                case GameMode.CoreDebug: levelManager.StartDebugCore(Main.Main.Instance.CoreDebugBase); break;
+                case GameMode.LoaderDebug:
+                    GameManager.GameMediator.CallAction(GameActionNames.ACTION_DEBUG_LEVEL_LOADER, Main.Main.Instance.LevelDebugTarget);
+                    GameInitHideGameInitUi(false);
+                    break;
+                case GameMode.CoreDebug:
+                    GameManager.GameMediator.CallAction(GameActionNames.ACTION_DEBUG_CORE, Main.Main.Instance.CoreDebugBase);
+                    GameInitHideGameInitUi(false);
+                    break;
                 case GameMode.Level:
                     GameManager.GameMediator.CallAction(GameActionNames.ACTION_LOAD_LEVEL, Main.Main.Instance.LevelDebugTarget);
+                    GameInitHideGameInitUi(true);
                     break;
                 case GameMode.LevelEditor:
                     LevelEditor levelEditor = (LevelEditor)GameManager.RegisterManager(typeof(LevelEditor), false);
                     levelEditor.StartDebugLevelEditor(Main.Main.Instance.LevelDebugTarget);
+                    GameInitHideGameInitUi(true);
                     break;
-            }                
+            }
         }
         private IEnumerator GameInitPackages(string GameInitTable)
         {
@@ -198,12 +222,18 @@ namespace Ballance2.Managers
 
                     bool required = false;
                     string packageName = "";
+                    LoadMask mask = LoadMask.Game;
                     args = ar.Split(':');
 
                     if(args.Length >= 3) {
-                        required = args[1] == "Required";
+                        required = args[2] == "Required";
                         packageName = args[0];
+                        System.Enum.TryParse(args[1], out mask);
                     }
+
+                    //跳过不需要加载的模块
+                    if((mask & currentLoadMask) != mask)
+                        continue;
 
                     //状态
                     loadedCount++;
@@ -222,9 +252,17 @@ namespace Ballance2.Managers
                         GameErrorManager.ThrowGameError(GameError.GameInitPartLoadFailed, "加载模块  " + packageName + " 时发生错误");
                     else GameLogger.Warning(TAG, "加载模块  {0} 时发生错误", packageName);
                 }
+
+                LoadGameInitUIProgressValue(1);
+                UIProgressText.text = "Loading";
             }
         }
 
+        private void GameInitHideGameInitUi(bool showBlack)
+        {
+            GameManager.UIManager.MaskBlackSet(showBlack);
+            gameInitUI.SetActive(false);
+        }
         private void GameInitContinueGoGame()
         {
             int initEventHandledCount = GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_FINISH, "*");
@@ -235,11 +273,7 @@ namespace Ballance2.Managers
                 GameErrorManager.ThrowGameError(GameError.HandlerLost, "未找到 EVENT_GAME_INIT_FINISH 的下一步事件接收器\n此错误出现原因可能是配置不正确");
                 GameLogger.Warning(TAG, "None EVENT_GAME_INIT_FINISH handler was found, the game will not continue.");
             }
-            else
-            {
-                GameManager.UIManager.MaskBlackSet(true);
-                gameInitUI.SetActive(false);
-            }
+            else GameInitHideGameInitUi(true);
         }
 
         #endregion
@@ -253,13 +287,17 @@ namespace Ballance2.Managers
         private void InitSettings()
         {
             DebugManager.RegisterCommand("restsettings", (string keyword, string fullCmd, string[] args) =>
-            {
-                GameSettingsManager.ResetDefaultSettings();
-                return true;
-            }, 0, "[还原默认设置]");
+         {
+             GameSettingsManager.ResetDefaultSettings();
+             GameLogger.Log(TAG, "设置已还原默认");
+             return true;
+         }, 0, "[还原默认设置]");
         }
         private void InitVideoSettings()
         {
+            //屏幕大小事件
+            GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_SCREEN_SIZE_CHANGED);
+
             resolutions = Screen.resolutions;
 
             for (int i = 0; i < resolutions.Length; i++)
@@ -278,18 +316,38 @@ namespace Ballance2.Managers
         private bool OnVideoSettingsUpdated(string evtName, params object[] param)
         {
             int resolutionsSet = GameSettings.GetInt("video.resolution", defaultResolution);
-            bool fullScreen = GameSettings.GetBool("video.fullScreen", false);
-            int quality = GameSettings.GetInt("video.quality", 2);
-            int vSync = GameSettings.GetInt("video.vsync", 0);
+            bool fullScreen = GameSettings.GetBool("video.fullScreen", Screen.fullScreen);
+            int quality = GameSettings.GetInt("video.quality", QualitySettings.GetQualityLevel());
+            int vSync = GameSettings.GetInt("video.vsync", QualitySettings.vSyncCount);
+
+            GameLogger.Log(TAG, "OnVideoSettingsUpdated:\nresolutionsSet: {0}\nfullScreen: {1}" +
+                "\nquality: {2}\nvSync : {3}", resolutionsSet, fullScreen, quality, vSync);
 
             Screen.SetResolution(resolutions[resolutionsSet].width, resolutions[resolutionsSet].height, true);
             Screen.fullScreen = fullScreen;
+            Screen.fullScreenMode = fullScreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
             QualitySettings.SetQualityLevel(quality, true);
             QualitySettings.vSyncCount = vSync;
+            
+            GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_SCREEN_SIZE_CHANGED, "*",
+                resolutions[resolutionsSet].width, resolutions[resolutionsSet].height);
+            GameManager.UIManager.RequestRelayoutForScreenSizeChaged();
 
             return true;
         }
 
         #endregion
+
+        private enum LoadMask
+        {
+            None = 0,
+            GameBase = 0x1,
+            MenuLevel = 0x2,
+            Level = 0x4,
+            LevelLoader = 0x8,
+            LevelEditor = 0x10,
+            GameCore = 0x20,
+            Game = GameBase | MenuLevel| Level| LevelLoader | LevelEditor | GameCore,
+        }
     }
 }

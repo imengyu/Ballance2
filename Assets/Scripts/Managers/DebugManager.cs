@@ -1,5 +1,6 @@
 ﻿using Ballance2.Config;
 using Ballance2.CoreBridge;
+using Ballance2.Interfaces;
 using Ballance2.UI.BallanceUI;
 using Ballance2.UI.Utils;
 using Ballance2.Utils;
@@ -10,8 +11,7 @@ using UnityEngine.UI;
 
 namespace Ballance2.Managers
 {
-    [CustomLuaClass]
-    public class DebugManager : BaseManagerBindable
+    public class DebugManager : BaseManager, IDebugManager
     {
         public const string TAG = "DebugManager";
 
@@ -38,6 +38,7 @@ namespace Ballance2.Managers
 
         private UIWindow debugWindow;
         private RectTransform DebugCmdContent;
+
         private InputField DebugInputCommand;
         private GameObject UIDebugTextItem;
         private GameObject UIDebugToolBar;
@@ -51,6 +52,7 @@ namespace Ballance2.Managers
         private Toggle DebugToggleError;
 
         private RectTransform DebugCmdScrollView;
+        private ScrollRect DebugCmdScrollViewScrollRect;
         private RectTransform DebugDetailsScrollView;
         private GameObject DebugToolsItem;
         private RectTransform DebugToolsItemHost;
@@ -64,13 +66,27 @@ namespace Ballance2.Managers
         private Sprite box_round_light;
         private Sprite background_transparent;
 
+        private Sprite ico_warning_big;
+        private Sprite ico_warning2_big;
+        private Sprite ico_info_big;
+        private Sprite ico_error_big;
+        private Sprite ico_success_big;
+
         private void InitDebugWindow()
         {
-            debugWindow = GameCloneUtils.CloneNewObjectWithParent(GameManager.FindStaticPrefabs("UIDebugWindow"), GameManager.UIManager.UIRoot.transform).GetComponent<UIWindow>();
+            RectTransform debugRectTransform = GameCloneUtils.CloneNewObjectWithParent(GameManager.FindStaticPrefabs("UIDebugWindow"), GameManager.UIManager.UIRoot.transform).GetComponent<RectTransform>();
+            debugWindow = GameManager.UIManager.CreateWindow("Debug console window", debugRectTransform);
             UIDebugToolBar = GameCloneUtils.CloneNewObjectWithParent(GameManager.FindStaticPrefabs("UIDebugToolBar"), GameManager.UIManager.UIRoot.transform, "GameUIDebugToolBar");
             debugWindow.CloseAsHide = true;
+            debugWindow.SetSize(450, 330);
+            debugWindow.SetMinSize(420, 270);
             debugWindow.Hide();
 
+            ico_warning2_big = GameManager.FindStaticAssets<Sprite>("ico_warning2_big");
+            ico_warning_big = GameManager.FindStaticAssets<Sprite>("ico_warning_big");
+            ico_info_big = GameManager.FindStaticAssets<Sprite>("ico_info_big");
+            ico_error_big = GameManager.FindStaticAssets<Sprite>("ico_error_big");
+            ico_success_big = GameManager.FindStaticAssets<Sprite>("ico_success_big");
             ico_warning = GameManager.FindStaticAssets<Sprite>("ico_warning");
             ico_info = GameManager.FindStaticAssets<Sprite>("ico_info");
             ico_error = GameManager.FindStaticAssets<Sprite>("ico_error");
@@ -82,18 +98,19 @@ namespace Ballance2.Managers
 
             UIDebugToolBar.SetActive(true);
             DebugTextFPS = UIDebugToolBar.transform.Find("DebugTextFPS").GetComponent<Text>();
-            DebugTextErrors = debugWindow.UIWindowClientArea.transform.Find("DebugToolErrors/Text").GetComponent<Text>();
-            DebugTextWarnings = debugWindow.UIWindowClientArea.transform.Find("DebugToolWarnings/Text").GetComponent<Text>();
-            DebugTextInfos = debugWindow.UIWindowClientArea.transform.Find("DebugToolInfos/Text").GetComponent<Text>();
-            DebugCmdContent = debugWindow.UIWindowClientArea.transform.Find("DebugCmdScrollView/Viewport/DebugCmdContent").GetComponent<RectTransform>();
-            DebugInputCommand = debugWindow.UIWindowClientArea.transform.Find("DebugInputCommand").GetComponent<InputField>();
-            DebugToggleInfo = debugWindow.UIWindowClientArea.transform.Find("DebugToggleInfo").GetComponent<Toggle>();
-            DebugToggleWarning = debugWindow.UIWindowClientArea.transform.Find("DebugToggleWarning").GetComponent<Toggle>();
-            DebugToggleError = debugWindow.UIWindowClientArea.transform.Find("DebugToggleError").GetComponent<Toggle>();
-            DebugItemContent = debugWindow.UIWindowClientArea.transform.Find("DebugDetailsScrollView/Viewport/DebugItemContent").GetComponent<Text>();
-            Toggle DebugToggleStackTrace = debugWindow.UIWindowClientArea.transform.Find("DebugToggleStackTrace").GetComponent<Toggle>();
-            DebugCmdScrollView = debugWindow.UIWindowClientArea.transform.Find("DebugCmdScrollView").GetComponent<RectTransform>();
-            DebugDetailsScrollView = debugWindow.UIWindowClientArea.transform.Find("DebugDetailsScrollView").GetComponent<RectTransform>();
+            DebugTextErrors = debugRectTransform.transform.Find("DebugToolErrors/Text").GetComponent<Text>();
+            DebugTextWarnings = debugRectTransform.transform.Find("DebugToolWarnings/Text").GetComponent<Text>();
+            DebugTextInfos = debugRectTransform.transform.Find("DebugToolInfos/Text").GetComponent<Text>();
+            DebugCmdContent = debugRectTransform.transform.Find("DebugCmdScrollView/Viewport/DebugCmdContent").GetComponent<RectTransform>();
+            DebugInputCommand = debugRectTransform.transform.Find("DebugInputCommand").GetComponent<InputField>();
+            DebugToggleInfo = debugRectTransform.transform.Find("DebugToggleInfo").GetComponent<Toggle>();
+            DebugToggleWarning = debugRectTransform.transform.Find("DebugToggleWarning").GetComponent<Toggle>();
+            DebugToggleError = debugRectTransform.transform.Find("DebugToggleError").GetComponent<Toggle>();
+            DebugItemContent = debugRectTransform.transform.Find("DebugDetailsScrollView/Viewport/DebugItemContent").GetComponent<Text>();
+            Toggle DebugToggleStackTrace = debugRectTransform.transform.Find("DebugToggleStackTrace").GetComponent<Toggle>();
+            DebugCmdScrollView = debugRectTransform.transform.Find("DebugCmdScrollView").GetComponent<RectTransform>();
+            DebugCmdScrollViewScrollRect = DebugCmdScrollView.GetComponent<ScrollRect>();
+            DebugDetailsScrollView = debugRectTransform.transform.Find("DebugDetailsScrollView").GetComponent<RectTransform>();
             DebugToolsItem = UIDebugToolBar.transform.Find("DebugToolsItem").gameObject;
             DebugToolsItemHost = UIDebugToolBar.transform.Find("DebugToolsItem/Viewport/DebugToolsItemHost").GetComponent<RectTransform>();
 
@@ -113,15 +130,16 @@ namespace Ballance2.Managers
             };
             EventTriggerListener.Get(UIDebugToolBar.transform.Find("DebugTools").gameObject).onClick = (g) => { DebugToolsItem.SetActive(!DebugToolsItem.activeSelf); };
 
-            EventTriggerListener.Get(debugWindow.UIWindowClientArea.transform.Find("DebugButtonRun").gameObject).onClick = (g) =>
+            EventTriggerListener.Get(debugRectTransform.transform.Find("DebugButtonRun").gameObject).onClick = (g) =>
             {
                 if (RunCommand(DebugInputCommand.text))
                     DebugInputCommand.text = "";
             };
-            EventTriggerListener.Get(debugWindow.UIWindowClientArea.transform.Find("DebugButtonClear").gameObject).onClick = (g) =>  { ClearLogs(); };
+            EventTriggerListener.Get(debugRectTransform.transform.Find("DebugButtonClear").gameObject).onClick = (g) =>  { ClearLogs(); };
 
             DebugInputCommand.onEndEdit.AddListener((s) =>
             {
+                ClearCurrentActiveLogItem();
                 if (RunCommand(s))
                     DebugInputCommand.text = "";
             });
@@ -196,6 +214,49 @@ namespace Ballance2.Managers
             CustomData customData = go.GetComponent<CustomData>();
             GameHandler callbackHandler = (GameHandler)customData.customData;
             callbackHandler.CallEventHandler("OnCustomDebugToolItemClick");
+        }
+
+        private List<int> showedExceptionDialogs = new List<int>();
+
+        public void ShowExceptionDialog(string title, string message, LogType type)
+        {
+            if(showedExceptionDialogs.Count >= 10)
+            {
+                GameManager.UIManager.GlobalToast(title + "\n发生的错误过多，请打开控制台查看\n\n" +
+                    (message.Length > 50 ? (message.Substring(0, 40) + "\n... (" + (message.Length - 50) + " more)") : message));
+            }
+
+            RectTransform debugRectTransform = GameCloneUtils.CloneNewObjectWithParent(GameManager.FindStaticPrefabs("UIErrorAlertDialog"), GameManager.UIManager.UIRoot.transform).GetComponent<RectTransform>();
+            UIWindow errWindow = GameManager.UIManager.CreateWindow(title, debugRectTransform);
+            errWindow.CanClose = true;
+            errWindow.CanResize = true;
+            errWindow.CanDrag = true;
+            errWindow.SetMinSize(300, 200);
+            errWindow.Show();
+            errWindow.onClose = (id) => showedExceptionDialogs.Remove(id);
+
+            showedExceptionDialogs.Add(errWindow.GetWindowId());
+
+            debugRectTransform.Find("UIButtonCopy").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                GUIUtility.systemCopyBuffer = message;
+                GameManager.UIManager.GlobalToast("错误信息已复制到剪贴板!");
+            });
+            debugRectTransform.Find("UIButtonClose").GetComponent<Button>().onClick.AddListener(() => errWindow.Close());
+
+            Image ico = debugRectTransform.Find("UIErrorImage").GetComponent<Image>();
+            Text text = debugRectTransform.Find("UIScrollView/Viewport/Content").GetComponent<Text>();
+
+            text.text = message;
+
+            switch (type)
+            {
+                case LogType.Error: ico.sprite = ico_error_big; break;
+                case LogType.Exception: ico.sprite = ico_error_big; break;
+                case LogType.Assert: ico.sprite = ico_warning2_big; break;
+                case LogType.Warning: ico.sprite = ico_warning_big; break;
+                case LogType.Log: ico.sprite = ico_info_big; break;
+            }
         }
 
         #region 日志截取
@@ -287,16 +348,21 @@ namespace Ballance2.Managers
             DebugCmdContent.sizeDelta = new Vector2(currentLogX, currentLogY + 6);
 
             EventTriggerListener.Get(newT).onClick = SetCurrentActiveLogItem;
+
+            if (lastActiveLogItem == null || lastActiveLogItem == lastLogItem)
+            {
+                SetCurrentActiveLogItem(newT);
+                DebugCmdScrollViewScrollRect.verticalNormalizedPosition = 0;
+            }
+
+            lastLogItem = newT;
         }
         private GameObject lastActiveLogItem = null;
+        private GameObject lastLogItem = null;
         private void SetCurrentActiveLogItem(GameObject logItem)
         {
             Image image = null;
-            if (lastActiveLogItem != null)
-            {
-                image = lastActiveLogItem.transform.parent.gameObject.GetComponent<Image>();
-                image.overrideSprite = background_transparent;
-            }
+            ClearCurrentActiveLogItem();
 
             if (lastActiveLogItem != logItem)
             {
@@ -311,6 +377,15 @@ namespace Ballance2.Managers
             {
                 lastActiveLogItem = null;
                 DebugItemContent.text = "Click a item to show details";
+            }
+        }
+        private void ClearCurrentActiveLogItem()
+        {
+            Image image = null;
+            if (lastActiveLogItem != null)
+            {
+                image = lastActiveLogItem.transform.parent.gameObject.GetComponent<Image>();
+                image.overrideSprite = background_transparent;
             }
         }
         private void ForceReloadLogList()
@@ -386,6 +461,9 @@ namespace Ballance2.Managers
                 GameLogger.WriteLog(type == LogType.Exception ?
                     GameLogger.LogType.Error : (GameLogger.LogType)type, "Unity", message + "\n" + stackTrace);
                 UpdateLogCount();
+
+                if (type == LogType.Assert || type == LogType.Error || type == LogType.Exception)
+                    ShowExceptionDialog("发生错误", message + "\n" + stackTrace, type);
             }
         }
 
@@ -394,9 +472,6 @@ namespace Ballance2.Managers
         #endregion
 
         #region 调试命令控制
-
-        [SLua.CustomLuaClass]
-        public delegate bool CommandDelegate(string keyword, string fullCmd, string[] args);
 
         private List<CmdItem> commands = null;
         private class CmdItem
@@ -504,21 +579,6 @@ namespace Ballance2.Managers
             }
             return false;
         }
-
-        /*
-         * 注册命令说明
-         * 
-         * 支持在LUA端直接注册控制台指令，你可以用于模块调试
-         * eg: 
-         *     local DebugManager = GameManager:GetManager("DebugManager")
-	     *     DebugManager:RegisterCommand("test", "TestModul:Modul:CmdTestHandler", 1, "测试指令帮助文字")
-         * 命令处理器 回调格式
-         *    func(keyword, argCount, stringList)
-         *         keyword 用户输入的命令单词
-         *         argCount 用户输入的参数个数（您也可以通过RegisterCommand中的limitArgCount参数指定最低参数个数）
-         *         stringList 参数数组，string[] 类型
-         * 
-         */
 
         /// <summary>
         /// 注册命令 (lua使用)

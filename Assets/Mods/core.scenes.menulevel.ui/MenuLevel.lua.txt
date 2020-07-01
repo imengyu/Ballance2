@@ -5,7 +5,7 @@ GameManager = Ballance2.GameManager
 GameLogger = Ballance2.GameLogger
 GameActionNames = Ballance2.CoreBridge.GameActionNames
 SkyBoxUtils = Ballance2.Utils.SkyBoxUtils
-GameSoundType = Ballance2.Managers.GameSoundType
+GameSoundType = Ballance2.Interfaces.GameSoundType
 
 RenderSettings = UnityEngine.RenderSettings
 Vector3 = UnityEngine.Vector3
@@ -13,7 +13,7 @@ Time = UnityEngine.Time
 Color = UnityEngine.Color
 
 local UIManager = GameManager.UIManager
-local SoundManager = Slua.As(GameManager.GetManager(Ballance2.Managers.SoundManager.TAG), Ballance2.Managers.SoundManager)
+local SoundManager = Slua.As(GameManager.GetManager("SoundManager"), Ballance2.Interfaces.ISoundManager)
 local TAG = "MenuLevel:MainCamera"
 
 MenuLevel = {
@@ -27,9 +27,9 @@ MenuLevel = {
   I_Camera = nil,
   I_Light_Day = nil,
   I_Light_Night = nil,
-  I_Zone_SuDu_Innen = nil,
-  I_Zone_NenLi_Innen = nil,
-  I_Zone_LiLiang_Innen = nil,
+  I_Zone_SuDu = nil,
+  I_Zone_NenLi = nil,
+  I_Zone_LiLiang = nil,
   speed = -6,
 
   skyBoxDay = nil,
@@ -76,12 +76,12 @@ function class_MenuLevel()
     self.I_Light_Day = self.transform:Find("I_Light_Day").gameObject
     -- izone
     self.I_Zone = self.transform:Find("I_Zone").gameObject
-    self.I_Zone_SuDu_Innen = self.I_Zone.transform:Find("I_Zone_SuDu_Innen").gameObject
-    self.I_Zone_NenLi_Innen = self.I_Zone.transform:Find("I_Zone_NenLi_Innen").gameObject
-    self.I_Zone_LiLiang_Innen = self.I_Zone.transform:Find("I_Zone_LiLiang_Innen").gameObject
-    self.I_Zone_SuDu_Innen:GetComponent("OutlineHighlightPicker").onClick:AddListener(function() self:OnLevelStart("13") end)
-    self.I_Zone_LiLiang_Innen:GetComponent("OutlineHighlightPicker").onClick:AddListener(function() self:OnLevelStart("14") end)
-    self.I_Zone_NenLi_Innen:GetComponent("OutlineHighlightPicker").onClick:AddListener(function() self:OnLevelStart("15") end)
+    self.I_Zone_SuDu = self.I_Zone.transform:Find("I_Zone_SuDu").gameObject
+    self.I_Zone_NenLi = self.I_Zone.transform:Find("I_Zone_NenLi").gameObject
+    self.I_Zone_LiLiang = self.I_Zone.transform:Find("I_Zone_LiLiang").gameObject
+    self.I_Zone_SuDu.transform:Find("Selector"):GetComponent("OutlineHighlightPicker").onClick:AddListener(function() self:OnLevelStart("13") end)
+    self.I_Zone_LiLiang.transform:Find("Selector"):GetComponent("OutlineHighlightPicker").onClick:AddListener(function() self:OnLevelStart("14") end)
+    self.I_Zone_NenLi.transform:Find("Selector"):GetComponent("OutlineHighlightPicker").onClick:AddListener(function() self:OnLevelStart("15") end)
     --skybox
     self.skyBox = self.I_Camera:GetComponent("Skybox")
     self.skyBoxDay = SkyBoxUtils.MakeSkyBox("C")
@@ -107,9 +107,9 @@ function class_MenuLevel()
 			self.I_Camera.transform:LookAt(self.domePosition)
     end
     if(self.runningLzLoop) then 
-      self.I_Zone_SuDu_Innen.transform:LookAt(self.I_Camera.transform.position)
-      self.I_Zone_NenLi_Innen.transform:LookAt(self.I_Camera.transform.position)
-      self.I_Zone_LiLiang_Innen.transform:LookAt(self.I_Camera.transform.position)
+      self.I_Zone_SuDu.transform:LookAt(self.I_Camera.transform.position, Vector3.up)
+      self.I_Zone_NenLi.transform:LookAt(self.I_Camera.transform.position, Vector3.up)
+      self.I_Zone_LiLiang.transform:LookAt(self.I_Camera.transform.position, Vector3.up)
     end
   end
   

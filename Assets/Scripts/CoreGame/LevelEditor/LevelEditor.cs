@@ -8,7 +8,7 @@ namespace Ballance2.GameCore
     /// <summary>
     /// 关卡编辑器
     /// </summary>
-    public class LevelEditor : BaseManagerBindable
+    public class LevelEditor : BaseManager
     {
         public const string TAG = "LevelEditor";
 

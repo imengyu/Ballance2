@@ -6,6 +6,7 @@ using Ballance2.UI.Utils;
 using System.Xml;
 using Ballance2.Utils;
 using Ballance2.Managers;
+using Ballance2.Interfaces;
 
 namespace Ballance2.UI.BallanceUI.Element
 {
@@ -44,13 +45,13 @@ namespace Ballance2.UI.BallanceUI.Element
                 Text = val;
         }
 
-        private SoundManager soundManager = null;
+        private ISoundManager soundManager = null;
 
         protected override void OnInitElement()
         {
             GetText();
             clickEventHandler = new GameHandlerList();
-            soundManager = (SoundManager)GameManager.GetManager(SoundManager.TAG);
+            soundManager = (ISoundManager)GameManager.GetManager("SoundManager");
 
             EventTriggerListener eventTriggerListener = EventTriggerListener.Get(gameObject);
             eventTriggerListener.onClick = OnClick;
