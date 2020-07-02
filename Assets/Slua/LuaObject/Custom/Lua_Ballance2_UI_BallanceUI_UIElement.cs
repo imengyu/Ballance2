@@ -277,6 +277,70 @@ public class Lua_Ballance2_UI_BallanceUI_UIElement : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int get_IsRootLayout(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.UI.BallanceUI.UIElement self=(Ballance2.UI.BallanceUI.UIElement)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.IsRootLayout);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_IsRootLayout(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.UI.BallanceUI.UIElement self=(Ballance2.UI.BallanceUI.UIElement)checkSelf(l);
+			bool v;
+			checkType(l,2,out v);
+			self.IsRootLayout=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int get_IsLayout(IntPtr l) {
 		try {
 			#if DEBUG
@@ -2076,6 +2140,7 @@ public class Lua_Ballance2_UI_BallanceUI_UIElement : LuaObject {
 		addMember(l,GetCustomData);
 		addMember(l,SetProperty);
 		addMember(l,DoResize);
+		addMember(l,"IsRootLayout",get_IsRootLayout,set_IsRootLayout,true);
 		addMember(l,"IsLayout",get_IsLayout,null,true);
 		addMember(l,"RootContainer",get_RootContainer,null,true);
 		addMember(l,"Layout_marginLeft",get_Layout_marginLeft,set_Layout_marginLeft,true);

@@ -40,6 +40,43 @@ public class Lua_Ballance2_Interfaces_IDebugManager : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int ShowExceptionDialog(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.Interfaces.IDebugManager self=(Ballance2.Interfaces.IDebugManager)checkSelf(l);
+			System.String a1;
+			checkType(l,2,out a1);
+			System.String a2;
+			checkType(l,3,out a2);
+			UnityEngine.LogType a3;
+			a3 = (UnityEngine.LogType)LuaDLL.luaL_checkinteger(l, 4);
+			self.ShowExceptionDialog(a1,a2,a3);
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int RunCommand(IntPtr l) {
 		try {
 			#if DEBUG
@@ -204,6 +241,7 @@ public class Lua_Ballance2_Interfaces_IDebugManager : LuaObject {
 	static public void reg(IntPtr l) {
 		getTypeTable(l,"Ballance2.Interfaces.IDebugManager");
 		addMember(l,AddCustomDebugToolItem);
+		addMember(l,ShowExceptionDialog);
 		addMember(l,RunCommand);
 		addMember(l,RegisterCommand);
 		addMember(l,UnRegisterCommand);

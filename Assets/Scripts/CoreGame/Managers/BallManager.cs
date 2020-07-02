@@ -196,6 +196,12 @@ namespace Ballance2.CoreGame.Managers
                 ActiveBall("BallPaper");
             if (Input.GetKeyDown(KeyCode.F5))
                 PlayLighting(true);
+            if (Input.GetKeyDown(KeyCode.F6))
+                ThrowPieces("BallWood");
+            if (Input.GetKeyDown(KeyCode.F7))
+                ThrowPieces("BallStone");
+            if (Input.GetKeyDown(KeyCode.F8))
+                ThrowPieces("BallPaper");
 #endif
 
             //闪电球
@@ -321,7 +327,7 @@ namespace Ballance2.CoreGame.Managers
             if (ball.gameObject.activeSelf) ball.gameObject.SetActive(false);
             if (pieces.activeSelf) pieces.SetActive(false);
 
-            return true;
+            return ball.Init();
         }
         /// <summary>
         /// 取消注册球
@@ -330,7 +336,11 @@ namespace Ballance2.CoreGame.Managers
         public virtual void UnRegisterBall(string name)
         {
             GameBall targetBall = GetRegisteredBall(name);
-            if (targetBall != null) BallTypes.Remove(targetBall);
+            if (targetBall != null)
+            {
+                BallTypes.Remove(targetBall);
+                targetBall.Destroy();
+            }
             else
             {
                 GameLogger.Log(TAG, "无法取消注册球 {0} 因为它没有注册", name);
@@ -494,6 +504,7 @@ namespace Ballance2.CoreGame.Managers
         private bool lighing = false;
         private bool lighingBig = false;
 
+        public AnimationCurve ballLightningCurve;
         public Texture ballLightningSphere1,
             ballLightningSphere2,
             ballLightningSphere3;

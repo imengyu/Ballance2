@@ -12,7 +12,7 @@ public class Lua_Ballance2_Utils_GameError : LuaObject {
 		addMember(l,4,"GameInitPartLoadFailed");
 		addMember(l,5,"HandlerLost");
 		addMember(l,6,"AlredayRegistered");
-		addMember(l,7,"NotRegistered");
+		addMember(l,7,"NotRegister");
 		addMember(l,8,"ParamNotProvide");
 		addMember(l,9,"PrefabNotFound");
 		addMember(l,10,"AssetsNotFound");

@@ -71,7 +71,7 @@ namespace Ballance2.CoreGame.Managers
 
         //一些摄像机的旋转动画曲线
         public AnimationCurve animationCurveCamera;
-        public AnimationCurve animationCurveCameraY;
+        public AnimationCurve animationCurveCameraZ;
         public AnimationCurve animationCurveCameraMoveY;
         public AnimationCurve animationCurveCameraMoveYDown;
 
@@ -96,25 +96,42 @@ namespace Ballance2.CoreGame.Managers
             get { return isLookingBall; }
             set { isLookingBall = value; }
         }
+        /// <summary>
+        /// 获取或设置摄像机朝向
+        /// </summary>
+        public DirectionType CurrentDirection
+        {
+            get { return cameraRoteValue; }
+            set
+            {
+                if(cameraRoteValue != value)
+                {
+                    cameraRoteValue = value;
+
+                    CamRoteResetTarget(false);
+                    CamRoteResetVector();
+
+                    isCameraRoteingX = true;
+                }
+            }
+        }
 
         private bool isFollowCam = false;
         private bool isLookingBall = false;
         private bool isCameraSpaced;
-        private bool isCameraRoteing;
         private bool isCameraRoteingX;
-        private bool isCameraRoteingY;
         private bool isCameraMovingY;
         private bool isCameraMovingYDown;
         private bool isCameraMovingZ;
         private bool isCameraMovingZFar;
 
-        public int cameraRoteValue;
+        public DirectionType cameraRoteValue = DirectionType.Forward;
+        public float cameraHeight = 15f;
         public float cameraLeaveFarMaxOffest = 15f;
+        public float cameraLeaveNearMaxOffestZ = -5f;
+        public float cameraLeaveFarMaxOffestZ = -15f;
         public float cameraMaxRoteingOffest = 5f;
-        public float cameraCurRoteingOffestX = 1f;
-        public float cameraCurRoteingOffestY = 1f;
         public float cameraSpaceMaxOffest = 80f;
-
         public float cameraSpaceOffest = 10f;
 
         //摄像机方向控制
@@ -124,7 +141,7 @@ namespace Ballance2.CoreGame.Managers
         public float camFollowSpeed2 = 0.05f;
         public float camMoveSpeedZ = 1f;
 
-        public GameObject ballCamMoveY;
+        public GameObject ballCamMoveHost;
         public Camera ballCamera;
         public GameObject ballCamFollowHost;
         public GameObject ballCamFollowTarget;
@@ -133,19 +150,32 @@ namespace Ballance2.CoreGame.Managers
         private Transform camFollowTarget;
         private Vector3 camVelocityTarget = new Vector3();
 
-        private float cameraNeedRoteingValueX;
-        private float cameraRoteingRealValueX;
-        private float cameraMovingZOld;
+        private float cameraRoteXVal = 0;
+        private float cameraRoteXTarget = 0;
+        private float cameraRoteXAll = 0;
+
+        private Rect line = new Rect(10, 135, 300, 20);
+
+        void OnGUI()
+        {
+            /*if (isFollowCam)
+            {
+                line.y = 185;
+                GUI.Label(line, "cameraRoteXVal : " + cameraRoteXVal + "  y: " + ballCamMoveY.transform.localEulerAngles.y); line.y += 16;
+                GUI.Label(line, "cameraRoteXTarget : " + cameraRoteXTarget); line.y += 16;
+                GUI.Label(line, "cameraRoteXAll : " + cameraRoteXAll); line.y += 16;
+            }*/
+        }
 
         /// <summary>
         /// 将摄像机开启
         /// </summary>
         public void CamStart() 
         {
-            ballCamera.transform.position = new Vector3(0, cameraLeaveFarMaxOffest, -cameraLeaveFarMaxOffest);
-            ballCamera.transform.eulerAngles = new Vector3(45, 0, 0);
+            ballCamera.transform.position = new Vector3(0, cameraHeight, -cameraLeaveFarMaxOffest);
+            ballCamera.transform.localEulerAngles = new Vector3(45, 0, 0);
             ballCamera.gameObject.SetActive(true);
-            cameraMovingZOld = ballCamera.transform.localPosition.z; 
+            cameraRoteXVal = 0;
         }
         /// <summary>
         /// 将摄像机关闭
@@ -185,87 +215,50 @@ namespace Ballance2.CoreGame.Managers
         /// </summary>
         public void CamRoteLeft()
         {
-            if (!isCameraRoteing)
-            {
-                if (cameraRoteValue < 3)
-                    cameraRoteValue++;
-                else
-                    cameraRoteValue = 0;
-                cameraNeedRoteingValueX = 90f;
-                isCameraRoteing = true;
-                isCameraRoteingX = true;
-                CamRote2();
-            }
+            if (cameraRoteValue < DirectionType.Right) cameraRoteValue++;
+            else cameraRoteValue = DirectionType.Forward;
+
+            CamRoteResetTarget(true);
+            CamRoteResetVector();
+
+            isCameraRoteingX = true;
         }
         /// <summary>
         /// 摄像机向右旋转
         /// </summary>
         public void CamRoteRight()
         {
-            if (!isCameraRoteing)
-            {
-                if (cameraRoteValue > 0)
-                {
-                    cameraRoteValue--;
-                }
-                else
-                {
-                    cameraRoteValue = 3;
-                }
-                cameraNeedRoteingValueX = -90f;
-                isCameraRoteing = true;
-                isCameraRoteingX = true;
-                CamRote2();
-            }
+            if (cameraRoteValue > DirectionType.Forward) cameraRoteValue--;
+            else cameraRoteValue = DirectionType.Right;
+
+            CamRoteResetTarget(false);
+            CamRoteResetVector();
+
+            isCameraRoteingX = true;
         }
         //摄像机面对向量重置
-        private void CamRote2()
+        private void CamRoteResetVector()
         {
             //根据摄像机朝向重置几个球推动的方向向量
             //    这4个方向向量用于球
-            switch (cameraRoteValue)
-            {
-                case 0:
-                    _thisVector3Right = Vector3.right;
-                    _thisVector3Left = Vector3.left;
-                    _thisVector3Fornt = Vector3.forward;
-                    _thisVector3Back = Vector3.back;
-                    break;
-                case 1:
-                    _thisVector3Right = Vector3.back;
-                    _thisVector3Left = Vector3.forward;
-                    _thisVector3Fornt = Vector3.right;
-                    _thisVector3Back = Vector3.left;
-                    break;
-                case 2:
-                    _thisVector3Right = Vector3.left;
-                    _thisVector3Left = Vector3.right;
-                    _thisVector3Fornt = Vector3.back;
-                    _thisVector3Back = Vector3.forward;
-                    break;
-                case 3:
-                    _thisVector3Right = Vector3.forward;
-                    _thisVector3Left = Vector3.back;
-                    _thisVector3Fornt = Vector3.left;
-                    _thisVector3Back = Vector3.right;
-                    break;
-            }
+            float y = -ballCamMoveHost.transform.localEulerAngles.y;
+            _thisVector3Right = Quaternion.AngleAxis(-y, Vector3.up) * Vector3.right;
+            _thisVector3Left = Quaternion.AngleAxis(-y, Vector3.up) * Vector3.left;
+            _thisVector3Fornt = Quaternion.AngleAxis(-y, Vector3.up) * Vector3.forward;
+            _thisVector3Back = Quaternion.AngleAxis(-y, Vector3.up) * Vector3.back;
+        }
+        //摄像机旋转目标
+        private void CamRoteResetTarget(bool left)
+        { 
+            cameraRoteXTarget += (left ? 90 : -90);
+            cameraRoteXAll = Mathf.Abs(cameraRoteXTarget - cameraRoteXVal);
         }
         //摄像机旋转偏移重置
-        private void CamRote3()
+        private void CamRoteResetTargetOffest()
         {
-            cameraMovingZOld = ballCamera.transform.localPosition.z;
-            switch (cameraRoteValue)
-            {
-                case 0:
-                case 2:
-                    if (ballCamera.transform.localPosition.x != 0) ballCamera.transform.localPosition = new Vector3(0, ballCamera.transform.localPosition.y, ballCamera.transform.localPosition.z);
-                    break;
-                case 1:
-                case 3:
-                    if (ballCamera.transform.localPosition.y != 0) ballCamera.transform.localPosition = new Vector3(ballCamera.transform.localPosition.x, ballCamera.transform.localPosition.y, 0);
-                    break;
-            }
+            if (ballCamMoveHost.transform.localEulerAngles.y != cameraRoteXTarget)
+                ballCamMoveHost.transform.localEulerAngles =
+                    new Vector3(0, cameraRoteXTarget, 0);
         }
 
         /// <summary>
@@ -276,7 +269,6 @@ namespace Ballance2.CoreGame.Managers
             if (!isCameraSpaced)
             {
                 isCameraSpaced = true;
-                isCameraRoteingY = true;
                 isCameraMovingY = true;
                 isCameraMovingYDown = false;
                 isCameraMovingZ = true;
@@ -292,7 +284,6 @@ namespace Ballance2.CoreGame.Managers
             if (isCameraSpaced)
             {
                 isCameraSpaced = false;
-                isCameraRoteingY = true;
                 isCameraMovingY = true;
                 isCameraMovingYDown = true;
                 isCameraMovingZ = true;
@@ -303,21 +294,23 @@ namespace Ballance2.CoreGame.Managers
         }
 
         //几个动画计算曲线
-        private float CamRoteSpeedFun(float cameraRoteingRealValue)
+        private float CamRoteSpeedFun(float v)
         {
-            return animationCurveCamera.Evaluate(Mathf.Abs(cameraRoteingRealValue / 90)) * cameraMaxRoteingOffest;
+            return animationCurveCamera.Evaluate((
+                Mathf.Abs(cameraRoteXTarget -  v) / cameraRoteXAll)
+                ) * cameraMaxRoteingOffest;
         }
-        private float CamMoveSpeedFunZ(float cameraRoteingRealValue)
+        private float CamMoveSpeedFunZ(float v)
         {
-            return animationCurveCameraY.Evaluate(Mathf.Abs(cameraRoteingRealValue / cameraLeaveFarMaxOffest)) * camMoveSpeedZ;
+            return animationCurveCameraZ.Evaluate(Mathf.Abs(v / cameraLeaveFarMaxOffest)) * camMoveSpeedZ;
         }
-        private float CamMoveSpeedFunY(float cameraRoteingRealValue)
+        private float CamMoveSpeedFunY(float v)
         {
-            return animationCurveCameraMoveY.Evaluate(Mathf.Abs(cameraRoteingRealValue / cameraSpaceMaxOffest)) * cameraSpaceOffest;
+            return animationCurveCameraMoveY.Evaluate(Mathf.Abs(v / cameraSpaceMaxOffest)) * cameraSpaceOffest;
         }
-        private float CamMoveSpeedFunYDown(float cameraRoteingRealValue)
+        private float CamMoveSpeedFunYDown(float v)
         {
-            return animationCurveCameraMoveYDown.Evaluate(Mathf.Abs((cameraRoteingRealValue) / cameraSpaceMaxOffest)) * cameraSpaceOffest;
+            return animationCurveCameraMoveYDown.Evaluate(Mathf.Abs((v) / cameraSpaceMaxOffest)) * cameraSpaceOffest;
         }
 
         //摄像机跟随 每帧
@@ -340,48 +333,30 @@ namespace Ballance2.CoreGame.Managers
         }
         private void CamUpdate()
         {
-            if (isCameraRoteing)
+            //水平旋转
+            if (isCameraRoteingX)
             {
-                //水平旋转
-                if (isCameraRoteingX)
+                float abs = Mathf.Abs(cameraRoteXVal - cameraRoteXTarget);
+                float off = CamRoteSpeedFun(cameraRoteXVal);
+                if (abs > 0.8f)
                 {
-                    if (cameraNeedRoteingValueX > 0.00001f)
-                    {
-                        if (cameraRoteingRealValueX < cameraNeedRoteingValueX)
-                        {
-                            cameraCurRoteingOffestX = CamRoteSpeedFun(cameraRoteingRealValueX);
-                            cameraRoteingRealValueX += cameraCurRoteingOffestX;
-                            ballCamera.transform.RotateAround(ballCamFollowHost.transform.position, Vector3.up, cameraCurRoteingOffestX);
-                        }
-                        else
-                        {
-                            float f = cameraNeedRoteingValueX - cameraRoteingRealValueX;
-                            if (f > 0) ballCamera.transform.RotateAround(ballCamFollowHost.transform.position, Vector3.up, -f);
-                            CamRote3();
-                            cameraRoteingRealValueX = 0f;
-                            isCameraRoteingX = false;
-                            isCameraRoteing = false;
-                        }
-                    }
-                    else
-                    {
-                        if (cameraRoteingRealValueX > cameraNeedRoteingValueX)
-                        {
-                            cameraCurRoteingOffestX = CamRoteSpeedFun(cameraRoteingRealValueX);
-                            cameraRoteingRealValueX -= cameraCurRoteingOffestX;
-                            ballCamera.transform.RotateAround(ballCamFollowHost.transform.position, Vector3.up, -cameraCurRoteingOffestX);
-                        }
-                        else
-                        {
-                            float f = cameraNeedRoteingValueX - cameraRoteingRealValueX;
-                            if (f < 0) ballCamera.transform.RotateAround(ballCamFollowHost.transform.position, Vector3.up, -f);
-                            CamRote3();
-                            cameraRoteingRealValueX = 0f;
-                            isCameraRoteingX = false;
-                            isCameraRoteing = false;
-                        }
-                    }
+                    if (off > abs) off = abs - 0.1f;
+                    if (cameraRoteXVal < cameraRoteXTarget)
+                        cameraRoteXVal += off;
+                    else if (cameraRoteXVal > cameraRoteXTarget)
+                        cameraRoteXVal -= off;
+
+                    ballCamMoveHost.transform.localEulerAngles = new Vector3(0,
+                            cameraRoteXVal,
+                            0);
                 }
+                else
+                {
+                    isCameraRoteingX = false;
+                    CamRoteResetTargetOffest();
+                }
+
+                CamRoteResetVector();
             }
 
             //空格键 垂直上升
@@ -389,26 +364,22 @@ namespace Ballance2.CoreGame.Managers
             {
                 if (isCameraMovingYDown)
                 {
-                    if (ballCamMoveY.transform.localPosition.y > 0)
-                        ballCamMoveY.transform.localPosition = new Vector3(0, (ballCamMoveY.transform.localPosition.y - CamMoveSpeedFunYDown(ballCamMoveY.transform.localPosition.y)), 0);
+                    if (ballCamMoveHost.transform.localPosition.y > 0)
+                        ballCamMoveHost.transform.localPosition = new Vector3(0, (ballCamMoveHost.transform.localPosition.y - CamMoveSpeedFunYDown(ballCamMoveHost.transform.localPosition.y)), 0);
                     else
                     {
-                        ballCamMoveY.transform.localPosition = new Vector3(0, 0, 0);
+                        ballCamMoveHost.transform.localPosition = new Vector3(0, 0, 0);
                         isCameraMovingY = false;
-                        if (!isCameraRoteingY)
-                            isCameraRoteing = false;
                     }
                 }
                 else
                 {
-                    if (ballCamMoveY.transform.localPosition.y < cameraSpaceMaxOffest)
-                        ballCamMoveY.transform.localPosition = new Vector3(0, ballCamMoveY.transform.localPosition.y + CamMoveSpeedFunY(ballCamMoveY.transform.localPosition.y), 0);
+                    if (ballCamMoveHost.transform.localPosition.y < cameraSpaceMaxOffest)
+                        ballCamMoveHost.transform.localPosition = new Vector3(0, ballCamMoveHost.transform.localPosition.y + CamMoveSpeedFunY(ballCamMoveHost.transform.localPosition.y), 0);
                     else
                     {
-                        ballCamMoveY.transform.localPosition = new Vector3(0, cameraSpaceMaxOffest, 0);
+                        ballCamMoveHost.transform.localPosition = new Vector3(0, cameraSpaceMaxOffest, 0);
                         isCameraMovingY = false;
-                        if (!isCameraRoteingY)
-                            isCameraRoteing = false;
                     }
                 }
             }
@@ -417,34 +388,37 @@ namespace Ballance2.CoreGame.Managers
             {
                 if (isCameraMovingZFar)
                 {
-                    float abs = Mathf.Abs(ballCamera.transform.localPosition.z - cameraMovingZOld);
+                    float abs = Mathf.Abs(ballCamera.transform.localPosition.z - cameraLeaveFarMaxOffestZ);
+                    float off = CamMoveSpeedFunZ(ballCamera.transform.localPosition.z);
                     if (abs > 1f)
                     {
-                        if (ballCamera.transform.localPosition.z < cameraMovingZOld)
-                            ballCamera.transform.localPosition = new Vector3(ballCamera.transform.localPosition.x, ballCamera.transform.localPosition.y, (ballCamera.transform.localPosition.z + camMoveSpeedZ));
-                        else if (ballCamera.transform.localPosition.z > cameraMovingZOld)
-                            ballCamera.transform.localPosition = new Vector3(ballCamera.transform.localPosition.x, ballCamera.transform.localPosition.y, (ballCamera.transform.localPosition.z - camMoveSpeedZ));
+                        if (off > abs) off = abs - 0.1f;
+                        if (ballCamera.transform.localPosition.z < cameraLeaveFarMaxOffestZ)
+                            ballCamera.transform.localPosition = new Vector3(ballCamera.transform.localPosition.x, ballCamera.transform.localPosition.y, (ballCamera.transform.localPosition.z + off));
+                        else if (ballCamera.transform.localPosition.z > cameraLeaveFarMaxOffestZ)
+                            ballCamera.transform.localPosition = new Vector3(ballCamera.transform.localPosition.x, ballCamera.transform.localPosition.y, (ballCamera.transform.localPosition.z - off));
                     }
                     else
                     {
-                        ballCamera.transform.localPosition = new Vector3(ballCamera.transform.localPosition.x, ballCamera.transform.localPosition.y, cameraMovingZOld);
+                        ballCamera.transform.localPosition = new Vector3(ballCamera.transform.localPosition.x, ballCamera.transform.localPosition.y, cameraLeaveFarMaxOffestZ);
                         isCameraMovingZ = false;
                     }
                 }
                 else
                 {
-                    float end = cameraMovingZOld > 0 ? 5f : -5f;
-                    float abs = Mathf.Abs(ballCamera.transform.localPosition.z - end);
+                    float abs = Mathf.Abs(ballCamera.transform.localPosition.z - cameraLeaveNearMaxOffestZ);
+                    float off = CamMoveSpeedFunZ(ballCamera.transform.localPosition.z);
                     if (abs > 0.2f)
                     {
-                        if (ballCamera.transform.localPosition.z < end)
-                            ballCamera.transform.localPosition = new Vector3(ballCamera.transform.localPosition.x, ballCamera.transform.localPosition.y, (ballCamera.transform.localPosition.z + camMoveSpeedZ));
-                        else if (ballCamera.transform.localPosition.z > end)
-                            ballCamera.transform.localPosition = new Vector3(ballCamera.transform.localPosition.x, ballCamera.transform.localPosition.y, (ballCamera.transform.localPosition.z - camMoveSpeedZ));
+                        if (off > abs) off = abs - 0.1f;
+                        if (ballCamera.transform.localPosition.z < cameraLeaveNearMaxOffestZ)
+                            ballCamera.transform.localPosition = new Vector3(ballCamera.transform.localPosition.x, ballCamera.transform.localPosition.y, (ballCamera.transform.localPosition.z + off));
+                        else if (ballCamera.transform.localPosition.z > cameraLeaveNearMaxOffestZ)
+                            ballCamera.transform.localPosition = new Vector3(ballCamera.transform.localPosition.x, ballCamera.transform.localPosition.y, (ballCamera.transform.localPosition.z - off));
                     }
                     else
                     {
-                        ballCamera.transform.localPosition = new Vector3(ballCamera.transform.localPosition.x, ballCamera.transform.localPosition.y, end);
+                        ballCamera.transform.localPosition = new Vector3(ballCamera.transform.localPosition.x, ballCamera.transform.localPosition.y, cameraLeaveNearMaxOffestZ);
                         isCameraMovingZ = false;
                     }
                 }
@@ -463,4 +437,5 @@ namespace Ballance2.CoreGame.Managers
         }
 
     }
+
 }

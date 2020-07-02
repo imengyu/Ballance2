@@ -345,6 +345,39 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int GlobalToast(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.Managers.UIManager self=(Ballance2.Managers.UIManager)checkSelf(l);
+			System.String a1;
+			checkType(l,2,out a1);
+			self.GlobalToast(a1);
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int GlobalAlertWindow(IntPtr l) {
 		try {
 			#if DEBUG
@@ -1700,6 +1733,7 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 		addMember(l,MaskWhiteFadeOut);
 		addMember(l,GlobalAlert);
 		addMember(l,GlobalConfirm);
+		addMember(l,GlobalToast);
 		addMember(l,GlobalAlertWindow);
 		addMember(l,GlobalConfirmWindow);
 		addMember(l,CreateWindow);

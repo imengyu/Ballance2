@@ -9,6 +9,7 @@ using Ballance2.ModBase;
 using Ballance2.GameCore;
 using Ballance2.Interfaces;
 using Ballance2.CoreGame.Interfaces;
+using Ballance2.CoreGame.Managers;
 
 namespace Ballance2.Managers
 {
@@ -166,6 +167,7 @@ namespace Ballance2.Managers
             //加载游戏内核管理器
             GameManager.RegisterManager(typeof(LevelLoader), false);
             GameManager.RegisterManager(typeof(LevelManager), false);
+            GameManager.RegisterManager(typeof(ICManager), false);
 
             IBallManager ballManager = GameCloneUtils.CloneNewObjectWithParent(
                 GameManager.FindStaticPrefabs("BallManager"), 
@@ -232,7 +234,7 @@ namespace Ballance2.Managers
                     }
 
                     //跳过不需要加载的模块
-                    if((mask & currentLoadMask) != mask)
+                    if((mask & currentLoadMask) == LoadMask.None)
                         continue;
 
                     //状态

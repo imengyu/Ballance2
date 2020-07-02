@@ -116,15 +116,31 @@ public class Lua_Ballance2_GameManager : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Managers.BaseManager a1;
-			checkType(l,1,out a1);
-			System.String a2;
-			checkType(l,2,out a2);
-			System.String a3;
-			checkType(l,3,out a3);
-			var ret=Ballance2.GameManager.ReplaceManager(a1,a2,a3);
-			pushValue(l,true);
-			pushValue(l,ret);
+			int argc = LuaDLL.lua_gettop(l);
+			if(argc==2){
+				Ballance2.Managers.BaseManager a1;
+				checkType(l,1,out a1);
+				System.String a2;
+				checkType(l,2,out a2);
+				var ret=Ballance2.GameManager.ReplaceManager(a1,a2);
+				pushValue(l,true);
+				pushValue(l,ret);
+				return 2;
+			}
+			else if(argc==3){
+				Ballance2.Managers.BaseManager a1;
+				checkType(l,1,out a1);
+				System.String a2;
+				checkType(l,2,out a2);
+				System.String a3;
+				checkType(l,3,out a3);
+				var ret=Ballance2.GameManager.ReplaceManager(a1,a2,a3);
+				pushValue(l,true);
+				pushValue(l,ret);
+				return 2;
+			}
+			pushValue(l,false);
+			LuaDLL.lua_pushstring(l,"No matched override function ReplaceManager to call");
 			return 2;
 		}
 		catch(Exception e) {

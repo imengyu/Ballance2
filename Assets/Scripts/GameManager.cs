@@ -133,6 +133,10 @@ namespace Ballance2
 
             managers.Remove(old);
             managers.Add(newClass);
+            
+            GameLogger.Log(TAG, "Manager was replaced : {0}:{1} old {2} -> new {3}", 
+                old.GetName(), old.GetSubName(),
+                old.GetInstanceID(), newClass.GetInstanceID());
 
             return old;
         }

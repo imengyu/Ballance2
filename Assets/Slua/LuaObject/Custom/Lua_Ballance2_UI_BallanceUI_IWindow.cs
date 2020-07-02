@@ -233,6 +233,41 @@ public class Lua_Ballance2_UI_BallanceUI_IWindow : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int SetMinSize(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.UI.BallanceUI.IWindow self=(Ballance2.UI.BallanceUI.IWindow)checkSelf(l);
+			System.Single a1;
+			checkType(l,2,out a1);
+			System.Single a2;
+			checkType(l,3,out a2);
+			self.SetMinSize(a1,a2);
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int SetPos(IntPtr l) {
 		try {
 			#if DEBUG
@@ -281,6 +316,38 @@ public class Lua_Ballance2_UI_BallanceUI_IWindow : LuaObject {
 			#endif
 			Ballance2.UI.BallanceUI.IWindow self=(Ballance2.UI.BallanceUI.IWindow)checkSelf(l);
 			var ret=self.GetSize();
+			pushValue(l,true);
+			pushValue(l,ret);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int GetMinSize(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.UI.BallanceUI.IWindow self=(Ballance2.UI.BallanceUI.IWindow)checkSelf(l);
+			var ret=self.GetMinSize();
 			pushValue(l,true);
 			pushValue(l,ret);
 			return 2;
@@ -531,8 +598,10 @@ public class Lua_Ballance2_UI_BallanceUI_IWindow : LuaObject {
 		addMember(l,SetVisible);
 		addMember(l,Destroy);
 		addMember(l,SetSize);
+		addMember(l,SetMinSize);
 		addMember(l,SetPos);
 		addMember(l,GetSize);
+		addMember(l,GetMinSize);
 		addMember(l,GetPos);
 		addMember(l,SetView);
 		addMember(l,GetView);

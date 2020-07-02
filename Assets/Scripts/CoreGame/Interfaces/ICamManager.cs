@@ -44,6 +44,10 @@ namespace Ballance2.CoreGame.Interfaces
         /// 获取是否正在看着球
         /// </summary>
         bool IsLookingBall { get; set; }
+        /// <summary>
+        /// 获取或设置摄像机朝向
+        /// </summary>
+        DirectionType CurrentDirection { get; set; }
 
         /// <summary>
         /// 将摄像机开启
@@ -81,7 +85,17 @@ namespace Ballance2.CoreGame.Interfaces
         /// 摄像机 放开 空格键 下降
         /// </summary>
         void CamRoteSpaceBack();
+    }
 
-
+    [SLua.CustomLuaClass]
+    /// <summary>
+    /// 方向朝向
+    /// </summary>
+    public enum DirectionType
+    {
+        Forward,
+        Left,
+        Back,
+        Right,
     }
 }

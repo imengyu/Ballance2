@@ -1,4 +1,6 @@
 ﻿using Ballance2.CoreGame.Interfaces;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Ballance2.CoreGame.GamePlay
@@ -64,6 +66,7 @@ namespace Ballance2.CoreGame.GamePlay
         public float FallForce = 10f;
         public float FallForceFloor = 10f;
         public bool LimitSpeed = true;
+        public float ThrowPiecesForce = 5f;
 
         public float MinSpeedY = 0f;
         public float MaxSpeedY = 0f;
@@ -72,6 +75,9 @@ namespace Ballance2.CoreGame.GamePlay
 
         public ForceMode FallForceMode = ForceMode.Force;
         public ForceMode ForceMode = ForceMode.Force;
+
+        public List<Rigidbody> PiecesRigidbody { get { return piecesRigidbody; } }
+        public List<MeshRenderer> PiecesMaterial { get { return piecesMaterial; } }
 
         private bool isOnFloor = false;
         private Vector3 oldSpeed;
@@ -177,16 +183,76 @@ namespace Ballance2.CoreGame.GamePlay
             if (hide) gameObject.SetActive(false);
         }
 
+        private IICManager ICManager = null;
+
+        public virtual bool Init()
+        {
+            ICManager = (IICManager)GameManager.GetManager("ICManager");
+            BuildPiecesData();
+            return true;
+        }
+        public virtual void Destroy()
+        {
+            if (piecesRigidbody != null)
+            {
+                piecesRigidbody.Clear();
+                piecesRigidbody = null;
+            }
+            if (piecesMaterial != null)
+            {
+                piecesMaterial.Clear();
+                piecesMaterial = null;
+            }
+        }
+
         //碎片
+
+        private List<Rigidbody> piecesRigidbody = null;
+        private List<MeshRenderer> piecesMaterial = null;
+
+        private void BuildPiecesData()
+        {
+            if (piecesRigidbody == null)
+            {
+                piecesRigidbody = new List<Rigidbody>();
+                Rigidbody r = null;
+                for (int i = 0; i < Pieces.transform.childCount; i++)
+                {
+                    r = Pieces.transform.GetChild(i).GetComponent<Rigidbody>();
+                    //保存IC
+                    ICManager.BackupIC(Pieces.transform.GetChild(i).gameObject);
+
+                    if (r != null) piecesRigidbody.Add(r);
+                }
+            }
+            if (piecesMaterial == null)
+            {
+                piecesMaterial = new List<MeshRenderer>();
+                MeshRenderer r = null;
+                for (int i = 0; i < Pieces.transform.childCount; i++)
+                {
+                    r = Pieces.transform.GetChild(i).GetComponent<MeshRenderer>();
+                    if (r != null && r.material != null) piecesMaterial.Add(r);
+                }
+            }
+        }
 
         /// <summary>
         /// 开始抛掷碎片
         /// </summary>
         public virtual void ThrowPieces()
         {
-            if (Pieces != null)
+            if (Pieces != null && piecesRigidbody != null)
             {
+                Pieces.SetActive(true);
 
+                foreach(Rigidbody r in piecesRigidbody)
+                {
+                    ICManager.ResetIC(r.gameObject);
+
+                    r.gameObject.SetActive(true);
+                    r.AddExplosionForce(ThrowPiecesForce, transform.position, 4f);
+                }
             }
         }
         /// <summary>
@@ -194,9 +260,34 @@ namespace Ballance2.CoreGame.GamePlay
         /// </summary>
         public virtual void RecoverPieces()
         {
-            if (Pieces != null)
+            if (Pieces != null && piecesMaterial != null && piecesRigidbody != null)
             {
+                foreach (MeshRenderer m in piecesMaterial)
+                {
+                    if (m.material != null)
+                        GameManager.UIManager.UIFadeManager.AddFadeOut(m.gameObject, 1.0f, true, m.material);
+                }
+            }
+            StartCoroutine(RecoverPiecesDelay());
+        }
 
+        private IEnumerator RecoverPiecesDelay()
+        {
+            yield return new WaitForSeconds(1.0f);
+
+            if (Pieces != null && piecesMaterial != null && piecesRigidbody != null)
+            {
+                foreach (Rigidbody r in piecesRigidbody)
+                {
+                    ICManager.ResetIC(r.gameObject);
+                    r.gameObject.SetActive(true);
+                }
+                foreach (MeshRenderer m in piecesMaterial)
+                {
+                    if (m.material != null)
+                        m.material.color = new Color(m.material.color.r, m.material.color.g, m.material.color.b, 1.0f);
+                }
+                Pieces.SetActive(false);
             }
         }
 

@@ -198,7 +198,7 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.1
+      value: 0.2
       inSlope: 1.0453146
       outSlope: 1.0453146
       tangentMode: 0
@@ -206,8 +206,8 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0.2113203
     - serializedVersion: 3
-      time: 0.1369143
-      value: 0.5677852
+      time: 0.22663392
+      value: 0.5595488
       inSlope: 2.5242555
       outSlope: 2.5242555
       tangentMode: 0
@@ -215,8 +215,8 @@ MonoBehaviour:
       inWeight: 0.33333334
       outWeight: 0.14528798
     - serializedVersion: 3
-      time: 0.6416426
-      value: 0.8543765
+      time: 0.6173506
+      value: 0.9037959
       inSlope: -0.9411417
       outSlope: -0.9411417
       tangentMode: 0
@@ -225,7 +225,7 @@ MonoBehaviour:
       outWeight: 0.2789611
     - serializedVersion: 3
       time: 1
-      value: 0.06
+      value: 0.2
       inSlope: -1.344916
       outSlope: -1.344916
       tangentMode: 0
@@ -235,35 +235,35 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  animationCurveCameraY:
+  animationCurveCameraZ:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: -0.0037384033
-      value: 0.123413086
-      inSlope: 2
-      outSlope: 2
+      time: 0
+      value: 0.2
+      inSlope: 4.821221
+      outSlope: 4.821221
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.059813086
     - serializedVersion: 3
-      time: 0.4388998
-      value: 0.66605234
-      inSlope: -2.7722657
-      outSlope: -2.7722657
+      time: 0.5064555
+      value: 0.9796117
+      inSlope: 0.009505353
+      outSlope: 0.009505353
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.15527526
+      outWeight: 0.39466527
     - serializedVersion: 3
-      time: 1.0017958
-      value: 0.1767948
-      inSlope: 0
-      outSlope: 0
+      time: 1
+      value: 0.2
+      inSlope: -4.180711
+      outSlope: -4.180711
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.031775713
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -274,15 +274,15 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0.055755615
-      inSlope: 2
-      outSlope: 2
+      inSlope: 0.00000045086463
+      outSlope: 0.00000045086463
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.2309083
     - serializedVersion: 3
-      time: 0.5009593
-      value: 0.84221715
+      time: 0.5
+      value: 0.8
       inSlope: -0.026883425
       outSlope: -0.026883425
       tangentMode: 0
@@ -290,13 +290,13 @@ MonoBehaviour:
       inWeight: 0.33333334
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.99816895
-      value: 0.22330475
-      inSlope: -2.115126
-      outSlope: -2.115126
+      time: 1
+      value: 0.03
+      inSlope: 0.12216497
+      outSlope: 0.12216497
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.07476634
+      inWeight: 0.16885853
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -335,20 +335,20 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   cameraRoteValue: 0
-  cameraLeaveFarMaxOffest: 15
+  cameraHeight: 17.5
+  cameraLeaveFarMaxOffest: 11.5
+  cameraLeaveNearMaxOffestZ: -5
+  cameraLeaveFarMaxOffestZ: -11.5
   cameraMaxRoteingOffest: 5
-  cameraCurRoteingOffestX: 1
-  cameraCurRoteingOffestY: 1
   cameraSpaceMaxOffest: 26
   cameraSpaceOffest: 5
   camFollowSpeed: 0.2
   camFollowSpeed2: 0.1
-  ballCamMoveY: {fileID: 6483853945354760610}
+  camMoveSpeedZ: 1
+  ballCamMoveHost: {fileID: 6483853945354760610}
   ballCamera: {fileID: 6483853943425503255}
   ballCamFollowHost: {fileID: 6483853944050536277}
   ballCamFollowTarget: {fileID: 6483853944495367109}
-  cameraNeedRoteingValueX: 0
-  cameraRoteingRealValueX: 0
 --- !u!1 &6483853945354760610
 GameObject:
   m_ObjectHideFlags: 0
@@ -359,7 +359,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6483853945354760611}
   m_Layer: 0
-  m_Name: BallCameraMoveY
+  m_Name: BallCameraMoveHost
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -372,7 +372,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6483853945354760610}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

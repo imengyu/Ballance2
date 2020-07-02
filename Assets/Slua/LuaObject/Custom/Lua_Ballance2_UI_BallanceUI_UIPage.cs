@@ -260,6 +260,134 @@ public class Lua_Ballance2_UI_BallanceUI_UIPage : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int get_PagePrefabName(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.UI.BallanceUI.UIPage self=(Ballance2.UI.BallanceUI.UIPage)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.PagePrefabName);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_PagePrefabName(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.UI.BallanceUI.UIPage self=(Ballance2.UI.BallanceUI.UIPage)checkSelf(l);
+			string v;
+			checkType(l,2,out v);
+			self.PagePrefabName=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_PageBackgroundPrefabName(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.UI.BallanceUI.UIPage self=(Ballance2.UI.BallanceUI.UIPage)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.PageBackgroundPrefabName);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_PageBackgroundPrefabName(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.UI.BallanceUI.UIPage self=(Ballance2.UI.BallanceUI.UIPage)checkSelf(l);
+			string v;
+			checkType(l,2,out v);
+			self.PageBackgroundPrefabName=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int get_PagePath(IntPtr l) {
 		try {
 			#if DEBUG
@@ -587,6 +715,8 @@ public class Lua_Ballance2_UI_BallanceUI_UIPage : LuaObject {
 		addMember(l,OnHide);
 		addMember(l,"onShow",get_onShow,set_onShow,true);
 		addMember(l,"onHide",get_onHide,set_onHide,true);
+		addMember(l,"PagePrefabName",get_PagePrefabName,set_PagePrefabName,true);
+		addMember(l,"PageBackgroundPrefabName",get_PageBackgroundPrefabName,set_PageBackgroundPrefabName,true);
 		addMember(l,"PagePath",get_PagePath,set_PagePath,true);
 		addMember(l,"PageBackground",get_PageBackground,set_PageBackground,true);
 		addMember(l,"RectTransform",get_RectTransform,set_RectTransform,true);

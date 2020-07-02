@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6991803851607233102}
   - component: {fileID: 197040516065230887}
   - component: {fileID: 2514232011083865015}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Paper_piece11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,7 +106,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 0.3
   m_AngularDrag: 0.2
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 6887007912360772269}
   - component: {fileID: 276038225374611276}
   - component: {fileID: 6995610146955219036}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Wood_piece10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -235,7 +235,7 @@ GameObject:
   - component: {fileID: 7596144053829828555}
   - component: {fileID: 445729806033645590}
   - component: {fileID: 4015710495477542035}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Paper_piece01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -328,7 +328,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 0.3
   m_AngularDrag: 0.2
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -346,7 +346,7 @@ GameObject:
   - component: {fileID: 1963535534775413822}
   - component: {fileID: 743103947644769153}
   - component: {fileID: 9048746280122716829}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Wood_piece04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -457,7 +457,7 @@ GameObject:
   - component: {fileID: 3059942104780064531}
   - component: {fileID: 784672741836966327}
   - component: {fileID: 7352201316486440262}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Wood_piece03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -568,7 +568,7 @@ GameObject:
   - component: {fileID: 6864050933833844889}
   - component: {fileID: 1026537439585563593}
   - component: {fileID: 961319469853536591}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Wood_piece05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -679,7 +679,7 @@ GameObject:
   - component: {fileID: 1469079462800918036}
   - component: {fileID: 1115216866196630298}
   - component: {fileID: 6972470516958455296}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Stone_piece08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -791,7 +791,7 @@ GameObject:
   - component: {fileID: 8851079392938862569}
   - component: {fileID: 1173761664984071025}
   - component: {fileID: 5837539663288305929}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Paper_piece15
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -884,7 +884,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 0.3
   m_AngularDrag: 0.2
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -902,7 +902,7 @@ GameObject:
   - component: {fileID: 5075148134593658028}
   - component: {fileID: 1198676614069344112}
   - component: {fileID: 967662526808127034}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Wood_piece06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1062,7 +1062,265 @@ MonoBehaviour:
   Ball_Smoke: {fileID: 92868727249227514}
   BallWood: {fileID: 2343699480779008538}
   BallStone: {fileID: 8618135650371243674}
-  BallPaper: {fileID: 1199595254845188942}
+  BallPaper: {fileID: 0}
+  ballLightningCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.063
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.091
+      value: 0.126
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.131
+      value: 0.053
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.142
+      value: 0.237
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.185
+      value: 0.03
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.209
+      value: 0.264
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.257
+      value: 0.076
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.278
+      value: 0.315
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.313
+      value: 0.102
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.346
+      value: 0.391
+      inSlope: -0.08590431
+      outSlope: -0.08590431
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.391
+      value: 0.198
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.451
+      value: 0.467
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.493
+      value: 0.234
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.54
+      value: 0.465
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.582
+      value: 0.325
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.615
+      value: 0.797
+      inSlope: -0.50109047
+      outSlope: -0.50109047
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.699
+      value: 0.457
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.716
+      value: 0.954
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.761
+      value: 0.401
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.797
+      value: 0.97
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.83
+      value: 0.325
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.851
+      value: 0.98
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.91
+      value: 0.503
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.919
+      value: 0.975
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.952
+      value: 0.766
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.996
+      value: 0.99
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -247.4995
+      outSlope: -247.4995
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   ballLightningSphere1: {fileID: 2800000, guid: a2308d99022b54349871994794271e91,
     type: 3}
   ballLightningSphere2: {fileID: 2800000, guid: 60957b2ac9d01094785a764591bf2565,
@@ -1174,7 +1432,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1199595254648216296}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.44, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1199595254221935674}
@@ -1191,9 +1449,9 @@ Light:
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
-  m_Color: {r: 0.6273585, g: 0.7857936, b: 1, a: 1}
+  m_Color: {r: 0.6179246, g: 0.77879846, b: 1, a: 1}
   m_Intensity: 1
-  m_Range: 4
+  m_Range: 35
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -1299,8 +1557,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1199595254845188272}
   - component: {fileID: 1199595254845188273}
-  - component: {fileID: 1199595254845188942}
-  m_Layer: 0
+  - component: {fileID: 1837300496761621996}
+  m_Layer: 16
   m_Name: Ball_Paper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1339,7 +1597,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1199595254845188942
+--- !u!114 &1837300496761621996
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1348,24 +1606,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 1199595254845188275}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b476e5e834fe1d4ca9af66a39b67307, type: 3}
+  m_Script: {fileID: 11500000, guid: abf1f4ae2349db6469088b4b821bb2b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Pieces: {fileID: 1199595254817708727}
   TypeName: 
   Rigidbody: {fileID: 1199595254845188273}
-  PushForce: 3
+  PushForce: 11
   UseFallForce: 0
   UseAutoCloseFallForce: 1
   FallForce: 10
   FallForceFloor: 10
   LimitSpeed: 1
+  ThrowPiecesForce: 5
   MinSpeedY: 0
   MaxSpeedY: 0
   MinSpeedXZ: 0
   MaxSpeedXZ: 0
   FallForceMode: 0
   ForceMode: 0
+  pushTick: 5
+  windForce: 3
+  windDirection: {x: 1.4, y: 0.2, z: 0.6}
 --- !u!1 &1199595254885999771
 GameObject:
   m_ObjectHideFlags: 0
@@ -1472,7 +1734,7 @@ GameObject:
   - component: {fileID: 5171947867915824480}
   - component: {fileID: 1340451379502334068}
   - component: {fileID: 4449628607282751803}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Paper_piece03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1565,7 +1827,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 0.3
   m_AngularDrag: 0.2
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -1583,7 +1845,7 @@ GameObject:
   - component: {fileID: 5404935522970934490}
   - component: {fileID: 1491488051155658109}
   - component: {fileID: 2230642752615727829}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Paper_piece17
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1676,7 +1938,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 0.3
   m_AngularDrag: 0.2
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -1694,7 +1956,7 @@ GameObject:
   - component: {fileID: 7588767890448045897}
   - component: {fileID: 1542553020060249069}
   - component: {fileID: 148168287207257006}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Stone_piece16
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1806,7 +2068,7 @@ GameObject:
   - component: {fileID: 6747058633154812331}
   - component: {fileID: 1740755234924316804}
   - component: {fileID: 5372706218538844905}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Wood_piece02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1917,7 +2179,7 @@ GameObject:
   - component: {fileID: 2363998000258028876}
   - component: {fileID: 1741623419322535527}
   - component: {fileID: 8008015685185919188}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Paper_piece02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2010,7 +2272,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 0.3
   m_AngularDrag: 0.2
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -2028,7 +2290,7 @@ GameObject:
   - component: {fileID: 4788919614850525627}
   - component: {fileID: 1842615393625880504}
   - component: {fileID: 7096878967219296258}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Stone_piece04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2140,7 +2402,7 @@ GameObject:
   - component: {fileID: 4164473936937186720}
   - component: {fileID: 1852044863069611095}
   - component: {fileID: 4894588905946988694}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Wood_piece07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2251,7 +2513,7 @@ GameObject:
   - component: {fileID: 7470652737857957227}
   - component: {fileID: 2253756162865953752}
   - component: {fileID: 287692970915269837}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Wood_piece14
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2363,7 +2625,7 @@ GameObject:
   - component: {fileID: 2343699480779008541}
   - component: {fileID: 2343699480779008540}
   - component: {fileID: 2343699480779008538}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Ball_Wood
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2441,7 +2703,7 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 0.9
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0.01
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -2475,12 +2737,13 @@ MonoBehaviour:
   Pieces: {fileID: 1199595254885999771}
   TypeName: 
   Rigidbody: {fileID: 2343699480779008541}
-  PushForce: 12
+  PushForce: 25
   UseFallForce: 0
   UseAutoCloseFallForce: 1
   FallForce: 10
   FallForceFloor: 10
   LimitSpeed: 1
+  ThrowPiecesForce: 5
   MinSpeedY: 0
   MaxSpeedY: 0
   MinSpeedXZ: 0
@@ -2500,7 +2763,7 @@ GameObject:
   - component: {fileID: 8421199904283550052}
   - component: {fileID: 2663626849411544594}
   - component: {fileID: 2924886003540002677}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Paper_piece09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2593,7 +2856,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 0.3
   m_AngularDrag: 0.2
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -2611,7 +2874,7 @@ GameObject:
   - component: {fileID: 2196187214768032720}
   - component: {fileID: 2800496164250932217}
   - component: {fileID: 6423257328344336522}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Paper_piece04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2704,7 +2967,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 0.3
   m_AngularDrag: 0.2
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -2722,7 +2985,7 @@ GameObject:
   - component: {fileID: 1446691134229368228}
   - component: {fileID: 2951650358787185646}
   - component: {fileID: 2212968851969364783}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Paper_piece10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2815,7 +3078,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 0.3
   m_AngularDrag: 0.2
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -2833,7 +3096,7 @@ GameObject:
   - component: {fileID: 2940849174033822497}
   - component: {fileID: 2976060002123166113}
   - component: {fileID: 5928845699405896018}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Wood_piece11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2944,7 +3207,7 @@ GameObject:
   - component: {fileID: 5201918106821433246}
   - component: {fileID: 3330756327391744663}
   - component: {fileID: 5492723990200652194}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Stone_piece13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3056,7 +3319,7 @@ GameObject:
   - component: {fileID: 2662232890716978550}
   - component: {fileID: 3774863549362987624}
   - component: {fileID: 3040869781957511901}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Stone_piece01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3168,7 +3431,7 @@ GameObject:
   - component: {fileID: 4979068434756407570}
   - component: {fileID: 3944946480649177416}
   - component: {fileID: 1871695138588533881}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Paper_piece16
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3261,7 +3524,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 0.3
   m_AngularDrag: 0.2
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -3279,7 +3542,7 @@ GameObject:
   - component: {fileID: 8757861099820277437}
   - component: {fileID: 3994560841584642568}
   - component: {fileID: 3358511530876695362}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Stone_piece07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3391,7 +3654,7 @@ GameObject:
   - component: {fileID: 1918853233116741943}
   - component: {fileID: 4532879499876483980}
   - component: {fileID: 8986381487675563205}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Stone_piece17
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3503,7 +3766,7 @@ GameObject:
   - component: {fileID: 2094019827557836612}
   - component: {fileID: 4554320434863444825}
   - component: {fileID: 547307908632686667}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Wood_piece08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3614,7 +3877,7 @@ GameObject:
   - component: {fileID: 4723703364090253820}
   - component: {fileID: 4737323553809556299}
   - component: {fileID: 7774133845247293219}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Paper_piece13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3707,7 +3970,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 0.3
   m_AngularDrag: 0.2
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -3725,7 +3988,7 @@ GameObject:
   - component: {fileID: 3641815950398687974}
   - component: {fileID: 4883875756670622761}
   - component: {fileID: 7678300462718192617}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Stone_piece14
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3837,7 +4100,7 @@ GameObject:
   - component: {fileID: 6368237325641841949}
   - component: {fileID: 4892841703542585736}
   - component: {fileID: 248713253313313898}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Stone_piece10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3948,7 +4211,7 @@ GameObject:
   - component: {fileID: 479033385972377237}
   - component: {fileID: 4340657507336867242}
   - component: {fileID: 6031503100787806272}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Ball_Paper_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4043,7 +4306,7 @@ GameObject:
   - component: {fileID: 841077976543698799}
   - component: {fileID: 6167255284971046198}
   - component: {fileID: 3493540987400056102}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Stone_piece11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4155,7 +4418,7 @@ GameObject:
   - component: {fileID: 3978658212254115570}
   - component: {fileID: 6185728510368513097}
   - component: {fileID: 4707001222949943682}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Paper_piece12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4248,7 +4511,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 0.3
   m_AngularDrag: 0.2
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -4266,7 +4529,7 @@ GameObject:
   - component: {fileID: 299393050582899254}
   - component: {fileID: 6274128871423941673}
   - component: {fileID: 7044999341959132946}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Paper_piece07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4359,7 +4622,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 0.3
   m_AngularDrag: 0.2
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -4377,7 +4640,7 @@ GameObject:
   - component: {fileID: 5129544525427937641}
   - component: {fileID: 6643746455599683220}
   - component: {fileID: 2668481222564755951}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Stone_piece12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4489,7 +4752,7 @@ GameObject:
   - component: {fileID: 9018321820559585272}
   - component: {fileID: 6765645689935248789}
   - component: {fileID: 5315695583788409983}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Wood_piece01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4600,7 +4863,7 @@ GameObject:
   - component: {fileID: 1703251706721000921}
   - component: {fileID: 6800340855041674493}
   - component: {fileID: 1089597006917647810}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Paper_piece18
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4693,7 +4956,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 0.3
   m_AngularDrag: 0.2
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -4711,7 +4974,7 @@ GameObject:
   - component: {fileID: 6369672228677599081}
   - component: {fileID: 6918949518422609495}
   - component: {fileID: 6831363628365372916}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Paper_piece14
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4804,7 +5067,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 0.3
   m_AngularDrag: 0.2
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -4822,7 +5085,7 @@ GameObject:
   - component: {fileID: 8320873949751412375}
   - component: {fileID: 7027249104384075786}
   - component: {fileID: 3376631937702045819}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Paper_piece08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4915,7 +5178,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 0.3
   m_AngularDrag: 0.2
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -4933,7 +5196,7 @@ GameObject:
   - component: {fileID: 3023868793835676427}
   - component: {fileID: 7214866662531672009}
   - component: {fileID: 8163561760658033121}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Stone_piece05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5045,7 +5308,7 @@ GameObject:
   - component: {fileID: 8689148531868291704}
   - component: {fileID: 7368073068956619315}
   - component: {fileID: 7798511483207538154}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Wood_piece15
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5156,7 +5419,7 @@ GameObject:
   - component: {fileID: 5703474856162687029}
   - component: {fileID: 7490852923867106410}
   - component: {fileID: 2007895870001592624}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Wood_piece12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5267,7 +5530,7 @@ GameObject:
   - component: {fileID: 3587754533726694386}
   - component: {fileID: 7511204147397011342}
   - component: {fileID: 6834028481247873473}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Wood_piece16
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5378,7 +5641,7 @@ GameObject:
   - component: {fileID: 8398012668566496085}
   - component: {fileID: 7545386956665335750}
   - component: {fileID: 5469114571048440983}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Paper_piece06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5471,7 +5734,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 0.3
   m_AngularDrag: 0.2
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -5489,7 +5752,7 @@ GameObject:
   - component: {fileID: 456837188686717097}
   - component: {fileID: 7568819807051869091}
   - component: {fileID: 2642474026597241774}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Wood_piece13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5600,7 +5863,7 @@ GameObject:
   - component: {fileID: 8323023244566648033}
   - component: {fileID: 7714135634342904739}
   - component: {fileID: 9059768685931511145}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Stone_piece02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5712,7 +5975,7 @@ GameObject:
   - component: {fileID: 6136692043709031683}
   - component: {fileID: 7746672261690006228}
   - component: {fileID: 1081750143342270976}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Wood_piece09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5823,7 +6086,7 @@ GameObject:
   - component: {fileID: 1220024498550053412}
   - component: {fileID: 8099717264120554191}
   - component: {fileID: 3919460066399841004}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Stone_piece06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5935,7 +6198,7 @@ GameObject:
   - component: {fileID: 3709307956629874619}
   - component: {fileID: 8113623628980517231}
   - component: {fileID: 2484025929333866501}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Stone_piece09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6126,7 +6389,7 @@ GameObject:
   - component: {fileID: 1674069528264794451}
   - component: {fileID: 8496791093350811208}
   - component: {fileID: 3500387004471882050}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Stone_piece03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6237,7 +6500,7 @@ GameObject:
   - component: {fileID: 4007305694349573426}
   - component: {fileID: 5073750349856477844}
   - component: {fileID: 8551332378953920576}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Ball_Paper_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6333,7 +6596,7 @@ GameObject:
   - component: {fileID: 8618135650371243677}
   - component: {fileID: 8618135650371243676}
   - component: {fileID: 8618135650371243674}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Ball_Stone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6411,7 +6674,7 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 10
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0.01
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -6445,12 +6708,13 @@ MonoBehaviour:
   Pieces: {fileID: 1199595255419123941}
   TypeName: 
   Rigidbody: {fileID: 8618135650371243677}
-  PushForce: 3
+  PushForce: 60
   UseFallForce: 0
   UseAutoCloseFallForce: 1
   FallForce: 10
   FallForceFloor: 10
   LimitSpeed: 1
+  ThrowPiecesForce: 5
   MinSpeedY: 0
   MaxSpeedY: 0
   MinSpeedXZ: 0
@@ -6470,7 +6734,7 @@ GameObject:
   - component: {fileID: 1908719172999669307}
   - component: {fileID: 9084482953774425296}
   - component: {fileID: 2526844655496534651}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Paper_piece05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6563,7 +6827,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 0.3
   m_AngularDrag: 0.2
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -6581,7 +6845,7 @@ GameObject:
   - component: {fileID: 5991730783473585395}
   - component: {fileID: 9148859718104348042}
   - component: {fileID: 8878095377315723888}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Ball_Stone_piece15
   m_TagString: Untagged
   m_Icon: {fileID: 0}
