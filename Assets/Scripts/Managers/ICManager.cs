@@ -1,8 +1,8 @@
-﻿using Ballance2.Managers;
+﻿using Ballance2.Interfaces;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ballance2.CoreGame.Managers
+namespace Ballance2.Managers
 {
     /// <summary>
     /// IC 管理器（类似Virtools的IC）

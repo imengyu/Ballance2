@@ -144,28 +144,34 @@ namespace Ballance2
         /// <summary>
         /// 请求所有管理器初始化
         /// </summary>
-        public static void RequestAllManagerInitialization()
+        /// <param name="isPre">是否是预初始化</param>
+        public static void RequestAllManagerInitialization(bool isPre)
         {
             foreach (BaseManager m in managers)
                 if (m.initialized == false)
-                    RequestManagerInitialization(m);
+                    RequestManagerInitialization(m, isPre);
         }
         /// <summary>
         /// 请求管理器初始化
         /// </summary>
         /// <param name="manager">目标管理器</param>
-        public static void RequestManagerInitialization(BaseManager manager)
+        /// <param name="isPre">是否是预初始化</param>
+        public static void RequestManagerInitialization(BaseManager manager, bool isPre)
         {
-            if (!manager.InitManager())
-            {
-                GameLogger.Warning(TAG, "RegisterManager 失败，管理器 {0}:{1} 初始化失败", manager.GetName(), manager.GetSubName());
-                GameErrorManager.LastError = GameError.InitializationFailed;
-            }
+            if (isPre) manager.PreInitManager();
             else
             {
-                manager.initialized = true;
-                if (GameMediator != null)
-                    GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_BASE_MANAGER_INIT_FINISHED, "*", manager.GetName(), manager.GetSubName());
+                if (!manager.InitManager())
+                {
+                    GameLogger.Warning(TAG, "RegisterManager 失败，管理器 {0}:{1} 初始化失败", manager.GetName(), manager.GetSubName());
+                    GameErrorManager.LastError = GameError.InitializationFailed;
+                }
+                else
+                {
+                    manager.initialized = true;
+                    if (GameMediator != null)
+                        GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_BASE_MANAGER_INIT_FINISHED, "*", manager.GetName(), manager.GetSubName());
+                }
             }
         }
         /// <summary>
@@ -377,6 +383,9 @@ namespace Ballance2
         internal static void Destroy()
         {
             Debug.Log("[" + TAG + " ] Destroy game");
+            
+            //降序排列销毁
+            managers.Sort((m1, m2) => -m1.loadIndex.CompareTo(m2.loadIndex));
 
             bool b = false;
             if (managers != null)

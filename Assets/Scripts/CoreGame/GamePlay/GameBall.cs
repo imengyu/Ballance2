@@ -1,5 +1,4 @@
-﻿using Ballance2.CoreGame.Interfaces;
-using System.Collections;
+﻿using Ballance2.Interfaces;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -49,13 +48,9 @@ namespace Ballance2.CoreGame.GamePlay
     public class GameBall : MonoBehaviour
     {
         /// <summary>
-        /// 球管理器
+        /// 碎片控制器
         /// </summary>
-        public IBallManager BallManager { get; internal set; }
-        /// <summary>
-        /// 摄像机管理器
-        /// </summary>
-        public ICamManager CamManager { get; internal set; }
+        public GameBallPiecesControl BallPiecesControl { get; set; }
 
         public GameObject Pieces;
         public string TypeName;
@@ -67,11 +62,14 @@ namespace Ballance2.CoreGame.GamePlay
         public float FallForceFloor = 10f;
         public bool LimitSpeed = true;
         public float ThrowPiecesForce = 5f;
+        public float CollectPiecesSec = 15f;
 
         public float MinSpeedY = 0f;
         public float MaxSpeedY = 0f;
         public float MinSpeedXZ = 0f;
         public float MaxSpeedXZ = 0f;
+
+        internal float CollectPiecesSecTick = 5f;
 
         public ForceMode FallForceMode = ForceMode.Force;
         public ForceMode ForceMode = ForceMode.Force;
@@ -82,20 +80,21 @@ namespace Ballance2.CoreGame.GamePlay
         private bool isOnFloor = false;
         private Vector3 oldSpeed;
 
-        private void OnCollisionEnter(Collision collision)
+        protected void OnCollisionEnter(Collision collision)
         {
             CurrentColObject = collision.gameObject.name;
             CurrentColObjectLayout = collision.gameObject.layer;
             if (collision.gameObject.layer >= GameLayers.LAYER_PHY_FLOOR && collision.gameObject.layer <= GameLayers.LAYER_PHY_RAIL/*Floor and ail*/)
                 isOnFloor = true;
         }
-        private void OnCollisionExit(Collision collision)
+        protected void OnCollisionExit(Collision collision)
         {
             if (CurrentColObjectLayout == collision.gameObject.layer)
                 CurrentColObjectLayout = 0;
             if (CurrentColObject == collision.gameObject.name)
                 CurrentColObject = "";
-            if (collision.gameObject.layer >= GameLayers.LAYER_PHY_FLOOR && collision.gameObject.layer <= GameLayers.LAYER_PHY_RAIL/*Floor and ail*/)
+            if (collision.gameObject.layer == GameLayers.LAYER_PHY_FLOOR 
+                || collision.gameObject.layer == GameLayers.LAYER_PHY_RAIL/*Floor and rail*/)
                 isOnFloor = false;
         }
 
@@ -234,60 +233,6 @@ namespace Ballance2.CoreGame.GamePlay
                     r = Pieces.transform.GetChild(i).GetComponent<MeshRenderer>();
                     if (r != null && r.material != null) piecesMaterial.Add(r);
                 }
-            }
-        }
-
-        /// <summary>
-        /// 开始抛掷碎片
-        /// </summary>
-        public virtual void ThrowPieces()
-        {
-            if (Pieces != null && piecesRigidbody != null)
-            {
-                Pieces.SetActive(true);
-
-                foreach(Rigidbody r in piecesRigidbody)
-                {
-                    ICManager.ResetIC(r.gameObject);
-
-                    r.gameObject.SetActive(true);
-                    r.AddExplosionForce(ThrowPiecesForce, transform.position, 4f);
-                }
-            }
-        }
-        /// <summary>
-        /// 恢复碎片
-        /// </summary>
-        public virtual void RecoverPieces()
-        {
-            if (Pieces != null && piecesMaterial != null && piecesRigidbody != null)
-            {
-                foreach (MeshRenderer m in piecesMaterial)
-                {
-                    if (m.material != null)
-                        GameManager.UIManager.UIFadeManager.AddFadeOut(m.gameObject, 1.0f, true, m.material);
-                }
-            }
-            StartCoroutine(RecoverPiecesDelay());
-        }
-
-        private IEnumerator RecoverPiecesDelay()
-        {
-            yield return new WaitForSeconds(1.0f);
-
-            if (Pieces != null && piecesMaterial != null && piecesRigidbody != null)
-            {
-                foreach (Rigidbody r in piecesRigidbody)
-                {
-                    ICManager.ResetIC(r.gameObject);
-                    r.gameObject.SetActive(true);
-                }
-                foreach (MeshRenderer m in piecesMaterial)
-                {
-                    if (m.material != null)
-                        m.material.color = new Color(m.material.color.r, m.material.color.g, m.material.color.b, 1.0f);
-                }
-                Pieces.SetActive(false);
             }
         }
 

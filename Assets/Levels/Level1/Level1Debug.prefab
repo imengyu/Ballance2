@@ -329,9 +329,9 @@ GameObject:
   - component: {fileID: 1462876691819508440}
   - component: {fileID: 8548055260304224792}
   - component: {fileID: 359289658545878811}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: A01_Floor_01_02
-  m_TagString: Untagged
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1386,9 +1386,9 @@ GameObject:
   - component: {fileID: 3091783094651317683}
   - component: {fileID: 6862561590887548608}
   - component: {fileID: 1018965395032634241}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: A01_Rail_03
-  m_TagString: Untagged
+  m_TagString: Rail
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1480,9 +1480,9 @@ GameObject:
   - component: {fileID: 2614447175299369342}
   - component: {fileID: 150929795973263747}
   - component: {fileID: 1058124239175967833}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: A01_Rail_05
-  m_TagString: Untagged
+  m_TagString: Rail
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2408,9 +2408,9 @@ GameObject:
   - component: {fileID: 7737561979723955392}
   - component: {fileID: 6120124276235435891}
   - component: {fileID: 1946045422164692851}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: A01_Rail_06
-  m_TagString: Untagged
+  m_TagString: Rail
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2740,9 +2740,9 @@ GameObject:
   - component: {fileID: 7528650304987093881}
   - component: {fileID: 5420366250702405198}
   - component: {fileID: 2245960888052951567}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: A01_Modul42
-  m_TagString: Untagged
+  m_TagString: FloorWood
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3388,9 +3388,9 @@ GameObject:
   - component: {fileID: 5609304552364385031}
   - component: {fileID: 8673631337915789469}
   - component: {fileID: 2735970712779804806}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: A01_Rail_02
-  m_TagString: Untagged
+  m_TagString: Rail
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3482,9 +3482,9 @@ GameObject:
   - component: {fileID: 6237298489141580865}
   - component: {fileID: 7944685513468568873}
   - component: {fileID: 2791118359222316413}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: A01_Floor_01
-  m_TagString: Untagged
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3657,9 +3657,9 @@ GameObject:
   - component: {fileID: 1592180035077567579}
   - component: {fileID: 801985475970284348}
   - component: {fileID: 2886729400519394529}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: A01_Floor_02
-  m_TagString: Untagged
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4071,9 +4071,9 @@ GameObject:
   - component: {fileID: 6687293343312468510}
   - component: {fileID: 5804336714799474381}
   - component: {fileID: 2962193202188724957}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: A01_Floor_Columns_Top
-  m_TagString: Untagged
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4166,9 +4166,9 @@ GameObject:
   - component: {fileID: 5996830502072006137}
   - component: {fileID: 1800737145293005826}
   - component: {fileID: 2986413883106190696}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: A01_Rail_02_01
-  m_TagString: Untagged
+  m_TagString: Rail
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4500,9 +4500,9 @@ GameObject:
   - component: {fileID: 8394128129502465365}
   - component: {fileID: 6789283207690281728}
   - component: {fileID: 3549866811519502060}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: A01_Floor_Colums_Bottom
-  m_TagString: Untagged
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5463,9 +5463,9 @@ GameObject:
   - component: {fileID: 2987339493161152913}
   - component: {fileID: 4738314544315217167}
   - component: {fileID: 4207117505354141377}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: A01_Floor_05
-  m_TagString: Untagged
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7880,9 +7880,9 @@ GameObject:
   - component: {fileID: 5134614636233884323}
   - component: {fileID: 2324376228822910552}
   - component: {fileID: 5905443252770641623}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: A01_Rail_00
-  m_TagString: Untagged
+  m_TagString: Rail
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8058,9 +8058,9 @@ GameObject:
   - component: {fileID: 8075498220753080813}
   - component: {fileID: 629143899334329111}
   - component: {fileID: 6008450616966685778}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: A01_Rail_08
-  m_TagString: Untagged
+  m_TagString: Rail
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8152,9 +8152,9 @@ GameObject:
   - component: {fileID: 3857831818462110775}
   - component: {fileID: 6103990883462860674}
   - component: {fileID: 6032762094023462955}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: A01_Floor_04
-  m_TagString: Untagged
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8728,9 +8728,9 @@ GameObject:
   - component: {fileID: 5264018026423159898}
   - component: {fileID: 4866480368554452081}
   - component: {fileID: 6563183895014386552}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: A01_Rail_07
-  m_TagString: Untagged
+  m_TagString: Rail
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9479,9 +9479,9 @@ GameObject:
   - component: {fileID: 1731287970652627893}
   - component: {fileID: 7681071107642332444}
   - component: {fileID: 7538710069332840685}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: A01_Rail_09
-  m_TagString: Untagged
+  m_TagString: Rail
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9894,9 +9894,9 @@ GameObject:
   - component: {fileID: 880858798280193166}
   - component: {fileID: 4085322064493224477}
   - component: {fileID: 7984188438850666239}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: A01_Rail_04
-  m_TagString: Untagged
+  m_TagString: Rail
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9988,9 +9988,9 @@ GameObject:
   - component: {fileID: 7130211375652954617}
   - component: {fileID: 5855825334279998903}
   - component: {fileID: 8099771382317265131}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: A01_Floor_03
-  m_TagString: Untagged
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

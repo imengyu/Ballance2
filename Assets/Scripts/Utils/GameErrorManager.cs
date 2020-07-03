@@ -25,6 +25,23 @@ namespace Ballance2.Utils
         }
 
         /// <summary>
+        /// 设置错误码并打印日志
+        /// </summary>
+        /// <param name="code">错误码</param>
+        /// <param name="tag">TAG</param>
+        /// <param name="message">错误信息</param>
+        /// <param name="param">日志信息</param>
+        public static void SetLastErrorAndLog(GameError code, string tag, string message, params object[] param)
+        {
+            LastError = code;
+            GameLogger.Warning(tag, message, param);
+        }
+        public static void SetLastErrorAndLog(GameError code, string tag, string message)
+        {
+            SetLastErrorAndLog(code, tag, message);
+        }
+
+        /// <summary>
         /// 抛出游戏异常，此操作会直接
         /// </summary>
         /// <param name="code"></param>

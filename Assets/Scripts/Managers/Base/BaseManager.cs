@@ -1,4 +1,5 @@
 ﻿using Ballance2.CoreBridge;
+using Ballance2.Utils;
 using SLua;
 using UnityEngine;
 
@@ -17,7 +18,8 @@ namespace Ballance2.Managers
         public BaseManager(string name)
         {
             this.name = name;
-            this.subName = "Singleton";
+            subName = "Singleton";
+            loadIndex = CommonUtils.GenAutoIncrementID();
         }
         /// <summary>
         /// 创建管理器（多例）
@@ -28,20 +30,32 @@ namespace Ballance2.Managers
         {
             this.name = name;
             this.subName = subName;
-            this.isSingleton = subName == "Singleton";
+            isSingleton = subName == "Singleton";
+            loadIndex = CommonUtils.GenAutoIncrementID();
         }
 
         private new string name = "";
         private bool isSingleton = false;
-        private string subName = ""; 
+        private string subName = "";
 
+        internal int loadIndex = 0;
         internal bool initialized = false;
+        internal bool preInitialized = false;
+        internal bool replaceable = true;
         private bool isLuaModul = false;
 
+        /// <summary>
+        /// 获取是否可替换
+        /// </summary>
+        public bool Replaceable { get { return replaceable; } }
         /// <summary>
         /// 获取是否初始化
         /// </summary>
         public bool Initialized { get { return initialized; } }
+        /// <summary>
+        /// 获取是否预初始化
+        /// </summary>
+        public bool PreInitialized { get { return preInitialized; } }
         /// <summary>
         /// 获取或所在这个管理器是不是 Lua 模块的
         /// </summary>
@@ -62,6 +76,7 @@ namespace Ballance2.Managers
         }
 
         private LuaReturnBoolDelegate fnInitManager;
+        private LuaVoidDelegate fnPreInitManager;
         private LuaReturnBoolDelegate fnReleaseManager;
         private GameLuaObjectHost luaObjectHost;
 
@@ -82,6 +97,20 @@ namespace Ballance2.Managers
 
         [DoNotToLua]
         /// <summary>
+        /// 管理器预初始化
+        /// </summary>
+        /// <returns></returns>
+        public virtual void PreInitManager()
+        {
+            if (IsLuaModul)
+            {
+                if (!InitLua())
+                    GameLogger.Error("BaseManager", "LuaModul can oly use when GameLuaObjectHost is bind ! ");
+                if (fnPreInitManager != null) fnPreInitManager(luaObjectHost.LuaSelf);
+            }
+        }
+        [DoNotToLua]
+        /// <summary>
         /// 当管理器第一次初始化时（场景进入）
         /// </summary>
         /// <returns></returns>
@@ -89,7 +118,7 @@ namespace Ballance2.Managers
         {
             if (IsLuaModul)
             {
-                if (!InitLua())
+                if (luaObjectHost == null)
                 {
                     GameLogger.Error("BaseManager", "LuaModul can oly use when GameLuaObjectHost is bind ! ");
                     return false;

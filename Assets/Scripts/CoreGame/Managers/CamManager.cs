@@ -13,7 +13,7 @@ namespace Ballance2.CoreGame.Managers
     /// <summary>
     /// 游戏摄像机管理器
     /// </summary>
-    public class CamManager : BaseManager, ICamManager
+    public class CamManager : BaseManager
     {
         public const string TAG = "CamManager";
 
@@ -22,11 +22,8 @@ namespace Ballance2.CoreGame.Managers
 
         }
 
-        private IBallManager BallManager;
-
         public override bool InitManager()
         {
-            BallManager = (IBallManager)GameManager.GetManager("BallManager");
             ballCamera.gameObject.SetActive(false);
             return true;
         }
@@ -437,5 +434,15 @@ namespace Ballance2.CoreGame.Managers
         }
 
     }
-
+    [SLua.CustomLuaClass]
+    /// <summary>
+    /// 方向朝向
+    /// </summary>
+    public enum DirectionType
+    {
+        Forward,
+        Left,
+        Back,
+        Right,
+    }
 }

@@ -36,6 +36,11 @@ namespace Ballance2.UI.Utils
                                 fadeObject.alpha += Time.deltaTime / fadeObject.timeInSecond * 1;
                                 if (fadeObject.material != null)
                                     fadeObject.material.color = new Color(fadeObject.material.color.r, fadeObject.material.color.g, fadeObject.material.color.b, fadeObject.alpha);
+                                else if (fadeObject.materials != null && fadeObject.materials.Length > 0)
+                                {
+                                    foreach (Material m in fadeObject.materials)
+                                        m.color = new Color(m.color.r, m.color.g, m.color.b, fadeObject.alpha);
+                                }
                                 else if (fadeObject.image != null)
                                     fadeObject.image.color = new Color(fadeObject.image.color.r, fadeObject.image.color.g, fadeObject.image.color.b, fadeObject.alpha);
                                 else if (fadeObject.text != null)
@@ -50,10 +55,16 @@ namespace Ballance2.UI.Utils
                                 fadeObject.alpha -= Time.deltaTime / fadeObject.timeInSecond * 1;
                                 if (fadeObject.material != null)
                                     fadeObject.material.color = new Color(fadeObject.material.color.r, fadeObject.material.color.g, fadeObject.material.color.b, fadeObject.alpha);
+                                else if (fadeObject.materials != null && fadeObject.materials.Length > 0)
+                                {
+                                    foreach(Material m in fadeObject.materials)
+                                        m.color = new Color(m.color.r, m.color.g, m.color.b, fadeObject.alpha);
+                                }
                                 else if (fadeObject.image != null)
                                     fadeObject.image.color = new Color(fadeObject.image.color.r, fadeObject.image.color.g, fadeObject.image.color.b, fadeObject.alpha);
                                 else if (fadeObject.text != null)
                                     fadeObject.text.color = new Color(fadeObject.text.color.r, fadeObject.text.color.g, fadeObject.text.color.b, fadeObject.alpha);
+
                             }
                             else
                             {
@@ -82,6 +93,7 @@ namespace Ballance2.UI.Utils
         {
             public GameObject gameObject;
             public Material material;
+            public Material[] materials;
             public Image image;
             public Text text;
             public float alpha;
@@ -164,6 +176,59 @@ namespace Ballance2.UI.Utils
             fadeObject.fadeType = FadeType.FadeIn;
             if (material != null)
                 material.color = new Color(material.color.r, material.color.g, material.color.b, 0);
+            if (!gameObject.activeSelf)
+                gameObject.SetActive(true);
+            fadeObjects.Add(fadeObject);
+            return fadeObject;
+        }
+
+        /// <summary>
+        /// 运行淡出动画
+        /// </summary>
+        /// <param name="gameObject">执行对象</param>
+        /// <param name="timeInSecond">执行时间</param>
+        /// <param name="hidden">执行完毕是否将对象设置为不激活</param>
+        /// <param name="material">执行材质</param>
+        public FadeObject AddFadeOut(GameObject gameObject, float timeInSecond, bool hidden, Material[] materials)
+        {
+            FadeObject fadeObject = FindFadeObjectByGameObject(gameObject, FadeType.FadeOut);
+            if (fadeObject != null)
+                fadeObjects.Remove(fadeObject);
+
+            fadeObject = new FadeObject();
+            fadeObject.gameObject = gameObject;
+            fadeObject.timeInSecond = timeInSecond;
+            fadeObject.alpha = 1;
+            fadeObject.materials = materials;
+            fadeObject.fadeType = FadeType.FadeOut;
+            if (materials != null && materials.Length > 0)
+                foreach (Material m in materials)
+                    m.color = new Color(m.color.r, m.color.g, m.color.b, 1);
+            fadeObject.endReactive = hidden;
+            fadeObjects.Add(fadeObject);
+            return fadeObject;
+        }
+        /// <summary>
+        /// 运行淡入动画
+        /// </summary>
+        /// <param name="gameObject">执行对象</param>
+        /// <param name="timeInSecond">执行时间</param>
+        /// <param name="material">执行材质</param>
+        public FadeObject AddFadeIn(GameObject gameObject, float timeInSecond, Material[] materials)
+        {
+            FadeObject fadeObject = FindFadeObjectByGameObject(gameObject, FadeType.FadeIn);
+            if (fadeObject != null)
+                fadeObjects.Remove(fadeObject);
+
+            fadeObject = new FadeObject();
+            fadeObject.gameObject = gameObject;
+            fadeObject.timeInSecond = timeInSecond;
+            fadeObject.alpha = 0;
+            fadeObject.materials = materials;
+            fadeObject.fadeType = FadeType.FadeIn;
+            if (materials != null && materials.Length > 0)
+                foreach (Material m in materials)
+                    m.color = new Color(m.color.r, m.color.g, m.color.b, 0);
             if (!gameObject.activeSelf)
                 gameObject.SetActive(true);
             fadeObjects.Add(fadeObject);

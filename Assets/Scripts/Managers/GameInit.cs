@@ -8,8 +8,6 @@ using Ballance2.Config;
 using Ballance2.ModBase;
 using Ballance2.GameCore;
 using Ballance2.Interfaces;
-using Ballance2.CoreGame.Interfaces;
-using Ballance2.CoreGame.Managers;
 
 namespace Ballance2.Managers
 {
@@ -169,22 +167,24 @@ namespace Ballance2.Managers
             GameManager.RegisterManager(typeof(LevelManager), false);
             GameManager.RegisterManager(typeof(ICManager), false);
 
-            IBallManager ballManager = GameCloneUtils.CloneNewObjectWithParent(
+            BaseManager ballManager = GameCloneUtils.CloneNewObjectWithParent(
                 GameManager.FindStaticPrefabs("BallManager"), 
-                GameManager.GameRoot.transform).GetComponent<IBallManager>();
-            ICamManager camManager = GameCloneUtils.CloneNewObjectWithParent(
+                GameManager.GameRoot.transform).GetComponent<BaseManager>();
+            BaseManager camManager = GameCloneUtils.CloneNewObjectWithParent(
                 GameManager.FindStaticPrefabs("CamManager"), 
-                GameManager.GameRoot.transform).GetComponent<ICamManager>();
+                GameManager.GameRoot.transform).GetComponent<BaseManager>();
 
-            GameManager.RegisterManager((BaseManager)ballManager, false);
-            GameManager.RegisterManager((BaseManager)camManager, false);
+            GameManager.RegisterManager(ballManager, false);
+            GameManager.RegisterManager(camManager, false);
+
+            GameManager.RequestAllManagerInitialization(true);
 
             //正常情况下，等待动画播放完成
-            if(GameManager.Mode == GameMode.Game)
+            if (GameManager.Mode == GameMode.Game)
                 yield return new WaitUntil(IsGameInitAnimPlayend);
 
             //初始化管理器
-            GameManager.RequestAllManagerInitialization();
+            GameManager.RequestAllManagerInitialization(false);
             //初始化模组启动代码（游戏初始化完成）
             ModManager.ExecuteModEntry(GameModEntryCodeExecutionAt.AtStart);
 

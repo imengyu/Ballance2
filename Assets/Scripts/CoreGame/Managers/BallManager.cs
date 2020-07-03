@@ -1,7 +1,6 @@
 ﻿using Ballance2.Config;
 using Ballance2.CoreBridge;
 using Ballance2.CoreGame.GamePlay;
-using Ballance2.CoreGame.Interfaces;
 using Ballance2.Interfaces;
 using Ballance2.Managers;
 using Ballance2.UI.Utils;
@@ -15,7 +14,7 @@ namespace Ballance2.CoreGame.Managers
     /// <summary>
     /// 球管理器
     /// </summary>
-    public class BallManager : BaseManager, IBallManager
+    public class BallManager : BaseManager
     {
         public const string TAG = "BallManager";
 
@@ -30,12 +29,15 @@ namespace Ballance2.CoreGame.Managers
 
             InitSettings();
             InitActions();
+            InitDataStores();
             InitMisc();
             InitBalls();
             return true;
         }
         public override bool ReleaseManager()
         {
+            UnInitActions();
+            UnInitDataStores();
             ClearBall();
             if (ballTypes != null)
             {
@@ -108,7 +110,7 @@ namespace Ballance2.CoreGame.Managers
         #endregion
 
         private ISoundManager SoundManager;
-        private ICamManager CamManager;
+        private IICManager ICManager;
 
         private void InitSettings()
         {
@@ -124,6 +126,7 @@ namespace Ballance2.CoreGame.Managers
         private void InitBalls()
         {
             CamManager = (ICamManager)GameManager.GetManager("CamManager");
+            ICManager = (IICManager)GameManager.GetManager("ICManager");
 
             pushType = BallPushType.None;
 
@@ -134,6 +137,8 @@ namespace Ballance2.CoreGame.Managers
             Ball_LightningSphere.SetActive(false);
             Ball_LightningSphere2.SetActive(false);
             Ball_Lightning.SetActive(false);
+
+            Ball_Light = Ball_Lightning.GetComponent<Light>();
         }
         private void InitKeyEvents()
         {
@@ -155,9 +160,24 @@ namespace Ballance2.CoreGame.Managers
         }
         private void InitActions()
         {
+            GameManager.GameMediator.RegisterActions(new string[] {
+
+            }, new string[] { }, new GameActionHandlerDelegate[] { });
+        }
+        private void UnInitActions()
+        {
+            GameManager.GameMediator.UnRegisterActions(new string[] {
+
+            });
+        }
+        private void InitDataStores()
+        {
 
         }
+        private void UnInitDataStores()
+        {
 
+        }
 
         //设置加载
         private bool OnControlSettingsChanged(string evtName, params object[] param)
@@ -199,7 +219,7 @@ namespace Ballance2.CoreGame.Managers
             if (Input.GetKeyDown(KeyCode.F6))
                 ThrowPieces("BallWood");
             if (Input.GetKeyDown(KeyCode.F7))
-                ThrowPieces("BallStone");
+                RecoverPieces("BallWood");
             if (Input.GetKeyDown(KeyCode.F8))
                 ThrowPieces("BallPaper");
 #endif
@@ -211,10 +231,11 @@ namespace Ballance2.CoreGame.Managers
                     Ball_LightningSphere.transform.localEulerAngles = new Vector3(0, 0, 0);
                 if (Ball_LightningSphere2.transform.localEulerAngles.z > 360f)
                     Ball_LightningSphere2.transform.localEulerAngles = new Vector3(0, 0, 0);
-                Ball_LightningSphere.transform.localEulerAngles = new Vector3(0, Ball_LightningSphere.transform.localEulerAngles.y + 60f * Time.deltaTime, 0);
-                Ball_LightningSphere2.transform.localEulerAngles = new Vector3(0, Ball_LightningSphere2.transform.localEulerAngles.y + 60f * Time.deltaTime, 0);
-                if (secxx < 0.2)
-                    secxx += Time.deltaTime;
+                Ball_LightningSphere.transform.localEulerAngles = new Vector3(-90, Ball_LightningSphere.transform.localEulerAngles.y - ballLightingRoateSpeed1 * Time.deltaTime, 0);
+                Ball_LightningSphere2.transform.localEulerAngles = new Vector3(-90, Ball_LightningSphere2.transform.localEulerAngles.y + ballLightingRoateSpeed2 * Time.deltaTime, 0);
+                
+                //更换闪电球贴图
+                if (secxx < 0.1f) secxx += Time.deltaTime;
                 else
                 {
                     if (currentBallLightningSphereTexture >= 3)
@@ -241,20 +262,45 @@ namespace Ballance2.CoreGame.Managers
             //闪电球 放大
             if (lighingBig)
             {
-                if (Ball_LightningSphere.transform.localScale.x < 1f)
+                if(lighingLightBigTick < ballLightBallBigSec)
                 {
-                    Ball_LightningSphere.transform.localScale = new Vector3(Ball_LightningSphere.transform.localScale.x + 0.8f * Time.deltaTime,
-                    Ball_LightningSphere.transform.localScale.y + 0.8f * Time.deltaTime,
-                    Ball_LightningSphere.transform.localScale.z + 0.8f * Time.deltaTime);
-                    Ball_LightningSphere2.transform.localScale = new Vector3(Ball_LightningSphere.transform.localScale.x + 0.8f * Time.deltaTime,
-                    Ball_LightningSphere2.transform.localScale.y + 0.8f * Time.deltaTime,
-                    Ball_LightningSphere2.transform.localScale.z + 0.8f * Time.deltaTime);
+                    lighingLightBigTick += Time.deltaTime;
+
+                    float v = ballLightningBallBigCurve.Evaluate(lighingLightBigTick / ballLightBallBigSec);
+
+                    Ball_LightningSphere.transform.localScale = new Vector3(v, v, v);
+                    Ball_LightningSphere2.transform.localScale = new Vector3(v, v, v);
                 }
                 else
                 {
                     Ball_LightningSphere.transform.localScale = new Vector3(1f, 1f, 1f);
                     Ball_LightningSphere2.transform.localScale = new Vector3(1f, 1f, 1f);
                     lighingBig = false;
+                }
+            }
+            //闪电light
+            if (lighingLight)
+            {
+                lighingLightTick += Time.deltaTime;
+                Ball_Light.color = new Color(Ball_Light.color.r, Ball_Light.color.g,
+                    ballLightningCurve.Evaluate(lighingLightTick / ballLightSec));
+                if (lighingLightTick > ballLightSec)
+                {
+                    lighingLightEndTick = 0;
+                    lighingLightEnd = true;
+                    lighingLight = false;
+                }
+            }
+            //闪电light
+            if (lighingLightEnd)
+            {
+                float v = ballLightningCurveEnd.Evaluate(lighingLightEndTick / ballLightEndSec);
+                lighingLightEndTick += Time.deltaTime;
+                Ball_Light.color = new Color(v, v, v);
+                if (lighingLightEndTick  > ballLightEndSec)
+                {
+                    Ball_Lightning.SetActive(false);
+                    lighingLightEnd = false;
                 }
             }
             //平滑移动
@@ -267,6 +313,11 @@ namespace Ballance2.CoreGame.Managers
                         isBallSmoothMove = false;
                 }
                 else isBallSmoothMove = false;
+            }
+            //球碎片回收
+            if(piecesThrowedBalls.Count > 0)
+            {
+                CollectPiecesTick();
             }
         }
         protected void FixedUpdate()
@@ -307,7 +358,7 @@ namespace Ballance2.CoreGame.Managers
         {
             if (ball == null)
             {
-                GameLogger.Log(TAG, "要注册的球 {0} 为空", name);
+                GameLogger.Warning(TAG, "要注册的球 {0} 为空", name);
                 GameErrorManager.LastError = GameError.ParamNotProvide;
                 return false;
             }
@@ -323,6 +374,13 @@ namespace Ballance2.CoreGame.Managers
             ball.BallManager = this;
             ball.CamManager = CamManager;
             BallTypes.Add(ball);
+
+            GameBallPiecesControl ballPiecesControl = pieces.GetComponent<GameBallPiecesControl>();
+            if(ballPiecesControl != null)
+            {
+                ballPiecesControl.Ball = ball;
+                ball.BallPiecesControl = ballPiecesControl;
+            }
 
             if (ball.gameObject.activeSelf) ball.gameObject.SetActive(false);
             if (pieces.activeSelf) pieces.SetActive(false);
@@ -343,7 +401,7 @@ namespace Ballance2.CoreGame.Managers
             }
             else
             {
-                GameLogger.Log(TAG, "无法取消注册球 {0} 因为它没有注册", name);
+                GameLogger.Warning(TAG, "无法取消注册球 {0} 因为它没有注册", name);
                 GameErrorManager.LastError = GameError.NotRegister;
             }
         }
@@ -360,6 +418,17 @@ namespace Ballance2.CoreGame.Managers
                     return b;
             }
             return null;
+        }
+        /// <summary>
+        /// 根据 GameObject 获取球的类型（通常在lua中调用）
+        /// </summary>
+        /// <param name="ball"></param>
+        /// <returns></returns>
+        public string GetBallType(GameObject ball)
+        {
+            GameBall b = ball.GetComponent<GameBall>();
+            if (b != null) return b.TypeName;
+            return "";
         }
 
         //球控制
@@ -502,9 +571,29 @@ namespace Ballance2.CoreGame.Managers
         private Material ballLightningSphereMaterial;
         private Material ballLightningSphereMaterial2;
         private bool lighing = false;
+        private bool lighingLight = false;
+        private bool lighingLightEnd = false;
+        private float lighingLightBigTick = 0;
+        private float lighingLightTick = 0;
+        private float lighingLightEndTick = 0;
         private bool lighingBig = false;
+        private Light Ball_Light;
 
+        public float ballLightingRoateSpeed1 = 80f;
+        public float ballLightingRoateSpeed2 = 80f;
+
+        //闪电球变大
+        public AnimationCurve ballLightningBallBigCurve;
+        public float ballLightBallBigSec = 1.5f;
+
+        //闪电球灯 闪光曲线
         public AnimationCurve ballLightningCurve;
+        public float ballLightSec = 2.5f;
+
+        //闪电球灯 最后一闪
+        public AnimationCurve ballLightningCurveEnd;
+        public float ballLightEndSec = 1.5f;
+
         public Texture ballLightningSphere1,
             ballLightningSphere2,
             ballLightningSphere3;
@@ -515,9 +604,9 @@ namespace Ballance2.CoreGame.Managers
         /// <summary>
         /// 播放球 闪电动画
         /// </summary>
-        /// <param name="smallToBig">是否由小变大。</param>
-        /// <param name="lightEnd">是否在之后闪一下。</param>
-        public virtual void PlayLighting(bool smallToBig = false, bool lightEnd = false)
+        /// <param name="smallToBig">是否由小变大</param>
+        /// <param name="lightAnim">是否播放相对应的 Light 灯光</param>
+        public virtual void PlayLighting(bool smallToBig = false, bool lightAnim = true)
         {
             //播放闪电声音
             if (Misc_Lightning != null)
@@ -527,33 +616,46 @@ namespace Ballance2.CoreGame.Managers
 
             ballLightningSphereMaterial2 = Ball_LightningSphere2.GetComponent<MeshRenderer>().material;
             ballLightningSphereMaterial = Ball_LightningSphere.GetComponent<MeshRenderer>().material;
+            
             Ball_LightningSphere.SetActive(true);
             Ball_LightningSphere2.SetActive(true);
             Ball_LightningSphere.transform.position = nextRecoverBallPos;
             Ball_LightningSphere2.transform.position = nextRecoverBallPos;
             if (smallToBig)
             {
-                Ball_LightningSphere.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                Ball_LightningSphere2.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                Ball_LightningSphere.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+                Ball_LightningSphere2.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+                lighingLightBigTick = 0;
                 lighingBig = true;
             }
+            if (lightAnim)
+            {
+                lighingLight = true;
+                lighingLightTick = 0;
+                Ball_Lightning.SetActive(true);
+            }
+            else
+                Ball_Lightning.SetActive(false);
 
-            StartCoroutine(PlayLightingWait(lightEnd));
+            StartCoroutine(PlayLightingWait(lightAnim));
         }
-        private IEnumerator PlayLightingWait(bool lightEnd)
+        private IEnumerator PlayLightingWait(bool lightAnim)
         {
-            yield return new WaitForSeconds(2);
+            yield return new WaitForSeconds(ballLightSec);
+
             ballLightningSphereMaterial.mainTexture = ballLightningSphere1;
             Ball_LightningSphere.transform.localScale = new Vector3(1f, 1f, 1f);
             Ball_LightningSphere.SetActive(false);
             Ball_LightningSphere2.transform.localScale = new Vector3(1f, 1f, 1f);
             Ball_LightningSphere2.SetActive(false);
-            if (lightEnd)
+            Ball_Smoke.Play();
+
+            if (lightAnim)
             {
-                Ball_Lightning.SetActive(true);
-                yield return new WaitForSeconds(0.35f);
+                yield return new WaitForSeconds(ballLightEndSec);
                 Ball_Lightning.SetActive(false);
             }
+            
             lighing = false;
             yield break;
         }
@@ -611,10 +713,6 @@ namespace Ballance2.CoreGame.Managers
         public virtual BallPushType PushType { get { return pushType; } }
 
         /// <summary>
-        /// 获取当前球是否正在平滑移动
-        /// </summary>
-        public virtual bool IsSmoothMove() { return isBallSmoothMove; }
-        /// <summary>
         /// 指定球速度清零。
         /// </summary>
         /// <param name="ball">指定球</param>
@@ -664,7 +762,7 @@ namespace Ballance2.CoreGame.Managers
         /// 重新设置指定球位置并激活
         /// </summary>
         /// <param name="pos">球名字</param>
-        public virtual void RecoverBall(Vector3 pos)
+        public virtual void RecoverBallAtPos(Vector3 pos)
         {
             if (CurrentBall != null)
             {
@@ -704,7 +802,7 @@ namespace Ballance2.CoreGame.Managers
         /// <summary>
         /// 清除已激活的球
         /// </summary>
-        public virtual void ClearBall()
+        public virtual void ClearActiveBall()
         {
             IsControlling = false;
             if (CurrentBall != null)
@@ -718,14 +816,37 @@ namespace Ballance2.CoreGame.Managers
             }
         }
 
+        #region 碎片控制
+
+        private List<GameBall> piecesThrowedBalls = new List<GameBall>();
+        private float fCollectPiecesTick = 0;
+
+        private void CollectPiecesTick()//回收碎片tick
+        {
+            if (fCollectPiecesTick < 1.0f) fCollectPiecesTick += Time.deltaTime;
+            else {
+                fCollectPiecesTick = 0;
+                GameBall ball = null;
+                for (int i = piecesThrowedBalls.Count - 1; i >= 0; i--)
+                {
+                    ball = piecesThrowedBalls[i];
+                    if (ball.CollectPiecesSecTick > 0) ball.CollectPiecesSecTick--;
+                    else
+                    {
+                        piecesThrowedBalls.Remove(ball);
+                        RecoverPieces(ball);
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// 抛出指定球碎片
         /// </summary>
         /// <param name="type">球类型</param>
         public virtual void ThrowPieces(string type)
         {
-            GameBall ball = GetRegisteredBall(type);
-            if (ball != null) ball.ThrowPieces();
+            ThrowPieces(GetRegisteredBall(type));
         }
         /// <summary>
         /// 抛出指定球碎片
@@ -733,7 +854,35 @@ namespace Ballance2.CoreGame.Managers
         /// <param name="ball">球</param>
         public virtual void ThrowPieces(GameBall ball)
         {
-            if (ball != null) ball.ThrowPieces();
+            if (ball != null)
+            {
+                if (ball.BallPiecesControl != null && ball.BallPiecesControl.ThrowPieces())
+                    return;
+                if (ball.Pieces != null && ball.PiecesRigidbody != null)
+                {
+                    ball.Pieces.SetActive(true);
+
+                    foreach (Rigidbody r in ball.PiecesRigidbody)
+                    {
+                        ICManager.ResetIC(r.gameObject);
+
+                        r.gameObject.SetActive(true);
+                        r.AddExplosionForce(ball.ThrowPiecesForce, transform.position, 6f);
+                    }
+
+                    ball.CollectPiecesSecTick = ball.CollectPiecesSec;
+                    if(!piecesThrowedBalls.Contains(ball))
+                        piecesThrowedBalls.Add(ball);
+                }
+            }
+        }
+        /// <summary>
+        /// 恢复指定球碎片
+        /// </summary>
+        /// <param name="ball">球</param>
+        public virtual void RecoverPieces(string type)
+        {
+            RecoverPieces(GetRegisteredBall(type));
         }
         /// <summary>
         /// 恢复指定球碎片
@@ -741,8 +890,50 @@ namespace Ballance2.CoreGame.Managers
         /// <param name="ball">球</param>
         public virtual void RecoverPieces(GameBall ball)
         {
-            if (ball != null) ball.RecoverPieces();
+            if (ball != null)
+            {
+                if (ball.BallPiecesControl != null && ball.BallPiecesControl.RecoverPieces())
+                    return;
+                if (piecesThrowedBalls.Contains(ball))
+                    piecesThrowedBalls.Remove(ball);
+                if (ball.Pieces != null && ball.PiecesMaterial != null && ball.PiecesRigidbody != null)
+                {
+                    foreach (MeshRenderer m in ball.PiecesMaterial)
+                    {
+                        if (m.materials.Length > 0)
+                            GameManager.UIManager.UIFadeManager.AddFadeOut(m.gameObject, 2.0f, true, m.materials);
+                    }
+                }
+
+                StartCoroutine(RecoverPiecesDelay(ball));
+            }
         }
+
+        private IEnumerator RecoverPiecesDelay(GameBall ball)
+        {
+            yield return new WaitForSeconds(2.0f);
+
+            if (ball.Pieces != null && ball.PiecesMaterial != null && ball.PiecesRigidbody != null)
+            {
+                foreach (Rigidbody r in ball.PiecesRigidbody)
+                {
+                    ICManager.ResetIC(r.gameObject);
+                    r.gameObject.SetActive(true);
+                }
+                foreach (MeshRenderer m in ball.PiecesMaterial)
+                {
+                    if (m.materials.Length > 0)
+                        foreach(Material ma in m.materials)
+                            ma.color = new Color(ma.color.r, ma.color.g, ma.color.b, 1.0f);
+                }
+
+                ball.Pieces.SetActive(false);
+                ball.CollectPiecesSecTick = ball.CollectPiecesSec;
+            }
+        }
+
+        #endregion
+
         /// <summary>
         /// 平滑移动球到指定位置。
         /// </summary>
@@ -761,18 +952,10 @@ namespace Ballance2.CoreGame.Managers
                 isBallSmoothMove = true;
             }
         }
-
         /// <summary>
-        /// 根据 GameObject 获取球的类型（通常在lua中调用）
+        /// 获取当前球是否正在平滑移动
         /// </summary>
-        /// <param name="ball"></param>
-        /// <returns></returns>
-        public string GetBallType(GameObject ball)
-        {
-            GameBall b = ball.GetComponent<GameBall>();
-            if (b != null) return b.TypeName;
-            return "";
-        }
+        public virtual bool IsSmoothMove() { return isBallSmoothMove; }
 
         /// <summary>
         /// 播放烟雾

@@ -21,7 +21,7 @@ namespace Ballance2.Managers
 
         public UIManager() : base(TAG)
         {
-
+            replaceable = false;
         }
 
         public override bool InitManager()

@@ -24,10 +24,8 @@ namespace Ballance2.CoreGame.GamePlay
         private LuaVoidDelegate fnDeactive = null;
         private LuaBoolDelegate fnEndControll = null;
         private LuaVector3Delegate fnRecover = null;
-        private LuaVoidDelegate fnRecoverPieces = null;
         private LuaVoidDelegate fnRemoveSpeed = null;
         private LuaVoidDelegate fnStartControll = null;
-        private LuaVoidDelegate fnThrowPieces = null;
 
         private GameLuaObjectHost GameLuaObjectHost;
 
@@ -56,14 +54,10 @@ namespace Ballance2.CoreGame.GamePlay
             if (fn != null) fnEndControll = fn.cast<LuaBoolDelegate>();
             fn = self["Recover"] as LuaFunction;
             if (fn != null) fnRecover = fn.cast<LuaVector3Delegate>();
-            fn = self["RecoverPieces"] as LuaFunction;
-            if (fn != null) fnRecoverPieces = fn.cast<LuaVoidDelegate>();
             fn = self["RemoveSpeed"] as LuaFunction;
             if (fn != null) fnRemoveSpeed = fn.cast<LuaVoidDelegate>();
             fn = self["StartControll"] as LuaFunction;
             if (fn != null) fnStartControll = fn.cast<LuaVoidDelegate>();
-            fn = self["ThrowPieces"] as LuaFunction;
-            if (fn != null) fnThrowPieces = fn.cast<LuaVoidDelegate>();
         }
 
         [DoNotToLua]
@@ -97,12 +91,6 @@ namespace Ballance2.CoreGame.GamePlay
             else base.Recover(pos);
         }
         [DoNotToLua]
-        public override void RecoverPieces()
-        {
-            if (fnRecoverPieces != null) fnRecoverPieces(self);
-            else base.RecoverPieces();
-        }
-        [DoNotToLua]
         public override void RemoveSpeed()
         {
             if (fnRemoveSpeed != null) fnRemoveSpeed(self);
@@ -113,12 +101,6 @@ namespace Ballance2.CoreGame.GamePlay
         {
             if (fnStartControll != null) fnStartControll(self);
             else base.StartControll();
-        }
-        [DoNotToLua]
-        public override void ThrowPieces()
-        {
-            if (fnThrowPieces != null) fnThrowPieces(self);
-            else base.Destroy();
         }
         [DoNotToLua]
         public override bool Init()

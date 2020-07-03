@@ -33,6 +33,25 @@ TagManager:
   - BallCustom3
   - BallCustom4
   - BallCustom5
+  - FloorCustom5
+  - FloorCustom6
+  - FloorCustom7
+  - FloorCustom8
+  - FloorCustom9
+  - FloorCustom10
+  - RailCustom1
+  - RailCustom2
+  - RailCustom3
+  - RailCustom4
+  - RailCustom5
+  - BallPiecesPaper
+  - BallPiecesWood
+  - BallPiecesStone
+  - BallPiecesCustom1
+  - BallPiecesCustom2
+  - BallPiecesCustom3
+  - BallPiecesCustom4
+  - BallPiecesCustom5
   layers:
   - Default
   - TransparentFX
@@ -44,13 +63,13 @@ TagManager:
   - 
   - Floor
   - FloorStopper
-  - FloorWood
+  - Ball
   - Rail
   - ModulFloorCol
   - ModulNoFloorCol
   - ModulNoBallCol
   - ModulNoCol
-  - Ball
+  - 
   - 
   - 
   - 

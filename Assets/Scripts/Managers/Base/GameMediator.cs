@@ -18,6 +18,7 @@ namespace Ballance2.Managers
 
         public GameMediator() : base(TAG)
         {
+            replaceable = false;
         }
 
         public override bool InitManager()
@@ -25,37 +26,43 @@ namespace Ballance2.Managers
             InitAllEvents();
             InitAllActions();
             InitModDebug();
+            InitStore();
             return true;
         }
         public override bool ReleaseManager()
         {
             UnLoadAllEvents();
             UnLoadAllActions();
+            DestroyStore();
             return true;
         }
 
         #region 全局事件控制器
 
-        private List<GameEvent> events = null;
+        private Dictionary<string, GameEvent> events = null;
 
         /// <summary>
         /// 注册事件
         /// </summary>
         /// <param name="evtName">事件名称</param>
         public GameEvent RegisterGlobalEvent(string evtName)
-        {
-            if (!IsGlobalEventRegistered(evtName))
+        { 
+            if (string.IsNullOrEmpty(evtName))
             {
-                GameEvent gameEvent = new GameEvent(evtName);
-                events.Add(gameEvent);
-                return gameEvent;
+                GameLogger.Warning(TAG, "RegisterGlobalEvent evtName 参数未提供");
+                GameErrorManager.LastError = GameError.ParamNotProvide;
+                return null;
             }
-            else
+            if (IsGlobalEventRegistered(evtName))
             {
                 GameLogger.Warning(TAG, "事件 {0} 已注册", evtName);
                 GameErrorManager.LastError = GameError.AlredayRegistered;
+                return null;
             }
-            return null;
+
+            GameEvent gameEvent = new GameEvent(evtName);
+            events.Add(evtName, gameEvent);
+            return gameEvent;
         }
         /// <summary>
         /// 取消注册事件
@@ -63,11 +70,17 @@ namespace Ballance2.Managers
         /// <param name="evtName">事件名称</param>
         public void UnRegisterGlobalEvent(string evtName)
         {
+            if (string.IsNullOrEmpty(evtName))
+            {
+                GameLogger.Warning(TAG, "UnRegisterGlobalEvent evtName 参数未提供");
+                GameErrorManager.LastError = GameError.ParamNotProvide;
+                return;
+            }
             GameEvent gameEvent = null;
             if (IsGlobalEventRegistered(evtName, out gameEvent))
             {
                 gameEvent.Dispose();
-                events.Remove(gameEvent);
+                events.Remove(evtName);
             }
             else
             {
@@ -82,12 +95,7 @@ namespace Ballance2.Managers
         /// <returns>是否注册</returns>
         public bool IsGlobalEventRegistered(string evtName)
         {
-            foreach (GameEvent gameEvent in events)
-            {
-                if (gameEvent.EventName == evtName)
-                    return true;
-            }
-            return false;
+            return events.ContainsKey(evtName);
         }
         /// <summary>
         /// 获取事件是否注册，如果已注册，则返回实例
@@ -97,14 +105,8 @@ namespace Ballance2.Managers
         /// <returns>是否注册</returns>
         public bool IsGlobalEventRegistered(string evtName, out GameEvent e)
         {
-            foreach (GameEvent gameEvent in events)
-            {
-                if (gameEvent.EventName == evtName)
-                {
-                    e = gameEvent;
-                    return true;
-                }
-            }
+            if (events.TryGetValue(evtName, out e))
+                return true;
             e = null;
             return false;
         }
@@ -115,12 +117,17 @@ namespace Ballance2.Managers
         /// <returns>返回的事件实例</returns>
         public GameEvent GetRegisteredGlobalEvent(string evtName)
         {
-            foreach (GameEvent gameEvent in events)
+            GameEvent gameEvent = null;
+
+            if (string.IsNullOrEmpty(evtName))
             {
-                if (gameEvent.EventName == evtName)
-                    return gameEvent;
+                GameLogger.Warning(TAG, "GetRegisteredGlobalEvent evtName 参数未提供");
+                GameErrorManager.LastError = GameError.ParamNotProvide;
+                return gameEvent;
             }
-            return null;
+
+            events.TryGetValue(evtName, out gameEvent);
+            return gameEvent;
         }
 
         /// <summary>
@@ -133,21 +140,27 @@ namespace Ballance2.Managers
         public int DispatchGlobalEvent(GameEvent gameEvent, string handlerFilter, params object[] pararms)
         {
             int handledCount = 0;
-            if (gameEvent != null)
+            if (gameEvent == null)
             {
-                foreach (GameHandler gameHandler in gameEvent.EventHandlers)
+                GameLogger.Warning(TAG, "DispatchGlobalEvent gameEvent 参数未提供");
+                GameErrorManager.LastError = GameError.ParamNotProvide;
+                return handledCount;
+            }
+
+            //事件分发
+            foreach (GameHandler gameHandler in gameEvent.EventHandlers)
+            {
+                if (handlerFilter == "*" || Regex.IsMatch(gameHandler.Name, handlerFilter))
                 {
-                    if (handlerFilter == "*" || Regex.IsMatch(gameHandler.Name, handlerFilter))
+                    handledCount++;
+                    if (gameHandler.CallEventHandler(gameEvent.EventName, pararms))
                     {
-                        handledCount++;
-                        if (gameHandler.CallEventHandler(gameEvent.EventName, pararms))
-                        {
-                            GameLogger.Log(TAG, "Event {0} was interrupted by : {1}", gameEvent.EventName, gameHandler.Name);
-                            break;
-                        }
+                        GameLogger.Log(TAG, "Event {0} was interrupted by : {1}", gameEvent.EventName, gameHandler.Name);
+                        break;
                     }
                 }
             }
+
             return handledCount;
         }
         /// <summary>
@@ -161,6 +174,13 @@ namespace Ballance2.Managers
         {
             int handledCount = 0;
             GameEvent gameEvent = null;
+
+            if (string.IsNullOrEmpty(evtName))
+            {
+                GameLogger.Warning(TAG, "DispatchGlobalEvent evtName 参数未提供");
+                GameErrorManager.LastError = GameError.ParamNotProvide;
+                return 0;
+            }
             if (IsGlobalEventRegistered(evtName, out gameEvent))
                 return DispatchGlobalEvent(gameEvent, handlerFilter, pararms);
             else
@@ -176,15 +196,15 @@ namespace Ballance2.Managers
         {
             if (events != null)
             {
-                foreach (GameEvent gameEvent in events)
-                    gameEvent.Dispose();
+                foreach (var gameEvent in events)
+                    gameEvent.Value.Dispose();
                 events.Clear();
                 events = null;
             }
         }
         private void InitAllEvents()
         {
-            events = new List<GameEvent>();
+            events = new Dictionary<string, GameEvent>();
 
             //注册内置事件
             RegisterGlobalEvent(GameEventNames.EVENT_BASE_INIT_FINISHED);
@@ -317,7 +337,87 @@ namespace Ballance2.Managers
 
         #region 全局操作控制器
 
-        private List<GameAction> actions = null;
+        private Dictionary<string, GameAction> actions = null;
+
+        /// <summary>
+        /// 注册多个操作
+        /// </summary>
+        /// <param name="names">操作名称数组</param>
+        /// <param name="handlerNames">接收器名称数组</param>
+        /// <param name="handlers">接收函数数组</param>
+        /// <returns>返回注册成功的操作个数</returns>
+        public int RegisterActions(string[] names, string[] handlerNames, GameActionHandlerDelegate[] handlers)
+        {
+            int succCount = 0;
+
+            if (CommonUtils.IsArrayNullOrEmpty(names))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 names 数组为空");
+                return succCount;
+            }
+            if (CommonUtils.IsArrayNullOrEmpty(handlerNames))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 handlerNames 数组为空");
+                return succCount;
+            }
+            if (CommonUtils.IsArrayNullOrEmpty(handlers))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 handlers 数组为空");
+                return succCount;
+            }
+            if (names.Length != handlerNames.Length || handlerNames.Length != handlers.Length)
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG,
+                    "RegisterActions 参数数组长度不符");
+                return succCount;
+            }
+
+            for (int i = 0, c = names.Length; i < c; i++)
+                if (RegisterAction(names[i], new GameHandler(handlerNames[i], handlers[i])) != null)
+                    succCount++;
+
+            return succCount;
+        }
+        /// <summary>
+        /// 注册多个操作
+        /// </summary>
+        /// <param name="names">操作名称数组</param>
+        /// <param name="handlerNames">接收器名称数组</param>
+        /// <param name="luaFunctionHandlers">LUA接收函数数组</param>
+        /// <param name="self">LUA self （当前类，LuaTable），如无可填null</param>
+        /// <returns>返回注册成功的操作个数</returns>
+        public int RegisterActions(string[] names, string[] handlerNames, LuaFunction[] luaFunctionHandlers, LuaTable self)
+        {
+            int succCount = 0;
+
+            if (CommonUtils.IsArrayNullOrEmpty(names))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 names 数组为空");
+                return succCount;
+            }
+            if (CommonUtils.IsArrayNullOrEmpty(handlerNames))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 handlerNames 数组为空");
+                return succCount;
+            }
+            if (CommonUtils.IsArrayNullOrEmpty(luaFunctionHandlers))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 luaFunctionHandlers 数组为空");
+                return succCount;
+            }
+            if (names.Length != handlerNames.Length || handlerNames.Length != luaFunctionHandlers.Length)
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG,
+                    "RegisterActions 参数数组长度不符");
+                return succCount;
+            }
+
+            for (int i = 0, c = names.Length; i < c; i++)
+                if (RegisterAction(names[i], new GameHandler(handlerNames[i], luaFunctionHandlers[i], self)) != null)
+                    succCount++;
+
+            return succCount;
+        }
 
         /// <summary>
         /// 注册操作
@@ -336,7 +436,7 @@ namespace Ballance2.Managers
         /// <param name="name">操作名称</param>
         /// <param name="handlerName">接收器名称</param>
         /// <param name="luaFunction">LUA接收函数</param>
-        /// <param name="self">LUA Self</param>
+        /// <param name="self">LUA self （当前类，LuaTable），如无可填null</param>
         /// <returns></returns>
         public GameAction RegisterAction(string name, string handlerName, LuaFunction luaFunction, LuaTable self)
         {
@@ -348,18 +448,26 @@ namespace Ballance2.Managers
         /// <param name="name">操作名称</param>
         public GameAction RegisterAction(string name, GameHandler handler)
         {
-            if (!IsActionRegistered(name))
+            if (string.IsNullOrEmpty(name))
             {
-                GameAction gameAction = new GameAction(name, handler);
-                actions.Add(gameAction);
-                return gameAction;
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterAction name 参数未提供");
+                return null;
             }
-            else
+            if (handler == null)
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterAction handler 参数未提供");
+                return null;
+            }
+            if (IsActionRegistered(name))
             {
                 GameLogger.Warning(TAG, "操作 {0} 已注册", name);
                 GameErrorManager.LastError = GameError.AlredayRegistered;
+                return null;
             }
-            return null;
+
+            GameAction gameAction = new GameAction(name, handler);
+            actions.Add(name, gameAction);
+            return gameAction;
         }
         /// <summary>
         /// 取消注册操作
@@ -367,11 +475,16 @@ namespace Ballance2.Managers
         /// <param name="name">操作名称</param>
         public void UnRegisterAction(string name)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "UnRegisterAction name 参数未提供");
+                return;
+            }
             GameAction gameAction = null;
             if (IsActionRegistered(name, out gameAction))
             {
                 gameAction.Dispose();
-                actions.Remove(gameAction);
+                actions.Remove(name);
             }
             else
             {
@@ -380,18 +493,27 @@ namespace Ballance2.Managers
             }
         }
         /// <summary>
+        /// 取消注册多个操作
+        /// </summary>
+        /// <param name="name">操作名称</param>
+        public void UnRegisterActions(string[] names)
+        {
+            if (CommonUtils.IsArrayNullOrEmpty(names))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "UnRegisterActions names 参数未提供或数组为空");
+                return;
+            }
+            foreach (string s in names)
+                UnRegisterAction(s);
+        }
+        /// <summary>
         /// 获取操作是否注册
         /// </summary>
         /// <param name="name">操作名称</param>
         /// <returns>是否注册</returns>
         public bool IsActionRegistered(string name)
         {
-            foreach (GameAction gameAction in actions)
-            {
-                if (gameAction.Name == name)
-                    return true;
-            }
-            return false;
+            return actions.ContainsKey(name);
         }
         /// <summary>
         /// 获取操作是否注册，如果已注册，则返回实例
@@ -401,14 +523,8 @@ namespace Ballance2.Managers
         /// <returns>是否注册</returns>
         public bool IsActionRegistered(string name, out GameAction e)
         {
-            foreach (GameAction gameAction in actions)
-            {
-                if (gameAction.Name == name)
-                {
-                    e = gameAction;
-                    return true;
-                }
-            }
+            if(actions.TryGetValue(name, out e))
+                return true;
             e = null;
             return false;
         }
@@ -419,11 +535,9 @@ namespace Ballance2.Managers
         /// <returns>返回的操作实例</returns>
         public GameAction GetRegisteredAction(string name)
         {
-            foreach (GameAction a in actions)
-            {
-                if (a.Name == name)
-                    return a;
-            }
+            GameAction a;
+            if (actions.TryGetValue(name, out a))
+                return a;
             return null;
         }
 
@@ -437,12 +551,13 @@ namespace Ballance2.Managers
         {
             GameActionCallResult result = null;
             GameAction gameAction = null;
-            if (IsActionRegistered(name, out gameAction)) return CallAction(gameAction, param);
-            else
+            if (string.IsNullOrEmpty(name))
             {
-                GameLogger.Warning(TAG, "操作 {0} 未注册", name);
-                GameErrorManager.LastError = GameError.NotRegister;
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "CallAction name 参数未提供");
+                return result;
             }
+            if (IsActionRegistered(name, out gameAction)) return CallAction(gameAction, param);
+            else GameErrorManager.SetLastErrorAndLog(GameError.NotRegister, TAG, "操作 {0} 未注册", name);
             return result;
         }
         /// <summary>
@@ -455,6 +570,12 @@ namespace Ballance2.Managers
         {
             GameErrorManager.LastError = GameError.None;
             GameActionCallResult result = null;
+
+            if (action == null)
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "CallAction action 参数未提供");
+                return result;
+            }
 
             param = LuaUtils.LuaTableArrayToObjectArray(param);
 
@@ -471,15 +592,15 @@ namespace Ballance2.Managers
         {
             if (actions != null)
             {
-                foreach (GameAction action in actions)
-                    action.Dispose();
+                foreach (var action in actions)
+                    action.Value.Dispose();
                 actions.Clear();
                 actions = null;
             }
         }
         private void InitAllActions()
         {
-            actions = new List<GameAction>();
+            actions = new Dictionary<string, GameAction>();
 
             //注册内置事件
             RegisterAction(GameActionNames.ACTION_QUIT, "GameManager", (param) =>
@@ -487,6 +608,82 @@ namespace Ballance2.Managers
                 GameManager.QuitGame();
                 return GameActionCallResult.CreateActionCallResult(true);
             });
+        }
+
+        #endregion
+
+        #region 全局共享数据共享池
+
+        private Dictionary<string, Store> globalStore;
+
+        private void InitStore()
+        {
+            globalStore = new Dictionary<string, Store>();
+        }
+        private void DestroyStore()
+        {
+            foreach(var v in globalStore)
+                v.Value.Destroy();
+            globalStore.Clear();
+            globalStore = null;
+        }
+
+        /// <summary>
+        /// 注册全局共享数据存储池
+        /// </summary>
+        /// <param name="name">池名称</param>
+        /// <returns></returns>
+        public Store RegisterGlobalDataStore(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, 
+                    "RegisterGlobalDataStore name 参数未提供");
+                return null;
+            }
+            if(globalStore.ContainsKey(name))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.AlredayRegistered, TAG,
+                    "数据共享存储池 {0} 已经注册", name);
+                return null;
+            }
+
+            Store store = new Store(name);
+            globalStore.Add(name, store);
+            return store;
+        }
+        /// <summary>
+        /// 获取全局共享数据存储池
+        /// </summary>
+        /// <param name="name">池名称</param>
+        /// <returns></returns>
+        public Store GetGlobalDataStore(string name)
+        {
+            Store s;
+            globalStore.TryGetValue(name, out s);
+            return s;
+        }
+        /// <summary>
+        /// 释放已注册的全局共享数据存储池
+        /// </summary>
+        /// <param name="name">池名称</param>
+        /// <returns></returns>
+        public bool UnRegisterGlobalDataStore(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG,
+                    "UnRegisterGlobalDataStore name 参数未提供");
+                return false;
+            }
+            if (!globalStore.ContainsKey(name))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.NotRegister, TAG,
+                    "数据共享存储池 {0} 未注册", name);
+                return false;
+            }
+            globalStore.Remove(name);
+            return false;
         }
 
         #endregion
@@ -505,6 +702,9 @@ namespace Ballance2.Managers
                     DebugManager.RegisterCommand("callaction", OnCommandCallAction, 1, "调用操作 [操作名称] [参数...]");
                     DebugManager.RegisterCommand("actions", OnCommandShowActions, 0, "显示全局操作");
                     DebugManager.RegisterCommand("events", OnCommandShowEvents, 0, "[showHandlers:true/false] 显示全局事件 [是否显示事件接收器]");
+                    DebugManager.RegisterCommand("showstore", OnCommandShowStores, 0, "[showParams:true/false] 显示全局数据共享池 [是否显示共享池内所有参数]");
+                    DebugManager.RegisterCommand("storedata", OnCommandShowStores, 1, "[storeName:string] [paramName:string] 显示全局数据共享池内的参数 [池名称] [要显示的参数名称，如果为空则显示全部] ");
+
                 }
                 return false;
             });
@@ -526,11 +726,11 @@ namespace Ballance2.Managers
         private bool OnCommandShowActions(string keyword, string fullCmd, string[] args)
         {
             StringBuilder s = new StringBuilder();
-            foreach (GameAction a in actions)
+            foreach (var a in actions)
             {
                 s.Append('\n');
-                s.Append(a.Name);
-                s.Append(a.GameHandler.Name);
+                s.Append(a.Key);
+                s.Append(a.Value.GameHandler.Name);
             }
             GameLogger.Log(TAG, "GameActions count {0} : \n{1}", actions.Count, s.ToString());
             return true;
@@ -540,16 +740,16 @@ namespace Ballance2.Managers
             bool showHandlers = args != null && args.Length > 0 && args[0] == "true";
 
             StringBuilder s = new StringBuilder();
-            foreach (GameEvent e in events)
+            foreach (var e in events)
             {
                 s.Append('\n');
-                s.Append(e.EventName);
+                s.Append(e.Key);
                 s.Append("   Handler count:  ");
-                s.Append(e.EventHandlers.Count);
-                if (showHandlers && e.EventHandlers.Count > 0)
+                s.Append(e.Value.EventHandlers.Count);
+                if (showHandlers && e.Value.EventHandlers.Count > 0)
                 {
                     s.Append("\n    Handlers : ");
-                    foreach (GameHandler h in e.EventHandlers)
+                    foreach (GameHandler h in e.Value.EventHandlers)
                     {
                         s.Append("\n  ");
                         s.Append(h.ToString());
@@ -559,6 +759,86 @@ namespace Ballance2.Managers
             GameLogger.Log(TAG, "GameEvents count {0} : \n{1}", events.Count, s.ToString());
             return true;
         }
+        private bool OnCommandShowStores(string keyword, string fullCmd, string[] args)
+        {
+            bool showParams = args != null && args.Length > 0 && args[0] == "true";
+
+            StringBuilder s = new StringBuilder();
+            foreach (var e in globalStore)
+            {
+                s.Append('\n');
+                s.Append(e.Key);
+                s.Append("   Params count:  ");
+                s.Append(e.Value.PoolDatas.Count);
+                if (showParams && e.Value.PoolDatas.Count > 0)
+                {
+                    s.Append("\n    Params : ");
+                    foreach (var p in e.Value.PoolDatas)
+                    {
+                        s.Append("\n  ");
+                        s.Append(p.ToString());
+                    }
+                }
+            }
+            GameLogger.Log(TAG, "Global Store data count {0} : \n{1}", globalStore.Count, s.ToString());
+            return true;
+        }
+        private bool OnCommandShowStoreData(string keyword, string fullCmd, string[] args)
+        {
+            string storeName = args != null && args.Length > 0 ? args[0] : "";
+            string paramName = args != null && args.Length > 1 ? args[1] : "";
+
+            Store s = GetGlobalDataStore(storeName);
+            if (s == null)
+            {
+                GameLogger.Error(TAG, "未找到 Store {0}", storeName);
+                return false;
+            }
+
+            if(paramName == "")
+            {
+                StringBuilder sb = new StringBuilder(storeName);
+                sb.Append("  All paramas: ");
+                foreach (var e in s.PoolDatas)
+                {
+                    sb.Append('\n');
+                    sb.Append(e.Key);
+                    sb.Append("   ");
+                    sb.Append(e.Value.ToString());
+                }
+                GameLogger.Log(TAG, sb.ToString());
+            }
+            else
+            {
+                StoreData sd = s.GetParameter(paramName);
+                if(sd == null)
+                {
+                    GameLogger.Error(TAG, "未找到 StoreData :  {0} -> {1}", storeName, paramName);
+                    return false;
+                }
+
+                GameLogger.Log(TAG, "{0} -> {1} : ", storeName, paramName);
+                GameLogger.Log(TAG, sd.ToString());
+                if (sd.DataType == StoreDataType.Array)
+                {
+                    int i = 0;
+                    StringBuilder sb = new StringBuilder(storeName);
+                    sb.Append("  Childs: ");
+                    foreach (var e in sd.DataArray)
+                    {
+                        sb.Append('\n');
+                        sb.Append(i);
+                        sb.Append("   ");
+                        sb.Append(e.ToString());
+                        i++;
+                    }
+                    GameLogger.Log(TAG, sb.ToString());
+                }
+            }
+           
+            return true;
+        }
+
 
         #endregion
     }
