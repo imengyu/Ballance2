@@ -1,4 +1,5 @@
 ﻿using Ballance2.ModBase;
+using Ballance2.Utils;
 using SLua;
 using System;
 using System.Collections.Generic;
@@ -18,60 +19,40 @@ namespace Ballance2.CoreBridge
         /// <summary>
         /// 原始数据
         /// </summary>
-        public object DataRaw;
+        public object DataRaw
+        {
+            get
+            {
+                if (StoreDataProvider != null)
+                    SetData(currentHolderContext, StoreDataProvider());
+                return _DataRaw;
+            }
+        }
         /// <summary>
         /// 数据类型
         /// </summary>
-        public StoreDataType DataType;
+        public StoreDataType DataType
+        {
+            get { return _DataType; }
+        }
         /// <summary>
         /// 数组类型
         /// </summary>
-        public List<StoreData> DataArray = new List<StoreData>();
+        public List<StoreData> DataArray
+        {
+            get { return _DataArray; }
+        }
+        
+        private int currentHolderContext = 0;
+        private object _DataRaw = null;
+        private StoreDataType _DataType = StoreDataType.Null;
+        private List<StoreData> _DataArray = new List<StoreData>();
+        private StoreDataAccess _StoreDataAccess = StoreDataAccess.Get;
 
-        public StoreData()
+        internal StoreData(StoreDataAccess access, StoreDataType dataType)
         {
-            DataRaw = null;
-            DataType = StoreDataType.Null;
-        }
-        public StoreData(int data) {
-            DataRaw = data;
-            DataType = StoreDataType.Int;
-        }
-        public StoreData(long data)
-        {
-            DataRaw = data;
-            DataType = StoreDataType.Long;
-        }
-        public StoreData(float data)
-        {
-            DataRaw = data;
-            DataType = StoreDataType.Float;
-        }
-        public StoreData(string data)
-        {
-            DataRaw = data;
-            DataType = StoreDataType.String;
-        }
-        public StoreData(bool data)
-        {
-            DataRaw = data;
-            DataType = StoreDataType.Bool;
-        }
-        public StoreData(double data)
-        {
-            DataRaw = data;
-            DataType = StoreDataType.Double;
-        }
-        public StoreData(object data)
-        {
-            DataRaw = data;
-            DataType = StoreDataType.Raw;
-        }
-        public StoreData(StoreData[] data)
-        {
-            DataRaw = null;
-            DataArray.AddRange(data);
-            DataType = StoreDataType.Array;
+            _StoreDataAccess = access;
+            _DataType = dataType;
         }
 
         /// <summary>
@@ -91,54 +72,102 @@ namespace Ballance2.CoreBridge
         /// </summary>
         public void Destroy()
         {
-            DataRaw = null;
-            DataType = StoreDataType.Null;
+            _DataRaw = null;
+            _DataType = StoreDataType.Null;
             if(DataArray != null)
             {
                 foreach (var v in DataArray)
                     v.Destroy();
-                DataArray.Clear();
-                DataArray = null;
+                _DataArray.Clear();
+                _DataArray = null;
             }
         }
 
-        // 观察者
+        // 观察者和数据提供者
         // ====================================
 
-        public StoreOnDataChanged OnDataChanged;
+        private StoreOnDataChanged DataObserver;
 
         public void RegisterDataObserver(StoreOnDataChanged observer)
         {
-            OnDataChanged += observer;
+            DataObserver += observer;
         }
         public void UnRegisterDataObserver(StoreOnDataChanged observer)
         {
-            OnDataChanged -= observer;
+            DataObserver -= observer;
+        }
+        public void NotificationDataObserver(object oldV, object newV)
+        {
+            if (DataObserver != null)
+                DataObserver(this, oldV, newV);
+        }
+
+        private StoreDataProvider StoreDataProvider = null;
+
+        public int SetDataProvider(int context, StoreDataProvider provider)
+        {
+            if(StoreDataProvider == null)
+            {
+                StoreDataProvider = provider;
+                currentHolderContext = context;
+                return context;
+            }
+            else if(context != currentHolderContext)
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ContextMismatch, "StoreData", 
+                    "上下文 {0} 没有操作此数据的权限", context);
+                return 0;
+            }
+            else
+            {
+                StoreDataProvider = provider;
+                return context;
+            }
+        }
+        public void RemoveRegisterProvider(int context)
+        {
+            if (StoreDataProvider != null)
+            {
+                if (context != currentHolderContext)
+                {
+                    GameErrorManager.SetLastErrorAndLog(GameError.ContextMismatch, "StoreData",
+                        "上下文 {0} 没有操作此数据的权限", context);
+                    return;
+                }
+
+                StoreDataProvider = null;
+            }
         }
 
         // 设置数据
         // ====================================
 
-        public void SetData(object data)
+        public bool SetData(int context, object data)
         {
-            DataRaw = data;
+            if (_StoreDataAccess == StoreDataAccess.Get && context != currentHolderContext)
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ContextMismatch, "StoreData",
+                    "上下文 {0} 没有操作此数据的权限", context);
+                return false;
+            }
 
-            //获得类型
+            //类型检查
             string typeName = data.GetType().Name;
-            StoreDataType type;
-            if (typeName == "UnityEngine.Object") type = StoreDataType.Object;
-            else if(Enum.TryParse(typeName, out type)) DataType = type;
-            else DataType = StoreDataType.Raw;
-        }
-        public void SetRawData(object data)
-        {
-            DataRaw = data;
-            DataType = StoreDataType.Raw;
-        }
-        public void SetRawData<T>(T data, StoreDataType type)
-        {
-            DataRaw = data;
-            DataType = type;
+            if (_DataType != StoreDataType.Raw && typeName != _DataType.ToString())
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ContextMismatch, "StoreData",
+                  "输入的类型 {0} 与设置的类型不符 {1}", typeName, _DataType.ToString());
+                return false;
+            }
+
+            if (_DataRaw != data)
+            {
+                object old = _DataRaw;
+                _DataRaw = data;
+                NotificationDataObserver(old, data);
+            }
+
+            return true;
         }
 
         // 数组操作
@@ -226,7 +255,10 @@ namespace Ballance2.CoreBridge
         }
     }
 
+    [CustomLuaClass]
     public delegate void StoreOnDataChanged(StoreData data, object oldV, object newV);
+    [CustomLuaClass]
+    public delegate object StoreDataProvider();
 
     /// <summary>
     /// 数据类型
@@ -273,6 +305,22 @@ namespace Ballance2.CoreBridge
     }
 
     /// <summary>
+    /// 数据访问
+    /// </summary>
+    [CustomLuaClass]
+    public enum StoreDataAccess
+    {
+        /// <summary>
+        /// 仅获取
+        /// </summary>
+        Get,
+        /// <summary>
+        /// 获取和设置
+        /// </summary>
+        GetAndSet,
+    }
+
+    /// <summary>
     /// 全局数据共享存储池类
     /// </summary>
     [CustomLuaClass]
@@ -287,7 +335,7 @@ namespace Ballance2.CoreBridge
         /// </summary>
         public Dictionary<string, StoreData> PoolDatas { get; private set; }
 
-        public Store(string name)
+        internal Store(string name)
         {
             PoolName = name;
             PoolDatas = new Dictionary<string, StoreData>();
@@ -310,13 +358,13 @@ namespace Ballance2.CoreBridge
         /// </summary>
         /// <param name="name">参数名称</param>
         /// <returns>添加成功，则返回参数，如果参数已经存在，则返回存在的实例</returns>
-        public StoreData AddParameter(string name)
+        public StoreData AddParameter(string name, StoreDataAccess access, StoreDataType storeDataType)
         {
             StoreData old;
             if (PoolDatas.TryGetValue(name, out old))
                 return old;
 
-            old = new StoreData();
+            old = new StoreData(access, storeDataType);
             PoolDatas.Add(name, old);
             return old;
         }

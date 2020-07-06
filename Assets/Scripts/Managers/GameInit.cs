@@ -18,24 +18,29 @@ namespace Ballance2.Managers
     {
         public const string TAG = "GameInit";
 
-        public GameInit() : base(TAG, "Singleton")
+        public GameInit() : base("core.gameinit", TAG, "Singleton")
         {
         }
 
         public override bool InitManager()
         {
-            GameManager.GameMediator.RegisterEventHandler(
-                GameEventNames.EVENT_BASE_INIT_FINISHED, TAG, (e, p) =>
+            GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_BASE_INIT_FINISHED, TAG, 
+                (e, p) =>
                 {
+                    GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_GAME_INIT_ENTRY, TAG,
+                       (e1, p1) =>
+                       {
+                           StartCoroutine(GameInitCore()); return false;
+                    });
                     LoadGameInitBase();
                     StartCoroutine(LoadGameInitUI());
                     InitSettings();
                     InitVideoSettings();
                     return false;
                 });
-            GameManager.GameMediator.RegisterEventHandler(
-                GameEventNames.EVENT_GAME_INIT_ENTRY, TAG, (e, p) =>
-                { StartCoroutine(GameInitCore()); return false; });
+            
+            GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_GAME_INIT_TAKE_OVER_CONTROL);
+
             return true;
         }
         public override bool ReleaseManager()
@@ -188,28 +193,10 @@ namespace Ballance2.Managers
             //初始化模组启动代码（游戏初始化完成）
             ModManager.ExecuteModEntry(GameModEntryCodeExecutionAt.AtStart);
 
-            //模式
-            switch (GameManager.Mode)
-            {
-                case GameMode.Game: GameInitContinueGoGame();  break;
-                case GameMode.LoaderDebug:
-                    GameManager.GameMediator.CallAction(GameActionNames.ACTION_DEBUG_LEVEL_LOADER, Main.Main.Instance.LevelDebugTarget);
-                    GameInitHideGameInitUi(false);
-                    break;
-                case GameMode.CoreDebug:
-                    GameManager.GameMediator.CallAction(GameActionNames.ACTION_DEBUG_CORE, Main.Main.Instance.CoreDebugBase);
-                    GameInitHideGameInitUi(false);
-                    break;
-                case GameMode.Level:
-                    GameManager.GameMediator.CallAction(GameActionNames.ACTION_LOAD_LEVEL, Main.Main.Instance.LevelDebugTarget);
-                    GameInitHideGameInitUi(true);
-                    break;
-                case GameMode.LevelEditor:
-                    LevelEditor levelEditor = (LevelEditor)GameManager.RegisterManager(typeof(LevelEditor), false);
-                    levelEditor.StartDebugLevelEditor(Main.Main.Instance.LevelDebugTarget);
-                    GameInitHideGameInitUi(true);
-                    break;
-            }
+            //分发接管事件
+            int hC = GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_TAKE_OVER_CONTROL, "*", (VoidDelegate)GameInitContinueInit);
+            if (hC == 0) //无接管
+                GameInitContinueInit();
         }
         private IEnumerator GameInitPackages(string GameInitTable)
         {
@@ -260,6 +247,31 @@ namespace Ballance2.Managers
             }
         }
 
+        private void GameInitContinueInit()
+        {
+            //模式
+            switch (GameManager.Mode)
+            {
+                case GameMode.Game: GameInitContinueGoGame(); break;
+                case GameMode.LoaderDebug:
+                    GameManager.GameMediator.CallAction(GameActionNames.CoreActions["ACTION_DEBUG_LEVEL_LOADER"], Main.Main.Instance.LevelDebugTarget);
+                    GameInitHideGameInitUi(false);
+                    break;
+                case GameMode.CoreDebug:
+                    GameManager.GameMediator.CallAction(GameActionNames.CoreActions["ACTION_DEBUG_CORE"], Main.Main.Instance.CoreDebugBase);
+                    GameInitHideGameInitUi(false);
+                    break;
+                case GameMode.Level:
+                    GameManager.GameMediator.CallAction(GameActionNames.LevelLoader["LoadLevel"], Main.Main.Instance.LevelDebugTarget);
+                    GameInitHideGameInitUi(true);
+                    break;
+                case GameMode.LevelEditor:
+                    LevelEditor levelEditor = (LevelEditor)GameManager.RegisterManager(typeof(LevelEditor), false);
+                    levelEditor.StartDebugLevelEditor(Main.Main.Instance.LevelDebugTarget);
+                    GameInitHideGameInitUi(true);
+                    break;
+            }
+        }
         private void GameInitHideGameInitUi(bool showBlack)
         {
             GameManager.UIManager.MaskBlackSet(showBlack);

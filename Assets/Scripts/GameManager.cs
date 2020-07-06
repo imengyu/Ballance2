@@ -6,6 +6,7 @@ using SLua;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Ballance2.Managers.Base;
 
 namespace Ballance2
 {
@@ -47,9 +48,9 @@ namespace Ballance2
             return GetManager(name, "Singleton");
         }
         /// <summary>
-        /// 注册自定义管理器（创建新实例并注册）
+        /// 注册自定义管理器（内置类，创建新实例并注册）
         /// </summary>
-        /// <param name="classInstance">实例</param>
+        /// <param name="classInstance">（内置类）</param>
         /// <param name="initializeNow">是否立即初始化</param>
         /// <returns></returns>
         public static BaseManager RegisterManager(Type classType, bool initializeNow = true)
@@ -88,13 +89,21 @@ namespace Ballance2
                 baseManager.gameObject.name = baseManager.GetName();
                 baseManager.transform.SetParent(GameRoot.transform);
             }
+            if (baseManager.isEmpty)
+            {
+                GameLogger.Warning(TAG, "ReplaceManager 失败，LUA 必须初始化");
+                GameErrorManager.LastError = GameError.NotInitialize;
+                return null;
+            }
 
             managers.Add(baseManager);
             GameLogger.Log(TAG, "Manager registered : {0}:{1}", baseManager.GetName(), baseManager.GetSubName());
 
             if (initializeNow)
-                RequestManagerInitialization(baseManager);
-
+            {
+                GameManagerWorker.nextInitManages.Add(baseManager);
+                GameManagerWorker.nextInitManagerTick = 30;
+            }
             return baseManager;
         }
 
@@ -118,25 +127,37 @@ namespace Ballance2
         public static BaseManager ReplaceManager(BaseManager newClass, string oldName, string subName)
         {
             BaseManager old = GetManager(oldName, subName);
-            if(old == null)
+            if (old == null)
             {
                 GameLogger.Warning(TAG, "ReplaceManager 失败，管理器 {0}:{1} 未注册", oldName, subName);
                 GameErrorManager.LastError = GameError.NotRegister;
                 return null;
             }
-            if(newClass.GetName() != oldName || newClass.GetSubName() != subName)
+            if (old.Replaceable == false)
+            {
+                GameLogger.Warning(TAG, "ReplaceManager 失败，管理器 {0} 为基础模块，不能替换", old.GetFullName());
+                GameErrorManager.LastError = GameError.BaseModuleCannotReplace;
+                return null;
+            }
+
+            if (newClass.GetName() != oldName || newClass.GetSubName() != subName)
             {
                 GameLogger.Warning(TAG, "ReplaceManager 失败，要替换的管理器 {0}:{1} 与 传入的管理器名称不符", oldName, subName);
                 GameErrorManager.LastError = GameError.ModConflict;
                 return null;
             }
+            if (newClass.isEmpty)
+            {
+                GameLogger.Warning(TAG, "ReplaceManager 失败，LUA 必须初始化");
+                GameErrorManager.LastError = GameError.NotInitialize;
+                return null;
+            }
 
             managers.Remove(old);
             managers.Add(newClass);
-            
-            GameLogger.Log(TAG, "Manager was replaced : {0}:{1} old {2} -> new {3}", 
-                old.GetName(), old.GetSubName(),
-                old.GetInstanceID(), newClass.GetInstanceID());
+
+            GameLogger.Log(TAG, "Manager was replaced : {0} -> {1}",
+                old.GetFullName(), newClass.GetFullName());
 
             return old;
         }
@@ -204,6 +225,10 @@ namespace Ballance2
         /// </summary>
         public static GameMode Mode { get; private set; }
         /// <summary>
+        /// 获取当前游戏工作场景
+        /// </summary>
+        public static GameCurrentScense CurrentScense { get; private set; }
+        /// <summary>
         /// 游戏根，所有游戏部件在这里托管
         /// </summary>
         public static GameObject GameRoot { get; private set; }
@@ -258,6 +283,7 @@ namespace Ballance2
         }
 
         private static int gameManagerAlertDialogId = 0;
+        private static GameManagerWorker GameManagerWorker = null;
 
         private static bool gameMediatorInitFinished = false;
         private static bool gameBaseInitFinished = false;
@@ -284,7 +310,7 @@ namespace Ballance2
         internal static bool Init(GameMode mode, GameObject gameRoot, GameObject gameCanvas,  List<GameObjectInfo> gamePrefab, List<GameAssetsInfo> gameAssets)
         {
             bool result = false;
-
+            CurrentScense = GameCurrentScense.None;
             Mode = mode;
             GameRoot = gameRoot;
             GameCanvas = gameCanvas;
@@ -294,6 +320,7 @@ namespace Ballance2
             InitStaticPrefab();
             GameBaseCamera = GameObject.Find("GameBaseCamera").GetComponent<Camera>();
             GameManagerObject = GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, TAG);
+            GameManagerWorker = GameManagerObject.AddComponent<GameManagerWorker>();
             managers = new List<BaseManager>();
             
             //错误提示
@@ -361,6 +388,7 @@ namespace Ballance2
                             GameLogger.Error(TAG, "Not found handler for EVENT_GAME_INIT_ENTRY!");
                             GameErrorManager.ThrowGameError(GameError.HandlerLost, "未找到 EVENT_GAME_INIT_ENTRY 的下一步事件接收器\n此错误出现原因可能是配置不正确");
                         }
+                        else CurrentScense = GameCurrentScense.Intro;
                     }
                 }
                 catch(Exception e)
@@ -566,9 +594,9 @@ namespace Ballance2
 
     [CustomLuaClass]
     /// <summary>
-    /// 指定游戏状态当前工作模式
+    /// 指定游戏状态当前工作场景
     /// </summary>
-    public enum GameCurrentWorkMode
+    public enum GameCurrentScense
     {
         None,
         Intro,

@@ -19,7 +19,7 @@ namespace Ballance2.Managers
     {
         public const string TAG = "UIManager";
 
-        public UIManager() : base(TAG)
+        public UIManager() : base(GamePartName.Core, TAG)
         {
             replaceable = false;
         }

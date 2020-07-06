@@ -16,7 +16,7 @@ namespace Ballance2.Managers
     {
         public const string TAG = "GameMediator";
 
-        public GameMediator() : base(TAG)
+        public GameMediator() : base(GamePartName.Core, TAG)
         {
             replaceable = false;
         }
@@ -345,8 +345,9 @@ namespace Ballance2.Managers
         /// <param name="names">操作名称数组</param>
         /// <param name="handlerNames">接收器名称数组</param>
         /// <param name="handlers">接收函数数组</param>
+        /// <param name="callTypeChecks">函数参数检查，如果不需要，也可以为null</param>
         /// <returns>返回注册成功的操作个数</returns>
-        public int RegisterActions(string[] names, string[] handlerNames, GameActionHandlerDelegate[] handlers)
+        public int RegisterActions(string[] names, string[] handlerNames, GameActionHandlerDelegate[] handlers, string[][] callTypeChecks)
         {
             int succCount = 0;
 
@@ -365,7 +366,8 @@ namespace Ballance2.Managers
                 GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 handlers 数组为空");
                 return succCount;
             }
-            if (names.Length != handlerNames.Length || handlerNames.Length != handlers.Length)
+            if (names.Length != handlerNames.Length || handlerNames.Length != handlers.Length
+                || (callTypeChecks != null && callTypeChecks.Length != handlers.Length))
             {
                 GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG,
                     "RegisterActions 参数数组长度不符");
@@ -373,9 +375,57 @@ namespace Ballance2.Managers
             }
 
             for (int i = 0, c = names.Length; i < c; i++)
-                if (RegisterAction(names[i], new GameHandler(handlerNames[i], handlers[i])) != null)
+            {
+                if (RegisterAction(names[i], new GameHandler(handlerNames[i], handlers[i]),
+                    callTypeChecks == null ? null : callTypeChecks[i]) != null)
                     succCount++;
+            }
 
+            return succCount;
+        }
+        /// <summary>
+        /// 注册多个操作
+        /// </summary>
+        /// <param name="names">操作名称数组</param>
+        /// <param name="handlerName">接收器名称（多个接收器名字一样）</param>
+        /// <param name="handlers">接收函数数组</param>
+        /// <param name="callTypeChecks">函数参数检查，如果不需要，也可以为null</param>
+        /// <returns>返回注册成功的操作个数</returns>
+        public int RegisterActions(Dictionary<string, string> names, string handlerName, GameActionHandlerDelegate[] handlers, string[][] callTypeChecks)
+        {
+            int succCount = 0;
+
+            if (CommonUtils.IsDictionaryNullOrEmpty(names))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 names 数组为空");
+                return succCount;
+            }
+            if (string.IsNullOrEmpty(handlerName))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 handlerName 为空");
+                return succCount;
+            }
+            if (CommonUtils.IsArrayNullOrEmpty(handlers))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 handlers 数组为空");
+                return succCount;
+            }
+            if (names.Keys.Count != handlers.Length
+                 || (callTypeChecks != null && callTypeChecks.Length != handlers.Length))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG,
+                    "RegisterActions 参数数组长度不符");
+                return succCount;
+            }
+
+            int i = 0;
+            foreach (string k in names.Keys)
+            {
+                if (RegisterAction(names[k], new GameHandler(handlerName, handlers[i]),
+                    callTypeChecks == null ? null : callTypeChecks[i]) != null)
+                    succCount++;
+                i++;
+            }
             return succCount;
         }
         /// <summary>
@@ -385,8 +435,9 @@ namespace Ballance2.Managers
         /// <param name="handlerNames">接收器名称数组</param>
         /// <param name="luaFunctionHandlers">LUA接收函数数组</param>
         /// <param name="self">LUA self （当前类，LuaTable），如无可填null</param>
+        /// <param name="callTypeChecks">函数参数检查，如果不需要，也可以为null</param>
         /// <returns>返回注册成功的操作个数</returns>
-        public int RegisterActions(string[] names, string[] handlerNames, LuaFunction[] luaFunctionHandlers, LuaTable self)
+        public int RegisterActions(string[] names, string[] handlerNames, LuaFunction[] luaFunctionHandlers, LuaTable self, string[][] callTypeChecks)
         {
             int succCount = 0;
 
@@ -405,7 +456,8 @@ namespace Ballance2.Managers
                 GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 luaFunctionHandlers 数组为空");
                 return succCount;
             }
-            if (names.Length != handlerNames.Length || handlerNames.Length != luaFunctionHandlers.Length)
+            if (names.Length != handlerNames.Length || handlerNames.Length != luaFunctionHandlers.Length
+                 || (callTypeChecks != null && callTypeChecks.Length != luaFunctionHandlers.Length))
             {
                 GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG,
                     "RegisterActions 参数数组长度不符");
@@ -413,7 +465,51 @@ namespace Ballance2.Managers
             }
 
             for (int i = 0, c = names.Length; i < c; i++)
-                if (RegisterAction(names[i], new GameHandler(handlerNames[i], luaFunctionHandlers[i], self)) != null)
+                if (RegisterAction(names[i], new GameHandler(handlerNames[i], luaFunctionHandlers[i], self),
+                    callTypeChecks == null ? null : callTypeChecks[i]) != null)
+                    succCount++;
+
+            return succCount;
+        }
+        /// <summary>
+        /// 注册多个操作
+        /// </summary>
+        /// <param name="names">操作名称数组</param>
+        /// <param name="handlerName">接收器名（多个接收器名字一样）</param>
+        /// <param name="luaFunctionHandlers">LUA接收函数数组</param>
+        /// <param name="self">LUA self （当前类，LuaTable），如无可填null</param>
+        /// <param name="callTypeChecks">函数参数检查，如果不需要，也可以为null</param>
+        /// <returns>返回注册成功的操作个数</returns>
+        public int RegisterActions(string[] names, string handlerName, LuaFunction[] luaFunctionHandlers, LuaTable self, string[][] callTypeChecks)
+        {
+            int succCount = 0;
+
+            if (CommonUtils.IsArrayNullOrEmpty(names))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 names 数组为空");
+                return succCount;
+            }
+            if (string.IsNullOrEmpty(handlerName))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 handlerName 为空");
+                return succCount;
+            }
+            if (CommonUtils.IsArrayNullOrEmpty(luaFunctionHandlers))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 luaFunctionHandlers 数组为空");
+                return succCount;
+            }
+            if (names.Length != luaFunctionHandlers.Length
+                 || (callTypeChecks != null && callTypeChecks.Length != luaFunctionHandlers.Length))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG,
+                    "RegisterActions 参数数组长度不符");
+                return succCount;
+            }
+
+            for (int i = 0, c = names.Length; i < c; i++)
+                if (RegisterAction(names[i], new GameHandler(handlerName, luaFunctionHandlers[i], self),
+                    callTypeChecks == null ? null : callTypeChecks[i]) != null)
                     succCount++;
 
             return succCount;
@@ -425,10 +521,15 @@ namespace Ballance2.Managers
         /// <param name="name">操作名称</param>
         /// <param name="handlerName">接收器名称</param>
         /// <param name="handler">接收函数</param>
+        /// <param name="callTypeCheck">函数参数检查，数组长度规定了操作需要的参数，
+        /// 数组值是一个或多个允许的类型名字，例如 UnityEngine.GameObject System.String 。
+        /// 如果一个参数允许多种类型，可使用/分隔。
+        /// 如果不需要，也可以为null，当前操作将不会进行类型检查
+        /// </param>
         /// <returns></returns>
-        public GameAction RegisterAction(string name, string handlerName, GameActionHandlerDelegate handler)
+        public GameAction RegisterAction(string name, string handlerName, GameActionHandlerDelegate handler, string[] callTypeCheck)
         {
-            return RegisterAction(name, new GameHandler(handlerName, handler));
+            return RegisterAction(name, new GameHandler(handlerName, handler), callTypeCheck);
         }
         /// <summary>
         /// 注册操作(LUA)
@@ -437,16 +538,17 @@ namespace Ballance2.Managers
         /// <param name="handlerName">接收器名称</param>
         /// <param name="luaFunction">LUA接收函数</param>
         /// <param name="self">LUA self （当前类，LuaTable），如无可填null</param>
+        /// <param name="callTypeCheck">函数参数检查，数组长度规定了操作需要的参数，
+        /// 数组值是一个或多个允许的类型名字，例如 UnityEngine.GameObject System.String 。
+        /// 如果一个参数允许多种类型，可使用/分隔。
+        /// 如果不需要，也可以为null，当前操作将不会进行类型检查
+        /// </param>
         /// <returns></returns>
-        public GameAction RegisterAction(string name, string handlerName, LuaFunction luaFunction, LuaTable self)
+        public GameAction RegisterAction(string name, string handlerName, LuaFunction luaFunction, LuaTable self, string[] callTypeCheck)
         {
-            return RegisterAction(name, new GameHandler(handlerName, luaFunction, self));
+            return RegisterAction(name, new GameHandler(handlerName, luaFunction, self), callTypeCheck);
         }
-        /// <summary>
-        /// 注册操作
-        /// </summary>
-        /// <param name="name">操作名称</param>
-        public GameAction RegisterAction(string name, GameHandler handler)
+        public GameAction RegisterAction(string name, GameHandler handler, string[] callTypeCheck)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -465,10 +567,11 @@ namespace Ballance2.Managers
                 return null;
             }
 
-            GameAction gameAction = new GameAction(name, handler);
+            GameAction gameAction = new GameAction(name, handler, callTypeCheck);
             actions.Add(name, gameAction);
             return gameAction;
         }
+
         /// <summary>
         /// 取消注册操作
         /// </summary>
@@ -505,6 +608,20 @@ namespace Ballance2.Managers
             }
             foreach (string s in names)
                 UnRegisterAction(s);
+        }
+        /// <summary>
+        /// 取消注册多个操作
+        /// </summary>
+        /// <param name="name">操作名称</param>
+        public void UnRegisterActions(Dictionary<string, string> names)
+        {
+            if (CommonUtils.IsDictionaryNullOrEmpty(names))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "UnRegisterActions names 参数未提供或数组为空");
+                return;
+            }
+            foreach (string s in names.Keys)
+                UnRegisterAction(names[s]);
         }
         /// <summary>
         /// 获取操作是否注册
@@ -569,17 +686,39 @@ namespace Ballance2.Managers
         public GameActionCallResult CallAction(GameAction action, params object[] param)
         {
             GameErrorManager.LastError = GameError.None;
-            GameActionCallResult result = null;
+            GameActionCallResult result = GameActionCallResult.FailResult;
 
             if (action == null)
             {
                 GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "CallAction action 参数未提供");
                 return result;
             }
+            if (action.CallTypeCheck != null && action.CallTypeCheck.Length > 0)
+            {
+                //参数类型检查
+                int argCount = action.CallTypeCheck.Length;
+                if (argCount > param.Length)
+                {
+                    GameLogger.Warning(TAG, "操作 {0} 至少需要 {1} 个参数", name, argCount);
+                    return result;
+                }
+                string allowType = "", typeName = "";
+                for (int i = 0; i < argCount; i++)
+                {
+                    typeName = param[i].GetType().Name;
+                    allowType = action.CallTypeCheck[i];
+                    if (allowType == typeName ||
+                        (allowType.Contains("/") && allowType.Contains(typeName)))
+                    {
+                        GameLogger.Warning(TAG, "操作 {0} 参数 {1} 类型必须是 {2}", name, i, action.CallTypeCheck[i]);
+                        return result;
+                    }
+               }
+            }
 
             param = LuaUtils.LuaTableArrayToObjectArray(param);
 
-            GameLogger.Log(TAG, "CallAction {0} -> {1}", action.Name, StringUtils.ValueArrayToString(param));
+            //GameLogger.Log(TAG, "CallAction {0} -> {1}", action.Name, StringUtils.ValueArrayToString(param));
 
             result = action.GameHandler.CallActionHandler(param);
             if (!result.Success)
@@ -603,11 +742,11 @@ namespace Ballance2.Managers
             actions = new Dictionary<string, GameAction>();
 
             //注册内置事件
-            RegisterAction(GameActionNames.ACTION_QUIT, "GameManager", (param) =>
+            RegisterAction(GameActionNames.CoreActions["QuitGame"], "GameManager", (param) =>
             {
                 GameManager.QuitGame();
                 return GameActionCallResult.CreateActionCallResult(true);
-            });
+            }, null);
         }
 
         #endregion
@@ -632,9 +771,10 @@ namespace Ballance2.Managers
         /// 注册全局共享数据存储池
         /// </summary>
         /// <param name="name">池名称</param>
-        /// <returns></returns>
+        /// <returns>如果注册成功，返回池对象；如果已经注册，则返回已经注册的池对象</returns>
         public Store RegisterGlobalDataStore(string name)
         {
+            Store store = null;
             if (string.IsNullOrEmpty(name))
             {
                 GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, 
@@ -645,10 +785,11 @@ namespace Ballance2.Managers
             {
                 GameErrorManager.SetLastErrorAndLog(GameError.AlredayRegistered, TAG,
                     "数据共享存储池 {0} 已经注册", name);
-                return null;
+                store = globalStore[name];
+                return store;
             }
 
-            Store store = new Store(name);
+            store = new Store(name);
             globalStore.Add(name, store);
             return store;
         }
@@ -677,6 +818,22 @@ namespace Ballance2.Managers
                 return false;
             }
             if (!globalStore.ContainsKey(name))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.NotRegister, TAG,
+                    "数据共享存储池 {0} 未注册", name);
+                return false;
+            }
+            globalStore.Remove(name);
+            return false;
+        }
+        /// <summary>
+        /// 释放已注册的全局共享数据存储池
+        /// </summary>
+        /// <param name="name">池名称</param>
+        /// <returns></returns>
+        public bool UnRegisterGlobalDataStore(Store store)
+        {
+            if (!globalStore.ContainsKey(store.PoolName))
             {
                 GameErrorManager.SetLastErrorAndLog(GameError.NotRegister, TAG,
                     "数据共享存储池 {0} 未注册", name);

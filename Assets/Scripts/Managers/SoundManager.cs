@@ -16,7 +16,7 @@ namespace Ballance2.Managers
     {
         public const string TAG = "SoundManager";
 
-        public SoundManager() : base(TAG, "Singleton") { }
+        public SoundManager() : base(GamePartName.SoundManager, TAG, "Singleton") { replaceable = false; }
 
         private GameSettingsActuator GameSettings = null;
 

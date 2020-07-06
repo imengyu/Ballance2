@@ -1,4 +1,6 @@
-﻿using Ballance2.ModBase;
+﻿using Ballance2.Interfaces;
+using Ballance2.ModBase;
+using Ballance2.Utils;
 using SLua;
 using UnityEngine;
 
@@ -7,20 +9,44 @@ namespace Ballance2.CoreBridge
     /// <summary>
     /// 简易 Lua 脚本承载组件
     /// </summary>
+    /// <remarks>
+    /// 使用方法：
+    /// ★ 可以直接绑定此组件至你的 Prefab 上，填写 LuaClassName 与 LuaModName，
+    /// Instantiate Prefab 后GameLuaObjectHost会自动找到模块并加载 LUA 文件并执行
+    /// ★ 也可以在 GameMod 中直接调用 RegisterLuaObject 注册一个 Lua 对象
+    /// ☆ 以上两种方法都可以在 GameMod 中使用 FindLuaObject 找到你注册的 Lua 对象
+    /// </remarks>
     [CustomLuaClass]
     public class GameLuaObjectHost : MonoBehaviour
     {
         public const string TAG = "GameLuaObjectHost";
 
-        public LuaState LuaState { get; set; }
-        public string LuaClassName;
-        public string Name;
-        public GameMod GameMod { get; set; }
-
         /// <summary>
         /// lua self
         /// </summary>
         public LuaTable LuaSelf { get { return self; } }
+        /// <summary>
+        /// 获取当前虚拟机
+        /// </summary>
+        public LuaState LuaState { get; set; }
+        /// <summary>
+        /// 获取或设置 Lua类的文件名（eg MenuLevel）
+        /// </summary>
+        public string LuaClassName;
+        /// <summary>
+        /// 获取或设置 Lua 类所在的模块包名（改模块必须是 ModPack 并可运行）
+        /// </summary>
+        public string LuaModName;
+        /// <summary>
+        /// LUA 对象名字，用于 FindLuaObject 查找
+        /// </summary>
+        public string Name;
+        /// <summary>
+        /// 获取对应 模组包
+        /// </summary>
+        public GameMod GameMod { get; set; }
+
+        private IModManager ModManager;
 
         private LuaTable self = null;
         private LuaVoidDelegate update = null;
@@ -34,7 +60,13 @@ namespace Ballance2.CoreBridge
 
         private void Start()
         {
-            LuaInit();
+            ModManager = ((IModManager)GameManager.GetManager("ModManager"));
+            if (!LuaInit())
+            {
+                enabled = false;
+                GameLogger.Warning(TAG + ":" + Name, "LuaObject disabled because {0} load error", Name);
+            }
+
             if (start != null) start(self, gameObject);
         }
         private void Awake()
@@ -70,14 +102,43 @@ namespace Ballance2.CoreBridge
             if (onCollisionStay != null) onCollisionStay(self, collision);
         }
 
-        private void LuaInit()
+        private bool LuaInit()
         {
+            if(GameMod ==  null)
+            {
+                if(string.IsNullOrEmpty(LuaModName))
+                {
+                    GameLogger.Error(TAG + ":" + Name, "LuaObject {0} load error :  LuaModName not provide ", Name);
+                    GameErrorManager.LastError = GameError.ParamNotProvide;
+                    return false;
+                }
+
+                GameMod = ModManager.FindGameModByName(LuaModName); 
+
+                if (GameMod == null)
+                {
+                    GameLogger.Error(TAG + ":" + Name, "LuaObject {0} load error :  LuaModName not found : {1}", Name, LuaModName);
+                    GameErrorManager.LastError = GameError.NotRegister;
+                    return false;
+                }
+
+                GameMod.AddeLuaObject(this);
+
+                LuaState = GameMod.ModLuaState;
+                if(LuaState == null)
+                {
+                    GameLogger.Error(TAG + ":" + Name, "LuaObject {0} load error :  Mod can not run : {1}", Name, LuaModName);
+                    GameErrorManager.LastError = GameError.ModCanNotRun;
+                    return false;
+                }
+            }
+
             LuaFunction classInit = GameMod.RequireLuaClass(LuaClassName);
             if (classInit == null)
             {
                 GameLogger.Error(TAG + ":" + Name, "LuaObject {0} load error :  class not found : {1}", Name, LuaClassName);
-                Destroy(this);
-                return;
+                GameErrorManager.LastError = GameError.FunctionNotFound;
+                return false;
             }
 
             object o = classInit.call();
@@ -85,11 +146,12 @@ namespace Ballance2.CoreBridge
             else
             {
                 GameLogger.Error(TAG + ":" + Name, "LuaObject {0} load error : table not return ", Name);
-                Destroy(this);
-                return;
+                GameErrorManager.LastError = GameError.NotReturn;
+                return false;
             }
 
             InitLuaEvents();
+            return true;
         }
         private void InitLuaEvents()
         {

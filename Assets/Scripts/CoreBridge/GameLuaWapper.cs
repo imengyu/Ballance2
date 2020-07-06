@@ -13,6 +13,9 @@ namespace Ballance2.CoreBridge
     }
 
     [CustomLuaClass]
+    public delegate void VoidDelegate();
+
+    [CustomLuaClass]
     public delegate void LuaStartDelegate(LuaTable self, GameObject gameObject);
     [CustomLuaClass]
     public delegate void LuaVoidDelegate(LuaTable self);

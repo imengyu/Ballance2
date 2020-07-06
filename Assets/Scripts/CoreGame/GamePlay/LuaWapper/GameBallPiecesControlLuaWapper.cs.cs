@@ -1,5 +1,4 @@
 ﻿using Ballance2.CoreBridge;
-using Ballance2.CoreGame.Interfaces;
 using SLua;
 using System;
 

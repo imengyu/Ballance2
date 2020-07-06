@@ -161,6 +161,10 @@ namespace Ballance2.Utils
         /// </summary>
         FunctionNotFound,
         /// <summary>
+        /// 函数未返回
+        /// </summary>
+        NotReturn,
+        /// <summary>
         /// 模组包版本不兼容
         /// </summary>
         BadMod,
@@ -192,5 +196,13 @@ namespace Ballance2.Utils
         /// 布局构建失败
         /// </summary>
         LayoutBuildFailed,
+        /// <summary>
+        /// 上下文不符
+        /// </summary>
+        ContextMismatch,
+        /// <summary>
+        /// 基础模块不能替换
+        /// </summary>
+        BaseModuleCannotReplace,
     }
 }

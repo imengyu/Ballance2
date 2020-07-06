@@ -66,12 +66,24 @@ namespace Ballance2.CoreBridge
         public const string EVENT_BEFORE_GAME_QUIT = "e:before_game_quit";
 
         /// <summary>
-        /// 游戏底层加载完成，现在开始加载游戏内核
+        /// 游戏底层加载完成，现在开始加载游戏内核（GameInit入口）。
+        /// 不推荐在这里接管加载序列（GameInit需要加载游戏必须的一些模块）。
+        /// 你可以通过 EVENT_GAME_INIT_TAKE_OVER_CONTROL 来接管游戏加载序列
         /// </summary>
         /// <remarks>
         /// 事件参数：无
         /// </remarks>
         public const string EVENT_GAME_INIT_ENTRY = "e:base_game_init";
+
+        /// <summary>
+        /// 游戏全部加载完成，监听此事件可以中断默认的游戏加载序列。
+        /// 你可以跳过监听此事件来接管游戏底层加载。
+        /// </summary>
+        /// <remarks>
+        /// 事件参数：
+        /// [0] LuaVoidDelegate ：如果接管后希望跳回原加载序列，可调用此回调
+        /// </remarks>
+        public const string EVENT_GAME_INIT_TAKE_OVER_CONTROL = "e:base_game_init_take_over_control";
 
         /// <summary>
         /// gameinit 完成
@@ -130,5 +142,8 @@ namespace Ballance2.CoreBridge
         /// 【0】Vector2 屏幕大小
         /// </remarks>
         public const string EVENT_SCREEN_SIZE_CHANGED = "e:core:screen_size_changed";
+
+
+
     }
 }

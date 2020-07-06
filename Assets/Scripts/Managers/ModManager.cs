@@ -23,8 +23,9 @@ namespace Ballance2.Managers
     {
         public const string TAG = "ModManager";
 
-        public ModManager() : base(TAG, "Singleton")
+        public ModManager() : base("core.modmgr", TAG, "Singleton")
         {
+            replaceable = false;
         }
 
         public override bool InitManager()

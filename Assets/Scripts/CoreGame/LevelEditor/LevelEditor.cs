@@ -4,7 +4,6 @@ using Ballance2.Utils;
 
 namespace Ballance2.GameCore
 {
-    [SLua.CustomLuaClass]
     /// <summary>
     /// 关卡编辑器
     /// </summary>
@@ -12,19 +11,26 @@ namespace Ballance2.GameCore
     {
         public const string TAG = "LevelEditor";
 
-        public LevelEditor() : base(TAG, "Singleton")
+        public LevelEditor() : base("ext.level_editor", TAG, "Singleton")
         {
 
         }
 
+        public override void PreInitManager()
+        {
+            base.PreInitManager();
+
+            GameManager.GameMediator.RegisterAction(GameActionNames.CoreActions["EditLevel"],
+                TAG, OnCallLoadLevel, new string[] { "System.String" });
+        }
         public override bool InitManager()
         {
-            GameManager.GameMediator.RegisterAction(GameActionNames.ACTION_EDIT_LEVEL, 
-                TAG, OnCallLoadLevel);
+            
             return true;
         }
         public override bool ReleaseManager()
         {
+            GameManager.GameMediator.UnRegisterAction(GameActionNames.CoreActions["EditLevel"]);
             return true;
         }
 

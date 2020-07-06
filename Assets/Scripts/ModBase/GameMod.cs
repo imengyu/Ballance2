@@ -172,7 +172,7 @@ namespace Ballance2.ModBase
                 yield break;
             }
         }
-
+        //加载
         private IEnumerator LoadModBase()
         {
             //检查兼容性
@@ -647,8 +647,7 @@ namespace Ballance2.ModBase
         /// </summary>
         /// <param name="name">lua虚拟脚本的名称</param>
         /// <param name="gameObject">要附加的物体</param>
-        /// <param name="script">脚本代码资源</param>
-        /// <param name="scclassNameript">目标代码类名</param>
+        /// <param name="className">目标代码类名</param>
         public void RegisterLuaObject(string name, GameObject gameObject, string className)
         {
             GameLuaObjectHost newGameLuaObjectHost = gameObject.AddComponent<GameLuaObjectHost>();
@@ -656,6 +655,7 @@ namespace Ballance2.ModBase
             newGameLuaObjectHost.GameMod = this;
             newGameLuaObjectHost.LuaState = ModLuaState;
             newGameLuaObjectHost.LuaClassName = className;
+            newGameLuaObjectHost.LuaModName = PackageName;
             luaObjects.Add(newGameLuaObjectHost);
         }
         /// <summary>
@@ -682,6 +682,11 @@ namespace Ballance2.ModBase
         {
             if (luaObjects != null)
                 luaObjects.Remove(o);
+        }
+        internal void AddeLuaObject(GameLuaObjectHost o)
+        {
+            if (luaObjects != null && !luaObjects.Contains(o))
+                luaObjects.Add(o);
         }
         /// <summary>
         /// 获取模组启动代码是否已经执行
@@ -842,8 +847,8 @@ namespace Ballance2.ModBase
                 return classInit;
 
             TextAsset lua = GetTextAsset(className);
-            if (lua == null)
-                lua = GetTextAsset(className + ".lua.txt");
+            if (lua == null) lua = GetTextAsset(className + ".lua.txt");
+            if (lua == null) lua = GetTextAsset(className + ".txt");
             if (lua == null)
                 throw new MissingReferenceException(PackageName + " 无法导入 Lua class : " + className + " ,未找到该文件");
 

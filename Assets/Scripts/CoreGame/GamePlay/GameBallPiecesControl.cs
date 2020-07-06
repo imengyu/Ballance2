@@ -1,6 +1,4 @@
-﻿using Ballance2.CoreGame.Interfaces;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Ballance2.CoreGame.GamePlay
 {

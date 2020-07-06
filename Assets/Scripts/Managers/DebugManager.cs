@@ -15,7 +15,7 @@ namespace Ballance2.Managers
     {
         public const string TAG = "DebugManager";
 
-        public DebugManager() : base(TAG, "Singleton")
+        public DebugManager() : base("core.debugmgr", TAG, "Singleton")
         {
         }
 

@@ -1,5 +1,4 @@
 ﻿using Ballance2.CoreBridge;
-using Ballance2.CoreGame.Interfaces;
 using Ballance2.Managers;
 using Ballance2.Utils;
 
@@ -8,47 +7,58 @@ namespace Ballance2.GameCore
     /// <summary>
     /// 关卡加载器
     /// </summary>
-    public class LevelLoader : BaseManager, ILevelLoader
+    public class LevelLoader : BaseManager
     {
         public const string TAG = "LevelLoader";
 
-        public LevelLoader() : base(TAG, "Singleton")
+        public LevelLoader() : base(GamePartName.LevelLoader, TAG, "Singleton")
         {
 
         }
 
+        public override void PreInitManager()
+        {
+            base.PreInitManager();
+            InitActions();
+        }
         public override bool InitManager()
         {
-            GameManager.GameMediator.RegisterAction(GameActionNames.ACTION_LOAD_LEVEL, 
-                TAG, OnCallLoadLevel);
-            GameManager.GameMediator.RegisterAction(GameActionNames.ACTION_UNLOAD_LEVEL,
-                TAG, OnCallLoadLevel);
-            GameManager.GameMediator.RegisterAction(GameActionNames.ACTION_DEBUG_LEVEL_LOADER,
-                TAG, OnCallStartDebugLevelLoader);
+          
             return true;
         }
         public override bool ReleaseManager()
         {
-            if (LevelLoadStatus == LevelLoadStatus.Loaded)
+            if (levelLoadStatus == LevelLoadStatus.Loaded)
                 UnLoadLevel(true);
+            UnInitActions();
             return true;
+        }
+
+        private void InitActions()
+        {
+            GameManager.GameMediator.RegisterAction(GameActionNames.LevelLoader["LoadLevel"],
+              TAG, OnCallLoadLevel, new string[] { "System,String" });
+            GameManager.GameMediator.RegisterAction(GameActionNames.LevelLoader["UnLoadLevel"],
+                TAG, OnCallLoadLevel, null);
+            GameManager.GameMediator.RegisterAction(GameActionNames.CoreActions["ACTION_DEBUG_LEVEL_LOADER"],
+                TAG, OnCallStartDebugLevelLoader, new string[] { "System,String" });
+        }
+        private void UnInitActions()
+        {
+            GameManager.GameMediator.UnRegisterActions(GameActionNames.LevelLoader);
+            GameManager.GameMediator.UnRegisterAction(GameActionNames.CoreActions["ACTION_DEBUG_LEVEL_LOADER"]);
         }
 
         private GameActionCallResult OnCallLoadLevel(params object[] param)
         {
-            if (LevelLoadStatus != LevelLoadStatus.Loading || LevelLoadStatus != LevelLoadStatus.UnLoading)
+            if (levelLoadStatus != LevelLoadStatus.Loading || levelLoadStatus != LevelLoadStatus.UnLoading)
             {
                 GameErrorManager.LastError = GameError.InProgress;
                 return GameActionCallResult.CreateActionCallResult(false);
             }
-            if (LevelLoadStatus != LevelLoadStatus.NotLoad)
+            if (levelLoadStatus != LevelLoadStatus.NotLoad)
             {
                 GameErrorManager.LastError = GameError.AlredayLoaded;
-                return GameActionCallResult.CreateActionCallResult(false);
-            }
-            if(param == null || param.Length < 1)
-            {
-                GameErrorManager.LastError = GameError.ParamNotProvide;
                 return GameActionCallResult.CreateActionCallResult(false);
             }
 
@@ -57,12 +67,12 @@ namespace Ballance2.GameCore
         }
         private GameActionCallResult OnCallUnLoadLevel(params object[] param)
         {
-            if (LevelLoadStatus != LevelLoadStatus.Loading || LevelLoadStatus != LevelLoadStatus.UnLoading)
+            if (levelLoadStatus != LevelLoadStatus.Loading || levelLoadStatus != LevelLoadStatus.UnLoading)
             {
                 GameErrorManager.LastError = GameError.InProgress;
                 return GameActionCallResult.CreateActionCallResult(false);
             }
-            if (LevelLoadStatus == LevelLoadStatus.Loaded)
+            if (levelLoadStatus == LevelLoadStatus.Loaded)
                 return GameActionCallResult.CreateActionCallResult(UnLoadLevel(false));
             else
             {
@@ -76,10 +86,7 @@ namespace Ballance2.GameCore
             return GameActionCallResult.CreateActionCallResult(true);
         }
 
-        /// <summary>
-        /// 关卡加载状态
-        /// </summary>
-        public LevelLoadStatus LevelLoadStatus { get; private set; } = LevelLoadStatus.NotLoad;
+        private LevelLoadStatus levelLoadStatus = LevelLoadStatus.NotLoad;
 
         private bool StartLoadLevel(string pathOrName)
         {

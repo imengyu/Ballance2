@@ -1,4 +1,5 @@
-﻿using Ballance2.Interfaces;
+﻿using Ballance2.CoreBridge;
+using Ballance2.Interfaces;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -56,23 +57,11 @@ namespace Ballance2.CoreGame.GamePlay
         public string TypeName;
         public Rigidbody Rigidbody;
         public float PushForce = 3f;
-        public bool UseFallForce = false;
-        public bool UseAutoCloseFallForce = true;
-        public float FallForce = 10f;
-        public float FallForceFloor = 10f;
-        public bool LimitSpeed = true;
+        public ForceMode ForceMode = ForceMode.Force;
         public float ThrowPiecesForce = 5f;
         public float CollectPiecesSec = 15f;
 
-        public float MinSpeedY = 0f;
-        public float MaxSpeedY = 0f;
-        public float MinSpeedXZ = 0f;
-        public float MaxSpeedXZ = 0f;
-
         internal float CollectPiecesSecTick = 5f;
-
-        public ForceMode FallForceMode = ForceMode.Force;
-        public ForceMode ForceMode = ForceMode.Force;
 
         public List<Rigidbody> PiecesRigidbody { get { return piecesRigidbody; } }
         public List<MeshRenderer> PiecesMaterial { get { return piecesMaterial; } }
@@ -158,7 +147,9 @@ namespace Ballance2.CoreGame.GamePlay
         /// 当前球触碰的物体所在层
         /// </summary>
         public int CurrentColObjectLayout { get; private set; }
-        public float FinalFallForce { get; private set; }
+        /// <summary>
+        /// 球最终的推力
+        /// </summary>
         public float FinalPushForce { get; private set; }
 
         //控制
@@ -184,9 +175,37 @@ namespace Ballance2.CoreGame.GamePlay
 
         private IICManager ICManager = null;
 
+        #region  其他模块全局共享数据
+
+        private Store storeBallmgr = null;
+        private StoreData IsControlling = null;
+        private StoreData PushType = null;
+        private StoreData IsBallDebug = null;
+        private Store storeCammgr = null;
+        private StoreData thisVector3Right = null;
+        private StoreData thisVector3Left = null;
+        private StoreData thisVector3Forward = null;
+        private StoreData thisVector3Back = null;
+
+        private void InitShareData()
+        {
+            storeBallmgr = GameManager.GameMediator.GetGlobalDataStore("core.ballmgr");
+            storeCammgr = GameManager.GameMediator.GetGlobalDataStore("core.cammgr");
+            IsControlling = storeBallmgr.GetParameter("IsControlling");
+            PushType = storeBallmgr.GetParameter("PushType");
+            IsBallDebug = storeBallmgr.GetParameter("IsBallDebug");
+            thisVector3Right = storeCammgr.GetParameter("thisVector3Right");
+            thisVector3Left = storeCammgr.GetParameter("thisVector3Left");
+            thisVector3Forward = storeCammgr.GetParameter("thisVector3Forward");
+            thisVector3Back = storeCammgr.GetParameter("thisVector3Back");
+        }
+
+        #endregion
+
         public virtual bool Init()
         {
             ICManager = (IICManager)GameManager.GetManager("ICManager");
+            InitShareData();
             BuildPiecesData();
             return true;
         }
@@ -241,41 +260,23 @@ namespace Ballance2.CoreGame.GamePlay
         /// </summary>
         public virtual void BallPush()
         {
-            if (BallManager.IsControlling)
+            if (IsControlling.BoolData())
             {
-                //自动压力
-                if (UseFallForce)
-                {
-                    float ySpeed = Mathf.Abs(Rigidbody.velocity.y);
-                    if (isOnFloor) FinalFallForce = FallForceFloor;
-                    else if (UseAutoCloseFallForce && ySpeed > MinSpeedY)
-                    {
-                        float refSpeed = ySpeed / MaxSpeedY;
-                        FinalFallForce = FallForce * (1 - (refSpeed > 1 ? 1 : refSpeed));
-                    }
-                    else FinalFallForce = FallForce;
-                    if (FinalFallForce > 0)
-                        Rigidbody.AddForce(Vector3.down * FinalFallForce, FallForceMode);
-                }
-
-                //球速度控制
-
-
                 //获取 ballsManager 的球推动类型。
-                BallPushType currentBallPushType = BallManager.PushType;
+                BallPushType currentBallPushType = PushType.Data<BallPushType>();
                 if (currentBallPushType != BallPushType.None)
                 {
                     if ((currentBallPushType & BallPushType.Forward) == BallPushType.Forward)
-                        Rigidbody.AddForce(CamManager.thisVector3Fornt * PushForce, ForceMode);
+                        Rigidbody.AddForce(thisVector3Forward.Vector3Data() * PushForce, ForceMode);
                     else if ((currentBallPushType & BallPushType.Back) == BallPushType.Back)
-                        Rigidbody.AddForce(CamManager.thisVector3Back * PushForce, ForceMode);
+                        Rigidbody.AddForce(thisVector3Back.Vector3Data() * PushForce, ForceMode);
                     if ((currentBallPushType & BallPushType.Left) == BallPushType.Left)
-                        Rigidbody.AddForce(CamManager.thisVector3Left * PushForce, ForceMode);
+                        Rigidbody.AddForce(thisVector3Left.Vector3Data() * PushForce, ForceMode);
                     else if ((currentBallPushType & BallPushType.Right) == BallPushType.Right)
-                        Rigidbody.AddForce(CamManager.thisVector3Right * PushForce, ForceMode);
+                        Rigidbody.AddForce(thisVector3Right.Vector3Data() * PushForce, ForceMode);
 
                     //调试模式可以上下飞行
-                    if (BallManager.IsBallDebug)
+                    if (IsBallDebug.BoolData())
                     {
                         if ((currentBallPushType & BallPushType.Up) == BallPushType.Up) //上
                             Rigidbody.AddForce(Vector3.up * PushForce * 1.5f, ForceMode);

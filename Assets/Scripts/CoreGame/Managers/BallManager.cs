@@ -18,18 +18,24 @@ namespace Ballance2.CoreGame.Managers
     {
         public const string TAG = "BallManager";
 
-        public BallManager() : base(TAG, "Singleton")
+        public BallManager() : base(GamePartName.BallManager, TAG, "Singleton")
         {
 
         }
 
+        public override void PreInitManager()
+        {
+            base.PreInitManager();
+
+            InitGlobaShareAndStore();
+            InitActions();
+        }
         public override bool InitManager()
         {
             keyListener = gameObject.AddComponent<KeyListener>();
 
             InitSettings();
-            InitActions();
-            InitDataStores();
+            InitShareDataStores();
             InitMisc();
             InitBalls();
             return true;
@@ -37,8 +43,7 @@ namespace Ballance2.CoreGame.Managers
         public override bool ReleaseManager()
         {
             UnInitActions();
-            UnInitDataStores();
-            ClearBall();
+            ClearActiveBall();
             if (ballTypes != null)
             {
                 ballTypes.Clear();
@@ -59,27 +64,6 @@ namespace Ballance2.CoreGame.Managers
         public GameBall BallPaper;
 
         private List<GameBall> ballTypes = new List<GameBall>();
-
-        /// <summary>
-        /// 所有球类型
-        /// </summary>
-        public List<GameBall> BallTypes { get { return ballTypes; } }
-        /// <summary>
-        /// 当前球的名称
-        /// </summary>
-        public string CurrentBallName { get; protected set; }
-        /// <summary>
-        /// 当前球
-        /// </summary>
-        public GameBall CurrentBall { get; protected set; }
-        /// <summary>
-        /// 获取球是否调试
-        /// </summary>
-        public virtual bool IsBallDebug { get { return debug; } }
-        /// <summary>
-        /// 获取是否控制反转
-        /// </summary>
-        public virtual bool IsReverseControl { get { return reverseControl; } }
 
         #region 设置变量
 
@@ -125,7 +109,6 @@ namespace Ballance2.CoreGame.Managers
         }
         private void InitBalls()
         {
-            CamManager = (ICamManager)GameManager.GetManager("CamManager");
             ICManager = (IICManager)GameManager.GetManager("ICManager");
 
             pushType = BallPushType.None;
@@ -160,24 +143,224 @@ namespace Ballance2.CoreGame.Managers
         }
         private void InitActions()
         {
-            GameManager.GameMediator.RegisterActions(new string[] {
-
-            }, new string[] { }, new GameActionHandlerDelegate[] { });
+            GameManager.GameMediator.RegisterActions(GameActionNames.BallManager, 
+                TAG, new GameActionHandlerDelegate[] {
+                    (param) =>
+                    {
+                        StartControll();
+              
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) =>
+                    {
+                        EndControll();
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) =>
+                    {
+                        PlaySmoke();
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) =>
+                    {
+                        PlayLighting((bool)param[0], (bool)param[1]);
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) =>
+                    {
+                        RemoveBallSpeed((GameBall)param[0]);
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) =>
+                    {
+                        AddBallPush((BallPushType)param[0]);
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) =>
+                    {
+                        RemoveBallPush((BallPushType)param[0]);
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) =>
+                    {
+                        RecoverSetPos((Vector3)param[0]);
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) =>
+                    {
+                        RecoverBallDef();
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) =>
+                    {
+                        RecoverBallAtPos((Vector3)param[0]);
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) =>
+                    {
+                        ActiveBall((string)param[0]);
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) =>
+                    {
+                        ActiveBallDef();
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) =>
+                    {
+                        ClearActiveBall();
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) =>
+                    {
+                        SmoothMoveBallToPos((Vector3)param[0]);
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) =>
+                    {
+                        if (param[0] is string)
+                            ThrowPieces(param[0] as string);
+                        else if (param[0] is GameBall)
+                             ThrowPieces(param[0] as GameBall);
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) =>
+                    {
+                        if (param[0] is string)
+                            RecoverPieces(param[0] as string);
+                        else if (param[0] is GameBall)
+                             RecoverPieces(param[0] as GameBall);
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) =>
+                    {
+                        return GameActionCallResult.CreateActionCallResult(
+                            RegisterBall((string)param[0], (GameBall)param[1], (GameObject)param[2])
+                        );
+                    },
+                    (param) =>
+                    {
+                        return GameActionCallResult.CreateActionCallResult(UnRegisterBall((string)param[0]));
+                    },
+                    (param) =>
+                    {
+                        return GameActionCallResult.CreateActionCallResult(
+                            true,
+                            new object[] {
+                                GetRegisteredBall((string)param[0])
+                            }
+                        );
+                    },
+                },
+                new string[][]
+                {
+                    null,
+                    null,
+                    null,
+                    new string[] { "System.Boolean", "System.Boolean" },
+                    new string[] { "Ballance2.CoreGame.GamePlay.GameBall" },
+                    new string[] { "Ballance2.CoreGame.GamePlay.BallPushType" },
+                    new string[] { "Ballance2.CoreGame.GamePlay.BallPushType" },
+                    new string[] { "UnityEngine.Vector3" },
+                    new string[] { "UnityEngine.Vector3" },
+                    new string[] { "System.String" },
+                    null,
+                    null,
+                    new string[] { "UnityEngine.Vector3" },
+                    new string[] { "System.String/Ballance2.CoreGame.GamePlay.BallPushType" },
+                    new string[] { "System.String/Ballance2.CoreGame.GamePlay.BallPushType"  },
+                    new string[] { "System.String", "Ballance2.CoreGame.GamePlay.BallPushType", "UnityEngine.GameObject"   },
+                    new string[] { "System.String" },
+                    new string[] { "System.String" },
+                }
+            );
         }
         private void UnInitActions()
         {
-            GameManager.GameMediator.UnRegisterActions(new string[] {
+            GameManager.GameMediator.UnRegisterActions(GameActionNames.BallManager);
+        }
 
+        #region 全局数据共享
+
+        //私有控制数据
+        private StoreData CurrentBall = null;//[GamBall] 获取当前的球
+        private StoreData CurrentBallName = null;//[string] 获取当前球的名称
+        private StoreData IsControlling = null;//[bool] 获取或设置是否启用球控制
+        private StoreData PushType = null;//[BallPushType] 获取当前球推力的方向
+        private StoreData IsBallSmoothMove = null;//[bool] 获取当前球是否是正在平滑移动
+        private StoreData IsBallDebug = null;//[bool] 获取球是否调试
+        private StoreData IsReverseControl = null;//[bool] 获取是否控制反转
+
+        //其他模块全局共享数据
+        private Store storeCammgr = null;
+        private StoreData IsLookingBall = null;
+        private StoreData IsFollowCam = null;
+        private StoreData CamFollowTarget = null;
+        //他模块全局共享操作
+        private GameAction CamRoteRight;
+        private GameAction CamRoteLeft;
+        private GameAction CamRoteSpace;
+        private GameAction CamRoteSpaceBack;
+
+        private void InitGlobaShareAndStore()
+        {
+            //初始化数据桥
+            CurrentBall = Store.AddParameter("CurrentBall", StoreDataAccess.Get, StoreDataType.Raw);
+            CurrentBallName = Store.AddParameter("CurrentBallName", StoreDataAccess.Get, StoreDataType.String);
+            IsControlling = Store.AddParameter("IsControlling", StoreDataAccess.GetAndSet, StoreDataType.Bool);
+            PushType = Store.AddParameter("PushType", StoreDataAccess.Get, StoreDataType.Raw);
+            IsBallSmoothMove = Store.AddParameter("IsBallSmoothMove", StoreDataAccess.Get, StoreDataType.Bool);
+            IsBallDebug = Store.AddParameter("IsBallDebug", StoreDataAccess.Get, StoreDataType.Bool);
+            IsReverseControl = Store.AddParameter("IsReverseControl", StoreDataAccess.Get, StoreDataType.Bool);
+
+            //Get
+            CurrentBall.SetDataProvider(currentContext, () => currentBall);
+            CurrentBallName.SetDataProvider(currentContext, () => currentBallType.TypeName);
+            IsControlling.SetDataProvider(currentContext, () => isBallControl);
+            PushType.SetDataProvider(currentContext, () => pushType);
+            IsBallSmoothMove.SetDataProvider(currentContext, () => isBallSmoothMove);
+            IsBallDebug.SetDataProvider(currentContext, () => debug);
+            IsReverseControl.SetDataProvider(currentContext, () => reverseControl);
+
+            //Set
+            IsControlling.RegisterDataObserver((storeData, oldV, newV) =>
+            {
+                bool value = storeData.BoolData();
+                if (value != isBallControl)
+                {
+                    isBallControl = value;
+                    keyListener.IsListenKey = value;
+                    if (value)
+                    {
+                        IsLookingBall.SetData(currentContext, true);
+                        IsFollowCam.SetData(currentContext, true);
+                        if (currentBallType != null)
+                            currentBallType.StartControll();
+                    }
+                    else
+                    {
+                        IsFollowCam.SetData(currentContext, false);
+                        IsLookingBall.SetData(currentContext, false);
+                        if (currentBallType != null)
+                            currentBallType.EndControll(true);
+                    }
+                }
             });
         }
-        private void InitDataStores()
+        private void InitShareDataStores()
         {
+            storeCammgr = GameManager.GetManager("CamMgr").Store;
+            IsFollowCam = storeCammgr.GetParameter("IsFollowCam");
+            IsLookingBall = storeCammgr.GetParameter("IsLookingBall");
+            CamFollowTarget = storeCammgr.GetParameter("CamFollowTarget");
 
+            CamRoteRight = GameManager.GameMediator.GetRegisteredAction(GameActionNames.CamManager["CamRoteRight"]);
+            CamRoteLeft = GameManager.GameMediator.GetRegisteredAction(GameActionNames.CamManager["CamRoteLeft"]);
+            CamRoteSpace = GameManager.GameMediator.GetRegisteredAction(GameActionNames.CamManager["CamRoteSpace"]);
+            CamRoteSpaceBack = GameManager.GameMediator.GetRegisteredAction(GameActionNames.CamManager["CamRoteSpaceBack"]);
         }
-        private void UnInitDataStores()
-        {
 
-        }
+        #endregion
 
         //设置加载
         private bool OnControlSettingsChanged(string evtName, params object[] param)
@@ -207,7 +390,7 @@ namespace Ballance2.CoreGame.Managers
 #if UNITY_EDITOR
             //调试所用代码
             if (Input.GetKeyDown(KeyCode.F1))
-                IsControlling = !IsControlling;
+                IsControlling.SetData(currentContext, !IsControlling.BoolData());
             if (Input.GetKeyDown(KeyCode.F2))
                 ActiveBall("BallWood");
             if (Input.GetKeyDown(KeyCode.F3))
@@ -215,7 +398,7 @@ namespace Ballance2.CoreGame.Managers
             if (Input.GetKeyDown(KeyCode.F4))
                 ActiveBall("BallPaper");
             if (Input.GetKeyDown(KeyCode.F5))
-                PlayLighting(true);
+                PlayLighting(true, true);
             if (Input.GetKeyDown(KeyCode.F6))
                 ThrowPieces("BallWood");
             if (Input.GetKeyDown(KeyCode.F7))
@@ -333,15 +516,14 @@ namespace Ballance2.CoreGame.Managers
             if (debug && CurrentBall != null)
             {
                 line.y = 35;
-                GUI.Label(line, "CurrentBall : " + CurrentBallName); line.y += 16;
-                GUI.Label(line, "Pos : " + CurrentBall.transform.position); line.y += 16;
-                GUI.Label(line, "Rotation : " + CurrentBall.transform.eulerAngles); line.y += 16;
-                GUI.Label(line, "Velocity : " + CurrentBall.Rigidbody.velocity); line.y += 16;
-                GUI.Label(line, "[OnFloor]: " + CurrentBall.IsOnFloor); line.y += 16;
-                GUI.Label(new Rect(10, line.y, 300, 32), "[ColObj]: [" + CurrentBall.CurrentColObjectLayout + "] "
-                    + CurrentBall.CurrentColObject); line.y += 36;
-                GUI.Label(line, "FinalPushForce : " + pushType + " Force: " + CurrentBall.PushForce); line.y += 16;
-                GUI.Label(line, "FinalFallForce : " + CurrentBall.FinalFallForce); line.y += 16;
+                GUI.Label(line, "CurrentBall : " + currentBallType.TypeName); line.y += 16;
+                GUI.Label(line, "Pos : " + currentBall.transform.position); line.y += 16;
+                GUI.Label(line, "Rotation : " + currentBall.transform.eulerAngles); line.y += 16;
+                GUI.Label(line, "Velocity : " + currentBallType.Rigidbody.velocity); line.y += 16;
+                GUI.Label(line, "[OnFloor]: " + currentBallType.IsOnFloor); line.y += 16;
+                GUI.Label(new Rect(10, line.y, 300, 32), "[ColObj]: [" + currentBallType.CurrentColObjectLayout + "] "
+                    + currentBallType.CurrentColObject); line.y += 36;
+                GUI.Label(line, "FinalPushForce : " + pushType + " Force: " + currentBallType.PushForce); line.y += 16;
             }
         }
 
@@ -354,7 +536,7 @@ namespace Ballance2.CoreGame.Managers
         /// <param name="name">球类型名称</param>
         /// <param name="ball">附加了GameBall组件的球实例</param>
         /// <param name="pieces">球碎片组</param>
-        public virtual bool RegisterBall(string name, GameBall ball, GameObject pieces)
+        private bool RegisterBall(string name, GameBall ball, GameObject pieces)
         {
             if (ball == null)
             {
@@ -371,9 +553,7 @@ namespace Ballance2.CoreGame.Managers
 
             ball.TypeName = name;
             ball.Pieces = pieces;
-            ball.BallManager = this;
-            ball.CamManager = CamManager;
-            BallTypes.Add(ball);
+            ballTypes.Add(ball);
 
             GameBallPiecesControl ballPiecesControl = pieces.GetComponent<GameBallPiecesControl>();
             if(ballPiecesControl != null)
@@ -391,18 +571,20 @@ namespace Ballance2.CoreGame.Managers
         /// 取消注册球
         /// </summary>
         /// <param name="name">球类型名称</param>
-        public virtual void UnRegisterBall(string name)
+        private bool UnRegisterBall(string name)
         {
             GameBall targetBall = GetRegisteredBall(name);
             if (targetBall != null)
             {
-                BallTypes.Remove(targetBall);
+                ballTypes.Remove(targetBall);
                 targetBall.Destroy();
+                return true;
             }
             else
             {
                 GameLogger.Warning(TAG, "无法取消注册球 {0} 因为它没有注册", name);
                 GameErrorManager.LastError = GameError.NotRegister;
+                return false;
             }
         }
         /// <summary>
@@ -410,25 +592,14 @@ namespace Ballance2.CoreGame.Managers
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public virtual GameBall GetRegisteredBall(string name)
+        private GameBall GetRegisteredBall(string name)
         {
-            foreach (GameBall b in BallTypes)
+            foreach (GameBall b in ballTypes)
             {
                 if (b.TypeName == name)
                     return b;
             }
             return null;
-        }
-        /// <summary>
-        /// 根据 GameObject 获取球的类型（通常在lua中调用）
-        /// </summary>
-        /// <param name="ball"></param>
-        /// <returns></returns>
-        public string GetBallType(GameObject ball)
-        {
-            GameBall b = ball.GetComponent<GameBall>();
-            if (b != null) return b.TypeName;
-            return "";
         }
 
         //球控制
@@ -437,23 +608,23 @@ namespace Ballance2.CoreGame.Managers
         /// <summary>
         /// 开始控制球
         /// </summary>
-        public virtual void StartControll()
+        private void StartControll()
         {
-            IsControlling = true;
+            IsControlling.SetData(currentContext, true);
         }
         /// <summary>
         /// 停止控制球
         /// </summary>
-        public virtual void EndControll()
+        private void EndControll()
         {
-            IsControlling = false;
+            IsControlling.SetData(currentContext, false);
         }
 
         //球推检测
         private void BallPush()
         {
-            if (CurrentBall != null)
-                CurrentBall.BallPush();
+            if (currentBallType != null)
+                currentBallType.BallPush();
         }
 
         #region Key Events
@@ -470,9 +641,9 @@ namespace Ballance2.CoreGame.Managers
         private void Space_Key(KeyCode key, bool down)
         {
             if (down)
-                CamManager.CamRoteSpace();
+                GameManager.GameMediator.CallAction(CamRoteSpace);
             else
-                CamManager.CamRoteSpaceBack();
+                GameManager.GameMediator.CallAction(CamRoteSpaceBack);
         }
         private void RightArrow_Key(KeyCode key, bool down)
         {
@@ -484,14 +655,14 @@ namespace Ballance2.CoreGame.Managers
                     {
                         pushType ^= BallPushType.Right;
                     }
-                    CamManager.CamRoteRight();
+                    GameManager.GameMediator.CallAction(CamRoteRight);
                 }
-                else if (IsControlling)
+                else if (isBallControl)
                 {
                     pushType |= BallPushType.Right;
                 }
             }
-            else if (IsControlling && (pushType & BallPushType.Right) == BallPushType.Right)
+            else if (isBallControl && (pushType & BallPushType.Right) == BallPushType.Right)
             {
                 pushType ^= BallPushType.Right;
             }
@@ -506,14 +677,14 @@ namespace Ballance2.CoreGame.Managers
                     {
                         pushType ^= BallPushType.Left;
                     }
-                    CamManager.CamRoteLeft();
+                    GameManager.GameMediator.CallAction(CamRoteLeft);
                 }
-                else if (IsControlling)
+                else if (isBallControl)
                 {
                     pushType |= BallPushType.Left;
                 }
             }
-            else if (IsControlling && (pushType & BallPushType.Left) == BallPushType.Left)
+            else if (isBallControl && (pushType & BallPushType.Left) == BallPushType.Left)
             {
                 pushType ^= BallPushType.Left;
             }
@@ -606,7 +777,7 @@ namespace Ballance2.CoreGame.Managers
         /// </summary>
         /// <param name="smallToBig">是否由小变大</param>
         /// <param name="lightAnim">是否播放相对应的 Light 灯光</param>
-        public virtual void PlayLighting(bool smallToBig = false, bool lightAnim = true)
+        public virtual void PlayLighting(bool smallToBig, bool lightAnim)
         {
             //播放闪电声音
             if (Misc_Lightning != null)
@@ -666,6 +837,7 @@ namespace Ballance2.CoreGame.Managers
 
         //当前球
         private GameObject currentBall;
+        private GameBall currentBallType;
         private Rigidbody rigidbodyCurrent;
 
         //下一次恢复球的位置
@@ -679,44 +851,10 @@ namespace Ballance2.CoreGame.Managers
         private BallPushType pushType = BallPushType.None;
 
         /// <summary>
-        /// 获取设置是否可以控制球
-        /// </summary>
-        public virtual bool IsControlling
-        {
-            get { return isBallControl; }
-            set
-            {
-                if (isBallControl != value)
-                {
-                    isBallControl = value;
-                    keyListener.IsListenKey = value;
-                    if (value)
-                    {
-                        CamManager.IsLookingBall = true;
-                        CamManager.IsFollowCam = true;
-                        if (CurrentBall != null)
-                            CurrentBall.StartControll();
-                    }
-                    else
-                    {
-                        CamManager.IsFollowCam = false;
-                        CamManager.IsLookingBall = false;
-                        if (CurrentBall != null)
-                            CurrentBall.EndControll(true);
-                    }
-                }
-            }
-        }
-        /// <summary>
-        /// 获取当前球推动方向
-        /// </summary>
-        public virtual BallPushType PushType { get { return pushType; } }
-
-        /// <summary>
         /// 指定球速度清零。
         /// </summary>
         /// <param name="ball">指定球</param>
-        public virtual void RemoveBallSpeed(GameBall ball)
+        private void RemoveBallSpeed(GameBall ball)
         {
             if (ball != null)
                 ball.RemoveSpeed();
@@ -725,7 +863,7 @@ namespace Ballance2.CoreGame.Managers
         /// 添加球推动方向
         /// </summary>
         /// <param name="t"></param>
-        public virtual void AddBallPush(BallPushType t)
+        private void AddBallPush(BallPushType t)
         {
             if ((pushType & t) != t)
             {
@@ -736,7 +874,7 @@ namespace Ballance2.CoreGame.Managers
         /// 去除球推动方向
         /// </summary>
         /// <param name="t"></param>
-        public virtual void RemoveBallPush(BallPushType t)
+        private void RemoveBallPush(BallPushType t)
         {
             if ((pushType & t) == t)
             {
@@ -747,68 +885,65 @@ namespace Ballance2.CoreGame.Managers
         /// 设置球下次激活的位置。
         /// </summary>
         /// <param name="pos">下次激活的位置</param>
-        public virtual void RecoverSetPos(Vector3 pos)
+        private void RecoverSetPos(Vector3 pos)
         {
             nextRecoverBallPos = pos;
         }
         /// <summary>
         /// 重新设置默认球位置并激活
         /// </summary>
-        public virtual void RecoverBallDef()
+        private void RecoverBallDef()
         {
-            RecoverBall(nextRecoverBallPos);
+            RecoverBallAtPos(nextRecoverBallPos);
         }
         /// <summary>
         /// 重新设置指定球位置并激活
         /// </summary>
         /// <param name="pos">球名字</param>
-        public virtual void RecoverBallAtPos(Vector3 pos)
+        private void RecoverBallAtPos(Vector3 pos)
         {
-            if (CurrentBall != null)
+            if (currentBallType != null)
             {
-                CurrentBall.Recover(pos);
-                CamManager.CamFollowTarget.position = pos;
+                currentBallType.Recover(pos);
+                CamFollowTarget.TransformData().position = pos;
             }
         }
         /// <summary>
         /// 激活默认球
         /// </summary>
-        public virtual void ActiveBallDef()
+        private void ActiveBallDef()
         {
-            if (CurrentBall != null)
-                ActiveBall(CurrentBall.TypeName);
+            if (currentBallType != null)
+                ActiveBall(currentBallType.TypeName);
             else ActiveBall("BallWood");
         }
         /// <summary>
         /// 激活指定的球
         /// </summary>
         /// <param name="type">球名字</param>
-        public virtual void ActiveBall(string type)
+        private void ActiveBall(string type)
         {
             RecoverBallDef();
             GameBall ball = GetRegisteredBall(type);
             if (ball != null)
             {
-                CurrentBall = ball;
-                CurrentBall.Active(nextRecoverBallPos);
-                currentBall = CurrentBall.gameObject;
-                CurrentBallName = type;
+                currentBallType = ball;
+                currentBallType.Active(nextRecoverBallPos);
+                currentBall = ball.gameObject;
                 rigidbodyCurrent = currentBall.GetComponent<Rigidbody>();
-                CamManager.CamFollowTarget = currentBall.GetComponent<Transform>();
-                CamManager.IsFollowCam = true;
-                CamManager.IsLookingBall = true;
+                CamFollowTarget.SetData(currentContext, currentBall.GetComponent<Transform>());
+                IsFollowCam.SetData(currentContext , true);
+                IsLookingBall.SetData(currentContext, true);
             }
         }
         /// <summary>
         /// 清除已激活的球
         /// </summary>
-        public virtual void ClearActiveBall()
+        private void ClearActiveBall()
         {
-            IsControlling = false;
-            if (CurrentBall != null)
-            {
-                CurrentBall.Deactive();
-            }
+            IsControlling.SetData(currentContext, false);
+            if (currentBallType != null)
+                currentBallType.Deactive();
             if (currentBall != null)
             {
                 currentBall.SetActive(false);
@@ -844,7 +979,7 @@ namespace Ballance2.CoreGame.Managers
         /// 抛出指定球碎片
         /// </summary>
         /// <param name="type">球类型</param>
-        public virtual void ThrowPieces(string type)
+        private void ThrowPieces(string type)
         {
             ThrowPieces(GetRegisteredBall(type));
         }
@@ -852,7 +987,7 @@ namespace Ballance2.CoreGame.Managers
         /// 抛出指定球碎片
         /// </summary>
         /// <param name="ball">球</param>
-        public virtual void ThrowPieces(GameBall ball)
+        private void ThrowPieces(GameBall ball)
         {
             if (ball != null)
             {
@@ -880,7 +1015,7 @@ namespace Ballance2.CoreGame.Managers
         /// 恢复指定球碎片
         /// </summary>
         /// <param name="ball">球</param>
-        public virtual void RecoverPieces(string type)
+        private void RecoverPieces(string type)
         {
             RecoverPieces(GetRegisteredBall(type));
         }
@@ -888,7 +1023,7 @@ namespace Ballance2.CoreGame.Managers
         /// 恢复指定球碎片
         /// </summary>
         /// <param name="ball">球</param>
-        public virtual void RecoverPieces(GameBall ball)
+        private void RecoverPieces(GameBall ball)
         {
             if (ball != null)
             {
@@ -939,28 +1074,24 @@ namespace Ballance2.CoreGame.Managers
         /// </summary>
         /// <param name="pos">指定位置。</param>
         /// <param name="off">动画平滑时间</param>
-        public virtual void SmoothMoveBallToPos(Vector3 pos, float off = 2f)
+        private void SmoothMoveBallToPos(Vector3 pos, float off = 2f)
         {
             if (CurrentBall != null)
             {
-                if (IsControlling)
-                    IsControlling = false;
-                RemoveBallSpeed(CurrentBall);
+                if (IsControlling.BoolData())
+                    IsControlling.SetData(currentContext, false);
+                RemoveBallSpeed(CurrentBall.Data<GameBall>());
                 ballSmoothMoveTarget = pos;
                 ballSmoothMoveTime = off;
 
                 isBallSmoothMove = true;
             }
         }
-        /// <summary>
-        /// 获取当前球是否正在平滑移动
-        /// </summary>
-        public virtual bool IsSmoothMove() { return isBallSmoothMove; }
 
         /// <summary>
         /// 播放烟雾
         /// </summary>
-        public virtual void PlaySmoke()
+        private void PlaySmoke()
         {
             Ball_Smoke.Play();
         }

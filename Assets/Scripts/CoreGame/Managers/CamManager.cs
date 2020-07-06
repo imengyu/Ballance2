@@ -1,11 +1,6 @@
-﻿using Ballance2.Config;
-using Ballance2.CoreBridge;
+﻿using Ballance2.CoreBridge;
 using Ballance2.CoreGame.GamePlay;
-using Ballance2.CoreGame.Interfaces;
 using Ballance2.Managers;
-using Ballance2.UI.Utils;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Ballance2.CoreGame.Managers
@@ -13,28 +8,157 @@ namespace Ballance2.CoreGame.Managers
     /// <summary>
     /// 游戏摄像机管理器
     /// </summary>
-    public class CamManager : BaseManager
+    class CamManager : BaseManager
     {
         public const string TAG = "CamManager";
 
-        public CamManager() : base(TAG, "Singleton")
+        public CamManager() : base(GamePartName.CamManager, TAG, "Singleton")
         {
 
         }
 
+        #region 全局数据共享
+
+        //私有控制数据
+        private StoreData thisVector3Right = null;
+        private StoreData thisVector3Left = null;
+        private StoreData thisVector3Forward = null;
+        private StoreData thisVector3Back = null;
+        private StoreData CamFollowTarget = null;//[Transform] 获取或设置跟随对象
+        private StoreData IsFollowCam = null;//[bool] 获取或设置是否正在跟随球
+        private StoreData IsLookingBall = null;//[bool] 获取或设置是否正在看着球
+        private StoreData CurrentDirection = null;//[DirectionType] 获取或设置摄像机朝向
+         
+        //其他模块全局共享数据
+        private Store storeBallmgr = null;
+        private StoreData CurrentBall = null;
+        private StoreData IsControlling = null;
+
+        private void InitGlobaShareAndStore()
+        {
+            //初始化数据桥
+            thisVector3Right = Store.AddParameter("thisVector3Right", StoreDataAccess.Get, StoreDataType.Vector3);
+            thisVector3Left = Store.AddParameter("thisVector3Left", StoreDataAccess.Get, StoreDataType.Vector3);
+            thisVector3Forward = Store.AddParameter("thisVector3Forward", StoreDataAccess.Get, StoreDataType.Vector3);
+            thisVector3Back = Store.AddParameter("thisVector3Back", StoreDataAccess.Get, StoreDataType.Vector3);
+            CamFollowTarget = Store.AddParameter("CamFollowTarget", StoreDataAccess.GetAndSet, StoreDataType.Transform);
+            IsFollowCam = Store.AddParameter("IsFollowCam", StoreDataAccess.GetAndSet, StoreDataType.Bool);
+            IsLookingBall = Store.AddParameter("IsLookingBall", StoreDataAccess.GetAndSet, StoreDataType.Bool);
+            CurrentDirection = Store.AddParameter("CurrentDirection", StoreDataAccess.GetAndSet, StoreDataType.Raw);
+
+            //Get
+            thisVector3Right.SetDataProvider(currentContext, () => _thisVector3Right);
+            thisVector3Left.SetDataProvider(currentContext, () => _thisVector3Left);
+            thisVector3Forward.SetDataProvider(currentContext, () => _thisVector3Forward);
+            thisVector3Back.SetDataProvider(currentContext, () => _thisVector3Back);
+            IsFollowCam.SetDataProvider(currentContext, () => isFollowCam);
+            IsLookingBall.SetDataProvider(currentContext, () => isLookingBall);
+            CurrentDirection.SetDataProvider(currentContext, () => cameraRoteValue);
+            CamFollowTarget.SetDataProvider(currentContext, () => camFollowTarget);
+
+            //Set
+            CurrentDirection.RegisterDataObserver((store, oldV, newV) =>
+            {
+                DirectionType value = (DirectionType)newV;
+                if (cameraRoteValue != value)
+                {
+                    cameraRoteValue = value;
+
+                    CamRoteResetTarget(false);
+                    CamRoteResetVector();
+
+                    isCameraRoteingX = true;
+                }
+            });
+            CamFollowTarget.RegisterDataObserver((store, oldV, newV) => camFollowTarget = store.TransformData());
+            IsLookingBall.RegisterDataObserver((store, oldV, newV) => isLookingBall = store.BoolData());
+            IsFollowCam.RegisterDataObserver((store, oldV, newV) => isFollowCam = store.BoolData());
+
+            
+        }
+        private void InitShareGlobalStore()
+        {
+            storeBallmgr = GameManager.GetManager("BallManager").Store;
+            CurrentBall = storeBallmgr.GetParameter("CurrentBall");
+            IsControlling = storeBallmgr.GetParameter("IsControlling");
+        }
+        private void InitActions()
+        {
+            //注册操作
+            GameManager.GameMediator.RegisterActions(
+                GameActionNames.CamManager,
+                TAG,
+                new GameActionHandlerDelegate[]
+                {
+                    (param) => {
+                        CamClose();
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) => {
+                        CamRoteLeft();
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) => {
+                        CamRoteRight();
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) => {
+                        CamRoteSpace();
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) => {
+                        CamRoteSpaceBack();
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) => {
+                        CamSetJustLookAtBall();
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) => {
+                        CamSetLookAtBall();
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) => {
+                        CamSetNoLookAtBall();
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) => {
+                        CamStart();
+                        return GameActionCallResult.SuccessResult;
+                    },
+                },
+                null
+             );
+        }
+        private void UnInitActions()
+        {
+            GameManager.GameMediator.UnRegisterActions(GameActionNames.CamManager);
+        }
+
+        #endregion
+
+        public override void PreInitManager()
+        {
+            base.PreInitManager();
+            InitGlobaShareAndStore();
+            InitActions();
+        }
         public override bool InitManager()
         {
             ballCamera.gameObject.SetActive(false);
+            InitShareGlobalStore();
             return true;
         }
         public override bool ReleaseManager()
         {
+            CamClose();
+            UnInitActions();
             return true;
         }
 
         private void FixedUpdate()
         {
-            if (BallManager != null && BallManager.IsControlling)
+            if (IsControlling != null && IsControlling.BoolData())
                 CamUpdate();
             if (isFollowCam)
                 CamFollow();
@@ -45,73 +169,15 @@ namespace Ballance2.CoreGame.Managers
         [SerializeField, SetProperty("thisVector3Left")]
         public Vector3 _thisVector3Left  = Vector3.left;
         [SerializeField, SetProperty("thisVector3Fornt")]
-        public Vector3 _thisVector3Fornt = Vector3.forward;
+        public Vector3 _thisVector3Forward = Vector3.forward;
         [SerializeField, SetProperty("thisVector3Back")]
         public Vector3 _thisVector3Back = Vector3.back;
-
-        /// <summary>
-        /// 摄像机面对的右方向量
-        /// </summary>
-        public Vector3 thisVector3Right { get { return _thisVector3Right; } }
-        /// <summary>
-        /// 摄像机面对的左方向量
-        /// </summary>
-        public Vector3 thisVector3Left { get { return _thisVector3Left; } } 
-        /// <summary>
-        /// 摄像机面对的前方向量
-        /// </summary>
-        public Vector3 thisVector3Fornt { get { return _thisVector3Fornt; } } 
-        /// <summary>
-        /// 摄像机面对的后方向量
-        /// </summary>
-        public Vector3 thisVector3Back { get { return _thisVector3Back; } } 
 
         //一些摄像机的旋转动画曲线
         public AnimationCurve animationCurveCamera;
         public AnimationCurve animationCurveCameraZ;
         public AnimationCurve animationCurveCameraMoveY;
         public AnimationCurve animationCurveCameraMoveYDown;
-
-        public Transform CamFollowTarget
-        {
-            get { return camFollowTarget; }
-            set { camFollowTarget = value; }
-        }
-        /// <summary>
-        /// 获取是否正在跟随球
-        /// </summary>
-        public bool IsFollowCam
-        {
-            get { return isFollowCam; }
-            set { isFollowCam = value; }
-        }
-        /// <summary>
-        /// 获取是否正在看着球
-        /// </summary>
-        public bool IsLookingBall
-        {
-            get { return isLookingBall; }
-            set { isLookingBall = value; }
-        }
-        /// <summary>
-        /// 获取或设置摄像机朝向
-        /// </summary>
-        public DirectionType CurrentDirection
-        {
-            get { return cameraRoteValue; }
-            set
-            {
-                if(cameraRoteValue != value)
-                {
-                    cameraRoteValue = value;
-
-                    CamRoteResetTarget(false);
-                    CamRoteResetVector();
-
-                    isCameraRoteingX = true;
-                }
-            }
-        }
 
         private bool isFollowCam = false;
         private bool isLookingBall = false;
@@ -167,7 +233,7 @@ namespace Ballance2.CoreGame.Managers
         /// <summary>
         /// 将摄像机开启
         /// </summary>
-        public void CamStart() 
+        private void CamStart() 
         {
             ballCamera.transform.position = new Vector3(0, cameraHeight, -cameraLeaveFarMaxOffest);
             ballCamera.transform.localEulerAngles = new Vector3(45, 0, 0);
@@ -177,31 +243,31 @@ namespace Ballance2.CoreGame.Managers
         /// <summary>
         /// 将摄像机关闭
         /// </summary>
-        public void CamClose()
+        private void CamClose()
         {
             ballCamera.gameObject.SetActive(false);
         }
         /// <summary>
         /// 让摄像机不看着球
         /// </summary>
-        public void CamSetNoLookAtBall()
+        private void CamSetNoLookAtBall()
         {
             isLookingBall = false;
         }
         /// <summary>
         /// 让摄像机看着球
         /// </summary>
-        public void CamSetLookAtBall()
+        private void CamSetLookAtBall()
         {
-            if (BallManager.CurrentBall != null)
+            if (!CurrentBall.IsNull())
                 isLookingBall = true;
         }
         /// <summary>
-        /// 让摄像机只看着球
+        /// 让摄像机只看着球（不跟随）
         /// </summary>
-        public void CamSetJustLookAtBall()
+        private void CamSetJustLookAtBall()
         {
-            if (BallManager.CurrentBall != null)
+            if (!CurrentBall.IsNull())
             {
                 isFollowCam = false;
                 isLookingBall = true;
@@ -210,7 +276,7 @@ namespace Ballance2.CoreGame.Managers
         /// <summary>
         /// 摄像机向左旋转
         /// </summary>
-        public void CamRoteLeft()
+        private void CamRoteLeft()
         {
             if (cameraRoteValue < DirectionType.Right) cameraRoteValue++;
             else cameraRoteValue = DirectionType.Forward;
@@ -223,7 +289,7 @@ namespace Ballance2.CoreGame.Managers
         /// <summary>
         /// 摄像机向右旋转
         /// </summary>
-        public void CamRoteRight()
+        private void CamRoteRight()
         {
             if (cameraRoteValue > DirectionType.Forward) cameraRoteValue--;
             else cameraRoteValue = DirectionType.Right;
@@ -241,7 +307,7 @@ namespace Ballance2.CoreGame.Managers
             float y = -ballCamMoveHost.transform.localEulerAngles.y;
             _thisVector3Right = Quaternion.AngleAxis(-y, Vector3.up) * Vector3.right;
             _thisVector3Left = Quaternion.AngleAxis(-y, Vector3.up) * Vector3.left;
-            _thisVector3Fornt = Quaternion.AngleAxis(-y, Vector3.up) * Vector3.forward;
+            _thisVector3Forward = Quaternion.AngleAxis(-y, Vector3.up) * Vector3.forward;
             _thisVector3Back = Quaternion.AngleAxis(-y, Vector3.up) * Vector3.back;
         }
         //摄像机旋转目标
@@ -320,11 +386,11 @@ namespace Ballance2.CoreGame.Managers
             }
             if (isFollowCam)
             {
-                if (BallManager.CurrentBall != null)
+                if (!CurrentBall.IsNull())
                 {
-                    ballCamFollowTarget.transform.position = Vector3.SmoothDamp(ballCamFollowTarget.transform.position, BallManager.CurrentBall.transform.position, ref camVelocityTarget2, camFollowSpeed2);
+                    ballCamFollowTarget.transform.position = Vector3.SmoothDamp(ballCamFollowTarget.transform.position, ((GameBall)CurrentBall.Data()).transform.position, ref camVelocityTarget2, camFollowSpeed2);
                     //ballCamFollowHost.transform.position = Vector3.SmoothDamp(ballCamFollowHost.transform.position, ballCamFollowTarget.transform.position, ref camVelocityTarget, camFollowSpeed);
-                    ballCamFollowHost.transform.position = Vector3.SmoothDamp(ballCamFollowHost.transform.position, BallManager.CurrentBall.transform.position, ref camVelocityTarget, camFollowSpeed);
+                    ballCamFollowHost.transform.position = Vector3.SmoothDamp(ballCamFollowHost.transform.position, ((GameBall)CurrentBall.Data()).transform.position, ref camVelocityTarget, camFollowSpeed);
                 }
             }
         }
@@ -428,8 +494,8 @@ namespace Ballance2.CoreGame.Managers
             }
             else if (isLookingBall && !isFollowCam)
             {
-                if (BallManager.CurrentBall != null)
-                    ballCamera.transform.LookAt(BallManager.CurrentBall.transform);
+                if (!CurrentBall.IsNull())
+                    ballCamera.transform.LookAt(((GameBall)CurrentBall.Data()).transform);
             }
         }
 

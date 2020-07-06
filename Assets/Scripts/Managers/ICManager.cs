@@ -1,4 +1,5 @@
-﻿using Ballance2.Interfaces;
+﻿using Ballance2.CoreBridge;
+using Ballance2.Interfaces;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,11 +8,11 @@ namespace Ballance2.Managers
     /// <summary>
     /// IC 管理器（类似Virtools的IC）
     /// </summary>
-    class ICManager : BaseManager
+    class ICManager : BaseManager, IICManager
     {
         private const string TAG = "ICManager";
 
-        public ICManager() : base(TAG)
+        public ICManager() : base(GamePartName.ICManager, TAG)
         {
         }
 

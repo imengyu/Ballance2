@@ -13,10 +13,11 @@ namespace Ballance2.CoreBridge
     [SLua.CustomLuaClass]
     public class GameAction
     {
-        public GameAction(string name, GameHandler gameHandler)
+        public GameAction(string name, GameHandler gameHandler, string[] callTypeCheck)
         {
             Name = name;
             GameHandler = gameHandler;
+            CallTypeCheck = callTypeCheck;
         }
 
         /// <summary>
@@ -27,6 +28,10 @@ namespace Ballance2.CoreBridge
         /// 操作接收器
         /// </summary>
         public GameHandler GameHandler { get; private set; }
+        /// <summary>
+        /// 操作类型检查
+        /// </summary>
+        public string[] CallTypeCheck { get; private set; }
 
         public void Dispose()
         {
@@ -66,6 +71,15 @@ namespace Ballance2.CoreBridge
         /// 返回的数据
         /// </summary>
         public object[] ReturnParams { get; private set; }
+
+        /// <summary>
+        /// 成功的无其他参数的调用返回结果
+        /// </summary>
+        public static GameActionCallResult SuccessResult = new GameActionCallResult(true, null);
+        /// <summary>
+        /// 失败的无其他参数的调用返回结果
+        /// </summary>
+        public static GameActionCallResult FailResult = new GameActionCallResult(false, null);
     }
 
     [SLua.CustomLuaClass]
@@ -75,74 +89,86 @@ namespace Ballance2.CoreBridge
     public static class GameActionNames
     {
         /// <summary>
-        /// 退出游戏操作
+        /// 游戏内核操作
         /// </summary>
-        /// <remarks>
-        /// 参数：无
-        /// </remarks>
-        public const string ACTION_QUIT = "core.quit_game";
-        /// <summary>
-        /// 显示设置页面
-        /// </summary>
-        /// <remarks>
-        /// 参数：
-        /// [0] string : 关闭后返回的 UI 页
-        /// </remarks>
-        public const string ACTION_SHOW_SETTINGS = "core.ui.show_settings";
-        /// <summary>
-        /// 加载关卡
-        /// </summary>
-        /// <remarks>
-        /// 参数：
-        /// [0] string : 目标关卡名称或路径
-        /// </remarks>
-        public const string ACTION_LOAD_LEVEL = "core.load_level";
-        /// <summary>
-        /// 卸载关卡
-        /// </summary>
-        /// <remarks>
-        /// 参数：无
-        /// </remarks>
-        public const string ACTION_UNLOAD_LEVEL = "core.unload_level";
-        /// <summary>
-        /// 打开编辑器编辑关卡
-        /// </summary>
-        /// 参数：
-        /// [0] string : 目标关卡名称或路径
-        /// </remarks>
-        public const string ACTION_EDIT_LEVEL = "core.edit_level";
+        public static Dictionary<string, string> CoreActions = new Dictionary<string, string>() {
+            /// <summary>
+            /// 退出游戏操作
+            /// </summary>
+            /// <remarks>
+            /// 参数：无
+            /// </remarks>
+            { "QuitGame", GamePartName.Core + ".QuitGame" },
+            /// <summary>
+            /// 显示设置页面
+            /// </summary>
+            /// <remarks>
+            /// 参数：
+            /// [0] string : 关闭后返回的 UI 页
+            /// </remarks>
+            { "ShowSettings", GamePartName.Core + ".ShowSettings" },
+            /// <summary>
+            /// 打开编辑器编辑关卡
+            /// </summary>
+            /// 参数：
+            /// [0] string : 目标关卡名称或路径
+            /// </remarks>
+            { "EditLevel", GamePartName.Core + ".EditLevel" },
 
-        public const string ACTION_DEBUG_LEVEL_LOADER = "core.debug_level_loader";
-        public const string ACTION_DEBUG_CORE = "core.debug";
-
+            { "ACTION_DEBUG_LEVEL_LOADER", GamePartName.Core + ".debug_level_loader" },
+            { "ACTION_DEBUG_CORE", GamePartName.Core + ".debug" },
+        };
+        /// <summary>
+        /// 自定义操作名字。你可以往这里添加名字，然后来快速索引
+        /// </summary>
+        public static Dictionary<string, string> CustomActions = new Dictionary<string, string>() {
+           
+        };
+        /// <summary>
+        /// LevelLoader 操作
+        /// </summary>
+        public static Dictionary<string, string> LevelLoader = new Dictionary<string, string>() {
+            /// <summary>
+            /// 加载关卡
+            /// </summary>
+            /// <remarks>
+            /// 参数：
+            /// [0] string : 目标关卡名称或路径
+            /// </remarks>
+            { "LoadLevel", GamePartName.LevelLoader + ".LoadLevel" },
+            /// <summary>
+            /// 卸载关卡
+            /// </summary>
+            /// <remarks>
+            /// 参数：无
+            /// </remarks>
+            { "UnLoadLevel", GamePartName.LevelLoader + ".UnLoadLevel" },
+        };
         /// <summary>
         /// 球管理器操作
         /// </summary>
-        public static class BallManager
-        {
-            public const string BASE = "core.ballmgr";
-
+        public static Dictionary<string, string> BallManager = new Dictionary<string, string>() {
             /// <summary>
             /// 球管理器开始控制
             /// </summary>
             /// <remarks>
             /// 参数：无
             /// </remarks>
-            public const string StartControll = BASE + ".StartControll";
+            { "StartControll", GamePartName.BallManager + ".StartControll" },
             /// <summary>
             /// 球管理器停止控制
             /// </summary>
             /// <remarks>
             /// 参数：无
             /// </remarks>
-            public const string EndControll = BASE + ".EndControll";
+            { "EndControll", GamePartName.BallManager + ".EndControll" },
             /// <summary>
             /// 球管理器播放球的烟雾动画
             /// </summary>
             /// <remarks>
             /// 参数：无
             /// </remarks>
-            public const string PlaySmoke = BASE + ".PlaySmoke";
+            { "PlaySmoke", GamePartName.BallManager + ".PlaySmoke" },
             /// <summary>
             /// 球管理器播放球的出生闪电动画
             /// </summary>
@@ -151,7 +177,7 @@ namespace Ballance2.CoreBridge
             /// [0] bool smallToBig : 是否由小变大
             /// [1] bool lightAnim : 是否播放相对应的 Light 灯光
             /// </remarks>
-            public const string PlayLighting = BASE + ".PlayLighting";
+            { "PlayLighting", GamePartName.BallManager + ".PlayLighting" },
             /// <summary>
             /// 指定球速度清零
             /// </summary>
@@ -159,7 +185,7 @@ namespace Ballance2.CoreBridge
             /// 参数：
             /// [0] GameBall ball :  指定球
             /// </remarks>
-            public const string RemoveBallSpeed = BASE + ".RemoveBallSpeed";
+            { "RemoveBallSpeed", GamePartName.BallManager + ".RemoveBallSpeed" },
             /// <summary>
             /// 添加球推动方向
             /// </summary>
@@ -167,7 +193,7 @@ namespace Ballance2.CoreBridge
             /// 参数：
             /// [0] BallPushType t : 球推动方向
             /// </remarks>
-            public const string AddBallPush = BASE + ".AddBallPush";
+            { "AddBallPush", GamePartName.BallManager + ".AddBallPush" },
             /// <summary>
             /// 去除球推动方向
             /// </summary>
@@ -175,7 +201,7 @@ namespace Ballance2.CoreBridge
             /// 参数：
             /// [0] BallPushType t : 球推动方向
             /// </remarks>
-            public const string RemoveBallPush = BASE + ".RemoveBallPush";
+            { "RemoveBallPush", GamePartName.BallManager + ".RemoveBallPush" },
             /// <summary>
             /// 设置球下次激活的位置
             /// </summary>
@@ -183,14 +209,14 @@ namespace Ballance2.CoreBridge
             /// 参数：
             /// [0] Vector3 pos : 下次激活的位置
             /// </remarks>
-            public const string RecoverSetPos = BASE + ".RecoverSetPos";
+            { "RecoverSetPos", GamePartName.BallManager + ".RecoverSetPos" },
             /// <summary>
             /// 重新设置当前球在默认位置并激活
             /// </summary>
             /// <remarks>
             /// 参数：无
             /// </remarks>
-            public const string RecoverBallDef = BASE + ".RecoverBallDef";
+            { "RecoverBallDef", GamePartName.BallManager + ".RecoverBallDef" },
             /// <summary>
             /// 重新设置当前球位置并激活
             /// </summary>
@@ -198,14 +224,7 @@ namespace Ballance2.CoreBridge
             /// 参数：
             /// [0] Vector3 pos : 目标位置
             /// </remarks>
-            public const string RecoverBallAtPos = BASE + ".RecoverBallAtPos";
-            /// <summary>
-            /// 激活默认球
-            /// </summary>
-            /// <remarks>
-            /// 参数：无
-            /// </remarks>
-            public const string ActiveBallDef = BASE + ".ActiveBallDef";
+            { "RecoverBallAtPos", GamePartName.BallManager + ".RecoverBallAtPos" },
             /// <summary>
             /// 激活指定的球
             /// </summary>
@@ -213,23 +232,30 @@ namespace Ballance2.CoreBridge
             /// 参数：
             /// [0] string type :  球名字
             /// </remarks>
-            public const string ActiveBall = BASE + ".ActiveBall";
+            { "ActiveBall", GamePartName.BallManager + ".ActiveBall" },
+            /// <summary>
+            /// 激活默认球
+            /// </summary>
+            /// <remarks>
+            /// 参数：无
+            /// </remarks>
+            { "ActiveBallDef", GamePartName.BallManager + ".ActiveBallDef" },
             /// <summary>
             /// 清除已激活的球
             /// </summary>
             /// <remarks>
             /// 参数：无
             /// </remarks>
-            public const string ClearActiveBall = BASE + ".ClearActiveBall";
+            { "ClearActiveBall", GamePartName.BallManager + ".ClearActiveBall" },
             /// <summary>
-            /// 清除已激活的球
+            /// 平滑移动当前球至指定位置
             /// </summary>
             /// <remarks>
             /// 参数：
-            /// [0] Vector3 pos : 
-            /// [1] float off = 2f
+            /// [0] Vector3 pos : 指定位置
+            /// [1] float off = 2f ：耗时（秒）
             /// </remarks>
-            public const string SmoothMoveBallToPos = BASE + ".SmoothMoveBallToPos";
+            { "SmoothMoveBallToPos", GamePartName.BallManager + ".SmoothMoveBallToPos" },
             /// <summary>
             /// 抛出指定球碎片
             /// </summary>
@@ -237,7 +263,7 @@ namespace Ballance2.CoreBridge
             /// 参数：
             /// [0] GameBall 或 string ball : 球的实例或球的名字
             /// </remarks>
-            public const string ThrowPieces = BASE + ".ThrowPieces";
+            { "ThrowPieces", GamePartName.BallManager + ".ThrowPieces" },
             /// <summary>
             /// 恢复指定球碎片
             /// </summary>
@@ -245,80 +271,107 @@ namespace Ballance2.CoreBridge
             /// 参数：
             /// [0] GameBall 或 string ball : 球的实例或球的名字
             /// </remarks>
-            public const string RecoverPieces = BASE + ".RecoverPieces";
-        }
+            { "RecoverPieces", GamePartName.BallManager + ".RecoverPieces" },
+            /// <summary>
+            /// 注册球
+            /// </summary>
+            /// <remarks>
+            /// 参数：
+            /// [0] string name：球类型名称
+            /// [1] GameBall ball：附加了GameBall组件的球实例
+            /// [2] GameObject pieces：球碎片组
+            /// </remarks>
+            { "RegisterBall", GamePartName.BallManager + ".RegisterBall" },
+            /// <summary>
+            /// 取消注册球
+            /// </summary>
+            /// <remarks>
+            /// 参数：
+            /// [0]  string ball : 球的名字
+            /// </remarks>
+            { "UnRegisterBall", GamePartName.BallManager + ".UnRegisterBall" },
+            /// <summary>
+            /// 获取已注册的球
+            /// </summary>
+            /// <remarks>
+            /// 参数：
+            /// [0] string name : 球的名字
+            /// 返回值：
+            /// [0] GameBall：找到的球的实例，如果未找到，为null
+            /// </remarks>
+            { "GetRegisteredBall", GamePartName.BallManager + ".GetRegisteredBall" },
+
+        };
         /// <summary>
         /// 摄像机管理器操作
         /// </summary>
-        public static class CamManager
+        public static Dictionary<string, string> CamManager = new Dictionary<string, string>()
         {
-            public const string BASE = "core.cammgr";
-
             /// <summary>
             /// 将摄像机开启
             /// </summary>
             /// <remarks>
             /// 参数：无
             /// </remarks>
-            public const string CamStart = BASE + ".CamStart";
+            { "CamStart", GamePartName.CamManager + ".CamStart" },
             /// <summary>
             /// 将摄像机关闭
             /// </summary>
             /// <remarks>
             /// 参数：无
             /// </remarks>
-            public const string CamClose = BASE + ".CamClose";
+            { "CamClose", GamePartName.CamManager + ".CamClose" },
             /// <summary>
             /// 让摄像机不看着球
             /// </summary>
             /// <remarks>
             /// 参数：无
             /// </remarks>
-            public const string CamSetNoLookAtBall = BASE + ".CamSetNoLookAtBall";
+            { "CamSetNoLookAtBall", GamePartName.CamManager + ".CamSetNoLookAtBall" },
             /// <summary>
             /// 让摄像机看着球
             /// </summary>
             /// <remarks>
             /// 参数：无
             /// </remarks>
-            public const string CamSetLookAtBall = BASE + ".CamSetLookAtBall";
+            { "CamSetLookAtBall", GamePartName.CamManager + ".CamSetLookAtBall" },
             /// <summary>
             /// 让摄像机只看着球（不跟随）
             /// </summary>
             /// <remarks>
             /// 参数：无
             /// </remarks>
-            public const string CamSetJustLookAtBall = BASE + ".CamSetJustLookAtBall";
+            { "CamSetJustLookAtBall", GamePartName.CamManager + ".CamSetJustLookAtBall" },
             /// <summary>
             /// 摄像机向左旋转
             /// </summary>
             /// <remarks>
             /// 参数：无
             /// </remarks>
-            public const string CamRoteLeft = BASE + ".CamRoteLeft";
+            { "CamRoteLeft", GamePartName.CamManager + ".CamRoteLeft" },
             /// <summary>
             /// 摄像机向右旋转
             /// </summary>
             /// <remarks>
             /// 参数：无
             /// </remarks>
-            public const string CamRoteRight = BASE + ".CamRoteRight";
+            { "CamRoteRight", GamePartName.CamManager + ".CamRoteRight" },
             /// <summary>
             /// 摄像机 按住 空格键 上升
             /// </summary>
             /// <remarks>
             /// 参数：无
             /// </remarks>
-            public const string CamRoteSpace = BASE + ".CamRoteSpace";
+            { "CamRoteSpace", GamePartName.CamManager + ".CamRoteSpace" },
             /// <summary>
             /// 摄像机 放开 空格键 下降
             /// </summary>
             /// <remarks>
             /// 参数：无
             /// </remarks>
-            public const string CamRoteSpaceBack = BASE + ".CamRoteSpaceBack";
-
-        }
+            { "CamRoteSpaceBack", GamePartName.CamManager + ".CamRoteSpaceBack" },
+        };
+            
 
     }
 }
