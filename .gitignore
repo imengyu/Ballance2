@@ -29,8 +29,6 @@
 ExportedObj/
 .consulo/
 *.csproj
-*.unityproj
-*.sln
 *.suo
 *.tmp
 *.user
@@ -59,5 +57,4 @@ sysinfo.txt
 crashlytics-build.properties
 
 /Output
-
 
