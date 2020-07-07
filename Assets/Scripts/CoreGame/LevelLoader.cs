@@ -16,11 +16,12 @@ namespace Ballance2.GameCore
 
         }
 
-        public override void PreInitManager()
+        protected override void InitPre()
         {
-            base.PreInitManager();
             InitActions();
+            base.InitPre();
         }
+
         public override bool InitManager()
         {
           

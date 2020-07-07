@@ -1,9 +1,5 @@
 ﻿using Ballance2.Utils;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ballance2.CoreBridge
 {
@@ -33,8 +29,14 @@ namespace Ballance2.CoreBridge
         /// </summary>
         public string[] CallTypeCheck { get; private set; }
 
+        /// <summary>
+        /// 空
+        /// </summary>
+        public static GameAction Empty { get; } = new GameAction("internal.empty", null, null);
+
         public void Dispose()
         {
+            CallTypeCheck = null;
             GameHandler.Dispose();
             GameHandler = null;
         }
@@ -115,11 +117,12 @@ namespace Ballance2.CoreBridge
             /// </remarks>
             { "EditLevel", GamePartName.Core + ".EditLevel" },
 
+            { "ACTION_GAME_INIT", GamePartName.Core + ".game_init" },
             { "ACTION_DEBUG_LEVEL_LOADER", GamePartName.Core + ".debug_level_loader" },
-            { "ACTION_DEBUG_CORE", GamePartName.Core + ".debug" },
+            { "ACTION_DEBUG_CORE", GamePartName.Core + ".debug_core" },
         };
         /// <summary>
-        /// 自定义操作名字。你可以往这里添加名字，然后来快速索引
+        /// 自定义操作名字。你可以往这里添加名字，然后来快速索引（须动态添加）
         /// </summary>
         public static Dictionary<string, string> CustomActions = new Dictionary<string, string>() {
            

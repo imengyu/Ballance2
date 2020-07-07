@@ -30,21 +30,20 @@ namespace Ballance2.CoreGame.Managers
         private StoreData CurrentDirection = null;//[DirectionType] 获取或设置摄像机朝向
          
         //其他模块全局共享数据
-        private Store storeBallmgr = null;
-        private StoreData CurrentBall = null;
-        private StoreData IsControlling = null;
+        private StoreData CurrentBall = StoreData.Empty;
+        private StoreData IsControlling = StoreData.Empty;
 
-        private void InitGlobaShareAndStore()
+        private void InitGlobaShareAndStore(Store store)
         {
             //初始化数据桥
-            thisVector3Right = Store.AddParameter("thisVector3Right", StoreDataAccess.Get, StoreDataType.Vector3);
-            thisVector3Left = Store.AddParameter("thisVector3Left", StoreDataAccess.Get, StoreDataType.Vector3);
-            thisVector3Forward = Store.AddParameter("thisVector3Forward", StoreDataAccess.Get, StoreDataType.Vector3);
-            thisVector3Back = Store.AddParameter("thisVector3Back", StoreDataAccess.Get, StoreDataType.Vector3);
-            CamFollowTarget = Store.AddParameter("CamFollowTarget", StoreDataAccess.GetAndSet, StoreDataType.Transform);
-            IsFollowCam = Store.AddParameter("IsFollowCam", StoreDataAccess.GetAndSet, StoreDataType.Bool);
-            IsLookingBall = Store.AddParameter("IsLookingBall", StoreDataAccess.GetAndSet, StoreDataType.Bool);
-            CurrentDirection = Store.AddParameter("CurrentDirection", StoreDataAccess.GetAndSet, StoreDataType.Raw);
+            thisVector3Right = store.AddParameter("thisVector3Right", StoreDataAccess.Get, StoreDataType.Vector3);
+            thisVector3Left = store.AddParameter("thisVector3Left", StoreDataAccess.Get, StoreDataType.Vector3);
+            thisVector3Forward = store.AddParameter("thisVector3Forward", StoreDataAccess.Get, StoreDataType.Vector3);
+            thisVector3Back = store.AddParameter("thisVector3Back", StoreDataAccess.Get, StoreDataType.Vector3);
+            IsFollowCam = store.AddParameter("IsFollowCam", StoreDataAccess.GetAndSet,  StoreDataType.Boolean);
+            IsLookingBall = store.AddParameter("IsLookingBall", StoreDataAccess.GetAndSet,  StoreDataType.Boolean);
+            CurrentDirection = store.AddParameter("CurrentDirection", StoreDataAccess.GetAndSet, StoreDataType.Custom);
+            CamFollowTarget = store.AddParameter("CamFollowTarget", StoreDataAccess.GetAndSet, StoreDataType.Transform);
 
             //Get
             thisVector3Right.SetDataProvider(currentContext, () => _thisVector3Right);
@@ -57,7 +56,7 @@ namespace Ballance2.CoreGame.Managers
             CamFollowTarget.SetDataProvider(currentContext, () => camFollowTarget);
 
             //Set
-            CurrentDirection.RegisterDataObserver((store, oldV, newV) =>
+            CurrentDirection.RegisterDataObserver((storeV, oldV, newV) =>
             {
                 DirectionType value = (DirectionType)newV;
                 if (cameraRoteValue != value)
@@ -70,17 +69,19 @@ namespace Ballance2.CoreGame.Managers
                     isCameraRoteingX = true;
                 }
             });
-            CamFollowTarget.RegisterDataObserver((store, oldV, newV) => camFollowTarget = store.TransformData());
-            IsLookingBall.RegisterDataObserver((store, oldV, newV) => isLookingBall = store.BoolData());
-            IsFollowCam.RegisterDataObserver((store, oldV, newV) => isFollowCam = store.BoolData());
+            CamFollowTarget.RegisterDataObserver((storeV, oldV, newV) => camFollowTarget = (Transform)newV);
+            IsLookingBall.RegisterDataObserver((storeV, oldV, newV) => isLookingBall = (bool)newV);
+            IsFollowCam.RegisterDataObserver((storeV, oldV, newV) => isFollowCam = (bool)newV);
 
             
         }
         private void InitShareGlobalStore()
         {
-            storeBallmgr = GameManager.GetManager("BallManager").Store;
-            CurrentBall = storeBallmgr.GetParameter("CurrentBall");
-            IsControlling = storeBallmgr.GetParameter("IsControlling");
+            GameManager.RegisterManagerRedayCallback("BallManager", (self, store, manager) =>
+            {
+                CurrentBall = store.GetParameter("CurrentBall");
+                IsControlling = store.GetParameter("IsControlling");
+            });
         }
         private void InitActions()
         {
@@ -91,7 +92,23 @@ namespace Ballance2.CoreGame.Managers
                 new GameActionHandlerDelegate[]
                 {
                     (param) => {
+                        CamStart();
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) => {
                         CamClose();
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) => {
+                        CamSetNoLookAtBall();
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) => {
+                        CamSetLookAtBall();
+                        return GameActionCallResult.SuccessResult;
+                    },
+                    (param) => {
+                        CamSetJustLookAtBall();
                         return GameActionCallResult.SuccessResult;
                     },
                     (param) => {
@@ -110,22 +127,6 @@ namespace Ballance2.CoreGame.Managers
                         CamRoteSpaceBack();
                         return GameActionCallResult.SuccessResult;
                     },
-                    (param) => {
-                        CamSetJustLookAtBall();
-                        return GameActionCallResult.SuccessResult;
-                    },
-                    (param) => {
-                        CamSetLookAtBall();
-                        return GameActionCallResult.SuccessResult;
-                    },
-                    (param) => {
-                        CamSetNoLookAtBall();
-                        return GameActionCallResult.SuccessResult;
-                    },
-                    (param) => {
-                        CamStart();
-                        return GameActionCallResult.SuccessResult;
-                    },
                 },
                 null
              );
@@ -137,16 +138,21 @@ namespace Ballance2.CoreGame.Managers
 
         #endregion
 
-        public override void PreInitManager()
+        protected override void InitPre()
         {
-            base.PreInitManager();
-            InitGlobaShareAndStore();
             InitActions();
+            InitShareGlobalStore();
+            base.InitPre();
         }
+        protected override bool InitStore(Store store)
+        {
+            InitGlobaShareAndStore(store);
+            return base.InitStore(store);
+        }
+
         public override bool InitManager()
         {
             ballCamera.gameObject.SetActive(false);
-            InitShareGlobalStore();
             return true;
         }
         public override bool ReleaseManager()
@@ -158,7 +164,7 @@ namespace Ballance2.CoreGame.Managers
 
         private void FixedUpdate()
         {
-            if (IsControlling != null && IsControlling.BoolData())
+            if (!IsControlling.IsNull() && IsControlling.BoolData())
                 CamUpdate();
             if (isFollowCam)
                 CamFollow();
@@ -210,7 +216,7 @@ namespace Ballance2.CoreGame.Managers
         public GameObject ballCamFollowTarget;
 
         private Vector3 camVelocityTarget2 = new Vector3();
-        private Transform camFollowTarget;
+        private Transform camFollowTarget = null;
         private Vector3 camVelocityTarget = new Vector3();
 
         private float cameraRoteXVal = 0;
@@ -389,7 +395,6 @@ namespace Ballance2.CoreGame.Managers
                 if (!CurrentBall.IsNull())
                 {
                     ballCamFollowTarget.transform.position = Vector3.SmoothDamp(ballCamFollowTarget.transform.position, ((GameBall)CurrentBall.Data()).transform.position, ref camVelocityTarget2, camFollowSpeed2);
-                    //ballCamFollowHost.transform.position = Vector3.SmoothDamp(ballCamFollowHost.transform.position, ballCamFollowTarget.transform.position, ref camVelocityTarget, camFollowSpeed);
                     ballCamFollowHost.transform.position = Vector3.SmoothDamp(ballCamFollowHost.transform.position, ((GameBall)CurrentBall.Data()).transform.position, ref camVelocityTarget, camFollowSpeed);
                 }
             }

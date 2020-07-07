@@ -16,12 +16,11 @@ namespace Ballance2.GameCore
 
         }
 
-        public override void PreInitManager()
+        protected override void InitPre()
         {
-            base.PreInitManager();
-
             GameManager.GameMediator.RegisterAction(GameActionNames.CoreActions["EditLevel"],
-                TAG, OnCallLoadLevel, new string[] { "System.String" });
+                   TAG, OnCallLoadLevel, new string[] { "System.String" });
+            base.InitPre();
         }
         public override bool InitManager()
         {

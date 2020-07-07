@@ -23,19 +23,22 @@ namespace Ballance2.CoreGame.Managers
 
         }
 
-        public override void PreInitManager()
+        protected override void InitPre()
         {
-            base.PreInitManager();
-
-            InitGlobaShareAndStore();
             InitActions();
+            InitShareDataStores();
+            base.InitPre();
+        }
+        protected override bool InitStore(Store store)
+        {
+            InitGlobaShareAndStore(store);
+            return base.InitStore(store);
         }
         public override bool InitManager()
         {
             keyListener = gameObject.AddComponent<KeyListener>();
 
             InitSettings();
-            InitShareDataStores();
             InitMisc();
             InitBalls();
             return true;
@@ -262,6 +265,7 @@ namespace Ballance2.CoreGame.Managers
                     new string[] { "Ballance2.CoreGame.GamePlay.BallPushType" },
                     new string[] { "Ballance2.CoreGame.GamePlay.BallPushType" },
                     new string[] { "UnityEngine.Vector3" },
+                    null,
                     new string[] { "UnityEngine.Vector3" },
                     new string[] { "System.String" },
                     null,
@@ -292,29 +296,28 @@ namespace Ballance2.CoreGame.Managers
         private StoreData IsReverseControl = null;//[bool] 获取是否控制反转
 
         //其他模块全局共享数据
-        private Store storeCammgr = null;
-        private StoreData IsLookingBall = null;
-        private StoreData IsFollowCam = null;
-        private StoreData CamFollowTarget = null;
+        private StoreData IsLookingBall = StoreData.Empty;
+        private StoreData IsFollowCam = StoreData.Empty;
+        private StoreData CamFollowTarget = StoreData.Empty;
         //他模块全局共享操作
-        private GameAction CamRoteRight;
-        private GameAction CamRoteLeft;
-        private GameAction CamRoteSpace;
-        private GameAction CamRoteSpaceBack;
+        private GameAction CamRoteRight = GameAction.Empty;
+        private GameAction CamRoteLeft = GameAction.Empty;
+        private GameAction CamRoteSpace = GameAction.Empty;
+        private GameAction CamRoteSpaceBack = GameAction.Empty;
 
-        private void InitGlobaShareAndStore()
+        private void InitGlobaShareAndStore(Store store)
         {
             //初始化数据桥
-            CurrentBall = Store.AddParameter("CurrentBall", StoreDataAccess.Get, StoreDataType.Raw);
-            CurrentBallName = Store.AddParameter("CurrentBallName", StoreDataAccess.Get, StoreDataType.String);
-            IsControlling = Store.AddParameter("IsControlling", StoreDataAccess.GetAndSet, StoreDataType.Bool);
-            PushType = Store.AddParameter("PushType", StoreDataAccess.Get, StoreDataType.Raw);
-            IsBallSmoothMove = Store.AddParameter("IsBallSmoothMove", StoreDataAccess.Get, StoreDataType.Bool);
-            IsBallDebug = Store.AddParameter("IsBallDebug", StoreDataAccess.Get, StoreDataType.Bool);
-            IsReverseControl = Store.AddParameter("IsReverseControl", StoreDataAccess.Get, StoreDataType.Bool);
+            CurrentBall = store.AddParameter("CurrentBall", StoreDataAccess.Get, StoreDataType.Custom);
+            CurrentBallName = store.AddParameter("CurrentBallName", StoreDataAccess.Get, StoreDataType.String);
+            IsControlling = store.AddParameter("IsControlling", StoreDataAccess.GetAndSet,  StoreDataType.Boolean);
+            PushType = store.AddParameter("PushType", StoreDataAccess.Get, StoreDataType.Custom);
+            IsBallSmoothMove = store.AddParameter("IsBallSmoothMove", StoreDataAccess.Get,  StoreDataType.Boolean);
+            IsBallDebug = store.AddParameter("IsBallDebug", StoreDataAccess.Get,  StoreDataType.Boolean);
+            IsReverseControl = store.AddParameter("IsReverseControl", StoreDataAccess.Get,  StoreDataType.Boolean);
 
             //Get
-            CurrentBall.SetDataProvider(currentContext, () => currentBall);
+            CurrentBall.SetDataProvider(currentContext, () => currentBallType);
             CurrentBallName.SetDataProvider(currentContext, () => currentBallType.TypeName);
             IsControlling.SetDataProvider(currentContext, () => isBallControl);
             PushType.SetDataProvider(currentContext, () => pushType);
@@ -325,7 +328,7 @@ namespace Ballance2.CoreGame.Managers
             //Set
             IsControlling.RegisterDataObserver((storeData, oldV, newV) =>
             {
-                bool value = storeData.BoolData();
+                bool value = (bool)newV;
                 if (value != isBallControl)
                 {
                     isBallControl = value;
@@ -334,30 +337,31 @@ namespace Ballance2.CoreGame.Managers
                     {
                         IsLookingBall.SetData(currentContext, true);
                         IsFollowCam.SetData(currentContext, true);
-                        if (currentBallType != null)
-                            currentBallType.StartControll();
+                        if (currentBallType != null) currentBallType.StartControll();
                     }
                     else
                     {
                         IsFollowCam.SetData(currentContext, false);
                         IsLookingBall.SetData(currentContext, false);
-                        if (currentBallType != null)
-                            currentBallType.EndControll(true);
+                        if (currentBallType != null) currentBallType.EndControll(true);
                     }
                 }
             });
         }
         private void InitShareDataStores()
         {
-            storeCammgr = GameManager.GetManager("CamMgr").Store;
-            IsFollowCam = storeCammgr.GetParameter("IsFollowCam");
-            IsLookingBall = storeCammgr.GetParameter("IsLookingBall");
-            CamFollowTarget = storeCammgr.GetParameter("CamFollowTarget");
+            GameManager.RegisterManagerRedayCallback("CamManager", (self, store, manager) =>
+            {
+                IsFollowCam = store.GetParameter("IsFollowCam");
+                IsLookingBall = store.GetParameter("IsLookingBall");
+                CamFollowTarget = store.GetParameter("CamFollowTarget");
 
-            CamRoteRight = GameManager.GameMediator.GetRegisteredAction(GameActionNames.CamManager["CamRoteRight"]);
-            CamRoteLeft = GameManager.GameMediator.GetRegisteredAction(GameActionNames.CamManager["CamRoteLeft"]);
-            CamRoteSpace = GameManager.GameMediator.GetRegisteredAction(GameActionNames.CamManager["CamRoteSpace"]);
-            CamRoteSpaceBack = GameManager.GameMediator.GetRegisteredAction(GameActionNames.CamManager["CamRoteSpaceBack"]);
+                CamRoteRight = GameManager.GameMediator.GetRegisteredAction(GameActionNames.CamManager["CamRoteRight"]);
+                CamRoteLeft = GameManager.GameMediator.GetRegisteredAction(GameActionNames.CamManager["CamRoteLeft"]);
+                CamRoteSpace = GameManager.GameMediator.GetRegisteredAction(GameActionNames.CamManager["CamRoteSpace"]);
+                CamRoteSpaceBack = GameManager.GameMediator.GetRegisteredAction(GameActionNames.CamManager["CamRoteSpaceBack"]);
+
+            });
         }
 
         #endregion
@@ -513,7 +517,7 @@ namespace Ballance2.CoreGame.Managers
 
         protected void OnGUI()
         {
-            if (debug && CurrentBall != null)
+            if (debug && currentBallType != null)
             {
                 line.y = 35;
                 GUI.Label(line, "CurrentBall : " + currentBallType.TypeName); line.y += 16;
@@ -842,8 +846,8 @@ namespace Ballance2.CoreGame.Managers
 
         //下一次恢复球的位置
         private Vector3 nextRecoverBallPos = Vector3.zero;
-        private bool isBallControl = false;
-        private bool isBallSmoothMove = false;
+        public bool isBallControl = false;
+        public bool isBallSmoothMove = false;
         private Vector3 ballSmoothMoveTarget;
         private Vector3 ballSmoothMoveVelocityTarget;
         private float ballSmoothMoveTime = 0.2f;
@@ -931,8 +935,9 @@ namespace Ballance2.CoreGame.Managers
                 currentBallType.Active(nextRecoverBallPos);
                 currentBall = ball.gameObject;
                 rigidbodyCurrent = currentBall.GetComponent<Rigidbody>();
-                CamFollowTarget.SetData(currentContext, currentBall.GetComponent<Transform>());
-                IsFollowCam.SetData(currentContext , true);
+
+                CamFollowTarget.SetData(currentContext, currentBall.transform);
+                IsFollowCam.SetData(currentContext, true);
                 IsLookingBall.SetData(currentContext, true);
             }
         }

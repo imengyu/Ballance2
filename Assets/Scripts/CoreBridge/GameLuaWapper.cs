@@ -1,4 +1,5 @@
-﻿using SLua;
+﻿using Ballance2.Managers;
+using SLua;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,10 @@ namespace Ballance2.CoreBridge
     public delegate void VoidDelegate();
 
     [CustomLuaClass]
+    public delegate void LuaManagerRedayDelegate(LuaTable self, 
+        Store store, BaseManager baseManager);
+
+    [CustomLuaClass]
     public delegate void LuaStartDelegate(LuaTable self, GameObject gameObject);
     [CustomLuaClass]
     public delegate void LuaVoidDelegate(LuaTable self);
@@ -27,4 +32,6 @@ namespace Ballance2.CoreBridge
     public delegate void LuaBoolDelegate(LuaTable self, bool b);
     [CustomLuaClass]
     public delegate bool LuaReturnBoolDelegate(LuaTable self);
+    [CustomLuaClass]
+    public delegate bool LuaStoreReturnBoolDelegate(LuaTable self, Store store);
 }

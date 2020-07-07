@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Ballance2.Utils
 {
@@ -38,7 +34,8 @@ namespace Ballance2.Utils
         }
         public static void SetLastErrorAndLog(GameError code, string tag, string message)
         {
-            SetLastErrorAndLog(code, tag, message);
+            LastError = code;
+            GameLogger.Warning(tag, message);
         }
 
         /// <summary>
@@ -120,6 +117,10 @@ namespace Ballance2.Utils
         /// 参数未提供
         /// </summary>
         ParamNotProvide,
+        /// <summary>
+        /// 空数据
+        /// </summary>
+        Empty,
         /// <summary>
         /// 需要初始化的 Prefab 未找到，可能是未注册
         /// </summary>

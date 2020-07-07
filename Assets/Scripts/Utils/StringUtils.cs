@@ -140,6 +140,8 @@ namespace Ballance2.Utils
         public static object[] TryConvertStringArrayToValueArray(string[] arr)
         {
             object[] rs = new object[arr.Length];
+            if(arr==null) return rs;
+
             for (int i = 0; i < arr.Length; i++)
             {
                 string s = arr[i];
@@ -171,11 +173,16 @@ namespace Ballance2.Utils
         public static string ValueArrayToString(object[] arr)
         {
             StringBuilder sb = new StringBuilder();
-            foreach(object o in arr)
+            if (arr == null)
+                sb.Append("null");
+            else
             {
-                sb.Append("\n");
-                if (o == null) sb.Append("null");
-                else sb.Append(o.ToString());
+                foreach (object o in arr)
+                {
+                    sb.Append("\n");
+                    if (o == null) sb.Append("null");
+                    else sb.Append(o.ToString());
+                }
             }
             return sb.ToString() ;
         }

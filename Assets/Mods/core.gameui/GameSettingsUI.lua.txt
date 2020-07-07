@@ -165,11 +165,11 @@ function LoadGameSettingsUI()
   ------------------
 
   -- 注册操作
-  GameManager.GameMediator:RegisterAction(GameActionNames.ACTION_SHOW_SETTINGS, "core.ui", function(p)
+  GameManager.GameMediator:RegisterAction(GameActionNames.CoreActions["ShowSettings"], "core.ui", function(p)
     pageOld = p
     UIManager:GotoUIPage(pageSettings.PagePath)
     return GameActionCallResult.CreateActionCallResult(true, nil)
-  end, nil)
+  end, nil, "System.String")
 
 	return true
 end

@@ -9,8 +9,14 @@ using System.Text.RegularExpressions;
 namespace Ballance2.Managers
 {
     /// <summary>
-    /// 游戏全局中介者
+    /// 游戏全局中介者。
+    /// 核心模块。
     /// </summary>
+    /// <remarks>
+    /// 游戏的架构分为：
+    /// 操作，事件，共享数据 》管理器。
+    /// 各个模块通过中介者解耦
+    /// </remarks>
     [CustomLuaClass]
     public class GameMediator : BaseManager
     {
@@ -19,6 +25,7 @@ namespace Ballance2.Managers
         public GameMediator() : base(GamePartName.Core, TAG)
         {
             replaceable = false;
+            initStore = false;
         }
 
         public override bool InitManager()
@@ -370,7 +377,11 @@ namespace Ballance2.Managers
                 || (callTypeChecks != null && callTypeChecks.Length != handlers.Length))
             {
                 GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG,
-                    "RegisterActions 参数数组长度不符");
+                    "RegisterActions 参数数组长度不符\n{0}=={1}=={2}=={3}", 
+                    names.Length, 
+                    handlerNames.Length,
+                    handlers.Length,
+                    callTypeChecks.Length);
                 return succCount;
             }
 
@@ -414,7 +425,10 @@ namespace Ballance2.Managers
                  || (callTypeChecks != null && callTypeChecks.Length != handlers.Length))
             {
                 GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG,
-                    "RegisterActions 参数数组长度不符");
+                    "RegisterActions 参数数组长度不符\n{0}=={1}=={2}",
+                    names.Count,
+                    handlers.Length,
+                    callTypeChecks.Length);
                 return succCount;
             }
 
@@ -460,7 +474,11 @@ namespace Ballance2.Managers
                  || (callTypeChecks != null && callTypeChecks.Length != luaFunctionHandlers.Length))
             {
                 GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG,
-                    "RegisterActions 参数数组长度不符");
+                    "RegisterActions 参数数组长度不符\n{0}=={1}=={2}=={3}",
+                    names.Length,
+                    handlerNames.Length,
+                    luaFunctionHandlers.Length,
+                    callTypeChecks.Length);
                 return succCount;
             }
 
@@ -503,7 +521,10 @@ namespace Ballance2.Managers
                  || (callTypeChecks != null && callTypeChecks.Length != luaFunctionHandlers.Length))
             {
                 GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG,
-                    "RegisterActions 参数数组长度不符");
+                    "RegisterActions 参数数组长度不符\n{0}=={1}=={2}",
+                    names.Length,
+                    luaFunctionHandlers.Length,
+                    callTypeChecks.Length);
                 return succCount;
             }
 
@@ -690,7 +711,12 @@ namespace Ballance2.Managers
 
             if (action == null)
             {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "CallAction action 参数未提供");
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "CallAction action 参数为空");
+                return result;
+            }
+            if (action.Name == GameAction.Empty.Name)
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.Empty, TAG, "CallAction action 为空");
                 return result;
             }
             if (action.CallTypeCheck != null && action.CallTypeCheck.Length > 0)
@@ -699,7 +725,7 @@ namespace Ballance2.Managers
                 int argCount = action.CallTypeCheck.Length;
                 if (argCount > param.Length)
                 {
-                    GameLogger.Warning(TAG, "操作 {0} 至少需要 {1} 个参数", name, argCount);
+                    GameLogger.Warning(TAG, "操作 {0} 至少需要 {1} 个参数", action.Name, argCount);
                     return result;
                 }
                 string allowType = "", typeName = "";
@@ -887,6 +913,7 @@ namespace Ballance2.Managers
             {
                 s.Append('\n');
                 s.Append(a.Key);
+                s.Append(' ');
                 s.Append(a.Value.GameHandler.Name);
             }
             GameLogger.Log(TAG, "GameActions count {0} : \n{1}", actions.Count, s.ToString());
@@ -995,7 +1022,6 @@ namespace Ballance2.Managers
            
             return true;
         }
-
 
         #endregion
     }

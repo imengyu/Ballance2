@@ -19,16 +19,31 @@ namespace Ballance2.Managers
         {
         }
 
-        public override bool InitManager()
+        protected override void InitPre()
         {
             InitCommands();
+            base.InitPre();
+        }
+        public override bool InitManager()
+        {
             InitDebugWindow();
+            //日志回调
+#if UNITY_4
+            Application.RegisterLogCallback(HandleLog);
+#else
+            Application.logMessageReceived += HandleUnityLog;
+#endif
             return true;
         }
         public override bool ReleaseManager()
         {
             logDestroyed = true;
-            OnDisable();
+            //日志回调
+#if UNITY_4
+            Application.RegisterLogCallback(null);
+#else
+            Application.logMessageReceived -= HandleUnityLog;
+#endif
             DestroyCommands();
             DestroyDebugWindow();
             return true;
@@ -174,7 +189,6 @@ namespace Ballance2.Managers
         }
         private void DestroyDebugWindow()
         {
-            OnDisable();
             GameLogger.UnRegisterLogCallback();
             if (!thisDestroyed)
             {
@@ -263,6 +277,11 @@ namespace Ballance2.Managers
 
         private void OnDestroy()
         {
+#if UNITY_4
+            Application.RegisterLogCallback(null);
+#else
+            Application.logMessageReceived -= HandleUnityLog;
+#endif
             logDestroyed = true;
             thisDestroyed = true;
         }
@@ -309,6 +328,9 @@ namespace Ballance2.Managers
             Text newText = newT.GetComponent<Text>();
             CustomData customData = newGo.GetComponent<CustomData>();
             customData.customData = data;
+
+            if (data.Data.Length > 32767)//字符过长Text无法显示
+                data.Data = data.Data.Substring(0, 32766);
 
             switch (data.Type)
             {
@@ -436,23 +458,6 @@ namespace Ballance2.Managers
             DebugTextErrors.text = GameLogger.GetLogCount(GameLogger.LogType.Error).ToString();
             DebugTextWarnings.text = GameLogger.GetLogCount(GameLogger.LogType.Warning).ToString();
             DebugTextInfos.text = GameLogger.GetLogCount(GameLogger.LogType.Info).ToString();
-        }
-
-        void OnEnable()
-        {
-#if UNITY_4
-            Application.RegisterLogCallback(HandleLog);
-#else
-            Application.logMessageReceived += HandleUnityLog;
-#endif
-        }
-        void OnDisable()
-        {
-#if UNITY_4
-            Application.RegisterLogCallback(null);
-#else
-            Application.logMessageReceived -= HandleUnityLog;
-#endif
         }
 
         void HandleUnityLog(string message, string stackTrace, LogType type)

@@ -24,23 +24,19 @@ namespace Ballance2.Managers
 
         public override bool InitManager()
         {
-            GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_BASE_INIT_FINISHED, TAG, 
-                (e, p) =>
+            GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_BASE_INIT_FINISHED, TAG, (e, p) =>
                 {
-                    GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_GAME_INIT_ENTRY, TAG,
-                       (e1, p1) =>
-                       {
-                           StartCoroutine(GameInitCore()); return false;
-                    });
                     LoadGameInitBase();
                     StartCoroutine(LoadGameInitUI());
                     InitSettings();
                     InitVideoSettings();
                     return false;
                 });
-            
             GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_GAME_INIT_TAKE_OVER_CONTROL);
-
+            GameManager.GameMediator.RegisterAction(GameActionNames.CoreActions["ACTION_GAME_INIT"], TAG, (param) => {
+                StartCoroutine(GameInitCore());
+                return GameActionCallResult.SuccessResult;
+            }, null);
             return true;
         }
         public override bool ReleaseManager()
@@ -182,16 +178,19 @@ namespace Ballance2.Managers
             GameManager.RegisterManager(ballManager, false);
             GameManager.RegisterManager(camManager, false);
 
-            GameManager.RequestAllManagerInitialization(true);
+            //初始化管理器
+            GameManager.RequestAllManagerInitialization();
 
             //正常情况下，等待动画播放完成
             if (GameManager.Mode == GameMode.Game)
                 yield return new WaitUntil(IsGameInitAnimPlayend);
 
-            //初始化管理器
-            GameManager.RequestAllManagerInitialization(false);
+            yield return new WaitUntil(GameManager.IsManagerInitFinished);
+
             //初始化模组启动代码（游戏初始化完成）
             ModManager.ExecuteModEntry(GameModEntryCodeExecutionAt.AtStart);
+
+            yield return new WaitUntil(GameManager.IsManagerInitFinished);
 
             //分发接管事件
             int hC = GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_TAKE_OVER_CONTROL, "*", (VoidDelegate)GameInitContinueInit);

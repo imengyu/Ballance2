@@ -17,6 +17,15 @@ namespace Ballance2.CoreBridge
     public class StoreData
     {
         /// <summary>
+        /// 空
+        /// </summary>
+        public static StoreData Empty { get; } = new StoreData("Empty", StoreDataAccess.GetAndSet, StoreDataType.NotSet);
+
+        /// <summary>
+        /// 名称
+        /// </summary>
+        public string Name { get; private set; }
+        /// <summary>
         /// 原始数据
         /// </summary>
         public object DataRaw
@@ -24,7 +33,20 @@ namespace Ballance2.CoreBridge
             get
             {
                 if (StoreDataProvider != null)
-                    SetData(currentHolderContext, StoreDataProvider());
+                {
+                   object data = StoreDataProvider();
+                    if(data == null)
+                    {
+                        _DataRaw = null;
+                        return _DataRaw;
+                    }
+                    //类型检查
+                    string typeName = data.GetType().Name;
+                    if (_DataType != StoreDataType.Custom && typeName != _DataType.ToString())
+                        return _DataRaw;
+
+                    _DataRaw = data;
+                }
                 return _DataRaw;
             }
         }
@@ -45,12 +67,13 @@ namespace Ballance2.CoreBridge
         
         private int currentHolderContext = 0;
         private object _DataRaw = null;
-        private StoreDataType _DataType = StoreDataType.Null;
+        private StoreDataType _DataType = StoreDataType.Custom;
         private List<StoreData> _DataArray = new List<StoreData>();
         private StoreDataAccess _StoreDataAccess = StoreDataAccess.Get;
 
-        internal StoreData(StoreDataAccess access, StoreDataType dataType)
+        internal StoreData(string name, StoreDataAccess access, StoreDataType dataType)
         {
+            Name = name;
             _StoreDataAccess = access;
             _DataType = dataType;
         }
@@ -61,11 +84,13 @@ namespace Ballance2.CoreBridge
         /// <returns></returns>
         public bool IsNull()
         {
+            if (DataType == StoreDataType.NotSet)
+                return true;
             if (DataType == StoreDataType.GameObject)
                 return ((GameObject)DataRaw) == null;
             if (DataType == StoreDataType.Object)
                 return ((UnityEngine.Object)DataRaw) == null;
-            return DataRaw == null || DataType == StoreDataType.Null;
+            return DataRaw == null;
         }
         /// <summary>
         /// 释放
@@ -73,7 +98,7 @@ namespace Ballance2.CoreBridge
         public void Destroy()
         {
             _DataRaw = null;
-            _DataType = StoreDataType.Null;
+            _DataType = StoreDataType.NotSet;
             if(DataArray != null)
             {
                 foreach (var v in DataArray)
@@ -144,7 +169,7 @@ namespace Ballance2.CoreBridge
 
         public bool SetData(int context, object data)
         {
-            if (_StoreDataAccess == StoreDataAccess.Get && context != currentHolderContext)
+            if (_StoreDataAccess != StoreDataAccess.GetAndSet && context != currentHolderContext)
             {
                 GameErrorManager.SetLastErrorAndLog(GameError.ContextMismatch, "StoreData",
                     "上下文 {0} 没有操作此数据的权限", context);
@@ -152,11 +177,10 @@ namespace Ballance2.CoreBridge
             }
 
             //类型检查
-            string typeName = data.GetType().Name;
-            if (_DataType != StoreDataType.Raw && typeName != _DataType.ToString())
+            if (_DataType != StoreDataType.Custom && data.GetType().Name != _DataType.ToString())
             {
                 GameErrorManager.SetLastErrorAndLog(GameError.ContextMismatch, "StoreData",
-                  "输入的类型 {0} 与设置的类型不符 {1}", typeName, _DataType.ToString());
+                  "输入 {0} 与设置的类型不符 {1}", data, _DataType.ToString());
                 return false;
             }
 
@@ -166,7 +190,6 @@ namespace Ballance2.CoreBridge
                 _DataRaw = data;
                 NotificationDataObserver(old, data);
             }
-
             return true;
         }
 
@@ -225,31 +248,33 @@ namespace Ballance2.CoreBridge
         public StoreData[] ArrayData() { return DataArray.ToArray(); }
         public List<StoreData> ListArrayData() { return DataArray; }
         public Color ColorData() { return (Color)DataRaw; }
-        public Material MaterialData() { return (Material)DataRaw; }
-        public Texture TextureData() { return (Texture)DataRaw; }
-        public Texture2D Texture2DData() { return (Texture2D)DataRaw; }
+        public Material MaterialData() { return DataRaw == null ? null : (Material)DataRaw; }
+        public Texture TextureData() { return DataRaw == null ? null : (Texture)DataRaw; }
+        public Texture2D Texture2DData() { return DataRaw == null ? null : (Texture2D)DataRaw; }
         public Vector2 Vector2Data() { return (Vector2)DataRaw; }
         public Vector3 Vector3Data() { return (Vector3)DataRaw; }
         public Vector4 Vector4Data() { return (Vector4)DataRaw; }
         public Quaternion QuaternionData() { return (Quaternion)DataRaw; }
-        public Sprite SpriteData() { return (Sprite)DataRaw; }
-        public Rigidbody RigidbodyData() { return (Rigidbody)DataRaw; }
-        public Rigidbody2D Rigidbody2DData() { return (Rigidbody2D)DataRaw; }
-        public RectTransform RectTransformData() { return (RectTransform)DataRaw; }
-        public Transform TransformData() { return (Transform)DataRaw; }
-        public Camera CameraData() { return (Camera)DataRaw; }
-        public GameObject GameObjectData() { return (GameObject)DataRaw; }
-        public UnityEngine.Object ObjectData() { return (UnityEngine.Object)DataRaw; }
-        public AudioClip AudioClipData() { return (AudioClip)DataRaw; }
-        public AudioSource AudioSourceData() { return (AudioSource)DataRaw; }
-        public MonoBehaviour MonoBehaviourData() { return (MonoBehaviour)DataRaw; }
-        public GameMod GameModData() { return (GameMod)DataRaw; }
+        public Sprite SpriteData() { return DataRaw == null ? null : (Sprite)DataRaw; }
+        public Rigidbody RigidbodyData() { return DataRaw == null ? null : (Rigidbody)DataRaw; }
+        public Rigidbody2D Rigidbody2DData() { return DataRaw == null ? null : (Rigidbody2D)DataRaw; }
+        public RectTransform RectTransformData() { return DataRaw == null ? null : (RectTransform)DataRaw; }
+        public Transform TransformData() { return DataRaw == null ? null : (Transform)DataRaw; }
+        public Camera CameraData() { return DataRaw == null ? null : (Camera)DataRaw; }
+        public GameObject GameObjectData() { return DataRaw == null ? null : (GameObject)DataRaw; }
+        public UnityEngine.Object ObjectData() { return DataRaw == null ? null : (UnityEngine.Object)DataRaw; }
+        public AudioClip AudioClipData() { return DataRaw == null ? null : (AudioClip)DataRaw; }
+        public AudioSource AudioSourceData() { return DataRaw == null ? null : (AudioSource)DataRaw; }
+        public MonoBehaviour MonoBehaviourData() { return DataRaw == null ? null : (MonoBehaviour)DataRaw; }
+        public GameMod GameModData() { return DataRaw == null ? null : (GameMod)DataRaw; }
 
         public override string ToString()
         {
-            if(DataType == StoreDataType.Array)
+            if (DataType == StoreDataType.NotSet)
+                return " [StoreData NotSet]";
+            if (DataType == StoreDataType.Array)
                 return DataArray.Count + " [StoreData Array]";
-            if (DataType == StoreDataType.Null)
+            if (DataRaw == null)
                 return "[StoreData Null]";
             return DataRaw.ToString() + " [StoreData " + DataType + "]";
         }
@@ -266,20 +291,17 @@ namespace Ballance2.CoreBridge
     [CustomLuaClass]
     public enum StoreDataType
     {
-        /// <summary>
-        /// 未定义
-        /// </summary>
-        Null,
+        NotSet,
         /// <summary>
         /// object 类型
         /// </summary>
-        Raw,
+        Custom,
         Array,
-        Int,
+        Integer,
         Long,
         Float,
         String,
-        Bool,
+        Boolean,
         Double,
         Color,
         Material,
@@ -364,7 +386,7 @@ namespace Ballance2.CoreBridge
             if (PoolDatas.TryGetValue(name, out old))
                 return old;
 
-            old = new StoreData(access, storeDataType);
+            old = new StoreData(name, access, storeDataType);
             PoolDatas.Add(name, old);
             return old;
         }

@@ -63,7 +63,7 @@ namespace Ballance2.Main
             GameLogger.InitLogger();
             GameManager.AssetsPreferEditor = AssetsPreferEditor;
             GameManager.BreakAtStart = BreakAtStart;
-            GameManager.Init(GameMode, GameRoot, GameCanvas, GamePrefab, GameAssets);
+            StartCoroutine(GameManager.Init(GameMode, GameRoot, GameCanvas, GamePrefab, GameAssets));
         }
         private void OnDestroy()
         {

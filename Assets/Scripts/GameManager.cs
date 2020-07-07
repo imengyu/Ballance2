@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Ballance2.Managers.Base;
+using System.Collections;
 
 namespace Ballance2
 {
@@ -21,25 +22,20 @@ namespace Ballance2
         #region 管理器控制
 
         /// <summary>
-        /// 全局管理器单例数组
-        /// </summary>
-        private static List<BaseManager> managers = null;
-
-        /// <summary>
-        /// 获取管理器
+        /// 获取管理器实例
         /// </summary>
         /// <param name="name">标识符名称</param>
         /// <param name="subName">二级名称</param>
         /// <returns>管理器</returns>
         public static BaseManager GetManager(string name, string subName)
         {
-            foreach (BaseManager m in managers)
+            foreach (BaseManager m in GameManagerWorker.managers)
                 if (m.GetName() == name && m.GetSubName() == subName)
                     return m;
             return null;
         }
         /// <summary>
-        /// 获取管理器（单例）
+        /// 获取管理器实例（单例模式）
         /// </summary>
         /// <param name="name">标识符名称</param>
         /// <returns></returns>
@@ -96,7 +92,7 @@ namespace Ballance2
                 return null;
             }
 
-            managers.Add(baseManager);
+            GameManagerWorker.managers.Add(baseManager);
             GameLogger.Log(TAG, "Manager registered : {0}:{1}", baseManager.GetName(), baseManager.GetSubName());
 
             if (initializeNow)
@@ -113,10 +109,7 @@ namespace Ballance2
         /// <param name="newClass">新的管理器实例</param>
         /// <param name="oldName">要替换的管理器名称</param>
         /// <returns></returns>
-        public static BaseManager ReplaceManager(BaseManager newClass, string oldName)
-        {
-            return ReplaceManager(newClass, oldName, "Singleton");
-        }
+        public static BaseManager ReplaceManager(BaseManager newClass, string oldName) { return ReplaceManager(newClass, oldName, "Singleton"); }
         /// <summary>
         /// 替换管理器
         /// </summary>
@@ -153,8 +146,12 @@ namespace Ballance2
                 return null;
             }
 
-            managers.Remove(old);
-            managers.Add(newClass);
+            newClass.OldManager = old;
+
+            GameManagerWorker.managers.Remove(old);
+            GameManagerWorker.managers.Add(newClass);
+
+            RequestManagerInitialization(newClass);
 
             GameLogger.Log(TAG, "Manager was replaced : {0} -> {1}",
                 old.GetFullName(), newClass.GetFullName());
@@ -163,37 +160,74 @@ namespace Ballance2
         }
 
         /// <summary>
+        /// 注册管理器就绪回调。
+        /// 在这里来引用管理器实例
+        /// </summary>
+        /// <param name="name">标识符名称</param>
+        /// <param name="subName">二级名称</param>
+        /// <param name="managerRedayDelegate">回调</param>
+        /// <returns>返回一个ID，可以使用 UnRegisterManagerRedayCallback 取消注册回调</returns>
+        public static int RegisterManagerRedayCallback(string name, string subName, LuaManagerRedayDelegate managerRedayDelegate, LuaTable self = null)
+        {
+            return GameManagerWorker.RegisterManagerRedayCallback(name, subName, managerRedayDelegate, self);
+        }
+        /// <summary>
+        /// 注册管理器就绪回调（单例）。
+        /// 在这里来引用管理器实例
+        /// </summary>
+        /// <param name="name">标识符名称</param>
+        /// <param name="managerRedayDelegate">回调</param>
+        /// <returns>返回一个ID，可以使用 UnRegisterManagerRedayCallback 取消注册回调</returns>
+        public static int RegisterManagerRedayCallback(string name, LuaManagerRedayDelegate managerRedayDelegate, LuaTable self = null)
+        {
+            return RegisterManagerRedayCallback(name, "Singleton", managerRedayDelegate, self);
+        }
+        /// <summary>
+        /// 取消注册管理器就绪回调
+        /// </summary>
+        /// <param name="id">注册时返回的ID</param>
+        public static void UnRegisterManagerRedayCallback(int id)
+        {
+            GameManagerWorker.UnRegisterManagerRedayCallback(id);
+        }
+
+        public static bool IsManagerInitFinished() { return GameManagerWorker.IsManagerInitFinished(); }
+
+        /// <summary>
         /// 请求所有管理器初始化
         /// </summary>
         /// <param name="isPre">是否是预初始化</param>
-        public static void RequestAllManagerInitialization(bool isPre)
+        public static void RequestAllManagerInitialization()
         {
-            foreach (BaseManager m in managers)
-                if (m.initialized == false)
-                    RequestManagerInitialization(m, isPre);
+            foreach (BaseManager m in GameManagerWorker.managers)
+            {
+                if (!m.initialized || !m.preIinitialized)
+                {
+                    GameManagerWorker.nextInitManages.Add(m);
+                    GameManagerWorker.nextInitManagerTick = 5;
+                }
+            }
         }
         /// <summary>
         /// 请求管理器初始化
         /// </summary>
         /// <param name="manager">目标管理器</param>
         /// <param name="isPre">是否是预初始化</param>
-        public static void RequestManagerInitialization(BaseManager manager, bool isPre)
+        public static void RequestManagerInitialization(BaseManager manager)
         {
-            if (isPre) manager.PreInitManager();
-            else
-            {
-                if (!manager.InitManager())
-                {
-                    GameLogger.Warning(TAG, "RegisterManager 失败，管理器 {0}:{1} 初始化失败", manager.GetName(), manager.GetSubName());
-                    GameErrorManager.LastError = GameError.InitializationFailed;
-                }
-                else
-                {
-                    manager.initialized = true;
-                    if (GameMediator != null)
-                        GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_BASE_MANAGER_INIT_FINISHED, "*", manager.GetName(), manager.GetSubName());
-                }
-            }
+            GameManagerWorker.nextInitManages.Add(manager);
+            GameManagerWorker.nextInitManagerTick = 10;
+        }
+        /// <summary>
+        /// 请求管理器立即初始化
+        /// </summary>
+        /// <param name="manager"></param>
+        public static void RequestManagerInitializationImmediately(BaseManager manager)
+        {
+            if (!manager.preIinitialized)
+                manager.DoPreInit();
+            if (!manager.initialized)
+                GameManagerWorker.InitManager(manager);
         }
         /// <summary>
         /// 手动释放管理器
@@ -202,11 +236,13 @@ namespace Ballance2
         /// <returns></returns>
         public static bool DestroyManager(string name)
         {
-            foreach (BaseManager m in managers)
+            foreach (BaseManager m in GameManagerWorker.managers)
                 if (m.GetName() == name)
                 {
+                    if (m.OldManager != null)
+                        m.OldManager.ReleaseManager();
                     m.ReleaseManager();
-                    managers.Remove(m);
+                    GameManagerWorker.managers.Remove(m);
                     UnityEngine.Object.Destroy(m);
                     GameLogger.Log(TAG, "Manager destroyed : {0}:{1}", m.GetName(), m.GetSubName());
                     return true;
@@ -307,9 +343,8 @@ namespace Ballance2
             return gameMediatorInitFinished;
         }
 
-        internal static bool Init(GameMode mode, GameObject gameRoot, GameObject gameCanvas,  List<GameObjectInfo> gamePrefab, List<GameAssetsInfo> gameAssets)
+        internal static IEnumerator Init(GameMode mode, GameObject gameRoot, GameObject gameCanvas, List<GameObjectInfo> gamePrefab, List<GameAssetsInfo> gameAssets)
         {
-            bool result = false;
             CurrentScense = GameCurrentScense.None;
             Mode = mode;
             GameRoot = gameRoot;
@@ -321,83 +356,59 @@ namespace Ballance2
             GameBaseCamera = GameObject.Find("GameBaseCamera").GetComponent<Camera>();
             GameManagerObject = GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, TAG);
             GameManagerWorker = GameManagerObject.AddComponent<GameManagerWorker>();
-            managers = new List<BaseManager>();
-            
+
             //错误提示
             GameObject GlobalGameErrorPanel = GameCanvas.transform.Find("GlobalGameErrorPanel").gameObject;
             GameErrorManager.SetGameErrorUI(GlobalGameErrorPanel.GetComponent<GameGlobalErrorUI>());
 
-            GameLogger.Log(TAG, "Init game");
+            GameLogger.Log(TAG, "Init game {0}", GameManagerWorker.managers);
+            GameSettingsManager.Init();
+
+            yield return new WaitForSeconds(0.2f);
 
             if (Mode != GameMode.None)
             {
-                try
-                {
-                    //初始化各个管理器
-                    GameMediator = (GameMediator)RegisterManager(typeof(GameMediator));
-                    gameMediatorInitFinished = true;
-                    GameSettingsManager.Init();
-                    UIManager = (UIManager)RegisterManager(typeof(UIManager));
-                    RegisterManager(typeof(DebugManager));
-                    RegisterManager(typeof(ModManager));
-                    RegisterManager(typeof(SoundManager));
-                    
-                    if (Mode != GameMode.MinimumDebug)
-                    {
-                        //游戏加载器
-                        RegisterManager(typeof(GameInit));
-                        //Lua
-                        GameMainLuaState = new LuaSvr.MainState();
-                    }
+                //初始化基础管理器
+                GameMediator = (GameMediator)RegisterManager(typeof(GameMediator));
+                RequestManagerInitializationImmediately(GameMediator);//中介者需要立即初始化
+                gameMediatorInitFinished = true;
+                UIManager = (UIManager)RegisterManager(typeof(UIManager));
+                RegisterManager(typeof(DebugManager));
+                RegisterManager(typeof(ModManager));
+                RegisterManager(typeof(SoundManager));
 
-                    //初始化完成
-                    gameBaseInitFinished = true;
-                    GameLogger.Log(TAG, "All manager initialization complete");
-                    GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_BASE_INIT_FINISHED, "*", null);
-
-                    if (Mode == GameMode.MinimumDebug)
-                    {
-                        GameLogger.Log(TAG, "MinimumLoad Break");
-                        gameManagerAlertDialogId = UIManager.GlobalAlertWindow("MinimumLoad<br/>当前是最小加载模式。", "提示", "关闭");
-                    }
-                    else if (gameBreakAtStart) //启动时暂停
-                    {
-                        GameLogger.Log(TAG, "Game break at start");
-                        gameManagerAlertDialogId = UIManager.GlobalAlertWindow("BreakAtStart<br/>您可以点击“继续运行”", "BreakAtStart", "继续运行");
-                        GameMediator.RegisterEventHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, TAG, (evtName, param) =>
-                        {
-                            if ((int)param[0] == gameManagerAlertDialogId)
-                            {
-                                //通知进行下一步内核加载
-                                int initEventHandledCount = GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_ENTRY, "*", null);
-                                if (initEventHandledCount == 0)
-                                {
-                                    GameLogger.Error(TAG, "Not found handler for EVENT_GAME_INIT_ENTRY!");
-                                    GameErrorManager.ThrowGameError(GameError.HandlerLost, "未找到 EVENT_GAME_INIT_ENTRY 的下一步事件接收器\n此错误出现原因可能是配置不正确");
-                                }
-                            }
-                            return false;
-                        });
-                    }
-                    else
-                    {
-                        //通知进行下一步内核加载
-                        int initEventHandledCount = GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_ENTRY, "*", null);
-                        if (initEventHandledCount == 0)
-                        {
-                            GameLogger.Error(TAG, "Not found handler for EVENT_GAME_INIT_ENTRY!");
-                            GameErrorManager.ThrowGameError(GameError.HandlerLost, "未找到 EVENT_GAME_INIT_ENTRY 的下一步事件接收器\n此错误出现原因可能是配置不正确");
-                        }
-                        else CurrentScense = GameCurrentScense.Intro;
-                    }
-                }
-                catch(Exception e)
+                if (Mode != GameMode.MinimumDebug)
                 {
-                    GameLogger.Error(TAG, "Global Exception was captured in initialization. ");
-                    GameLogger.Exception(e);
-                    GameErrorManager.LastError = GameError.GlobalException;
-                    GameErrorManager.ThrowGameError(GameError.GlobalException, "初始化失败：\n" + e.ToString());
+                    //游戏加载器
+                    RegisterManager(typeof(GameInit));
+                    //Lua
+                    GameMainLuaState = new LuaSvr.MainState();
                 }
+
+                yield return new WaitUntil(IsManagerInitFinished);
+
+                //初始化完成
+                gameBaseInitFinished = true;
+                GameLogger.Log(TAG, "All manager initialization complete");
+                GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_BASE_INIT_FINISHED, "*", null);
+
+                if (Mode == GameMode.MinimumDebug)
+                {
+                    GameLogger.Log(TAG, "MinimumLoad Break");
+                    gameManagerAlertDialogId = UIManager.GlobalAlertWindow("MinimumLoad<br/>当前是最小加载模式。", "提示", "关闭");
+                }
+                else if (gameBreakAtStart) //启动时暂停
+                {
+                    GameLogger.Log(TAG, "Game break at start");
+                    gameManagerAlertDialogId = UIManager.GlobalAlertWindow("BreakAtStart<br/>您可以点击“继续运行”", "BreakAtStart", "继续运行");
+                    GameMediator.RegisterEventHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, TAG, (evtName, param) =>
+                    {
+                        if ((int)param[0] == gameManagerAlertDialogId)
+                            CallGameInit();
+                        return false;
+                    });
+                }
+                else CallGameInit();
             }
             else
             {
@@ -405,30 +416,27 @@ namespace Ballance2
                 GameErrorManager.LastError = GameError.BadMode;
                 GameErrorManager.ThrowGameError(GameError.BadMode, "错误的模式，请确定启动模式已设置");
             }
-
-            return result;
         }
         internal static void Destroy()
         {
             Debug.Log("[" + TAG + " ] Destroy game");
-            
-            //降序排列销毁
-            managers.Sort((m1, m2) => -m1.loadIndex.CompareTo(m2.loadIndex));
-
-            bool b = false;
-            if (managers != null)
-            {
-                for (int i = managers.Count - 1; i >= 0; i--)
-                {
-                    b = managers[i].ReleaseManager();
-                    if (!b) UnityEngine.Debug.LogWarningFormat("[" + TAG + " ] Failed to release manager {0}:{1} . ",
-                         managers[i].GetName(), managers[i].GetSubName());
-                }
-                managers.Clear();
-                managers = null;
-            }
-
+            GameManagerWorker.DestroyManagers();
             GameSettingsManager.Destroy();
+        }
+
+        //通知进行下一步内核加载
+        private static void CallGameInit()
+        {
+            GameActionCallResult rs = GameMediator.CallAction(GameActionNames.CoreActions["ACTION_GAME_INIT"]);
+            if (rs == null)
+            {
+                GameLogger.Error(TAG, "Not found handler for ACTION_GAME_INIT!");
+                GameErrorManager.ThrowGameError(GameError.HandlerLost, "Not found handler for ACTION_GAME_INIT");
+            }
+            else if (rs.Success)
+            {
+                CurrentScense = GameCurrentScense.Intro;
+            }
         }
 
         /// <summary>
@@ -439,7 +447,6 @@ namespace Ballance2
         {
             GameBaseCamera.gameObject.SetActive(visible);
         }
-
         /// <summary>
         /// 立即退出游戏
         /// </summary>
@@ -540,7 +547,6 @@ namespace Ballance2
 
         private static void InitStaticPrefab()
         {
-            GameLogger.Log(TAG, "Init static prefab, count : {0}", GamePrefab.Count);
             PrefabEmpty = FindStaticPrefabs("PrefabEmpty");
             PrefabUIEmpty = FindStaticPrefabs("PrefabUIEmpty");
         }

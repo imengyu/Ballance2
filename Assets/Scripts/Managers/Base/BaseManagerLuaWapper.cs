@@ -15,14 +15,5 @@ namespace Ballance2.Managers
         {
             IsLuaModul = true;
         }
-
-        private void Start()
-        {
-            if (IsLuaModul)
-            {
-                if (!InitLua())
-                    GameLogger.Error(GetFullName(), "LuaModul can oly use when GameLuaObjectHost is bind ! ");
-            }
-        }
     }
 }

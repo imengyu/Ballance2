@@ -140,7 +140,7 @@ function class_MenuLevel()
         function(evtName) UIManager:GotoUIPage(self.pageStart.PagePath) end, 
         function(evtName) UIManager:GotoUIPage(self.pageHighScore.PagePath) end, 
         function(evtName) 
-          GameManager.GameMediator:CallAction(GameActionNames.ACTION_SHOW_SETTINGS, { "main" })
+          GameManager.GameMediator:CallAction(GameActionNames.CoreActions["ShowSettings"], { "main" })
         end, 
         function(evtName) UIManager:GotoUIPage(self.pageAbout.PagePath) end, 
         function(evtName) self.dialogQuitId = UIManager:GlobalConfirm("真的要退出游戏吗", "提示", "确定","取消") end
@@ -237,7 +237,7 @@ function class_MenuLevel()
 
   function MenuLevel:OnLevelStart(lev) 
     self.soundMenuLoad:Play()
-    GameManager.GameMediator:CallAction(GameActionNames.ACTION_LOAD_LEVEL, { lev })
+    GameManager.GameMediator:CallAction(GameActionNames.LevelLoader["LoadLevel"], { lev })
   end
 
 
