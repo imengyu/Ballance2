@@ -1,6 +1,7 @@
 ﻿using Ballance2.CoreBridge;
 using SLua;
 using System;
+using UnityEngine;
 
 namespace Ballance2.CoreGame.GamePlay
 {
@@ -8,6 +9,8 @@ namespace Ballance2.CoreGame.GamePlay
     /// 球碎片控制器 LUA 包装
     /// </summary>
     [CustomLuaClass]
+    [AddComponentMenu("Ballance/Lua/GameBallPiecesControlLuaWapper")]
+    [RequireComponent(typeof(GameLuaObjectHost))]
     public class GameBallPiecesControlLuaWapper : GameBallPiecesControl
     {
         private LuaReturnBoolDelegate fnRecoverPieces = null;

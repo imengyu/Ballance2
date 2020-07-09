@@ -2,8 +2,6 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
-    <CscToolPath>C:\Program Files\Unity\Hub\Editor\2019.3.0f3\Editor\Data\Tools\RoslynScripts</CscToolPath>
-    <CscToolExe>unity_csc.bat</CscToolExe>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -54,6 +52,9 @@
     <UnityVersion>2019.3.0f3</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2019.3.0f3\Editor\Data\Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
@@ -63,12 +64,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Editor\AssetBundleMaker.cs" />
+    <Compile Include="Assets\Scripts\Editor\Common\ReorderableArrayInspector.cs" />
+    <Compile Include="Assets\Scripts\Editor\Common\SerializedPropExtension.cs" />
+    <Compile Include="Assets\Scripts\Editor\Common\SetPropertyDrawer.cs" />
+    <Compile Include="Assets\Scripts\Editor\EditorIcons.cs" />
     <Compile Include="Assets\Scripts\Editor\EditorStyleViewer.cs" />
-    <Compile Include="Assets\Scripts\Editor\ReorderableArrayInspector.cs" />
-    <Compile Include="Assets\Scripts\Editor\SerializedPropExtension.cs" />
-    <Compile Include="Assets\Scripts\Editor\SetPropertyDrawer.cs" />
-    <Compile Include="Assets\Scripts\Editor\UIElementEditor.cs" />
-    <Compile Include="Assets\Scripts\Editor\UILayoutEditor.cs" />
+    <Compile Include="Assets\Scripts\Editor\Game\GameLuaObjectHostInspector.cs" />
+    <Compile Include="Assets\Scripts\Editor\Modding\LevelMaker.cs" />
+    <Compile Include="Assets\Scripts\Editor\Modding\ModMaker.cs" />
+    <Compile Include="Assets\Scripts\Editor\Modding\ModMakerWindow.cs" />
+    <Compile Include="Assets\Scripts\Editor\Modding\ModPackerWindow.cs" />
+    <Compile Include="Assets\Scripts\Editor\UI\UIElementEditor.cs" />
+    <Compile Include="Assets\Scripts\Editor\UI\UILayoutEditor.cs" />
     <Compile Include="Assets\Slua\Editor\CustomEditor.cs" />
     <Compile Include="Assets\Slua\Editor\CustomExport.cs" />
     <Compile Include="Assets\Slua\Editor\LoggerHelper.cs" />
@@ -310,7 +317,7 @@
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.0f3/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
-      <HintPath>C:/Program Files (x86)/Microsoft Visual Studio Tools for Unity/15.0/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
+      <HintPath>C:/Program Files (x86)/Microsoft Visual Studio Tools for Unity/16.0/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>E:/Programming/GameProject/Ballance2/Assets/Plugins/Newtonsoft.Json.dll</HintPath>

@@ -43,8 +43,7 @@ function OnEnterMenuLevel()
   then
     GameLogger.Error(TAG, "MenuLevel.prefab not found !")
   else 
-    goMenuLevel = GameCloneUtils.CloneNewObject(prefab, "MenuLevel")
-    gameModThis:RegisterLuaObject("MenuLevel:MainCamera", goMenuLevel, "MenuLevel")
+    GameCloneUtils.CloneNewObject(prefab, "MenuLevel")
   end
   
   GameLogger.Log(TAG, "MenuLevel init OK !")

@@ -1,8 +1,5 @@
-﻿using Ballance2.UI.BallanceUI;
-using Ballance2.UI.BallanceUI.Element;
-using Ballance2.UI.Utils;
+﻿using Ballance2.UI.Utils;
 using System.Collections.Generic;
-using System.Xml;
 using UnityEngine;
 
 namespace Ballance2.UI.BallanceUI.Layout
@@ -11,6 +8,7 @@ namespace Ballance2.UI.BallanceUI.Layout
     /// 相对布局
     /// </summary>
     [SLua.CustomLuaClass]
+    [AddComponentMenu("Ballance/UI/Layout/UIRelativeLayout")]
     public class UIRelativeLayout : UILayout
     {
         public UIRelativeLayout()

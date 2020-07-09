@@ -4,6 +4,7 @@ using Ballance2.UI.BallanceUI.Layout;
 namespace Ballance2.UI.BallanceUI.Element
 {
     [SLua.CustomLuaClass]
+    [AddComponentMenu("Ballance/UI/UISpace")]
     public class UISpace : UIElement
     {
         private const string TAG = "UISpace";

@@ -1053,6 +1053,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cc989a3b29c8dd4ea6ced8756a2773b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  initStore: 1
   Ball_Wood_piece: {fileID: 1199595254885999771}
   Ball_Stone_piece: {fileID: 1199595255419123941}
   Ball_Paper_piece: {fileID: 1199595254817708727}
@@ -1380,6 +1381,8 @@ MonoBehaviour:
     type: 3}
   ballLightningSphere3: {fileID: 2800000, guid: b2eeb8f070825934d93b86eaae4885fe,
     type: 3}
+  isBallControl: 0
+  isBallSmoothMove: 0
   pushType: 0
 --- !u!1 &1199595254242677582
 GameObject:
@@ -1679,22 +1682,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Pieces: {fileID: 1199595254817708727}
-  TypeName: 
+  TypeName: BallPaper
   Rigidbody: {fileID: 1199595254845188273}
   PushForce: 12.5
-  UseFallForce: 1
-  UseAutoCloseFallForce: 1
-  FallForce: 10
-  FallForceFloor: 10
-  LimitSpeed: 1
+  ForceMode: 0
   ThrowPiecesForce: 0.3
   CollectPiecesSec: 30
-  MinSpeedY: 0
-  MaxSpeedY: 0
-  MinSpeedXZ: 0
-  MaxSpeedXZ: 0
-  FallForceMode: 0
-  ForceMode: 0
 --- !u!1 &1199595254885999771
 GameObject:
   m_ObjectHideFlags: 0
@@ -2769,7 +2762,7 @@ Rigidbody:
   m_GameObject: {fileID: 2343699480779008543}
   serializedVersion: 2
   m_Mass: 0.9
-  m_Drag: 0
+  m_Drag: 0.05
   m_AngularDrag: 0.01
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -2802,22 +2795,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Pieces: {fileID: 1199595254885999771}
-  TypeName: 
+  TypeName: BallWood
   Rigidbody: {fileID: 2343699480779008541}
   PushForce: 25
-  UseFallForce: 1
-  UseAutoCloseFallForce: 1
-  FallForce: 35
-  FallForceFloor: 10
-  LimitSpeed: 1
+  ForceMode: 0
   ThrowPiecesForce: 15
   CollectPiecesSec: 20
-  MinSpeedY: 0
-  MaxSpeedY: 0
-  MinSpeedXZ: 0
-  MaxSpeedXZ: 0
-  FallForceMode: 0
-  ForceMode: 0
 --- !u!1 &2663626849411544597
 GameObject:
   m_ObjectHideFlags: 0
@@ -6741,7 +6724,7 @@ Rigidbody:
   m_GameObject: {fileID: 8618135650371243679}
   serializedVersion: 2
   m_Mass: 10
-  m_Drag: 0
+  m_Drag: 0.02
   m_AngularDrag: 0.01
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -6774,22 +6757,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Pieces: {fileID: 1199595255419123941}
-  TypeName: 
+  TypeName: BallStone
   Rigidbody: {fileID: 8618135650371243677}
   PushForce: 60
-  UseFallForce: 1
-  UseAutoCloseFallForce: 1
-  FallForce: 10
-  FallForceFloor: 10
-  LimitSpeed: 1
+  ForceMode: 0
   ThrowPiecesForce: 5
   CollectPiecesSec: 15
-  MinSpeedY: 0
-  MaxSpeedY: 0
-  MinSpeedXZ: 0
-  MaxSpeedXZ: 0
-  FallForceMode: 0
-  ForceMode: 0
 --- !u!1 &9084482953774425299
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,6 +7,7 @@ using UnityEngine.UI;
 namespace Ballance2.UI.BallanceUI.Element
 {
     [SLua.CustomLuaClass]
+    [AddComponentMenu("Ballance/UI/UIText")]
     public class UIText : UIElement
     {
         private const string TAG = "UIText";

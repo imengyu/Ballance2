@@ -8,6 +8,7 @@ using Ballance2.Managers;
 namespace Ballance2.UI.BallanceUI.Element
 {
     [SLua.CustomLuaClass]
+    [AddComponentMenu("Ballance/UI/UISlider")]
     public class UISlider : UIElement
     {
         private const string TAG = "UISilder";

@@ -2,6 +2,9 @@
 using Ballance2.ModBase;
 using Ballance2.Utils;
 using SLua;
+using SubjectNerd.Utilities;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Ballance2.CoreBridge
@@ -10,16 +13,48 @@ namespace Ballance2.CoreBridge
     /// 简易 Lua 脚本承载组件
     /// </summary>
     /// <remarks>
-    /// 使用方法：
-    /// ★ 可以直接绑定此组件至你的 Prefab 上，填写 LuaClassName 与 LuaModName，
-    /// Instantiate Prefab 后GameLuaObjectHost会自动找到模块并加载 LUA 文件并执行
-    /// ★ 也可以在 GameMod 中直接调用 RegisterLuaObject 注册一个 Lua 对象
-    /// ☆ 以上两种方法都可以在 GameMod 中使用 FindLuaObject 找到你注册的 Lua 对象
+    /// ✧使用方法：
+    ///     ★ 可以直接绑定此组件至你的 Prefab 上，填写 LuaClassName 与 LuaModName，
+    ///     Instantiate Prefab 后GameLuaObjectHost会自动找到模块并加载 LUA 文件并执行。
+    ///     如果找不到模块或LUA 文件，将会抛出错误。
+    ///     ★ 也可以在 GameMod 中直接调用 RegisterLuaObject 注册一个 Lua 对象
+    ///     ☆ 以上两种方法都可以在 GameMod 中使用 FindLuaObject 找到你注册的 Lua 对象
+    /// 
+    /// ✧参数引入
+    ///     可以在编辑器中设置 LuaInitialVars 添加你想引入的参数，承载组件会自动将的参数设置
+    ///     到你的 Lua脚本 self 上，通过 self.参数名 就可以访问了。
+    /// 
     /// </remarks>
     [CustomLuaClass]
+    [AddComponentMenu("Ballance/Lua/GameLuaObjectHost")]
+
     public class GameLuaObjectHost : MonoBehaviour
     {
         public const string TAG = "GameLuaObjectHost";
+
+        /// <summary>
+        /// LUA 对象名字，用于 FindLuaObject 查找
+        /// </summary>
+        [Tooltip("LUA 对象名字，用于 FindLuaObject 查找")]
+        public string Name;
+
+        /// <summary>
+        /// 获取或设置 Lua类的文件名（eg MenuLevel）
+        /// </summary>
+        [Tooltip("设置 Lua类的文件名（eg MenuLevel）")]
+        public string LuaClassName;
+        /// <summary>
+        /// 获取或设置 Lua 类所在的模块包名（改模块必须是 ModPack 并可运行）。设置后该对象会自动注册到 LuaObject 中
+        /// </summary>
+        [Tooltip("设置 Lua 类所在的模块包名（改模块必须是 ModPack 并可运行）。设置后该对象会自动注册到 LuaObject 中")]
+        public string LuaModName;
+        /// <summary>
+        /// 设置 LUA 初始参数，用于方便地从 Unity 编辑器直接引入初始参数至 Lua，这些变量会设置到 Lua self 上，可直接获取。
+        /// </summary>
+        [Tooltip("设置 LUA 初始参数，用于方便地从 Unity 编辑器直接引入初始参数至 Lua，这些变量会设置到 Lua self 上，可直接获取。")]
+        [SerializeField]
+        public List<LuaVarObjectInfo> LuaInitialVars = new List<LuaVarObjectInfo>();
+
 
         /// <summary>
         /// lua self
@@ -30,18 +65,6 @@ namespace Ballance2.CoreBridge
         /// </summary>
         public LuaState LuaState { get; set; }
         /// <summary>
-        /// 获取或设置 Lua类的文件名（eg MenuLevel）
-        /// </summary>
-        public string LuaClassName;
-        /// <summary>
-        /// 获取或设置 Lua 类所在的模块包名（改模块必须是 ModPack 并可运行）
-        /// </summary>
-        public string LuaModName;
-        /// <summary>
-        /// LUA 对象名字，用于 FindLuaObject 查找
-        /// </summary>
-        public string Name;
-        /// <summary>
         /// 获取对应 模组包
         /// </summary>
         public GameMod GameMod { get; set; }
@@ -50,13 +73,15 @@ namespace Ballance2.CoreBridge
 
         private LuaTable self = null;
         private LuaVoidDelegate update = null;
+        private LuaVoidDelegate fixedUpdate = null;
+        private LuaVoidDelegate lateUpdate = null;
         private LuaStartDelegate start = null;
         private LuaVoidDelegate awake = null;
         private LuaVoidDelegate onGUI = null;
         private LuaVoidDelegate onDestory = null;
-        private LuaCollisionDelegate onCollisionEnter = null;
-        private LuaCollisionDelegate onCollisionExit = null;
-        private LuaCollisionDelegate onCollisionStay = null;
+        private LuaVoidDelegate onEnable = null;
+        private LuaVoidDelegate onDisable = null;
+        private LuaVoidDelegate reset = null;
 
         private void Start()
         {
@@ -77,30 +102,41 @@ namespace Ballance2.CoreBridge
         {
             if (update != null) update(self);
         }
+        private void FixedUpdate()
+        {
+            if (fixedUpdate != null) fixedUpdate(self);
+        }
+        private void LateUpdate()
+        {
+            if (lateUpdate != null) lateUpdate(self);
+        }
 
+        private void OnGUI()
+        {
+            if (onGUI != null) onGUI(self);
+        }
         private void OnDestroy()
         {
             if (onDestory != null) onDestory(self);
             StopLuaEvents();
             GameMod.RemoveLuaObject(this);
         }
-        private void OnGUI()
+        private void OnDisable()
         {
-            if (onGUI != null) onGUI(self);
+            if (onDisable != null) onDisable(self);
+        }
+        private void OnEnable()
+        {
+            if (onEnable != null) onEnable(self);
         }
 
-        private void OnCollisionEnter(Collision collision)
+        private void Reset()
         {
-            if (onCollisionEnter != null) onCollisionEnter(self, collision);
+            if (reset != null) reset(self);
         }
-        private void OnCollisionExit(Collision collision)
-        {
-            if (onCollisionExit != null) onCollisionExit(self, collision);
-        }
-        private void OnCollisionStay(Collision collision)
-        {
-            if (onCollisionStay != null) onCollisionStay(self, collision);
-        }
+
+        // Init and get
+        // ===========================
 
         private bool LuaInit()
         {
@@ -150,6 +186,10 @@ namespace Ballance2.CoreBridge
                 return false;
             }
 
+            InitLuaInternalVars();
+            InitLuaVars(); //初始化引入参数
+            //调用其他LUA初始化脚本
+            SendMessage("OnInitLua", gameObject, SendMessageOptions.DontRequireReceiver);
             InitLuaEvents();
             return true;
         }
@@ -169,17 +209,58 @@ namespace Ballance2.CoreBridge
             fun = self["OnGUI"] as LuaFunction;
             if (fun != null) onGUI = fun.cast<LuaVoidDelegate>();
 
-            fun = self["OnGUI"] as LuaFunction;
-            if (fun != null) onGUI = fun.cast<LuaVoidDelegate>();
+            fun = self["FixedUpdate"] as LuaFunction;
+            if (fun != null) fixedUpdate = fun.cast<LuaVoidDelegate>();
 
-            fun = self["OnCollisionEnter"] as LuaFunction;
-            if (fun != null) onCollisionEnter = fun.cast<LuaCollisionDelegate>();
+            fun = self["LateUpdate"] as LuaFunction;
+            if (fun != null) lateUpdate = fun.cast<LuaVoidDelegate>();
 
-            fun = self["OnCollisionExit"] as LuaFunction;
-            if (fun != null) onCollisionExit = fun.cast<LuaCollisionDelegate>();
+            fun = self["onEnable"] as LuaFunction;
+            if (fun != null) onEnable = fun.cast<LuaVoidDelegate>();
 
-            fun = self["onCollisionStay"] as LuaFunction;
-            if (fun != null) onCollisionStay = fun.cast<LuaCollisionDelegate>();
+            fun = self["OnDisable"] as LuaFunction;
+            if (fun != null) onDisable = fun.cast<LuaVoidDelegate>();
+
+            fun = self["Reset"] as LuaFunction;
+            if (fun != null) reset = fun.cast<LuaVoidDelegate>();
+        }
+        private void InitLuaInternalVars()
+        {
+            LuaSelf["transform"] = transform;
+            LuaSelf["gameObject"] = gameObject;
+        }
+        private void InitLuaVars()
+        {
+            foreach(LuaVarObjectInfo v in LuaInitialVars)
+            {
+                if (!string.IsNullOrEmpty(v.Name))
+                {
+                    switch (v.Type)
+                    {
+                        case LuaVarObjectType.None: LuaSelf[v.Name] = null; break;
+                        case LuaVarObjectType.Vector2: LuaSelf[v.Name] = v.Vector2(); break;
+                        case LuaVarObjectType.Vector2Int: LuaSelf[v.Name] = v.Vector2Int(); break;
+                        case LuaVarObjectType.Vector3: LuaSelf[v.Name] = v.Vector3(); break;
+                        case LuaVarObjectType.Vector3Int: LuaSelf[v.Name] = v.Vector3Int(); break;
+                        case LuaVarObjectType.Vector4: LuaSelf[v.Name] = v.Vector4(); break;
+                        case LuaVarObjectType.Rect: LuaSelf[v.Name] = v.Rect(); break;
+                        case LuaVarObjectType.RectInt: LuaSelf[v.Name] = v.RectInt(); break;
+                        case LuaVarObjectType.Gradient: LuaSelf[v.Name] = v.Gradient(); break;
+                        case LuaVarObjectType.Layer: LuaSelf[v.Name] = v.Layer(); break;
+                        case LuaVarObjectType.Curve: LuaSelf[v.Name] = v.Curve(); break;
+                        case LuaVarObjectType.Color: LuaSelf[v.Name] = v.Color(); break;
+                        case LuaVarObjectType.BoundsInt: LuaSelf[v.Name] = v.BoundsInt(); break;
+                        case LuaVarObjectType.Bounds: LuaSelf[v.Name] = v.Bounds(); break;
+                        case LuaVarObjectType.Object: LuaSelf[v.Name] = v.Object(); break;
+                        case LuaVarObjectType.GameObject: LuaSelf[v.Name] = v.GameObject(); break;
+                        case LuaVarObjectType.Long: LuaSelf[v.Name] = v.Long(); break;
+                        case LuaVarObjectType.Int: LuaSelf[v.Name] = v.Int(); break;
+                        case LuaVarObjectType.String: LuaSelf[v.Name] = v.String(); break;
+                        case LuaVarObjectType.Double: LuaSelf[v.Name] = v.Double(); break;
+                        case LuaVarObjectType.Bool: LuaSelf[v.Name] = v.Bool(); break;
+                    }
+                }
+            }
         }
         private void StopLuaEvents()
         {

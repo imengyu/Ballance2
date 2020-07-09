@@ -12,41 +12,27 @@ using UnityEngine;
 /// </summary>
 public class AssetBundleMaker
 {
-    [DllImport("user32.dll")]
-    static extern int MessageBoxW(System.IntPtr hWnd, [MarshalAs(UnmanagedType.LPWStr)]string titl, [MarshalAs(UnmanagedType.LPWStr)]string text, int flag);
-
-    ///[@MenuItem("AssetBundles/Build AssetBundle Test")]
-    static void BuildABsPCTTestt()
-    {
-        Object[] selection2 = Selection.GetFiltered(typeof(Object), SelectionMode.DeepAssets);
-        for (int i = 0; i < selection2.Length; i++)
-        {
-            if (MessageBoxW(System.IntPtr.Zero, selection2[i].name, "Info", 0x0001) == 2)
-                break;
-        }
-    }
-    [@MenuItem("AssetBundles/Build AssetBundle From Selection StandaloneWindows")]
+    [@MenuItem("Tools/AssetBundle/Build AssetBundle From Selection StandaloneWindows")]
     static void BuildABsPCSel()
     {
         BuildABsSelC(BuildTarget.StandaloneWindows);
     }
-    [@MenuItem("AssetBundles/Build AssetBundle From Selection StandaloneLinux64")]
+    [@MenuItem("Tools/AssetBundle/Build AssetBundle From Selection StandaloneLinux64")]
     static void BuildABsLinuxSel()
     {
         BuildABsSelC(BuildTarget.StandaloneLinux64);
     }
-
-    [@MenuItem("AssetBundles/Build AssetBundle From Selection StandaloneOSX")]
+    [@MenuItem("Tools/AssetBundle/Build AssetBundle From Selection StandaloneOSX")]
     static void BuildABsMacSel()
     {
         BuildABsSelC(BuildTarget.StandaloneOSX);
     }
-    [@MenuItem("AssetBundles/Build AssetBundle From Selection Android")]
+    [@MenuItem("Tools/AssetBundle/Build AssetBundle From Selection Android")]
     static void BuildABsSel()
     {
         BuildABsSelC(BuildTarget.Android);
     }
-    [@MenuItem("AssetBundles/Build AssetBundle From Selection IOS")]
+    [@MenuItem("Tools/AssetBundle/Build AssetBundle From Selection IOS")]
     static void BuildABsIosSel()
     {
         BuildABsSelC(BuildTarget.iOS);

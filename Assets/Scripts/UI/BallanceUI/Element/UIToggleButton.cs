@@ -10,6 +10,7 @@ using Ballance2.Interfaces;
 namespace Ballance2.UI.BallanceUI.Element
 {
     [SLua.CustomLuaClass]
+    [AddComponentMenu("Ballance/UI/UIToggleButton")]
     public class UIToggleButton : UIElement
     {
         private const string TAG = "UIBUIToggleButtonutton";

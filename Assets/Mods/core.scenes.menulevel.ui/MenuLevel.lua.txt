@@ -17,10 +17,10 @@ local SoundManager = Slua.As(GameManager.GetManager("SoundManager"), Ballance2.I
 local TAG = "MenuLevel:MainCamera"
 
 MenuLevel = {
-  gameObject = false,
+
   runningLoop = false,
   runningLzLoop = false,
-  transform = nil,
+
   GameLuaObjectHost = nil,
   domePosition = nil,
   I_Zone = nil,
@@ -69,16 +69,8 @@ function class_MenuLevel()
     thisMod = self.GameLuaObjectHost.GameMod
     
     self.domePosition = self.transform:Find("I_Dome_MF").position
-    self.I_Camera = self.transform:Find("I_Camera").gameObject
     self.I_Camera:SetActive(true)
-    -- light
-    self.I_Light_Night = self.transform:Find("I_Light_Night").gameObject
-    self.I_Light_Day = self.transform:Find("I_Light_Day").gameObject
     -- izone
-    self.I_Zone = self.transform:Find("I_Zone").gameObject
-    self.I_Zone_SuDu = self.I_Zone.transform:Find("I_Zone_SuDu").gameObject
-    self.I_Zone_NenLi = self.I_Zone.transform:Find("I_Zone_NenLi").gameObject
-    self.I_Zone_LiLiang = self.I_Zone.transform:Find("I_Zone_LiLiang").gameObject
     self.I_Zone_SuDu.transform:Find("Selector"):GetComponent("OutlineHighlightPicker").onClick:AddListener(function() self:OnLevelStart("13") end)
     self.I_Zone_LiLiang.transform:Find("Selector"):GetComponent("OutlineHighlightPicker").onClick:AddListener(function() self:OnLevelStart("14") end)
     self.I_Zone_NenLi.transform:Find("Selector"):GetComponent("OutlineHighlightPicker").onClick:AddListener(function() self:OnLevelStart("15") end)

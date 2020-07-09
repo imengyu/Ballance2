@@ -5,6 +5,7 @@ namespace Ballance2.CoreGame.GamePlay
     /// <summary>
     /// 纸球碎片控制
     /// </summary>
+    [AddComponentMenu("Ballance/Game/GameBallPaperPiecesControl")]
     public class GameBallPaperPiecesControl : GameBallPiecesControl
     {
         private bool paperPeicesThowed = false;

@@ -2,8 +2,6 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
-    <CscToolPath>C:\Program Files\Unity\Hub\Editor\2019.3.0f3\Editor\Data\Tools\RoslynScripts</CscToolPath>
-    <CscToolExe>unity_csc.bat</CscToolExe>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -54,6 +52,9 @@
     <UnityVersion>2019.3.0f3</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2019.3.0f3\Editor\Data\Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
@@ -70,8 +71,16 @@
     <Compile Include="Assets\Scripts\CoreBridge\GameHandler.cs" />
     <Compile Include="Assets\Scripts\CoreBridge\GameHandlerList.cs" />
     <Compile Include="Assets\Scripts\CoreBridge\GameLuaHandler.cs" />
+    <Compile Include="Assets\Scripts\CoreBridge\GameLuaInfo.cs" />
     <Compile Include="Assets\Scripts\CoreBridge\GameLuaObjectHost.cs" />
     <Compile Include="Assets\Scripts\CoreBridge\GameLuaWapper.cs" />
+    <Compile Include="Assets\Scripts\CoreBridge\GameLuaWapperEvents\GameLuaObjectAnimatorEventCaller.cs" />
+    <Compile Include="Assets\Scripts\CoreBridge\GameLuaWapperEvents\GameLuaObjectEventCaller.cs" />
+    <Compile Include="Assets\Scripts\CoreBridge\GameLuaWapperEvents\GameLuaObjectMouseEventCaller.cs" />
+    <Compile Include="Assets\Scripts\CoreBridge\GameLuaWapperEvents\GameLuaObjectOtherEventCaller.cs" />
+    <Compile Include="Assets\Scripts\CoreBridge\GameLuaWapperEvents\GameLuaObjectParticleEventCaller.cs" />
+    <Compile Include="Assets\Scripts\CoreBridge\GameLuaWapperEvents\GameLuaObjectPhysics2DEventCaller.cs" />
+    <Compile Include="Assets\Scripts\CoreBridge\GameLuaWapperEvents\GameLuaObjectPhysicsEventCaller.cs" />
     <Compile Include="Assets\Scripts\CoreBridge\GamePartName.cs" />
     <Compile Include="Assets\Scripts\CoreGame\GamePlay\Balls\GameBallPaperPiecesControl.cs" />
     <Compile Include="Assets\Scripts\CoreGame\GamePlay\GameBall.cs" />
@@ -1098,6 +1107,7 @@
     <None Include="Assets\Shaders\UltimateOutline.shader" />
     <None Include="Assets\Shaders\OutLinePostEffectX.shader" />
     <None Include="Assets\ThirdPart\QuickOutline\Resources\Shaders\OutlineMask.shader" />
+    <None Include="Assets\Version.txt" />
     <None Include="Assets\Prefabs\UI\Layouts\PageGlobalConfirm.xml" />
     <None Include="Assets\Mods\core.gameinit\ModDef.xml" />
     <None Include="Assets\Mods\com.imengyu.test\ModDef.xml" />

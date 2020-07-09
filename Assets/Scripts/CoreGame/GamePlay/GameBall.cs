@@ -46,6 +46,7 @@ namespace Ballance2.CoreGame.GamePlay
     /// 球基础类
     /// </summary>
     [SLua.CustomLuaClass]
+    [AddComponentMenu("Ballance/Game/GameBall")]
     public class GameBall : MonoBehaviour
     {
         /// <summary>

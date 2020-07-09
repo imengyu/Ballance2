@@ -6,6 +6,7 @@ using UnityEngine;
 namespace Ballance2.Managers
 {
     [CustomLuaClass]
+    [AddComponentMenu("Ballance/BaseManager")]
     /// <summary>
     /// 管理器接口
     /// </summary>

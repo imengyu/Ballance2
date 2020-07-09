@@ -7,6 +7,7 @@ namespace Ballance2.UI.BallanceUI.Layout
     /// 线性布局
     /// </summary>
     [SLua.CustomLuaClass]
+    [AddComponentMenu("Ballance/UI/Layout/UILinearLayout")]
     public class UILinearLayout : UILayout
     {
         public UILinearLayout()

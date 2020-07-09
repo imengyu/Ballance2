@@ -546,7 +546,7 @@ namespace SLua
 			LuaDLL.lua_pop(l, 1);
 		}
 
-		protected static void addMember(IntPtr l, LuaCSFunction func)
+		public static void addMember(IntPtr l, LuaCSFunction func)
 		{
             checkMethodValid(func);
 
@@ -561,7 +561,7 @@ namespace SLua
 				LuaDLL.lua_setfield(l, -2, name);
 		}
 
-		protected static void addMember(IntPtr l, LuaCSFunction func, bool instance)
+		public static void addMember(IntPtr l, LuaCSFunction func, bool instance)
 		{
             checkMethodValid(func);
 
@@ -570,7 +570,7 @@ namespace SLua
 			LuaDLL.lua_setfield(l, instance ? -2 : -3, name);
 		}
 
-		protected static void addMember(IntPtr l, string name, LuaCSFunction get, LuaCSFunction set, bool instance)
+		public static void addMember(IntPtr l, string name, LuaCSFunction get, LuaCSFunction set, bool instance)
 		{
             checkMethodValid(get);
             checkMethodValid(set);
@@ -593,7 +593,7 @@ namespace SLua
 			LuaDLL.lua_setfield(l, t, name);
 		}
 
-		protected static void addMember(IntPtr l, int v, string name)
+		public static void addMember(IntPtr l, int v, string name)
 		{
 			LuaDLL.lua_pushinteger(l, v);
 			LuaDLL.lua_setfield(l, -2, name);

@@ -9,6 +9,7 @@ using Ballance2.Interfaces;
 namespace Ballance2.UI.BallanceUI.Element
 {
     [SLua.CustomLuaClass]
+    [AddComponentMenu("Ballance/UI/UIDropdown")]
     public class UIDropdown : UIElement
     {
         private const string TAG = "UIDropdown";

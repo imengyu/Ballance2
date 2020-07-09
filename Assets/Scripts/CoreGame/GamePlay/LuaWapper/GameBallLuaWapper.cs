@@ -9,6 +9,8 @@ namespace Ballance2.CoreGame.GamePlay
     /// 球基础类 Lua 包装
     /// </summary>
     [CustomLuaClass]
+    [AddComponentMenu("Ballance/Lua/GameBallLuaWapper")]
+    [RequireComponent(typeof(GameLuaObjectHost))]
     public class GameBallLuaWapper : GameBall
     {
         /// <summary>

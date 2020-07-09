@@ -11,6 +11,7 @@ using Ballance2.Interfaces;
 namespace Ballance2.UI.BallanceUI.Element
 {
     [SLua.CustomLuaClass]
+    [AddComponentMenu("Ballance/UI/UIKeyChooseButton")]
     public class UIKeyChooseButton : UIElement
     {
         private const string TAG = "UIKeyChooseButton";
