@@ -405,12 +405,76 @@ public class Lua_Ballance2_Interfaces_IModManager : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			Ballance2.Interfaces.IModManager self=(Ballance2.Interfaces.IModManager)checkSelf(l);
-			System.Int32 a1;
-			checkType(l,2,out a1);
-			var ret=self.InitializeLoadGameMod(a1);
-			pushValue(l,true);
-			pushValue(l,ret);
+			int argc = LuaDLL.lua_gettop(l);
+			if(matchType(l,argc,2,typeof(int))){
+				Ballance2.Interfaces.IModManager self=(Ballance2.Interfaces.IModManager)checkSelf(l);
+				System.Int32 a1;
+				checkType(l,2,out a1);
+				var ret=self.InitializeLoadGameMod(a1);
+				pushValue(l,true);
+				pushValue(l,ret);
+				return 2;
+			}
+			else if(matchType(l,argc,2,typeof(string))){
+				Ballance2.Interfaces.IModManager self=(Ballance2.Interfaces.IModManager)checkSelf(l);
+				System.String a1;
+				checkType(l,2,out a1);
+				var ret=self.InitializeLoadGameMod(a1);
+				pushValue(l,true);
+				pushValue(l,ret);
+				return 2;
+			}
+			pushValue(l,false);
+			LuaDLL.lua_pushstring(l,"No matched override function InitializeLoadGameMod to call");
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int UnInitializeLoadGameMod(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			int argc = LuaDLL.lua_gettop(l);
+			if(matchType(l,argc,2,typeof(int))){
+				Ballance2.Interfaces.IModManager self=(Ballance2.Interfaces.IModManager)checkSelf(l);
+				System.Int32 a1;
+				checkType(l,2,out a1);
+				var ret=self.UnInitializeLoadGameMod(a1);
+				pushValue(l,true);
+				pushValue(l,ret);
+				return 2;
+			}
+			else if(matchType(l,argc,2,typeof(string))){
+				Ballance2.Interfaces.IModManager self=(Ballance2.Interfaces.IModManager)checkSelf(l);
+				System.String a1;
+				checkType(l,2,out a1);
+				var ret=self.UnInitializeLoadGameMod(a1);
+				pushValue(l,true);
+				pushValue(l,ret);
+				return 2;
+			}
+			pushValue(l,false);
+			LuaDLL.lua_pushstring(l,"No matched override function UnInitializeLoadGameMod to call");
 			return 2;
 		}
 		catch(Exception e) {
@@ -462,6 +526,55 @@ public class Lua_Ballance2_Interfaces_IModManager : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int IsModEnabled(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			int argc = LuaDLL.lua_gettop(l);
+			if(matchType(l,argc,2,typeof(Ballance2.ModBase.GameMod))){
+				Ballance2.Interfaces.IModManager self=(Ballance2.Interfaces.IModManager)checkSelf(l);
+				Ballance2.ModBase.GameMod a1;
+				checkType(l,2,out a1);
+				var ret=self.IsModEnabled(a1);
+				pushValue(l,true);
+				pushValue(l,ret);
+				return 2;
+			}
+			else if(matchType(l,argc,2,typeof(string))){
+				Ballance2.Interfaces.IModManager self=(Ballance2.Interfaces.IModManager)checkSelf(l);
+				System.String a1;
+				checkType(l,2,out a1);
+				var ret=self.IsModEnabled(a1);
+				pushValue(l,true);
+				pushValue(l,ret);
+				return 2;
+			}
+			pushValue(l,false);
+			LuaDLL.lua_pushstring(l,"No matched override function IsModEnabled to call");
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int ExecuteModEntry(IntPtr l) {
 		try {
 			#if DEBUG
@@ -479,6 +592,38 @@ public class Lua_Ballance2_Interfaces_IModManager : LuaObject {
 			self.ExecuteModEntry(a1);
 			pushValue(l,true);
 			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int GetModEnableStatusList(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.Interfaces.IModManager self=(Ballance2.Interfaces.IModManager)checkSelf(l);
+			var ret=self.GetModEnableStatusList();
+			pushValue(l,true);
+			pushValue(l,ret);
+			return 2;
 		}
 		catch(Exception e) {
 			return error(l,e);
@@ -539,8 +684,11 @@ public class Lua_Ballance2_Interfaces_IModManager : LuaObject {
 		addMember(l,UnLoadGameMod);
 		addMember(l,IsGameModLoading);
 		addMember(l,InitializeLoadGameMod);
+		addMember(l,UnInitializeLoadGameMod);
 		addMember(l,RunLoadGameMod);
+		addMember(l,IsModEnabled);
 		addMember(l,ExecuteModEntry);
+		addMember(l,GetModEnableStatusList);
 		addMember(l,"CurrentLoadingMod",get_CurrentLoadingMod,null,true);
 		createTypeMetatable(l,null, typeof(Ballance2.Interfaces.IModManager));
 	}

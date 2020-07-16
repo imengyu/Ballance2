@@ -3,7 +3,17 @@ guid: 98e582ad2cf97c54984c937cb09b9216
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - rectTransform: {instanceID: 0}
+  - itemPrefab: {instanceID: 0}
+  - itemBackgroundNormal: {fileID: 21300000, guid: 2d122f45ef24cfa4a986e71d0eafe34a,
+      type: 3}
+  - itemBackgroundSelected: {fileID: 21300000, guid: b064b6d543af0db428e530091dff62ca,
+      type: 3}
+  - itemBackgroundHover: {fileID: 21300000, guid: b064b6d543af0db428e530091dff62ca,
+      type: 3}
+  - itemBackgroundPressed: {fileID: 21300000, guid: 33ed93811fde3a741a5d0c97faf70389,
+      type: 3}
   executionOrder: 0
   icon: {fileID: 2800000, guid: 14b8c37a0dd67b041a8ece25e4aec177, type: 3}
   userData: 

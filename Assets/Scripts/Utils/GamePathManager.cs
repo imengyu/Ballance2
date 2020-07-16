@@ -15,27 +15,46 @@ namespace Ballance2.Utils
         /// 调试模组包存放路径
         /// </summary>
         public const string DEBUG_MOD_FOLDER = "Assets/Mods";
-        /// <summary>
-        /// 调试路径（当前目录）<c>（您在调试时请将其更改为自己项目存放目录）</c>
-        /// </summary>
-        public const string DEBUG_PATH = "E:/Programming/GameProject/Ballance2/Debug/";
-        /// <summary>
-        /// 调试路径（当前模组目录）<c>（您在调试时请将其更改为自己项目存放目录）</c>
-        /// </summary>
-        public const string DEBUG_MODS_PATH = "E:/Programming/GameProject/Ballance2/Debug/mods/";
-        /// <summary>
-        /// 调试路径（当前关卡目录）<c>（您在调试时请将其更改为自己项目存放目录）</c>
-        /// </summary>
-        public const string DEBUG_LEVELS_PATH = "E:/Programming/GameProject/Ballance2/Debug/levels/";
 
+        /// <summary>
+        /// 调试路径（输出目录）<c>（您在调试时请点击菜单 "Ballance">"开发设置">"Debug Settings" 将其更改为自己调试输出存放目录）</c>
+        /// </summary>
+        public static string DEBUG_PATH 
+        {
+            get
+            {
+                DebugSettings debugSettings = DebugSettings.Instance;
+                if (debugSettings != null)
+                    return debugSettings.DebugFolder.Replace("\\", "/");
+                return "";
+            }
+        }
+        /// <summary>
+        /// 调试路径（模组目录）
+        /// </summary>
+        public static string DEBUG_MODS_PATH { get { return DEBUG_PATH + "Mods/"; } }
+        /// <summary>
+        /// 调试路径（关卡目录）
+        /// </summary>
+        public static string DEBUG_LEVELS_PATH { get { return DEBUG_PATH + "Levels/"; } }
+
+        /// <summary>
+        /// 安卓系统数据目录
+        /// </summary>
+        public const string ANDROID_FOLDER_PATH = "/sdcard/games/com.imengyu.ballance2/";
         /// <summary>
         /// 安卓系统模组目录
         /// </summary>
-        public const string ANDROID_MODS_PATH = "/sdcard/games/com.imengyu.ballance2/mods/";
+        public const string ANDROID_MODS_PATH = ANDROID_FOLDER_PATH + "Mods/";
         /// <summary>
         /// 安卓系统关卡目录
         /// </summary>
-        public const string ANDROID_LEVELS_PATH = "/sdcard/games/com.imengyu.ballance2/levels/";
+        public const string ANDROID_LEVELS_PATH = ANDROID_FOLDER_PATH + "Levels/";
+
+
+
+
+
 
         /// <summary>
         /// 检测是否是绝对路径

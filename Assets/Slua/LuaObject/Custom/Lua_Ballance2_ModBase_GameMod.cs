@@ -76,6 +76,69 @@ public class Lua_Ballance2_ModBase_GameMod : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int LoadInternal(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.ModBase.GameMod self=(Ballance2.ModBase.GameMod)checkSelf(l);
+			var ret=self.LoadInternal();
+			pushValue(l,true);
+			pushValue(l,ret);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int UnLoad(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.ModBase.GameMod self=(Ballance2.ModBase.GameMod)checkSelf(l);
+			self.UnLoad();
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int Destroy(IntPtr l) {
 		try {
 			#if DEBUG
@@ -120,38 +183,6 @@ public class Lua_Ballance2_ModBase_GameMod : LuaObject {
 			#endif
 			Ballance2.ModBase.GameMod self=(Ballance2.ModBase.GameMod)checkSelf(l);
 			var ret=self.Run();
-			pushValue(l,true);
-			pushValue(l,ret);
-			return 2;
-		}
-		catch(Exception e) {
-			return error(l,e);
-		}
-		#if DEBUG
-		finally {
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.EndSample();
-			#else
-			Profiler.EndSample();
-			#endif
-		}
-		#endif
-	}
-	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	[UnityEngine.Scripting.Preserve]
-	static public int LoadInternal(IntPtr l) {
-		try {
-			#if DEBUG
-			var method = System.Reflection.MethodBase.GetCurrentMethod();
-			string methodName = GetMethodName(method);
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.BeginSample(methodName);
-			#else
-			Profiler.BeginSample(methodName);
-			#endif
-			#endif
-			Ballance2.ModBase.GameMod self=(Ballance2.ModBase.GameMod)checkSelf(l);
-			var ret=self.LoadInternal();
 			pushValue(l,true);
 			pushValue(l,ret);
 			return 2;
@@ -583,6 +614,176 @@ public class Lua_Ballance2_ModBase_GameMod : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int GetTextureAsset(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.ModBase.GameMod self=(Ballance2.ModBase.GameMod)checkSelf(l);
+			System.String a1;
+			checkType(l,2,out a1);
+			var ret=self.GetTextureAsset(a1);
+			pushValue(l,true);
+			pushValue(l,ret);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int GetTexture2DAsset(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.ModBase.GameMod self=(Ballance2.ModBase.GameMod)checkSelf(l);
+			System.String a1;
+			checkType(l,2,out a1);
+			var ret=self.GetTexture2DAsset(a1);
+			pushValue(l,true);
+			pushValue(l,ret);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int GetSpriteAsset(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.ModBase.GameMod self=(Ballance2.ModBase.GameMod)checkSelf(l);
+			System.String a1;
+			checkType(l,2,out a1);
+			var ret=self.GetSpriteAsset(a1);
+			pushValue(l,true);
+			pushValue(l,ret);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int GetMaterialAsset(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.ModBase.GameMod self=(Ballance2.ModBase.GameMod)checkSelf(l);
+			System.String a1;
+			checkType(l,2,out a1);
+			var ret=self.GetMaterialAsset(a1);
+			pushValue(l,true);
+			pushValue(l,ret);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int GetPhysicMaterialAsset(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.ModBase.GameMod self=(Ballance2.ModBase.GameMod)checkSelf(l);
+			System.String a1;
+			checkType(l,2,out a1);
+			var ret=self.GetPhysicMaterialAsset(a1);
+			pushValue(l,true);
+			pushValue(l,ret);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int get_Uid(IntPtr l) {
 		try {
 			#if DEBUG
@@ -831,6 +1032,37 @@ public class Lua_Ballance2_ModBase_GameMod : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int get_IsModInitByGameinit(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.ModBase.GameMod self=(Ballance2.ModBase.GameMod)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.IsModInitByGameinit);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int get_TAG(IntPtr l) {
 		try {
 			#if DEBUG
@@ -1000,6 +1232,37 @@ public class Lua_Ballance2_ModBase_GameMod : LuaObject {
 			Ballance2.ModBase.GameMod self=(Ballance2.ModBase.GameMod)checkSelf(l);
 			pushValue(l,true);
 			pushEnum(l,(int)self.ModType);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_ModFileType(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.ModBase.GameMod self=(Ballance2.ModBase.GameMod)checkSelf(l);
+			pushValue(l,true);
+			pushEnum(l,(int)self.ModFileType);
 			return 2;
 		}
 		catch(Exception e) {
@@ -1329,9 +1592,10 @@ public class Lua_Ballance2_ModBase_GameMod : LuaObject {
 	static public void reg(IntPtr l) {
 		getTypeTable(l,"Ballance2.ModBase.GameMod");
 		addMember(l,Load);
+		addMember(l,LoadInternal);
+		addMember(l,UnLoad);
 		addMember(l,Destroy);
 		addMember(l,Run);
-		addMember(l,LoadInternal);
 		addMember(l,RegisterLuaObject);
 		addMember(l,FindLuaObject);
 		addMember(l,GetModEntryCodeExecuted);
@@ -1343,6 +1607,11 @@ public class Lua_Ballance2_ModBase_GameMod : LuaObject {
 		addMember(l,GetAsset);
 		addMember(l,GetTextAsset);
 		addMember(l,GetPrefabAsset);
+		addMember(l,GetTextureAsset);
+		addMember(l,GetTexture2DAsset);
+		addMember(l,GetSpriteAsset);
+		addMember(l,GetMaterialAsset);
+		addMember(l,GetPhysicMaterialAsset);
 		addMember(l,"Uid",get_Uid,null,true);
 		addMember(l,"PackagePath",get_PackagePath,null,true);
 		addMember(l,"PackageName",get_PackageName,null,true);
@@ -1351,12 +1620,14 @@ public class Lua_Ballance2_ModBase_GameMod : LuaObject {
 		addMember(l,"LoadStatus",get_LoadStatus,null,true);
 		addMember(l,"AssetBundle",get_AssetBundle,null,true);
 		addMember(l,"IsEditorPack",get_IsEditorPack,null,true);
+		addMember(l,"IsModInitByGameinit",get_IsModInitByGameinit,null,true);
 		addMember(l,"TAG",get_TAG,null,true);
 		addMember(l,"ModLogo",get_ModLogo,null,true);
 		addMember(l,"ModInfo",get_ModInfo,null,true);
 		addMember(l,"ModHasDefFile",get_ModHasDefFile,null,true);
 		addMember(l,"ModDefFile",get_ModDefFile,null,true);
 		addMember(l,"ModType",get_ModType,null,true);
+		addMember(l,"ModFileType",get_ModFileType,null,true);
 		addMember(l,"ModCodeType",get_ModCodeType,null,true);
 		addMember(l,"ModCompatibilityInfo",get_ModCompatibilityInfo,null,true);
 		addMember(l,"ModDependencyInfo",get_ModDependencyInfo,null,true);

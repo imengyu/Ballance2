@@ -5,11 +5,12 @@ using System.Collections.Generic;
 public class Lua_Ballance2_ModBase_GameModStatus : LuaObject {
 	static public void reg(IntPtr l) {
 		getEnumTable(l,"Ballance2.ModBase.GameModStatus");
-		addMember(l,0,"NotInitialize");
-		addMember(l,1,"InitializeSuccess");
-		addMember(l,2,"Loading");
-		addMember(l,3,"InitializeFailed");
-		addMember(l,4,"BadMod");
+		addMember(l,0,"Destroyed");
+		addMember(l,1,"NotInitialize");
+		addMember(l,2,"InitializeSuccess");
+		addMember(l,3,"Loading");
+		addMember(l,4,"InitializeFailed");
+		addMember(l,5,"BadMod");
 		LuaDLL.lua_pop(l, 1);
 	}
 }

@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2367753625
+CRC: 3441629812
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 5299dc85b56b1b07f5f1f07cce87080a
+    Hash: 75f900ec0b77c8573b4eb3c8f223ac6e
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 3cdc18a143d99f0eae8f8c0b1cf5dcf8
+    Hash: b774a284ba0d17f1b31b979a6eb2211d
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -17,6 +17,8 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 48
   Script: {instanceID: 0}
+- Class: 49
+  Script: {instanceID: 0}
 - Class: 74
   Script: {instanceID: 0}
 - Class: 91
@@ -24,9 +26,9 @@ ClassTypes:
 - Class: 95
   Script: {instanceID: 0}
 - Class: 114
-  Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-- Class: 114
   Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 128
@@ -38,7 +40,9 @@ ClassTypes:
 - Class: 224
   Script: {instanceID: 0}
 Assets:
+- Assets/Mods/core.gameinit/ModLogo.png
 - Assets/Mods/core.gameinit/UIGameInit.prefab
 - Assets/Mods/core.gameinit/IntroAnimator.controller
+- Assets/Mods/core.gameinit/ModDef.xml
 - Assets/Mods/core.gameinit/IntroAnimation.anim
 Dependencies: []

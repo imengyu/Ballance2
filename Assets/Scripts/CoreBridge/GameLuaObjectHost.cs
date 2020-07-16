@@ -2,8 +2,6 @@
 using Ballance2.ModBase;
 using Ballance2.Utils;
 using SLua;
-using SubjectNerd.Utilities;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,11 +21,17 @@ namespace Ballance2.CoreBridge
     /// ✧参数引入
     ///     可以在编辑器中设置 LuaInitialVars 添加你想引入的参数，承载组件会自动将的参数设置
     ///     到你的 Lua脚本 self 上，通过 self.参数名 就可以访问了。
+    ///     
+    /// ✧Unity消息
+    ///     ★ 你可以在 Lua 类中添加 Start、Update、Awake、OnDestroy等等方法（也可以不写），
+    ///     承载组件会自动调用这些方法，Lua使用起来就像在C#中使用MonoBehaviour一样, 无需你写其他代码。
+    ///     ★ GameLuaObjectHost默认实现 Awake Start Update FixedUpdate LateUpdate 
+    ///     GUI Destory Enable Disable 这几个事件，如果需要更多事件，在编辑器中 “Lua 类 On * 事件接收器”
+    ///     这个设置中添加你需要的事件类别，下方会显示可用的事件。
     /// 
     /// </remarks>
     [CustomLuaClass]
     [AddComponentMenu("Ballance/Lua/GameLuaObjectHost")]
-
     public class GameLuaObjectHost : MonoBehaviour
     {
         public const string TAG = "GameLuaObjectHost";
@@ -51,10 +55,20 @@ namespace Ballance2.CoreBridge
         /// <summary>
         /// 设置 LUA 初始参数，用于方便地从 Unity 编辑器直接引入初始参数至 Lua，这些变量会设置到 Lua self 上，可直接获取。
         /// </summary>
+        /// <remarks>
+        /// 提示：这些参数仅用于LUA对象初始化时来传递参数使用的，如果你在LUA中修改了变量值，或是在其他脚本中访问修改，
+        /// 其不会自动更新，你需要手动调用 UpdateVarFromLua UpdateVarToLua 来更新对应数据。
+        /// </remarks>
         [Tooltip("设置 LUA 初始参数，用于方便地从 Unity 编辑器直接引入初始参数至 Lua，这些变量会设置到 Lua self 上，可直接获取。")]
         [SerializeField]
         public List<LuaVarObjectInfo> LuaInitialVars = new List<LuaVarObjectInfo>();
-
+        /// <summary>
+        /// 设置 LUA 脚本执行顺序，这个值越大，脚本越晚被执行。(仅在加载时有效)
+        /// </summary>
+        [DoNotToLua]
+        [Tooltip("设置 LUA 脚本执行顺序，这个值越大，脚本越晚被执行。")]
+        [SerializeField]
+        public int ExecuteOrder = 0;
 
         /// <summary>
         /// lua self
@@ -83,23 +97,45 @@ namespace Ballance2.CoreBridge
         private LuaVoidDelegate onDisable = null;
         private LuaVoidDelegate reset = null;
 
-        private void Start()
+        private bool luaInited = false;
+        private bool awakeCalledBeforeInit = false;
+        private bool startCalledBeforeInit = false;
+
+        private void DoInit()
         {
             ModManager = ((IModManager)GameManager.GetManager("ModManager"));
+
             if (!LuaInit())
             {
                 enabled = false;
-                GameLogger.Warning(TAG + ":" + Name, "LuaObject disabled because {0} load error", Name);
+                GameLogger.Warning(TAG + ":" + Name, "LuaObject {0} disabled because load error", Name);
             }
+            else
+            {
+                if (awakeCalledBeforeInit && awake != null) awake(self);
+                if (startCalledBeforeInit && start != null) start(self, gameObject);      
+            }
+        }
 
+        private void Start()
+        {
+            if (!luaInited) awakeCalledBeforeInit = true;
             if (start != null) start(self, gameObject);
         }
         private void Awake()
         {
+            if (ExecuteOrder == 0) DoInit();
+            if (!luaInited) awakeCalledBeforeInit = true;
             if (awake != null) awake(self);
         }
         private void Update()
         {
+            if (ExecuteOrder >= 0)
+            {
+                ExecuteOrder--;
+                if (ExecuteOrder == 0)
+                    DoInit();
+            }
             if (update != null) update(self);
         }
         private void FixedUpdate()
@@ -231,36 +267,8 @@ namespace Ballance2.CoreBridge
         }
         private void InitLuaVars()
         {
-            foreach(LuaVarObjectInfo v in LuaInitialVars)
-            {
-                if (!string.IsNullOrEmpty(v.Name))
-                {
-                    switch (v.Type)
-                    {
-                        case LuaVarObjectType.None: LuaSelf[v.Name] = null; break;
-                        case LuaVarObjectType.Vector2: LuaSelf[v.Name] = v.Vector2(); break;
-                        case LuaVarObjectType.Vector2Int: LuaSelf[v.Name] = v.Vector2Int(); break;
-                        case LuaVarObjectType.Vector3: LuaSelf[v.Name] = v.Vector3(); break;
-                        case LuaVarObjectType.Vector3Int: LuaSelf[v.Name] = v.Vector3Int(); break;
-                        case LuaVarObjectType.Vector4: LuaSelf[v.Name] = v.Vector4(); break;
-                        case LuaVarObjectType.Rect: LuaSelf[v.Name] = v.Rect(); break;
-                        case LuaVarObjectType.RectInt: LuaSelf[v.Name] = v.RectInt(); break;
-                        case LuaVarObjectType.Gradient: LuaSelf[v.Name] = v.Gradient(); break;
-                        case LuaVarObjectType.Layer: LuaSelf[v.Name] = v.Layer(); break;
-                        case LuaVarObjectType.Curve: LuaSelf[v.Name] = v.Curve(); break;
-                        case LuaVarObjectType.Color: LuaSelf[v.Name] = v.Color(); break;
-                        case LuaVarObjectType.BoundsInt: LuaSelf[v.Name] = v.BoundsInt(); break;
-                        case LuaVarObjectType.Bounds: LuaSelf[v.Name] = v.Bounds(); break;
-                        case LuaVarObjectType.Object: LuaSelf[v.Name] = v.Object(); break;
-                        case LuaVarObjectType.GameObject: LuaSelf[v.Name] = v.GameObject(); break;
-                        case LuaVarObjectType.Long: LuaSelf[v.Name] = v.Long(); break;
-                        case LuaVarObjectType.Int: LuaSelf[v.Name] = v.Int(); break;
-                        case LuaVarObjectType.String: LuaSelf[v.Name] = v.String(); break;
-                        case LuaVarObjectType.Double: LuaSelf[v.Name] = v.Double(); break;
-                        case LuaVarObjectType.Bool: LuaSelf[v.Name] = v.Bool(); break;
-                    }
-                }
-            }
+            foreach (LuaVarObjectInfo v in LuaInitialVars)
+                UpdateVarToLua(v);
         }
         private void StopLuaEvents()
         {
@@ -269,6 +277,24 @@ namespace Ballance2.CoreBridge
             awake = null;
             onGUI = null;
             onDestory = null;
+        }
+
+        /// <summary>
+        /// 更新 LuaVarObjectInfo 至 lua 脚本上
+        /// </summary>
+        /// <param name="v"></param>
+        public void UpdateVarToLua(LuaVarObjectInfo v)
+        {
+            if (!string.IsNullOrEmpty(v.Name))
+                v.UpdateToLua(LuaSelf);
+        }
+        /// <summary>
+        /// 从 lua 脚本上获取 lua 变量更新至 LuaVarObjectInfo 
+        /// </summary>
+        /// <param name="v"></param>
+        public void UpdateVarFromLua(LuaVarObjectInfo v)
+        {
+            v.UpdateFromLua(LuaSelf);
         }
 
         /// <summary>

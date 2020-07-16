@@ -180,10 +180,10 @@ namespace Ballance2.CoreGame.Managers
         public Vector3 _thisVector3Back = Vector3.back;
 
         //一些摄像机的旋转动画曲线
-        public AnimationCurve animationCurveCamera;
-        public AnimationCurve animationCurveCameraZ;
-        public AnimationCurve animationCurveCameraMoveY;
-        public AnimationCurve animationCurveCameraMoveYDown;
+        public AnimationCurve animationCurveCamera = null;
+        public AnimationCurve animationCurveCameraZ = null;
+        public AnimationCurve animationCurveCameraMoveY = null;
+        public AnimationCurve animationCurveCameraMoveYDown = null;
 
         private bool isFollowCam = false;
         private bool isLookingBall = false;
@@ -210,10 +210,10 @@ namespace Ballance2.CoreGame.Managers
         public float camFollowSpeed2 = 0.05f;
         public float camMoveSpeedZ = 1f;
 
-        public GameObject ballCamMoveHost;
-        public Camera ballCamera;
-        public GameObject ballCamFollowHost;
-        public GameObject ballCamFollowTarget;
+        public GameObject ballCamMoveHost = null;
+        public Camera ballCamera = null;
+        public GameObject ballCamFollowHost = null;
+        public GameObject ballCamFollowTarget = null;
 
         private Vector3 camVelocityTarget2 = new Vector3();
         private Transform camFollowTarget = null;

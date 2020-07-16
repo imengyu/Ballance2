@@ -21,10 +21,10 @@ namespace Ballance2.Editor.Modding
 
         }
 
-        [@MenuItem("Ballance/模组开发/创建模组包")]
+        [@MenuItem("Ballance/模组开发/生成模组包")]
         static void MakeModFile()
         {
-            EditorWindow.GetWindowWithRect(typeof(ModMakerWindow), new Rect(200, 150, 450, 550));
+            EditorWindow.GetWindowWithRect(typeof(ModMakerWindow), new Rect(200, 150, 450, 400));
         }
 
         [@MenuItem("Ballance/模组开发/打包模组包")]

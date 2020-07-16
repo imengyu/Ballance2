@@ -5,14 +5,14 @@ using System.Collections.Generic;
 public class Lua_Ballance2_CoreBridge_StoreDataType : LuaObject {
 	static public void reg(IntPtr l) {
 		getEnumTable(l,"Ballance2.CoreBridge.StoreDataType");
-		addMember(l,0,"Null");
-		addMember(l,1,"Raw");
+		addMember(l,0,"NotSet");
+		addMember(l,1,"Custom");
 		addMember(l,2,"Array");
-		addMember(l,3,"Int");
+		addMember(l,3,"Integer");
 		addMember(l,4,"Long");
 		addMember(l,5,"Float");
 		addMember(l,6,"String");
-		addMember(l,7,"Bool");
+		addMember(l,7,"Boolean");
 		addMember(l,8,"Double");
 		addMember(l,9,"Color");
 		addMember(l,10,"Material");

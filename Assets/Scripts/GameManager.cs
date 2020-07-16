@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Ballance2.Managers.Base;
 using System.Collections;
+using Ballance2.Interfaces;
 
 namespace Ballance2
 {
@@ -292,14 +293,11 @@ namespace Ballance2
         /// 静态资源引入
         /// </summary>
         public static List<GameAssetsInfo> GameAssets { get; private set; }
-        /// <summary>
-        /// 资源优先选择 Editor 中的资源（仅 Editor 有效）
-        /// </summary>
-        public static bool AssetsPreferEditor { get; set; }
+        [DoNotToLua]
         /// <summary>
         /// 在开始时暂停（通常用于调试）
         /// </summary>
-        public static bool BreakAtStart { get { return gameBreakAtStart; } set { gameBreakAtStart = value; } }
+        public static bool BreakAtStart { get; set; } = false;
 
         [Serializable]
         public class GameObjectInfo
@@ -323,7 +321,6 @@ namespace Ballance2
 
         private static bool gameMediatorInitFinished = false;
         private static bool gameBaseInitFinished = false;
-        private static bool gameBreakAtStart = false;
 
         /// <summary>
         /// 获取底层管理器是否初始化完成
@@ -357,6 +354,10 @@ namespace Ballance2
             GameManagerObject = GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, TAG);
             GameManagerWorker = GameManagerObject.AddComponent<GameManagerWorker>();
 
+            //程序事件
+            Application.wantsToQuit += Application_wantsToQuit;
+            Application.lowMemory += Application_lowMemory;
+
             //错误提示
             GameObject GlobalGameErrorPanel = GameCanvas.transform.Find("GlobalGameErrorPanel").gameObject;
             GameErrorManager.SetGameErrorUI(GlobalGameErrorPanel.GetComponent<GameGlobalErrorUI>());
@@ -375,7 +376,7 @@ namespace Ballance2
                 gameMediatorInitFinished = true;
                 UIManager = (UIManager)RegisterManager(typeof(UIManager));
                 RegisterManager(typeof(DebugManager));
-                RegisterManager(typeof(ModManager));
+                ModManager = (ModManager)RegisterManager(typeof(ModManager)); 
                 RegisterManager(typeof(SoundManager));
 
                 if (Mode != GameMode.MinimumDebug)
@@ -398,7 +399,7 @@ namespace Ballance2
                     GameLogger.Log(TAG, "MinimumLoad Break");
                     gameManagerAlertDialogId = UIManager.GlobalAlertWindow("MinimumLoad<br/>当前是最小加载模式。", "提示", "关闭");
                 }
-                else if (gameBreakAtStart) //启动时暂停
+                else if (BreakAtStart) //启动时暂停
                 {
                     GameLogger.Log(TAG, "Game break at start");
                     gameManagerAlertDialogId = UIManager.GlobalAlertWindow("BreakAtStart<br/>您可以点击“继续运行”", "BreakAtStart", "继续运行");
@@ -421,10 +422,29 @@ namespace Ballance2
         internal static void Destroy()
         {
             Debug.Log("[" + TAG + " ] Destroy game");
-            GameManagerWorker.DestroyManagers();
             GameSettingsManager.Destroy();
         }
 
+        private static void Application_lowMemory()
+        {
+            GameLogger.Log(TAG, "lowMemory !");
+            if (ModManager != null)
+            {
+                ModManager.UnLoadNotUsedMod();
+            }
+        }
+        private static bool Application_wantsToQuit()
+        {
+            if (!gameIsQuitEmitByGameManager)
+                DoQuit();
+            return true;
+        }
+        private static void DoQuit() 
+        {
+            GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_BEFORE_GAME_QUIT, "*", null);
+            GameManagerWorker.ReqDestroyManagers();
+            GameManagerWorker.ReqGameQuit();
+        }
         //通知进行下一步内核加载
         private static void CallGameInit()
         {
@@ -440,6 +460,8 @@ namespace Ballance2
             }
         }
 
+        private static bool gameIsQuitEmitByGameManager = false;
+
         /// <summary>
         /// 设置基础摄像机状态
         /// </summary>
@@ -454,12 +476,8 @@ namespace Ballance2
         public static void QuitGame()
         {
             GameLogger.Log(TAG, "Quiting game");
-            GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_BEFORE_GAME_QUIT, "*", null);
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#else
-            Application.Quit();
-#endif
+            gameIsQuitEmitByGameManager = true;
+            DoQuit();
         }
         /// <summary>
         /// 强制中断游戏，此操作会立即停止所有物体运行。此操作由错误管理器进行控制
@@ -474,11 +492,12 @@ namespace Ballance2
                 GameObject go = GameCanvas.transform.GetChild(i).gameObject;
                 if (go.name == "GameUIWindow")
                 {
+                    GameObject go1 = null;
                     for (int j = 0, c1 = go.transform.childCount; j < c1; j++)
                     {
-                        go = go.transform.GetChild(j).gameObject;
-                        if(go.name != "GameUIWindow_Debug Window")
-                            go.SetActive(false);
+                        go1 = go.transform.GetChild(j).gameObject;
+                        if(go1.name != "GameUIWindow_Debug Window")
+                            go1.SetActive(false);
                     }
                 }
                 else if(go.name != "GameUIDebugToolBar" && go.name != "GameUIWindow_Debug Window")
@@ -556,6 +575,7 @@ namespace Ballance2
 
         #region  游戏基础管理器快速索引
 
+        public static IModManager ModManager { get; private set; }
         public static UIManager UIManager { get; private set; }
         public static GameMediator GameMediator { get; private set; }
 

@@ -8,6 +8,7 @@ using Ballance2.Config;
 using Ballance2.ModBase;
 using Ballance2.GameCore;
 using Ballance2.Interfaces;
+using System.IO;
 
 namespace Ballance2.Managers
 {
@@ -81,7 +82,14 @@ namespace Ballance2.Managers
         private IEnumerator LoadGameInitUI()
         {
             int modUid = ModManager.LoadGameMod(GamePathManager.GetResRealPath("core", "core.gameinit.ballance"), false);
+            if(modUid == 0)
+            {
+                GameErrorManager.ThrowGameError(GameError.GameInitPartLoadFailed, "加载 GameInit 资源包失败 ");
+                StopAllCoroutines();
+            }
+
             gameInitMod = ModManager.FindGameMod(modUid);
+            gameInitMod.IsModInitByGameinit = true;
             yield return StartCoroutine(gameInitMod.LoadInternal());
 
             if (gameInitMod.LoadStatus != GameModStatus.InitializeSuccess)
@@ -105,7 +113,7 @@ namespace Ballance2.Managers
 
         private LoadMask currentLoadMask = LoadMask.None;
 
-        //加载模块
+        //加载主函数
         private IEnumerator GameInitCore()
         {
             yield return new WaitUntil(IsGameInitUILoaded);
@@ -132,15 +140,15 @@ namespace Ballance2.Managers
 
             //加载 core.gameinit.txt 获得要加载的模块
             string gameInitTxt = "";
-#if UNITY_EDITOR
+#if UNITY_EDITOR // 编辑器中直接加载
             TextAsset gameInitEditorAsset = null;
-            if (GameManager.AssetsPreferEditor
+            if (DebugSettings.Instance.GameInitLoadInEditor
                 && (gameInitEditorAsset =
                 UnityEditor.AssetDatabase.LoadAssetAtPath<TextAsset>(
                     GamePathManager.DEBUG_MOD_FOLDER + "/core.gameinit.txt")) != null)
             {
                 gameInitTxt = gameInitEditorAsset.text;
-                GameLogger.Log(TAG, "Load gameinit table in Editor");
+                GameLogger.Log(TAG, "Load gameinit table in Editor : \n" + gameInitTxt);
             }
 #else
             if(false) { }
@@ -202,13 +210,14 @@ namespace Ballance2.Managers
             if (hC == 0) //无接管
                 GameInitContinueInit();
         }
+        //加载GameInit模块
         private IEnumerator GameInitPackages(string GameInitTable)
         {
             StringSpliter sp = new StringSpliter(GameInitTable, '\n');
             if (sp.Count >= 1)
             {
                 int loadedCount = 0;
-                string[] args = null;
+                string[] args;
 
                 GameLogger.Log(TAG, "Gameinit table : {0}", sp.Count);
 
@@ -239,6 +248,7 @@ namespace Ballance2.Managers
                     //加载
                     int modUid = ModManager.LoadGameModByPackageName(packageName, false);
                     GameMod mod = ModManager.FindGameMod(modUid);
+                    mod.IsModInitByGameinit = true;
                     //等待加载
                     yield return StartCoroutine(mod.LoadInternal());
 
@@ -253,8 +263,23 @@ namespace Ballance2.Managers
                 UIProgressText.text = "Loading";
             }
         }
+        //加载用户模组
         private IEnumerator GameInitUserMods()
         {
+            //加载mod文件夹下所有模组
+            string modFolderPath = GamePathManager.GetResRealPath("mod", "");
+            if(Directory.Exists(modFolderPath))
+            {
+                DirectoryInfo direction = new DirectoryInfo(modFolderPath);
+                FileInfo[] files = direction.GetFiles("*.ballance", SearchOption.AllDirectories);
+                for (int i = 0; i < files.Length; i++)
+                    ModManager.LoadGameMod(GamePathManager.GetResRealPath("mod", files[i].Name));
+            }
+
+            //根据用户设置启用对应模组
+            string[] enableMods = ModManager.GetModEnableStatusList();
+            foreach(string packageName in enableMods)
+                ModManager.InitializeLoadGameMod(packageName);
 
             yield break;
         }

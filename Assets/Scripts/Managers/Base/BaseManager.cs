@@ -21,7 +21,6 @@ namespace Ballance2.Managers
             this.name = name;
             this.packageName = packageName;
             subName = "Singleton";
-            loadIndex = CommonUtils.GenAutoIncrementID();
             currentContext = CommonUtils.GenRandomID();
         }
         /// <summary>
@@ -35,7 +34,6 @@ namespace Ballance2.Managers
             this.subName = subName;
             this.packageName = packageName;
             isSingleton = subName == "Singleton";
-            loadIndex = CommonUtils.GenAutoIncrementID();
             currentContext = CommonUtils.GenRandomID();
         }
         /// <summary>

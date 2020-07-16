@@ -11,6 +11,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using Ballance2.Interfaces;
 using System.Xml;
+using System.Collections;
+using Ballance2.Config;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -32,15 +34,20 @@ namespace Ballance2.Managers
         public override bool InitManager()
         {
             gameMods = new List<GameMod>();
+            LoadModEnableStatusList();
+
             GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_MOD_LOAD_FAILED);
             GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_MOD_LOAD_SUCCESS);
             GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_MOD_REGISTERED);
             GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_MOD_UNLOAD);
+
             InitModDebug();
             return true;
         }
         public override bool ReleaseManager()
         {
+            SaveModSettings();
+            SaveModEnableStatusList();
             DestroyModEnableStatusList();
             if (gameMods != null)
             {
@@ -52,11 +59,22 @@ namespace Ballance2.Managers
             return true;
         }
 
+        private void Update()
+        {
+            if (flushModListTick >= 0)
+            {
+                flushModListTick--;
+                if (flushModListTick == 0) 
+                    DoFlushModList();
+            }
+        }
+
         #region 模组包管理
 
         // 所有模组包
         private List<GameMod> gameMods = null;
         private GameMod _CurrentLoadingMod = null;
+        private bool _NoModMode = false;
 
         /// <summary>
         /// 获取所有已注册模组数
@@ -103,12 +121,12 @@ namespace Ballance2.Managers
                 return mod.Uid;
             }
             //处理路径至mod文件夹路径
-            if (!packagePath.StartsWith(Application.streamingAssetsPath) && !GamePathManager.IsAbsolutePath(packagePath))
+            if (!File.Exists(packagePath) && !GamePathManager.IsAbsolutePath(packagePath))
                 packagePath = GamePathManager.GetResRealPath("mod", packagePath);
             if (!File.Exists(packagePath))
             {
                 GameLogger.Error(TAG, "Mod file \"{0}\" not exists", packagePath);
-                return mod.Uid;
+                return 0;
             }
  
             mod = new GameMod(packagePath, this);
@@ -147,13 +165,13 @@ namespace Ballance2.Managers
             if (false) { }
 #if UNITY_EDITOR
             //编辑器直接加载模组
-            else if (GameManager.AssetsPreferEditor && File.Exists(pathInEditorMods + "/ModDef.xml"))
+            else if (DebugSettings.Instance.ModLoadInEditor && File.Exists(pathInEditorMods + "/ModDef.xml"))
                 mod = LoadModInEditor(pathInEditorMods, packageName);
 #endif
             else if (File.Exists(pathInMods)) mod = new GameMod(pathInMods, this, packageName);
             else if (File.Exists(pathInCore)) mod = new GameMod(pathInCore, this, packageName);
 #if UNITY_EDITOR
-            else if (GameManager.AssetsPreferEditor == false && File.Exists(pathInEditorMods + "/ModDef.xml"))
+            else if (DebugSettings.Instance.ModLoadInEditor == false && File.Exists(pathInEditorMods + "/ModDef.xml"))
                 mod = LoadModInEditor(pathInEditorMods, packageName);
 #endif
             else
@@ -339,6 +357,53 @@ namespace Ballance2.Managers
             return true;
         }
         /// <summary>
+        /// 加载模组包
+        /// </summary>
+        /// <param name="modUid">模组包包名</param>
+        /// <returns>返回操作是否成功</returns>
+        public bool InitializeLoadGameMod(string modPackageName)
+        {
+            GameMod m = FindGameModByName(modPackageName);
+            if (m == null)
+            {
+                GameLogger.Warning(TAG, "无法初始化模组包 {0}，因为没有注册", modPackageName);
+                GameErrorManager.LastError = GameError.NotRegister;
+                return false;
+            }
+
+            if (m.LoadStatus != GameModStatus.InitializeSuccess)
+                m.Load(this);
+            return true;
+        }
+        /// <summary>
+        /// 卸载模组包
+        /// </summary>
+        /// <param name="modUid"></param>
+        /// <returns></returns>
+        public bool UnInitializeLoadGameMod(string modPackageName)
+        {
+            GameMod m = FindGameModByName(modPackageName);
+            if (m == null)
+            {
+                GameLogger.Warning(TAG, "无法卸载模组包 {0} ，因为没有注册", modPackageName);
+                GameErrorManager.LastError = GameError.NotRegister;
+                return false;
+            }
+
+            if (m.LoadStatus == GameModStatus.InitializeSuccess)
+            {
+                m.UnLoad();
+                return true;
+            }
+            else
+            {
+                GameLogger.Warning(TAG, "无法卸载模组包 {0} ，因为没有加载", modPackageName);
+                GameErrorManager.LastError = GameError.NotInitialize;
+                return false;
+            }
+        }
+
+        /// <summary>
         /// 执行模组包代码
         /// </summary>
         /// <param name="modUid">模组包UID</param>
@@ -405,8 +470,13 @@ namespace Ballance2.Managers
 
         private List<string> modEnableStatusList = null;
         private XmlDocument modEnableStatusListXml = null;
+        private bool modEnableStatusListSaved = false;
 
-        internal void LoadModEnableStatusList()
+        public string[] GetModEnableStatusList() { return modEnableStatusList.ToArray(); }
+        public bool IsModEnabled(GameMod mod) { return IsModEnabled(mod.PackageName); }
+        public bool IsModEnabled(string packageName) { return modEnableStatusList.Contains(packageName); }
+
+        private void LoadModEnableStatusList()
         {
             modEnableStatusList = new List<string>();
             modEnableStatusListXml = new XmlDocument();
@@ -419,11 +489,19 @@ namespace Ballance2.Managers
                 sr.Dispose();
             }
             else//加载默认xml文档
-                modEnableStatusListXml.LoadXml("<?xml version=\"1.0\" encoding=\"utf - 8\"?><ModList></ModList><NoModMode>false</NoModMode>");
+                modEnableStatusListXml.LoadXml("<?xml version=\"1.0\" encoding=\"utf-8\"?><ModConfig><ModList></ModList><NoModMode>False</NoModMode></ModConfig>");
 
+            XmlNode nodeNoModMode = modEnableStatusListXml.SelectSingleNode("NoModMode");
+            if (nodeNoModMode != null)
+                _NoModMode = bool.Parse(nodeNoModMode.InnerText);
+            XmlNode nodeModList = modEnableStatusListXml.SelectSingleNode("ModList");
+            if (nodeModList != null)
+            {
+                foreach (XmlNode n in nodeModList)
+                    modEnableStatusList.Add(n.InnerText);
+            }
 
-
-
+            modEnableStatusListSaved = true;
         }
         private void DestroyModEnableStatusList()
         {
@@ -434,16 +512,65 @@ namespace Ballance2.Managers
                 modEnableStatusList.Clear();
                 modEnableStatusList = null;
             }
+            modEnableStatusListSaved = true;
         }
-        internal void SaveModEnableStatusList()
+        private void SaveModEnableStatusList()
         {
+            if (!modEnableStatusListSaved)
+            {
+                StreamWriter sw = new StreamWriter(Application.persistentDataPath + "/ModStatus.xml", false, Encoding.UTF8);
 
+                XmlDocument xml = new XmlDocument();
+                XmlNode nodeModConfig = xml.CreateElement("ModConfig");
+                XmlNode nodeModList = xml.CreateElement("ModList");
+                XmlNode nodeNoModMode = xml.CreateElement("NoModMode");
 
+                xml.AppendChild(xml.CreateXmlDeclaration("1.0", "utf-8", null));
+                xml.AppendChild(nodeModConfig);
+                nodeModConfig.AppendChild(nodeModList);
+                nodeModConfig.AppendChild(nodeNoModMode);
 
-            StreamWriter sw = new StreamWriter(Application.persistentDataPath + "/ModStatus.xml", false, Encoding.UTF8);
-            modEnableStatusListXml.Save(sw);
-            sw.Close();
-            sw.Dispose();
+                nodeNoModMode.InnerText = _NoModMode.ToString();
+                foreach(string s in modEnableStatusList)
+                {
+                    XmlNode node = xml.CreateElement("Package"); 
+                    node.InnerText = s;
+                    nodeModList.AppendChild(node);
+                }
+
+                //save
+                modEnableStatusListXml.Save(sw);
+                sw.Close();
+                sw.Dispose();
+
+                modEnableStatusListSaved = true;
+            }
+        }
+
+        //释放已经禁用的模组，加载启用的模组
+        internal IEnumerator FlushModEnableStatus()
+        {
+            foreach(GameMod m in gameMods)
+            {
+                if(!m.IsModInitByGameinit)
+                {
+                    if (IsModEnabled(m.PackageName) && m.LoadStatus == GameModStatus.NotInitialize)
+                        yield return StartCoroutine(m.LoadInternal());
+                }
+            }
+            UnLoadNotUsedMod();
+            yield break;
+        }
+        public void UnLoadNotUsedMod()
+        {
+            foreach (GameMod m in gameMods)
+            {
+                if (!m.IsModInitByGameinit)
+                {
+                    if (!IsModEnabled(m.PackageName) && m.LoadStatus == GameModStatus.InitializeSuccess)
+                        m.UnLoad();
+                }
+            }
         }
 
         #endregion
@@ -458,11 +585,17 @@ namespace Ballance2.Managers
         private RectTransform modManagerView;
         private UICommonList modList;
         private Text TextModCount;
+        private Toggle UIToggleHideCoreMod;
 
         private Sprite mod_icon_not_load;
         private Sprite mod_icon_default;
         private Sprite mod_icon_failed;
         private Sprite mod_icon_bad;
+
+        private GameSettingsActuator settings;
+
+        private bool hideCoreMod = true;
+        private int flushModListTick = 0;
 
         private void InitModDebug()
         {
@@ -474,6 +607,9 @@ namespace Ballance2.Managers
             DebugManager.RegisterCommand("modasset", OnCommandShowModAssets, 1, "[packageUid:int]  显示模组包内所有资源 [模组UID]");
             DebugManager.RegisterCommand("mods", OnCommandShowAllMod, 0, "显示所有模组");
             DebugManager.AddCustomDebugToolItem("模组管理器", new GameHandler(TAG, OnDebugToolItemClick));
+
+            settings = GameSettingsManager.GetSettings("core");
+            hideCoreMod = settings.GetBool("modmgr.hideCoreMod", true);
 
             InitModManagementWindow();
         }
@@ -490,8 +626,18 @@ namespace Ballance2.Managers
             modManageWindow.SetMinSize(400, 250);
             modManageWindow.CloseAsHide = true;
             modManageWindow.Hide();
+            modManageWindow.onHide += (windowId) => { SaveModEnableStatusList(); };
+            modManageWindow.onShow += (windowId) => { FlushModList(); };
             modList = modManagerView.transform.Find("UIScrollView/Viewport/Content").gameObject.GetComponent<UICommonList>();
             TextModCount = modManagerView.transform.Find("TextModCount").GetComponent<Text>();
+            hideCoreMod = 
+            UIToggleHideCoreMod = modManagerView.transform.Find("UIToggleHideCoreMod").GetComponent<Toggle>();
+            UIToggleHideCoreMod.isOn = hideCoreMod;
+            UIToggleHideCoreMod.onValueChanged.AddListener((b) =>
+            {
+                hideCoreMod = b;
+                FlushModList();
+            });
 
             GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_MOD_REGISTERED, "ModDebug", (evtName, param) =>
             {
@@ -544,73 +690,86 @@ namespace Ballance2.Managers
                 OnModAdded(m);
             UpdateModListCountInfos();
         }
-        private void OnModAdded(GameMod mod)
+        private void SaveModSettings()
         {
-            UICommonList.CommonListItem newItem = modList.AddItem();
-            newItem.id = mod.Uid;
-            newItem.itemObject.name = mod.Uid.ToString();
-
-            EventTriggerListener.Get(newItem.itemObject.transform.Find("Loaded").gameObject).onClick = (b) => OnLoadModStatus(mod);
-            EventTriggerListener.Get(newItem.itemObject.transform.Find("Unload").gameObject).onClick = (b) => OnUnloadMod(mod);
-
-            UpdateModListItemInfos(newItem, mod);
-            UpdateModListCountInfos();
+            settings.SetBool("modmgr.hideCoreMod", hideCoreMod);
         }
+
+        private class ModListItemData
+        {
+            public GameMod Mod;
+            public Text Title;
+            public Text Text;
+
+            public Text TextFailed;
+            public Text TextStatus;
+
+            public Toggle EnableStatus;
+            public Text EnableStatusText;
+
+            public Button Unload;
+            public Image Image;
+            public Image ImageSmall;
+        } 
+
         private void UpdateModListItemInfos(UICommonList.CommonListItem newItem, GameMod mod)
         {
-            Text title = newItem.itemObject.transform.Find("Title").GetComponent<Text>();
-            Text text = newItem.itemObject.transform.Find("Text").GetComponent<Text>();
-            Text TextFailed = newItem.itemObject.transform.Find("TextFailed").GetComponent<Text>();
-            Button Unload = newItem.itemObject.transform.Find("Unload").GetComponent<Button>();
-            Image image = newItem.itemObject.transform.Find("Image").GetComponent<Image>();
-            Toggle toggleOn = newItem.itemObject.transform.Find("Loaded").GetComponent<Toggle>();
-            toggleOn.isOn = mod.LoadStatus == GameModStatus.InitializeSuccess;
+            ModListItemData modListItemData = (ModListItemData)newItem.data;
+
+            modListItemData.EnableStatus.isOn = IsModEnabled(mod);
+            modListItemData.Text.text = mod.ModInfo.Introduction + "\n作者：" + mod.ModInfo.Author + "   版本：" +
+                        mod.ModInfo.Version;
+            modListItemData.Title.text = mod.ModInfo.Name + "\n( " + mod.PackageName + "/" + mod.Uid + "/" + mod.ModType + ")";
+            modListItemData.Image.sprite = mod.ModLogo == null ? mod_icon_default : mod.ModLogo;
+
+            if (mod.IsModInitByGameinit)
+            {
+                modListItemData.EnableStatus.isOn = true;
+                modListItemData.EnableStatus.interactable = false;
+                modListItemData.EnableStatusText.text = "基础模块";
+            }
 
             switch (mod.LoadStatus)
             {
                 case GameModStatus.InitializeFailed:
-                    image.sprite = mod_icon_failed;
-                    toggleOn.gameObject.SetActive(false);
-                    TextFailed.gameObject.SetActive(true);
-                    Unload.gameObject.SetActive(true);
-                    TextFailed.text = "初始化失败" ;
-                    text.text = "错误信息：" + mod.LoadFriendlyErrorExplain;
-                    title.text = mod.PackageName + "\n " + mod.PackagePath + "\n(" + mod.Uid + ")";
+                    modListItemData.Image.sprite = mod_icon_failed;
+                    modListItemData.TextFailed.gameObject.SetActive(true);
+                    modListItemData.TextFailed.text = mod.LoadFriendlyErrorExplain;
+                    modListItemData.TextStatus.text = "初始化失败";
+                    modListItemData.ImageSmall.sprite = mod_icon_failed;
+                    modListItemData.ImageSmall.gameObject.SetActive(true);
                     break;
                 case GameModStatus.BadMod:
-                    image.sprite = mod_icon_bad;
-                    TextFailed.gameObject.SetActive(true);
-                    Unload.gameObject.SetActive(true);
-                    toggleOn.gameObject.SetActive(false);
-                    TextFailed.text = "此模组与当前游戏版本不兼容";
-                    text.text = "";
-                    title.text = mod.ModInfo.Name + "\n( " + mod.PackageName + "/" + mod.Uid + "/" + mod.ModType + ")";
+                    modListItemData.ImageSmall.sprite = mod_icon_bad;
+                    modListItemData.ImageSmall.gameObject.SetActive(true);
+                    modListItemData.TextFailed.gameObject.SetActive(true);
+                    modListItemData.EnableStatus.gameObject.SetActive(false);
+                    modListItemData.TextStatus.text = "";
+                    modListItemData.TextFailed.text = "此模组与当前游戏版本不兼容";
                     break;
                 case GameModStatus.InitializeSuccess:
-                    toggleOn.gameObject.SetActive(true);
-                    TextFailed.gameObject.SetActive(false);
-                    Unload.gameObject.SetActive(true);
-                    if (mod.ModLogo != null) image.sprite = mod.ModLogo;
-                    else image.sprite = mod_icon_default;
-                    text.text = mod.ModInfo.Introduction + "\n作者：" + mod.ModInfo.Author + "   版本：" +
-                        mod.ModInfo.Version;
-                    title.text = mod.ModInfo.Name + "\n( " + mod.PackageName + "/" + mod.Uid + "/" + mod.ModType + ")";
+                    modListItemData.TextFailed.gameObject.SetActive(false);
+                    
+                    modListItemData.ImageSmall.sprite = null;
+                    modListItemData.TextStatus.text = "加载成功，已初始化";
+                    if(mod.IsModInitByGameinit)
+                    {
+                        modListItemData.ImageSmall.gameObject.SetActive(true);
+                        modListItemData.ImageSmall.sprite = mod_icon_default;
+                    }
+                    else modListItemData.ImageSmall.gameObject.SetActive(false);
                     break;
                 case GameModStatus.NotInitialize:
-                    image.sprite = mod_icon_not_load;
-                    text.text = "模组还未初始化";
-                    toggleOn.gameObject.SetActive(true);
-                    TextFailed.gameObject.SetActive(false);
-                    Unload.gameObject.SetActive(true);
-                    title.text = mod.PackageName + "\n " + mod.PackagePath + "\n(" + mod.Uid + ")";
+                    modListItemData.ImageSmall.sprite = mod_icon_not_load;
+                    modListItemData.ImageSmall.gameObject.SetActive(true);
+                    modListItemData.TextStatus.text = "模组还未初始化";
+                    modListItemData.TextFailed.gameObject.SetActive(false);
                     break;
                 case GameModStatus.Loading:
-                    image.sprite = mod_icon_not_load;
-                    text.text = "模组正在加载中";
-                    toggleOn.gameObject.SetActive(false);
-                    TextFailed.gameObject.SetActive(false);
-                    Unload.gameObject.SetActive(true);
-                    title.text = mod.PackageName + "\n " + mod.PackagePath + "\n(" + mod.Uid + ")";
+                    modListItemData.ImageSmall.sprite = mod_icon_not_load;
+                    modListItemData.ImageSmall.gameObject.SetActive(true);
+                    modListItemData.TextStatus.text = "模组正在加载中";
+                    modListItemData.TextFailed.gameObject.SetActive(false);
                     break;
             }
         
@@ -629,34 +788,77 @@ namespace Ballance2.Managers
             }
 
             TextModCount.text = "共 " + gameMods.Count + " 个模组，已加载" +
-                loadedCount + " 个，" + failedCount + " 个加载失败，不兼容模组 " + badCount + " 个";
+                loadedCount + " 个，" + failedCount + " 个加载失败，不兼容 " + badCount + " 个";
+        }
+        private void FlushModList()
+        {
+            flushModListTick = 5;
+        }
+        private void DoFlushModList()
+        {
+            foreach (UICommonList.CommonListItem item in modList.List)
+            {
+                GameMod mod = ((ModListItemData)item.data).Mod;
+                if (mod.IsModInitByGameinit)
+                    item.visible = !hideCoreMod;
+                UpdateModListItemInfos(item, mod);
+            }
+
+            UpdateModListCountInfos();
+            modList.Relayout();
         }
 
         private int unloadModConfirmUid = 0;
         private int initModConfirmUid = 0;
         private GameMod currentModConfirm = null;
 
+        private void OnModAdded(GameMod mod)
+        {
+            ModListItemData modListItemData = new ModListItemData();
+
+            UICommonList.CommonListItem newItem = modList.AddItem();
+            newItem.id = mod.Uid;
+            newItem.itemObject.name = mod.Uid.ToString();
+            newItem.data = modListItemData;
+
+            modListItemData.Mod = mod;
+            modListItemData.Title = newItem.itemObject.transform.Find("Title").GetComponent<Text>();
+            modListItemData.Text = newItem.itemObject.transform.Find("Text").GetComponent<Text>();
+            modListItemData.TextFailed = newItem.itemObject.transform.Find("TextFailed").GetComponent<Text>();
+            modListItemData.TextStatus = newItem.itemObject.transform.Find("TextStatus").GetComponent<Text>();
+            modListItemData.Unload = newItem.itemObject.transform.Find("Unload").GetComponent<Button>();
+            modListItemData.Image = newItem.itemObject.transform.Find("Image").GetComponent<Image>();
+            modListItemData.EnableStatus = newItem.itemObject.transform.Find("EnableStatus").GetComponent<Toggle>();
+            modListItemData.ImageSmall = newItem.itemObject.transform.Find("ImageSmall").GetComponent<Image>();
+            modListItemData.EnableStatusText = newItem.itemObject.transform.Find("EnableStatus/Label").GetComponent<Text>();
+
+            //Events
+            modListItemData.Unload.onClick.AddListener(() => OnUnloadModClicked(mod));
+            EventTriggerListener.Get(modListItemData.EnableStatus.gameObject).onClick = (b) => OnEnableStatusClicked(mod, newItem);
+
+            UpdateModListItemInfos(newItem, mod);
+            UpdateModListCountInfos();
+        }
         private void OnModRemoved(GameMod mod)
         {
             UICommonList.CommonListItem oldItem = modList.GetItemById(mod.Uid);
             if(oldItem != null)
                 modList.RemoveItem(oldItem);
+            oldItem.data = null;
             UpdateModListCountInfos();
         }
-        private void OnUnloadMod(GameMod mod)
+
+        private void OnUnloadModClicked(GameMod mod)
         {
             currentModConfirm = mod;
-            unloadModConfirmUid = GameManager.UIManager.GlobalConfirmWindow("您真的要卸载模组 " + mod.PackageName +
-                " 吗？\n如果模块正在使用，强制卸载会导致资源丢失！", "警告", "确定卸载");
+            unloadModConfirmUid = GameManager.UIManager.GlobalConfirmWindow("您真的要立即卸载模组 " + mod.PackageName +
+                " 吗？\n如果模块资源正在使用，强制卸载会导致物体丢失！", "警告", "确定卸载");
         }
-        private void OnLoadModStatus(GameMod mod)
+        private void OnEnableStatusClicked(GameMod mod, UICommonList.CommonListItem newItem)
         {
-            if (mod.LoadStatus == GameModStatus.NotInitialize)
-            {
-                currentModConfirm = mod;
-                initModConfirmUid = GameManager.UIManager.GlobalConfirmWindow("您是否要立即初始化模组 " + mod.PackageName +
-                    " ?", "提示", "确定初始化");
-            }
+            modEnableStatusListSaved = false;
+            if (((ModListItemData)newItem.data).EnableStatus.isOn) modEnableStatusList.Add(mod.PackageName);
+            else modEnableStatusList.Remove(mod.PackageName);
         }
 
         private bool OnDebugToolItemClick(string evn, params object [] param)

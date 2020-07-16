@@ -34,7 +34,7 @@ namespace Ballance2.Editor.Modding
         private int tab = 0;
         private string[] tabText = new string[] {  "选择 Mods 下的模组", "选择 ModDef.xml" };
         private int selectedMod = 0;
-        private Vector2 scrollRect;
+        private Vector2 scrollRect = new Vector2();
 
         private void OnEnable()
         {
@@ -246,8 +246,6 @@ namespace Ballance2.Editor.Modding
                         for (int i = 0; i < files.Length; i++)
                         {
                             if (files[i].Name.EndsWith(".meta")) continue;
-                            if (files[i].Name == ("ModDef.xml")) continue;
-                            if (files[i].Name == modLogoName) continue;
                             allAssetsPath.Add(files[i].FullName.Replace("\\", "/").Replace(projPath, ""));
                         }
                         isResult = true;

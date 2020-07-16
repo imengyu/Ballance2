@@ -917,6 +917,99 @@ public class Lua_Ballance2_Managers_GameMediator : LuaObject {
 		}
 		#endif
 	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_Events(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.Managers.GameMediator self=(Ballance2.Managers.GameMediator)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.Events);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_Actions(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.Managers.GameMediator self=(Ballance2.Managers.GameMediator)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.Actions);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_GlobalStore(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.Managers.GameMediator self=(Ballance2.Managers.GameMediator)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.GlobalStore);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
 	[UnityEngine.Scripting.Preserve]
 	static public void reg(IntPtr l) {
 		getTypeTable(l,"Ballance2.Managers.GameMediator");
@@ -940,6 +1033,9 @@ public class Lua_Ballance2_Managers_GameMediator : LuaObject {
 		addMember(l,GetGlobalDataStore);
 		addMember(l,UnRegisterGlobalDataStore);
 		addMember(l,"TAG",get_TAG,null,false);
+		addMember(l,"Events",get_Events,null,true);
+		addMember(l,"Actions",get_Actions,null,true);
+		addMember(l,"GlobalStore",get_GlobalStore,null,true);
 		createTypeMetatable(l,null, typeof(Ballance2.Managers.GameMediator),typeof(Ballance2.Managers.BaseManager));
 	}
 }

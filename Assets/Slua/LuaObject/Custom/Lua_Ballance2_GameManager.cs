@@ -969,130 +969,8 @@ public class Lua_Ballance2_GameManager : LuaObject {
 		}
 		#endif
 	}
-	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	[UnityEngine.Scripting.Preserve]
-	static public int get_AssetsPreferEditor(IntPtr l) {
-		try {
-			#if DEBUG
-			var method = System.Reflection.MethodBase.GetCurrentMethod();
-			string methodName = GetMethodName(method);
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.BeginSample(methodName);
-			#else
-			Profiler.BeginSample(methodName);
-			#endif
-			#endif
-			pushValue(l,true);
-			pushValue(l,Ballance2.GameManager.AssetsPreferEditor);
-			return 2;
-		}
-		catch(Exception e) {
-			return error(l,e);
-		}
-		#if DEBUG
-		finally {
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.EndSample();
-			#else
-			Profiler.EndSample();
-			#endif
-		}
-		#endif
-	}
-	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	[UnityEngine.Scripting.Preserve]
-	static public int set_AssetsPreferEditor(IntPtr l) {
-		try {
-			#if DEBUG
-			var method = System.Reflection.MethodBase.GetCurrentMethod();
-			string methodName = GetMethodName(method);
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.BeginSample(methodName);
-			#else
-			Profiler.BeginSample(methodName);
-			#endif
-			#endif
-			bool v;
-			checkType(l,2,out v);
-			Ballance2.GameManager.AssetsPreferEditor=v;
-			pushValue(l,true);
-			return 1;
-		}
-		catch(Exception e) {
-			return error(l,e);
-		}
-		#if DEBUG
-		finally {
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.EndSample();
-			#else
-			Profiler.EndSample();
-			#endif
-		}
-		#endif
-	}
-	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	[UnityEngine.Scripting.Preserve]
-	static public int get_BreakAtStart(IntPtr l) {
-		try {
-			#if DEBUG
-			var method = System.Reflection.MethodBase.GetCurrentMethod();
-			string methodName = GetMethodName(method);
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.BeginSample(methodName);
-			#else
-			Profiler.BeginSample(methodName);
-			#endif
-			#endif
-			pushValue(l,true);
-			pushValue(l,Ballance2.GameManager.BreakAtStart);
-			return 2;
-		}
-		catch(Exception e) {
-			return error(l,e);
-		}
-		#if DEBUG
-		finally {
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.EndSample();
-			#else
-			Profiler.EndSample();
-			#endif
-		}
-		#endif
-	}
-	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	[UnityEngine.Scripting.Preserve]
-	static public int set_BreakAtStart(IntPtr l) {
-		try {
-			#if DEBUG
-			var method = System.Reflection.MethodBase.GetCurrentMethod();
-			string methodName = GetMethodName(method);
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.BeginSample(methodName);
-			#else
-			Profiler.BeginSample(methodName);
-			#endif
-			#endif
-			bool v;
-			checkType(l,2,out v);
-			Ballance2.GameManager.BreakAtStart=v;
-			pushValue(l,true);
-			return 1;
-		}
-		catch(Exception e) {
-			return error(l,e);
-		}
-		#if DEBUG
-		finally {
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.EndSample();
-			#else
-			Profiler.EndSample();
-			#endif
-		}
-		#endif
-	}
+
+
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
 	static public int get_PrefabEmpty(IntPtr l) {
@@ -1243,8 +1121,6 @@ public class Lua_Ballance2_GameManager : LuaObject {
 		addMember(l,"GamePrefab",get_GamePrefab,null,false);
 		addMember(l,"GameMainLuaState",get_GameMainLuaState,set_GameMainLuaState,false);
 		addMember(l,"GameAssets",get_GameAssets,null,false);
-		addMember(l,"AssetsPreferEditor",get_AssetsPreferEditor,set_AssetsPreferEditor,false);
-		addMember(l,"BreakAtStart",get_BreakAtStart,set_BreakAtStart,false);
 		addMember(l,"PrefabEmpty",get_PrefabEmpty,null,false);
 		addMember(l,"PrefabUIEmpty",get_PrefabUIEmpty,null,false);
 		addMember(l,"UIManager",get_UIManager,null,false);

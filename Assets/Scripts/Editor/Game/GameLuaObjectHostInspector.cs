@@ -37,7 +37,6 @@ class GameLuaObjectHostInspector : Editor
         if (EditorGUI.EndChangeCheck())
         {
             serializedObject.ApplyModifiedProperties();
-            InitVarsList();
         }
     }
     private void OnEnable()
@@ -158,6 +157,18 @@ class GameLuaObjectHostInspector : Editor
                             pVal = ptargetElement.FindPropertyRelative("boolVal");
                             pVal.boolValue = EditorGUI.Toggle(rect, "boolVal", pVal.boolValue);
                             break;
+                    }
+                    rect.y += 20;
+
+                    if (isFocused && EditorApplication.isPlaying)
+                    {
+                        float w2 = rect.width / 2;
+                        rect.width -= w2;
+                        if (GUI.Button(rect, "UpdateVarFromLua"))
+                            myScript.UpdateVarFromLua(myScript.LuaInitialVars[index]);
+                        rect.x += w2;
+                        if (GUI.Button(rect, "UpdateVarToLua"))
+                            myScript.UpdateVarToLua(myScript.LuaInitialVars[index]);
                     }
                 }
             };

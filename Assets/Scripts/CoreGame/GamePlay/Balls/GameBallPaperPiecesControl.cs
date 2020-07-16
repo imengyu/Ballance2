@@ -32,7 +32,7 @@ namespace Ballance2.CoreGame.GamePlay
         {
             if (paperPeicesThowed)
             {
-                if (ticker > 0)
+                if (ticker >= 0)
                 {
                     ticker--;
                     if (ticker <= 0) {

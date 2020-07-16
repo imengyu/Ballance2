@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 439329911
+CRC: 2596717280
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 42fa6a103a6b3960d5f035809ed577f1
+    Hash: ae1bc6d4582886497367c0af841a2965
   TypeTreeHash:
     serializedVersion: 2
-    Hash: c93c1a6d175f24a1f6dcf2254389bb69
+    Hash: fee04bc823a16d8b8237621dc8933f76
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -28,6 +28,8 @@ ClassTypes:
 - Class: 45
   Script: {instanceID: 0}
 - Class: 48
+  Script: {instanceID: 0}
+- Class: 49
   Script: {instanceID: 0}
 - Class: 64
   Script: {instanceID: 0}
@@ -59,6 +61,7 @@ Assets:
 - Assets/Mods/core.scenes.menulevel/Import/Materials/I_Modul_11_Wood02.mat
 - Assets/Mods/core.scenes.menulevel/Import/Textures/Laterne_Glas.bmp
 - Assets/Mods/core.scenes.menulevel/Import/Materials/I_Trafo_Stone_Shadow.mat
+- Assets/Mods/core.scenes.menulevel/ModDef.xml
 - Assets/Mods/core.scenes.menulevel/Import/Textures/Metal_stained.bmp
 - Assets/Mods/core.scenes.menulevel/Import/Materials/I_Trafo_Stone_Color.mat
 - Assets/Mods/core.scenes.menulevel/Import/Materials/I_Tower_Floor_Side.mat
@@ -103,6 +106,7 @@ Assets:
 - Assets/Mods/core.scenes.menulevel/Import/Materials/I_TowerRoof.mat
 - Assets/Mods/core.scenes.menulevel/Import/Materials/I_Dome.mat
 - Assets/Mods/core.scenes.menulevel/Import/Textures/Column_blue.bmp
+- Assets/Mods/core.scenes.menulevel/ModLogo.png
 - Assets/Mods/core.scenes.menulevel/Import/Textures/Floor_Top_Profil.bmp
 - Assets/Mods/core.scenes.menulevel/Import/Textures/Ball_Stone.bmp
 - Assets/Mods/core.scenes.menulevel/Import/Materials/I_Floor_Top_ProfileFlat.mat

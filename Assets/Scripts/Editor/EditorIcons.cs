@@ -6,8 +6,6 @@ namespace Ballance2.Editor
 {
     class EditorIcons : EditorWindow
     {
-        static string[] text;
-
         public EditorIcons()
         {
             titleContent = new GUIContent("Unity 系统内置图标查看");
@@ -45,22 +43,6 @@ namespace Ballance2.Editor
                 GUILayout.Space(10);
             }
 
-            GUILayout.EndVertical();
-
-            GUILayout.BeginVertical(window);   //内置图标
-            GUILayout.Label("内置图标");
-
-            for (int i = 0; i < text.Length; i += 8)
-            {
-                GUILayout.BeginHorizontal();
-                for (int j = 0; j < 8; j++)
-                {
-                    int index = i + j;
-                    if (index < text.Length)
-                        GUILayout.Button(EditorGUIUtility.IconContent(text[index]), GUILayout.Width(50), GUILayout.Height(30));
-                }
-                GUILayout.EndHorizontal();
-            }
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();

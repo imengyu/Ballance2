@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace Ballance2.CoreBridge
 {
-    [CustomLuaClass]
-    [Serializable]
     /// <summary>
     /// 游戏通用接收器
     /// </summary>
+    [CustomLuaClass]
+    [Serializable]
     public class GameHandler
     {
         /// <summary>

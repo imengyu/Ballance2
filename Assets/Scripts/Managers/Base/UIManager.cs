@@ -34,6 +34,13 @@ namespace Ballance2.Managers
             GlobalFadeMaskBlack = UIRoot.transform.Find("GlobalFadeMaskBlack").gameObject.GetComponent<Image>();
             GlobalFadeMaskBlack.gameObject.SetActive(true);
 
+            //退出时的黑
+            GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_BEFORE_GAME_QUIT, TAG, (evtName, param) =>
+            {
+                MaskBlackFadeIn(0.25f);
+                return false;
+            });
+
             InitAllObects();
             InitWindowManagement();
             InitPageManagement();
@@ -138,6 +145,7 @@ namespace Ballance2.Managers
             GlobalFadeMaskBlack.color = new Color(GlobalFadeMaskBlack.color.r,
                    GlobalFadeMaskBlack.color.g, GlobalFadeMaskBlack.color.b, show ? 1.0f : 0f);
             GlobalFadeMaskBlack.gameObject.SetActive(show);
+            GlobalFadeMaskBlack.transform.SetAsLastSibling();
         }
         /// <summary>
         /// 全局黑色遮罩隐藏
@@ -147,6 +155,7 @@ namespace Ballance2.Managers
             GlobalFadeMaskWhite.color = new Color(GlobalFadeMaskWhite.color.r,
                 GlobalFadeMaskWhite.color.g, GlobalFadeMaskWhite.color.b, show ? 1.0f : 0f);
             GlobalFadeMaskWhite.gameObject.SetActive(show);
+            GlobalFadeMaskWhite.transform.SetAsLastSibling();
         }
         /// <summary>
         /// 全局黑色遮罩渐变淡入
@@ -155,6 +164,7 @@ namespace Ballance2.Managers
         public void MaskBlackFadeIn(float second)
         {
             UIFadeManager.AddFadeIn(GlobalFadeMaskBlack, second);
+            GlobalFadeMaskBlack.transform.SetAsLastSibling();
         }
         /// <summary>
         /// 全局白色遮罩渐变淡入
@@ -163,6 +173,7 @@ namespace Ballance2.Managers
         public void MaskWhiteFadeIn(float second)
         {
             UIFadeManager.AddFadeIn(GlobalFadeMaskWhite, second);
+            GlobalFadeMaskWhite.transform.SetAsLastSibling();
         }
         /// <summary>
         /// 全局黑色遮罩渐变淡出
@@ -171,6 +182,7 @@ namespace Ballance2.Managers
         public void MaskBlackFadeOut(float second)
         {
             UIFadeManager.AddFadeOut(GlobalFadeMaskBlack, second, true);
+            GlobalFadeMaskBlack.transform.SetAsLastSibling();
         }
         /// <summary>
         /// 全局白色遮罩渐变淡出
@@ -179,6 +191,7 @@ namespace Ballance2.Managers
         public void MaskWhiteFadeOut(float second)
         {
             UIFadeManager.AddFadeOut(GlobalFadeMaskWhite, second, true);
+            GlobalFadeMaskWhite.transform.SetAsLastSibling();
         }
 
         #endregion

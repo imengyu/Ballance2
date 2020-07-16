@@ -150,6 +150,70 @@ public class Lua_Ballance2_CoreBridge_GameLuaObjectHost : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int get_Name(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreBridge.GameLuaObjectHost self=(Ballance2.CoreBridge.GameLuaObjectHost)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.Name);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_Name(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreBridge.GameLuaObjectHost self=(Ballance2.CoreBridge.GameLuaObjectHost)checkSelf(l);
+			System.String v;
+			checkType(l,2,out v);
+			self.Name=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int get_LuaClassName(IntPtr l) {
 		try {
 			#if DEBUG
@@ -278,7 +342,7 @@ public class Lua_Ballance2_CoreBridge_GameLuaObjectHost : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int get_Name(IntPtr l) {
+	static public int get_LuaInitialVars(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -291,7 +355,7 @@ public class Lua_Ballance2_CoreBridge_GameLuaObjectHost : LuaObject {
 			#endif
 			Ballance2.CoreBridge.GameLuaObjectHost self=(Ballance2.CoreBridge.GameLuaObjectHost)checkSelf(l);
 			pushValue(l,true);
-			pushValue(l,self.Name);
+			pushValue(l,self.LuaInitialVars);
 			return 2;
 		}
 		catch(Exception e) {
@@ -309,7 +373,7 @@ public class Lua_Ballance2_CoreBridge_GameLuaObjectHost : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int set_Name(IntPtr l) {
+	static public int set_LuaInitialVars(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -321,9 +385,9 @@ public class Lua_Ballance2_CoreBridge_GameLuaObjectHost : LuaObject {
 			#endif
 			#endif
 			Ballance2.CoreBridge.GameLuaObjectHost self=(Ballance2.CoreBridge.GameLuaObjectHost)checkSelf(l);
-			System.String v;
+			System.Collections.Generic.List<Ballance2.CoreBridge.LuaVarObjectInfo> v;
 			checkType(l,2,out v);
-			self.Name=v;
+			self.LuaInitialVars=v;
 			pushValue(l,true);
 			return 1;
 		}
@@ -506,9 +570,10 @@ public class Lua_Ballance2_CoreBridge_GameLuaObjectHost : LuaObject {
 		addMember(l,GetLuaFun);
 		addMember(l,CallLuaFun);
 		addMember(l,"TAG",get_TAG,null,false);
+		addMember(l,"Name",get_Name,set_Name,true);
 		addMember(l,"LuaClassName",get_LuaClassName,set_LuaClassName,true);
 		addMember(l,"LuaModName",get_LuaModName,set_LuaModName,true);
-		addMember(l,"Name",get_Name,set_Name,true);
+		addMember(l,"LuaInitialVars",get_LuaInitialVars,set_LuaInitialVars,true);
 		addMember(l,"LuaSelf",get_LuaSelf,null,true);
 		addMember(l,"LuaState",get_LuaState,set_LuaState,true);
 		addMember(l,"GameMod",get_GameMod,set_GameMod,true);

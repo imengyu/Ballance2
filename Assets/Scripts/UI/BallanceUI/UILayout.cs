@@ -142,7 +142,7 @@ namespace Ballance2.UI.BallanceUI
 
         protected override void OnUpdateElement()
         {
-            if (loopUpdate > 0 && !layoutLock)
+            if (loopUpdate >= 0 && !layoutLock)
             {
                 loopUpdate--;
                 if (loopUpdate == 0)

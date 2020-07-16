@@ -103,8 +103,9 @@ namespace Ballance2.ModBase
         /// <returns></returns>
         public IEnumerator LoadInternal()
         {
-            if (LoadStatus == GameModStatus.Loading
-                || LoadStatus == GameModStatus.InitializeSuccess) yield break;
+            if (LoadStatus == GameModStatus.Loading || LoadStatus == GameModStatus.InitializeSuccess) 
+                yield break;
+
             LoadStatus = GameModStatus.Loading;
 
             GameLogger.Log(ModManager.TAG, "Load mod {0}", PackageName);
@@ -112,28 +113,29 @@ namespace Ballance2.ModBase
             if (ModFileType == GameModFileType.AssetBundle)
             {
                 //直接请求 AssetBundle
-                UnityWebRequest request = null;
-                if (AssetBundle == null)
+                UnityWebRequest request = UnityWebRequest.Get(PackagePath);
+                yield return request.SendWebRequest();
+              
+                if (!request.isNetworkError && string.IsNullOrEmpty(request.error))
                 {
-                    request = UnityWebRequest.Get(PackagePath);
-                    yield return request.SendWebRequest();
-                }
-                if (AssetBundle != null || (!request.isNetworkError && string.IsNullOrEmpty(request.error)))
-                {
+                    AssetBundleCreateRequest assetBundleCreateRequest = AssetBundle.LoadFromMemoryAsync(request.downloadHandler.data);
+                    yield return assetBundleCreateRequest;
+                    AssetBundle = assetBundleCreateRequest.assetBundle;
+
                     if (AssetBundle == null)
                     {
-                        AssetBundleCreateRequest assetBundleCreateRequest = AssetBundle.LoadFromMemoryAsync(request.downloadHandler.data);
-                        yield return assetBundleCreateRequest;
-                        AssetBundle = assetBundleCreateRequest.assetBundle;
-                    }
-                    if (AssetBundle == null)
-                    {
+                        GameErrorManager.SetLastErrorAndLog(GameError.BadAssetBundle, TAG, "加载 AssetBundle 失败 无效的资源包", PackagePath);
                         LoadFriendlyErrorExplain = "无效的资源包";
-                        GameLogger.Error(ModManager.TAG, "加载 AssetBundle {0} 失败", PackagePath);
-                        GameErrorManager.LastError = GameError.BadAssetBundle;
                         LoadStatus = GameModStatus.InitializeFailed;
                         ModManager.OnModLoadFinished(this);
                         yield break;
+                    }
+                    else
+                    {
+                        TextAsset modDefTextAsset = AssetBundle.LoadAsset<TextAsset>("modDef.xml");
+                        if (modDefTextAsset != null) 
+                            ReadModDef(modDefTextAsset.text);
+                        ModType = GameModType.AssetPack;
                     }
                 }
                 else
@@ -160,12 +162,29 @@ namespace Ballance2.ModBase
 
                 if (AssetBundle == null)
                 {
-                    LoadFriendlyErrorExplain = "无效的资源包";
                     GameErrorManager.SetLastErrorAndLog(GameError.BadAssetBundle, TAG, "加载 AssetBundle {0} 失败 无效的资源包", PackagePath);
-
+                    LoadFriendlyErrorExplain = "无效的资源包";
                     LoadStatus = GameModStatus.InitializeFailed;
                     ModManager.OnModLoadFinished(this);
                     yield break;
+                }
+                else
+                {
+                    TextAsset modDefTextAsset = AssetBundle.LoadAsset<TextAsset>("ModDef.xml");
+                    if (modDefTextAsset == null)
+                    {
+                        GameErrorManager.SetLastErrorAndLog(GameError.BadAssetBundle, TAG, "加载 AssetBundle {0} 失败 ModDef.xml 未找到 (2)", PackagePath);
+                        LoadFriendlyErrorExplain = "无效的资源包";
+                        LoadStatus = GameModStatus.InitializeFailed;
+                        ModManager.OnModLoadFinished(this);
+                    }
+                    else if (!Md5Helper.VerifyMd5Hash(modDefTextAsset.text, ModDefInZip))
+                    {
+                        GameErrorManager.SetLastErrorAndLog(GameError.BadMod, TAG, "模组校验失败，文件可能被损坏", PackagePath);
+                        LoadFriendlyErrorExplain = "模组校验失败，文件可能被损坏";
+                        LoadStatus = GameModStatus.InitializeFailed;
+                        ModManager.OnModLoadFinished(this);
+                    }
                 }
             }
             else
@@ -401,6 +420,10 @@ namespace Ballance2.ModBase
         /// 获取模组包是否直接在 Editor 加载
         /// </summary>
         public bool IsEditorPack { get; internal set; }
+        /// <summary>
+        /// 获取模组是否是在 Gameinit 就加载的（内核模块）
+        /// </summary>
+        public bool IsModInitByGameinit { get; internal set; }
 
         /// <summary>
         /// 名字标签
@@ -474,10 +497,13 @@ namespace Ballance2.ModBase
 
         #region 模组信息读取
 
+        private string ModDefInZip = "";
+
         private void LoadModDefInZip(ZipInputStream zip, ZipEntry theEntry)
         {
             MemoryStream ms = ZipUtils.ReadZipFileToMemory(zip);
-            ReadModDef(Encoding.UTF8.GetString(ms.ToArray()));
+            ModDefInZip = Encoding.UTF8.GetString(ms.ToArray());
+            ReadModDef(ModDefInZip);
             ms.Close();
             ms.Dispose();
         }
