@@ -12,27 +12,27 @@ using UnityEngine;
 /// </summary>
 public class AssetBundleMaker
 {
-    [@MenuItem("Tools/AssetBundle/Build AssetBundle From Selection StandaloneWindows")]
+    [@MenuItem("Tools/AssetBundle/Build From Selection/StandaloneWindows")]
     static void BuildABsPCSel()
     {
         BuildABsSelC(BuildTarget.StandaloneWindows);
     }
-    [@MenuItem("Tools/AssetBundle/Build AssetBundle From Selection StandaloneLinux64")]
+    [@MenuItem("Tools/AssetBundle/Build From Selection/StandaloneLinux64")]
     static void BuildABsLinuxSel()
     {
         BuildABsSelC(BuildTarget.StandaloneLinux64);
     }
-    [@MenuItem("Tools/AssetBundle/Build AssetBundle From Selection StandaloneOSX")]
+    [@MenuItem("Tools/AssetBundle/Build From Selection/StandaloneOSX")]
     static void BuildABsMacSel()
     {
         BuildABsSelC(BuildTarget.StandaloneOSX);
     }
-    [@MenuItem("Tools/AssetBundle/Build AssetBundle From Selection Android")]
+    [@MenuItem("Tools/AssetBundle/Build From Selection/Android")]
     static void BuildABsSel()
     {
         BuildABsSelC(BuildTarget.Android);
     }
-    [@MenuItem("Tools/AssetBundle/Build AssetBundle From Selection IOS")]
+    [@MenuItem("Tools/AssetBundle/Build From Selection/IOS")]
     static void BuildABsIosSel()
     {
         BuildABsSelC(BuildTarget.iOS);
@@ -73,9 +73,49 @@ public class AssetBundleMaker
             for (int i = 0; i < selection2.Length; i++)
                 selection[i] = selection2[i];
             selection[selection2.Length] = AssetDatabase.LoadAssetAtPath("Assets/Version.txt", typeof(Object));
-#pragma warning disable 0618
+
             BuildPipeline.BuildAssetBundle(selection[0], selection, path, BuildAssetBundleOptions.CollectDependencies, type);
-#pragma warning restore 0618
+        }
+    }
+
+    [@MenuItem("Tools/AssetBundle/Build All/StandaloneWindows")]
+    static void BuildAllStandaloneWindows()
+    {
+        BuildAll(BuildTarget.StandaloneWindows);
+    }
+    [@MenuItem("Tools/AssetBundle/Build All/StandaloneLinux64")]
+    static void BuildAllStandaloneLinux64()
+    {
+        BuildAll(BuildTarget.StandaloneLinux64);
+    }
+    [@MenuItem("Tools/AssetBundle/Build All/StandaloneOSX")]
+    static void BuildAllStandaloneOSX()
+    {
+        BuildAll(BuildTarget.iOS);
+    }
+    [@MenuItem("Tools/AssetBundle/Build All/Android")]
+    static void BuildAllAndroidS()
+    {
+        BuildAll(BuildTarget.Android);
+    }
+    [@MenuItem("Tools/AssetBundle/Build All/IOS")]
+    static void BuildAllIOS()
+    {
+        BuildAll(BuildTarget.iOS);
+    }
+
+    static void BuildAll(BuildTarget type)
+    {
+        string path = EditorUtility.SaveFolderPanel("选择输出目录",
+                       EditorPrefs.GetString("AssetBundleMakerAllDefSaveDir", GamePathManager.DEBUG_PATH),
+                       EditorPrefs.GetString("AssetBundleMakerAllDefName", "New Resource"));
+        if (!string.IsNullOrEmpty(path))
+        {
+            if (path != GamePathManager.DEBUG_PATH)
+                EditorPrefs.SetString("AssetBundleMakerAllDefSaveDir", GamePathManager.DEBUG_PATH);
+            EditorPrefs.SetString("AssetBundleMakerAllDefName", Path.GetFileNameWithoutExtension(path));
+
+            BuildPipeline.BuildAssetBundles(path, BuildAssetBundleOptions.None, type);
         }
     }
 }

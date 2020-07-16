@@ -849,7 +849,7 @@ MonoBehaviour:
   GameRoot: {fileID: 1368830292}
   GameCanvas: {fileID: 1928318315}
   BreakAtStart: 0
-  AssetsPreferEditor: 0
+  AssetsPreferEditor: 1
   TargetFrameRate: 60
   LevelDebugTarget: level01
   CoreDebugBase: {fileID: 2894737038254625379, guid: 9f6ff65e74b874346b9dfb3f015e29ce,

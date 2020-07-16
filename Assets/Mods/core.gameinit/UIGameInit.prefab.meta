@@ -3,5 +3,5 @@ guid: f1b64054cc63f4b43a496a0252bf1a93
 PrefabImporter:
   externalObjects: {}
   userData: 
-  assetBundleName: 
-  assetBundleVariant: 
+  assetBundleName: core.gameinit
+  assetBundleVariant: ballance

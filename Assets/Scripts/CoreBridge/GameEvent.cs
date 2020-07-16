@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Ballance2.CoreBridge
 {
     [SLua.CustomLuaClass]
+    [Serializable]
     /// <summary>
     /// 全局事件存储类
     /// </summary>
@@ -10,17 +13,23 @@ namespace Ballance2.CoreBridge
     {
         public GameEvent(string evtName)
         {
-            EventName = evtName; EventHandlers = new List<GameHandler>();
+            _EventName = evtName; 
+            _EventHandlers = new List<GameHandler>();
         }
 
         public void Dispose()
         {
-            EventHandlers.Clear();
-            EventHandlers = null;
+            _EventHandlers.Clear();
+            _EventHandlers = null;
         }
 
-        public string EventName { get; private set; }
-        public List<GameHandler> EventHandlers { get; private set; }
+        [SerializeField, SetProperty("EventName")]
+        private string _EventName;
+        [SerializeField, SetProperty("EventHandlers")]
+        private List<GameHandler> _EventHandlers;
+
+        public string EventName { get { return _EventName; } }
+        public List<GameHandler> EventHandlers { get { return _EventHandlers; } }
     }
 
     [SLua.CustomLuaClass]

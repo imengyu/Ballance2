@@ -137,8 +137,11 @@ namespace Ballance2.Managers
             if (GameManager.AssetsPreferEditor
                 && (gameInitEditorAsset =
                 UnityEditor.AssetDatabase.LoadAssetAtPath<TextAsset>(
-                    GamePathManager.DEBUG_MODS_PATH + "/core.gameinit.txt")) != null)
+                    GamePathManager.DEBUG_MOD_FOLDER + "/core.gameinit.txt")) != null)
+            {
                 gameInitTxt = gameInitEditorAsset.text;
+                GameLogger.Log(TAG, "Load gameinit table in Editor");
+            }
 #else
             if(false) { }
 #endif
@@ -160,6 +163,8 @@ namespace Ballance2.Managers
 
             //加载包
             yield return StartCoroutine(GameInitPackages(gameInitTxt));
+            //加载模组
+            yield return StartCoroutine(GameInitUserMods());
 
             UIProgressText.text = "Loading";
 
@@ -204,6 +209,9 @@ namespace Ballance2.Managers
             {
                 int loadedCount = 0;
                 string[] args = null;
+
+                GameLogger.Log(TAG, "Gameinit table : {0}", sp.Count);
+
                 foreach (string ar in sp.Result)
                 {
                     if (ar.StartsWith(":")) continue;
@@ -225,7 +233,7 @@ namespace Ballance2.Managers
 
                     //状态
                     loadedCount++;
-                    LoadGameInitUIProgressValue(loadedCount / (float)sp.Count);
+                    LoadGameInitUIProgressValue(loadedCount / (float)sp.Count / 2);
                     UIProgressText.text = "Loading " + packageName;
 
                     //加载
@@ -244,6 +252,11 @@ namespace Ballance2.Managers
                 LoadGameInitUIProgressValue(1);
                 UIProgressText.text = "Loading";
             }
+        }
+        private IEnumerator GameInitUserMods()
+        {
+
+            yield break;
         }
 
         private void GameInitContinueInit()

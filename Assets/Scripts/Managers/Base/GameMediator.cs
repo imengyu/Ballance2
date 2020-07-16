@@ -5,6 +5,7 @@ using SLua;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using UnityEngine;
 
 namespace Ballance2.Managers
 {
@@ -46,7 +47,10 @@ namespace Ballance2.Managers
 
         #region 全局事件控制器
 
+        [SerializeField, SetProperty("Events")]
         private Dictionary<string, GameEvent> events = null;
+
+        public Dictionary<string, GameEvent> Events { get { return events; } }
 
         /// <summary>
         /// 注册事件
@@ -344,7 +348,10 @@ namespace Ballance2.Managers
 
         #region 全局操作控制器
 
+        [SerializeField, SetProperty("Actions")]
         private Dictionary<string, GameAction> actions = null;
+
+        public Dictionary<string, GameAction> Actions { get { return actions; } }
 
         /// <summary>
         /// 注册多个操作
@@ -779,7 +786,10 @@ namespace Ballance2.Managers
 
         #region 全局共享数据共享池
 
+        [SerializeField, SetProperty("GlobalStore")]
         private Dictionary<string, Store> globalStore;
+
+        public Dictionary<string, Store> GlobalStore { get { return globalStore; } }
 
         private void InitStore()
         {

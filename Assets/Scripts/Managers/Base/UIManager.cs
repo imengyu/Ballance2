@@ -3,6 +3,7 @@ using Ballance2.Interfaces;
 using Ballance2.UI.BallanceUI;
 using Ballance2.UI.Utils;
 using Ballance2.Utils;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -533,11 +534,19 @@ namespace Ballance2.Managers
         #region 页管理
 
         //页
-        private List<UIPage> managedPages = null;
-        private List<UIPrefab> pagePrefabs = null;
-        private List<UIPrefab> elementPrefabs = null;
+        //[SerializeField, SetProperty("ManagedPages")]
+        public List<UIPage> managedPages = null;
+        //[SerializeField, SetProperty("PagePrefabs")]
+        public List<UIPrefab> pagePrefabs = null;
+        //[SerializeField, SetProperty("ElementPrefabs")]
+        public List<UIPrefab> elementPrefabs = null;
 
-        private struct UIPrefab
+        public List<UIPage> ManagedPages { get { return managedPages; } set { } }
+        public List<UIPrefab> PagePrefabs { get { return pagePrefabs; } set { } }
+        public List<UIPrefab> ElementPrefabs { get { return elementPrefabs; } set { } }
+
+        [Serializable]
+        public class UIPrefab
         {
             public UIPrefab(GameObject o, string n)
             {
@@ -552,7 +561,10 @@ namespace Ballance2.Managers
             public bool IsLuaPrefab;
             public GameLuaObjectHost LuaObjectHost;
         }
+        [SerializeField, SetProperty("CurrentShowPage")]
         private UIPage currentShowPage = null;
+
+        public UIPage CurrentShowPage { get { return currentShowPage; } }
 
         private void InitPageManagement()
         {

@@ -138,6 +138,10 @@ namespace Ballance2.Utils
         /// </summary>
         BadAssetBundle,
         /// <summary>
+        /// 无效文件
+        /// </summary>
+        BadFileType,
+        /// <summary>
         /// 未找到文件
         /// </summary>
         FileNotFound,

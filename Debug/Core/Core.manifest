@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 40154095
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: core.scenes.menulevel.ui.assetbundle
+      Dependencies: {}

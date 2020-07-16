@@ -15,6 +15,6 @@
     <TargetVersion>1</TargetVersion>
   </Compatibility>
   <EntryCode executionAt="AtStart">Entry.lua.txt</EntryCode>
-  <ModType>ModPack</ModType>
+  <ModType>ModulePack</ModType>
   
 </Mod>

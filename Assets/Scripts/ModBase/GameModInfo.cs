@@ -7,6 +7,10 @@
     public enum GameModStatus
     {
         /// <summary>
+        /// 已经释放
+        /// </summary>
+        Destroyed,
+        /// <summary>
         /// 已注册但未初始化
         /// </summary>
         NotInitialize,
@@ -28,6 +32,13 @@
         BadMod,
     }
     [SLua.CustomLuaClass]
+    public enum GameModFileType
+    {
+        NotSet,
+        AssetBundle,
+        BallanceZipPack,
+    }
+    [SLua.CustomLuaClass]
     /// <summary>
     /// 模组类型
     /// </summary>
@@ -35,15 +46,16 @@
     {
         NotSet,
         /// <summary>
-        /// 仅资源包
+        /// 资源包，提供资源给其他代码模块调用
+        /// 不包含代码（如果包中没有代码，可设置为资源包，可节省初始化环境的开销）
         /// </summary>
         AssetPack,
         /// <summary>
-        /// 代码模组和资源包
+        /// 游戏代码模块模组。包含完整代码运行环境。
         /// </summary>
-        ModPack,
+        ModulePack,
         /// <summary>
-        /// 关卡文件
+        /// 关卡包
         /// </summary>
         Level,
     }

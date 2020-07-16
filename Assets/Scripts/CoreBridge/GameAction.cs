@@ -1,5 +1,7 @@
 ﻿using Ballance2.Utils;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Ballance2.CoreBridge
 {
@@ -7,27 +9,35 @@ namespace Ballance2.CoreBridge
     /// 全局操作
     /// </summary>
     [SLua.CustomLuaClass]
+    [Serializable]
     public class GameAction
     {
         public GameAction(string name, GameHandler gameHandler, string[] callTypeCheck)
         {
-            Name = name;
-            GameHandler = gameHandler;
-            CallTypeCheck = callTypeCheck;
+            _Name = name;
+            _GameHandler = gameHandler;
+            _CallTypeCheck = callTypeCheck;
         }
+
+        [SerializeField, SetProperty("Name")]
+        private string _Name;
+        [SerializeField, SetProperty("GameHandler")]
+        private GameHandler _GameHandler;
+        [SerializeField, SetProperty("CallTypeCheck")]
+        private string[] _CallTypeCheck;
 
         /// <summary>
         /// 操作名称
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get { return _Name; } }
         /// <summary>
         /// 操作接收器
         /// </summary>
-        public GameHandler GameHandler { get; private set; }
+        public GameHandler GameHandler { get { return _GameHandler; } }
         /// <summary>
         /// 操作类型检查
         /// </summary>
-        public string[] CallTypeCheck { get; private set; }
+        public string[] CallTypeCheck { get { return _CallTypeCheck; } }
 
         /// <summary>
         /// 空
@@ -36,9 +46,9 @@ namespace Ballance2.CoreBridge
 
         public void Dispose()
         {
-            CallTypeCheck = null;
-            GameHandler.Dispose();
-            GameHandler = null;
+            _CallTypeCheck = null;
+            _GameHandler.Dispose();
+            _GameHandler = null;
         }
     }
 

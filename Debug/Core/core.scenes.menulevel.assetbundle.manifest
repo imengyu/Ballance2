@@ -1,0 +1,133 @@
+ManifestFileVersion: 0
+CRC: 439329911
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 42fa6a103a6b3960d5f035809ed577f1
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: c93c1a6d175f24a1f6dcf2254389bb69
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 20
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 45
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 81
+  Script: {instanceID: 0}
+- Class: 108
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: ee9280a3c1d818d4eaa7b598f9c22f5a, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 77595c1ceab446f40b66d9a0e7e875c8, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 198
+  Script: {instanceID: 0}
+- Class: 199
+  Script: {instanceID: 0}
+Assets:
+- Assets/Mods/core.scenes.menulevel/Import/MenuLevel.FBX
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Floor_Top_Flat.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Trafo_Wood_Color.mat
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Wood_Metal.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Modul_13_Wood.mat
+- Assets/Mods/core.scenes.menulevel/MenuLevel.prefab
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Modul_11_Wood02.mat
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Laterne_Glas.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Trafo_Stone_Shadow.mat
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Metal_stained.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Trafo_Stone_Color.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Tower_Floor_Side.mat
+- Assets/Mods/core.scenes.menulevel/Import/Textures/FloorGlow.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Rail.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Trafo_Paper_Color.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/FloorGlow_Blue.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Tower_Floor_Top_Flat_illu.mat
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Floor_Top_Flat.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_TowerRoof_Brim.mat
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Dome.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Floor_Top_ProfilFlat.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Misc_Schelle.mat
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Column_beige_fade.png
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Modul11_Wood.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_DomeShadow.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/FloorGlow_Oragne.mat
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Floor_Top_Borderless.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Trafo_Wood.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Zone_SuDu_Innen.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Floor_Top_Profile.mat
+- Assets/Mods/core.scenes.menulevel/Import/Textures/DomeShadow.png
+- Assets/Mods/core.scenes.menulevel/Import/Materials/FloorGlow_Green.mat
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Trafo_Environment.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Modul_13_Metal.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/_MenuLevelI_Floor_Top_Border.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Colums_blue.mat
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Ball_Paper.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Floor_Trafo_Paper.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Floor_Side.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Trafo_Wood_Shadow.mat
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Floor_Side.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Trafo_Paper_Shadow.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Trafo_Paper.mat
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Column_beige.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Laterne_Glas.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Floor_Trafo_Stone.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Floor_Wood.mat
+- Assets/Mods/core.scenes.menulevel/Import/Textures/DomeEnvironment.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Zone_NenLi_Innen.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Trafo_Stone.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_TowerRoof.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Dome.mat
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Column_blue.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Floor_Top_Profil.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Ball_Stone.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Floor_Top_ProfileFlat.mat
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Ball_Wood.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Wood_Panel.bmp
+- Assets/Mods/core.scenes.menulevel/Import/3text 1.FBX
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Floor_Top_Boderless.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Floor_Trafo_Wood.mat
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Rail_Environment.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Zone_LiLiang_Innen.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Misc_MetalButtons.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Ball_Stone.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Laterne_Metal.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Columns_beige_fade.mat
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Floor_Top_Checkpoint.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Laterne_Verlauf.png
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Modul11_13_Wood.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Textures/E_Holzbeschlag.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Colums_beige.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Laterne_Verlauf.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Floor_Top_Checkpoint.mat
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Tower_Roof.bmp
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Trafo_Shadow_Big.png
+- Assets/Mods/core.scenes.menulevel/Import/Textures/Laterne_Schatten.png
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Modul_11_Wood01.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_Laterne_Schatten.mat
+- Assets/Mods/core.scenes.menulevel/Import/Materials/I_TowerRail.mat
+Dependencies: []

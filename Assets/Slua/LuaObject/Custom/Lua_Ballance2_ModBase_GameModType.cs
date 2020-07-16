@@ -7,7 +7,7 @@ public class Lua_Ballance2_ModBase_GameModType : LuaObject {
 		getEnumTable(l,"Ballance2.ModBase.GameModType");
 		addMember(l,0,"NotSet");
 		addMember(l,1,"AssetPack");
-		addMember(l,2,"ModPack");
+		addMember(l,2,"ModulePack");
 		addMember(l,3,"Level");
 		LuaDLL.lua_pop(l, 1);
 	}

@@ -361,7 +361,8 @@ namespace Ballance2
             GameObject GlobalGameErrorPanel = GameCanvas.transform.Find("GlobalGameErrorPanel").gameObject;
             GameErrorManager.SetGameErrorUI(GlobalGameErrorPanel.GetComponent<GameGlobalErrorUI>());
 
-            GameLogger.Log(TAG, "Init game {0}", GameManagerWorker.managers);
+            GameLogger.Log(TAG, "Init game Version : {0}({1}) Platform : {2}", GameConst.GameVersion, 
+                GameConst.GameBulidVersion, GameConst.GamePlatform);
             GameSettingsManager.Init();
 
             yield return new WaitForSeconds(0.2f);

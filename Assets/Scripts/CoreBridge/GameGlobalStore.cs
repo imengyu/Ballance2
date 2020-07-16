@@ -14,6 +14,7 @@ namespace Ballance2.CoreBridge
     /// 全局数据共享存储类
     /// </summary>
     [CustomLuaClass]
+    [Serializable]
     public class StoreData
     {
         /// <summary>
@@ -68,6 +69,7 @@ namespace Ballance2.CoreBridge
         private int currentHolderContext = 0;
         private object _DataRaw = null;
         private StoreDataType _DataType = StoreDataType.Custom;
+        [NonSerialized]
         private List<StoreData> _DataArray = new List<StoreData>();
         private StoreDataAccess _StoreDataAccess = StoreDataAccess.Get;
 
@@ -346,32 +348,38 @@ namespace Ballance2.CoreBridge
     /// 全局数据共享存储池类
     /// </summary>
     [CustomLuaClass]
+    [Serializable]
     public class Store
     {
+        [SerializeField, SetProperty("PoolName")]
+        private string _PoolName;
+        [SerializeField, SetProperty("PoolDatas")]
+        private Dictionary<string, StoreData> _PoolDatas;
+
         /// <summary>
         /// 池的名称
         /// </summary>
-        public string PoolName { get; private set; }
+        public string PoolName { get { return _PoolName; }  }
         /// <summary>
         /// 池中的数据
         /// </summary>
-        public Dictionary<string, StoreData> PoolDatas { get; private set; }
+        public Dictionary<string, StoreData> PoolDatas { get { return _PoolDatas; } }
 
         internal Store(string name)
         {
-            PoolName = name;
-            PoolDatas = new Dictionary<string, StoreData>();
+            _PoolName = name;
+            _PoolDatas = new Dictionary<string, StoreData>();
         }
 
         public void Destroy()
         {
-            PoolName = null;
-            if(PoolDatas != null)
+            _PoolName = null;
+            if(_PoolDatas != null)
             {
-                foreach (var v in PoolDatas)
+                foreach (var v in _PoolDatas)
                     v.Value.Destroy();
-                PoolDatas.Clear();
-                PoolDatas = null;
+                _PoolDatas.Clear();
+                _PoolDatas = null;
             }
         }
 

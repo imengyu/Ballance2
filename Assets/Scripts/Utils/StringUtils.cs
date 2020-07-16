@@ -186,5 +186,32 @@ namespace Ballance2.Utils
             }
             return sb.ToString() ;
         }
+
+
+        /// <summary>
+        /// 比较Bytes
+        /// </summary>
+        /// <param name="inV">bytes数组1</param>
+        /// <param name="outV">bytes数组2</param>
+        /// <returns>返回两个Bytes是否相等</returns>
+        public static bool TestBytesMatch(byte[] inV, byte[] outV)
+        {
+            bool rs = true;
+            if (inV != null && outV != null)
+            {
+                if (inV.Length == outV.Length)
+                {
+                    for (int i = 0, c = outV.Length; i < c; i++)
+                    {
+                        if (inV[i] != outV[i])
+                        {
+                            rs = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            return rs;
+        }
     }
 }

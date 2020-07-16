@@ -44,9 +44,9 @@ namespace Ballance2.CoreBridge
         [Tooltip("设置 Lua类的文件名（eg MenuLevel）")]
         public string LuaClassName;
         /// <summary>
-        /// 获取或设置 Lua 类所在的模块包名（改模块必须是 ModPack 并可运行）。设置后该对象会自动注册到 LuaObject 中
+        /// 获取或设置 Lua 类所在的模块包名（该模块类型必须是 ModulePack 并可运行）。设置后该对象会自动注册到 LuaObject 中
         /// </summary>
-        [Tooltip("设置 Lua 类所在的模块包名（改模块必须是 ModPack 并可运行）。设置后该对象会自动注册到 LuaObject 中")]
+        [Tooltip("设置 Lua 类所在的模块包名（该模块类型必须是 ModulePack 并可运行）。设置后该对象会自动注册到 LuaObject 中")]
         public string LuaModName;
         /// <summary>
         /// 设置 LUA 初始参数，用于方便地从 Unity 编辑器直接引入初始参数至 Lua，这些变量会设置到 Lua self 上，可直接获取。

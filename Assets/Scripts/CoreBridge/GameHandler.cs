@@ -1,8 +1,11 @@
 ﻿using SLua;
+using System;
+using UnityEngine;
 
 namespace Ballance2.CoreBridge
 {
     [CustomLuaClass]
+    [Serializable]
     /// <summary>
     /// 游戏通用接收器
     /// </summary>
@@ -15,9 +18,9 @@ namespace Ballance2.CoreBridge
         /// <param name="gameHandlerDelegate">回调</param>
         public GameHandler(string name, GameActionHandlerDelegate gameActionHandlerDelegate)
         {
-            Name = name;
+            _Name = name;
             DelegateActionHandler = gameActionHandlerDelegate;
-            Type = GameHandlerType.CSKernel;
+            _Type = GameHandlerType.CSKernel;
         }
         /// <summary>
         /// 创建游戏内部使用 Handler
@@ -26,9 +29,9 @@ namespace Ballance2.CoreBridge
         /// <param name="gameHandlerDelegate">回调</param>
         public GameHandler(string name, GameEventHandlerDelegate gameEventHandlerDelegate)
         {
-            Name = name;
+            _Name = name;
             DelegateEventHandler = gameEventHandlerDelegate;
-            Type = GameHandlerType.CSKernel;
+            _Type = GameHandlerType.CSKernel;
         }
         /// <summary>
         /// 创建 LUA 层使用的 Handler
@@ -37,8 +40,8 @@ namespace Ballance2.CoreBridge
         /// <param name="luaModulHandler">LUA Handler （格式：模块名:Modul/lua虚拟脚本名字:主模块函数名称:附带参数）</param>
         public GameHandler(string name, string luaModulHandler)
         {
-            Name = name;
-            Type = GameHandlerType.LuaModul;
+            _Name = name;
+            _Type = GameHandlerType.LuaModul;
             LuaModulHandler = luaModulHandler;
             LuaModulHandlerFunc = new GameLuaHandler(luaModulHandler);
         }
@@ -49,8 +52,8 @@ namespace Ballance2.CoreBridge
         /// <param name="luaFunction">LUA 函数</param>
         public GameHandler(string name, LuaFunction luaFunction, LuaTable self = null)
         {
-            Name = name;
-            Type = GameHandlerType.LuaFun;
+            _Name = name;
+            _Type = GameHandlerType.LuaFun;
             LuaFunction = luaFunction;
             LuaSelf = self;
         }
@@ -136,14 +139,19 @@ namespace Ballance2.CoreBridge
             return result;
         }
 
+        [SerializeField, SetProperty("Name")]
+        public string _Name;
+        [SerializeField, SetProperty("Type")]
+        public GameHandlerType _Type;
+
         /// <summary>
         /// 接收器名称
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get { return _Name; } }
         /// <summary>
         /// 接收器类型
         /// </summary>
-        public GameHandlerType Type { get; private set; }
+        public GameHandlerType Type { get { return _Type; } }
 
         public GameActionHandlerDelegate DelegateActionHandler { get; private set; }
         public GameEventHandlerDelegate DelegateEventHandler { get; private set; }

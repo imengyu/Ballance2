@@ -3,5 +3,5 @@ guid: 1651480ae09f2c14d828debaef5e4888
 TextScriptImporter:
   externalObjects: {}
   userData: 
-  assetBundleName: 
-  assetBundleVariant: 
+  assetBundleName: core.gameinit
+  assetBundleVariant: ballance

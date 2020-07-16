@@ -148,6 +148,7 @@
     <Compile Include="Assets\Scripts\Utils\Effects\OutlinePostEffectX.cs" />
     <Compile Include="Assets\Scripts\Utils\Effects\PostEffectBase.cs" />
     <Compile Include="Assets\Scripts\Utils\FPSManager.cs" />
+    <Compile Include="Assets\Scripts\Utils\FileUtils.cs" />
     <Compile Include="Assets\Scripts\Utils\GameCloneUtils.cs" />
     <Compile Include="Assets\Scripts\Utils\GameErrorManager.cs" />
     <Compile Include="Assets\Scripts\Utils\GamePathManager.cs" />
@@ -156,6 +157,7 @@
     <Compile Include="Assets\Scripts\Utils\SkyBoxUtils.cs" />
     <Compile Include="Assets\Scripts\Utils\StringSpliter.cs" />
     <Compile Include="Assets\Scripts\Utils\StringUtils.cs" />
+    <Compile Include="Assets\Scripts\Utils\ZipUtils.cs" />
     <Compile Include="Assets\Slua\LuaObject\Custom\BindCustom.cs" />
     <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_GameActionHandlerDelegate.cs" />
     <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_GameEventHandlerDelegate.cs" />
@@ -1345,6 +1347,9 @@
     </Reference>
     <Reference Include="UnityEngine.XRModule">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.0f3/Editor/Data/Managed/UnityEngine/UnityEngine.XRModule.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>E:/Programming/GameProject/Ballance2/Assets/Plugins/ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>E:/Programming/GameProject/Ballance2/Assets/Plugins/Newtonsoft.Json.dll</HintPath>

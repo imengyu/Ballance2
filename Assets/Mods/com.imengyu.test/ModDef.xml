@@ -5,7 +5,7 @@
     <Name>Test Mod</Name>
     <Author>mengyu</Author>
     <Introduction>一个测试 MOD</Introduction>
-    <Logo>ModLogo.jpg</Logo>
+    <Logo>ModLogo.png</Logo>
     <Version>1.0</Version>
   </BaseInfo>
   <!---模组兼容性信息-->
@@ -16,6 +16,6 @@
   <!---模组入口LUA代码-->
   <EntryCode>Entry.lua.txt</EntryCode>
   <!---模组类型 GameModType -->
-  <ModType>ModPack</ModType>
+  <ModType>ModulePack</ModType>
   
 </Mod>

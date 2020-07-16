@@ -10,6 +10,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using Ballance2.Interfaces;
+using System.Xml;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -40,6 +41,7 @@ namespace Ballance2.Managers
         }
         public override bool ReleaseManager()
         {
+            DestroyModEnableStatusList();
             if (gameMods != null)
             {
                 foreach (GameMod gameMod in gameMods)
@@ -94,8 +96,25 @@ namespace Ballance2.Managers
                 return mod.Uid;
             }
 
+            //路径处理
+            if (StringUtils.IsUrl(packagePath))
+            {
+                GameLogger.Error(TAG, "不支持从 URL 加载模组包 \"{0}\" ，请将其先下载至 streamingAssetsPath 后再加载。", packagePath);
+                return mod.Uid;
+            }
+            //处理路径至mod文件夹路径
+            if (!packagePath.StartsWith(Application.streamingAssetsPath) && !GamePathManager.IsAbsolutePath(packagePath))
+                packagePath = GamePathManager.GetResRealPath("mod", packagePath);
+            if (!File.Exists(packagePath))
+            {
+                GameLogger.Error(TAG, "Mod file \"{0}\" not exists", packagePath);
+                return mod.Uid;
+            }
+ 
             mod = new GameMod(packagePath, this);
-            if(!gameMods.Contains(mod))
+            if (!mod.Init()) 
+                return 0;
+            if (!gameMods.Contains(mod))
                 gameMods.Add(mod);
 
             GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_MOD_REGISTERED, "*", mod.Uid, mod);
@@ -128,13 +147,13 @@ namespace Ballance2.Managers
             if (false) { }
 #if UNITY_EDITOR
             //编辑器直接加载模组
-            else if (GameManager.AssetsPreferEditor && AssetDatabase.IsValidFolder(pathInEditorMods))
+            else if (GameManager.AssetsPreferEditor && File.Exists(pathInEditorMods + "/ModDef.xml"))
                 mod = LoadModInEditor(pathInEditorMods, packageName);
 #endif
             else if (File.Exists(pathInMods)) mod = new GameMod(pathInMods, this, packageName);
             else if (File.Exists(pathInCore)) mod = new GameMod(pathInCore, this, packageName);
 #if UNITY_EDITOR
-            else if (GameManager.AssetsPreferEditor == false && AssetDatabase.IsValidFolder(pathInEditorMods))
+            else if (GameManager.AssetsPreferEditor == false && File.Exists(pathInEditorMods + "/ModDef.xml"))
                 mod = LoadModInEditor(pathInEditorMods, packageName);
 #endif
             else
@@ -144,11 +163,12 @@ namespace Ballance2.Managers
                 return 0;
             }
 
+            if (!mod.Init()) return 0;
             if (!gameMods.Contains(mod))
                 gameMods.Add(mod);
 
             GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_MOD_REGISTERED, "*", mod.Uid, mod);
-            GameLogger.Log(TAG, "Register mod \"{0}\"", packageName);
+            GameLogger.Log(TAG, "Register mod \"{0}\" {1}", packageName, (mod.IsEditorPack ? "(Editor Pack)" : ""));
 
             if (initialize) mod.Load(this);
 
@@ -223,7 +243,7 @@ namespace Ballance2.Managers
             return FindGameModByPath(modStrIndef);
         }
         /// <summary>
-        /// 卸载模组包
+        /// 移除模组包
         /// </summary>
         /// <param name="modUid">模组包UID</param>
         /// <returns>返回操作是否成功</returns>
@@ -260,7 +280,7 @@ namespace Ballance2.Managers
             return mod.LoadStatus == GameModStatus.Loading;
         }
         /// <summary>
-        /// 卸载模组包
+        /// 移除模组包
         /// </summary>
         /// <param name="mod">模组包实例</param>
         /// <returns>返回操作是否成功</returns>
@@ -271,17 +291,45 @@ namespace Ballance2.Managers
             GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_MOD_UNLOAD, "*", mod.Uid, mod);
             return true;
         }
+
         /// <summary>
-         /// 初始化模组包
-         /// </summary>
-         /// <param name="modUid">模组包UID</param>
-         /// <returns>返回操作是否成功</returns>
+        /// 卸载模组包
+        /// </summary>
+        /// <param name="modUid"></param>
+        /// <returns></returns>
+        public bool UnInitializeLoadGameMod(int modUid)
+        {
+            GameMod m = FindGameMod(modUid);
+            if (m == null)
+            {
+                GameLogger.Warning(TAG, "无法卸载模组包 (UID: {0}) ，因为没有注册", modUid);
+                GameErrorManager.LastError = GameError.NotRegister;
+                return false;
+            }
+
+            if (m.LoadStatus == GameModStatus.InitializeSuccess)
+            {
+                m.UnLoad();
+                return true;
+            }
+            else
+            {
+                GameLogger.Warning(TAG, "无法卸载模组包 (UID: {0}) ，因为没有加载", modUid);
+                GameErrorManager.LastError = GameError.NotInitialize;
+                return false;
+            }
+        }
+        /// <summary>
+        /// 初始化模组包
+        /// </summary>
+        /// <param name="modUid">模组包UID</param>
+        /// <returns>返回操作是否成功</returns>
         public bool InitializeLoadGameMod(int modUid)
         {
             GameMod m = FindGameMod(modUid);
             if (m == null)
             {
-                GameLogger.Warning(TAG, "无法初始化模组包 (UID: {0}) ，因为没有加载", modUid);
+                GameLogger.Warning(TAG, "无法初始化模组包 (UID: {0}) ，因为没有注册", modUid);
                 GameErrorManager.LastError = GameError.NotRegister;
                 return false;
             }
@@ -316,6 +364,7 @@ namespace Ballance2.Managers
         private GameMod LoadModInEditor(string pathInEditorMods, string packageName)
         {
 #if UNITY_EDITOR
+            GameLogger.Warning(TAG, "LoadModInEditor : {0} ({1})", packageName, pathInEditorMods);
             GameMod mod = null;
             TextAsset modDef = AssetDatabase.LoadAssetAtPath<TextAsset>(pathInEditorMods + "/ModDef.xml");
             if (modDef == null)
@@ -345,16 +394,63 @@ namespace Ballance2.Managers
         {
             foreach (GameMod m in gameMods)
             {
-                if (m.ModType == GameModType.ModPack
+                if (m.ModType == GameModType.ModulePack
                     && m.ModEntryCodeExecutionAt == at
                     && !m.GetModEntryCodeExecuted())
                     m.RunModExecutionCode();
             }
         }
 
+        #region 模组包启用管理
+
+        private List<string> modEnableStatusList = null;
+        private XmlDocument modEnableStatusListXml = null;
+
+        internal void LoadModEnableStatusList()
+        {
+            modEnableStatusList = new List<string>();
+            modEnableStatusListXml = new XmlDocument();
+            string pathModStatus = Application.persistentDataPath + "/ModStatus.xml";
+            if (File.Exists(pathModStatus))
+            {
+                StreamReader sr = new StreamReader(pathModStatus, Encoding.UTF8);
+                modEnableStatusListXml.LoadXml(sr.ReadToEnd());
+                sr.Close();
+                sr.Dispose();
+            }
+            else//加载默认xml文档
+                modEnableStatusListXml.LoadXml("<?xml version=\"1.0\" encoding=\"utf - 8\"?><ModList></ModList><NoModMode>false</NoModMode>");
+
+
+
+
+        }
+        private void DestroyModEnableStatusList()
+        {
+            if (modEnableStatusListXml != null)
+                modEnableStatusListXml = null;
+            if (modEnableStatusList != null)
+            {
+                modEnableStatusList.Clear();
+                modEnableStatusList = null;
+            }
+        }
+        internal void SaveModEnableStatusList()
+        {
+
+
+
+            StreamWriter sw = new StreamWriter(Application.persistentDataPath + "/ModStatus.xml", false, Encoding.UTF8);
+            modEnableStatusListXml.Save(sw);
+            sw.Close();
+            sw.Dispose();
+        }
+
         #endregion
 
-        #region 模组包管理调试
+        #endregion
+
+        #region 模组包管理调试窗口
 
         private UIManager UIManager;
         private IDebugManager DebugManager;

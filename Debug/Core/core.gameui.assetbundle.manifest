@@ -1,0 +1,21 @@
+ManifestFileVersion: 0
+CRC: 2605037901
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 79b35ffa82a0ce063bee659ad5cd3a1a
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 5ad585dd02dfb5016c0dad519eab8f49
+HashAppended: 0
+ClassTypes:
+- Class: 49
+  Script: {instanceID: 0}
+Assets:
+- Assets/Mods/core.gameui/PageSettings.xml
+- Assets/Mods/core.gameui/Entry.lua.txt
+- Assets/Mods/core.gameui/PageSettingsVoice.xml
+- Assets/Mods/core.gameui/PageSettingsVideo.xml
+- Assets/Mods/core.gameui/PageSettingsContol.xml
+- Assets/Mods/core.gameui/GameSettingsUI.lua.txt
+Dependencies: []
