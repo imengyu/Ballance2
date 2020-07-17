@@ -23,21 +23,27 @@ namespace Ballance2.Managers
         {
         }
 
-        public override bool InitManager()
+
+        protected override void InitPre()
         {
             GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_BASE_INIT_FINISHED, TAG, (e, p) =>
-                {
-                    LoadGameInitBase();
-                    StartCoroutine(LoadGameInitUI());
-                    InitSettings();
-                    InitVideoSettings();
-                    return false;
-                });
+            {
+                LoadGameInitBase();
+                StartCoroutine(LoadGameInitUI());
+                InitSettings();
+                InitVideoSettings();
+                return false;
+            });
+            GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_GAME_INIT_FINISH);
             GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_GAME_INIT_TAKE_OVER_CONTROL);
             GameManager.GameMediator.RegisterAction(GameActionNames.CoreActions["ACTION_GAME_INIT"], TAG, (param) => {
                 StartCoroutine(GameInitCore());
                 return GameActionCallResult.SuccessResult;
             }, null);
+            base.InitPre();
+        }
+        public override bool InitManager()
+        {
             return true;
         }
         public override bool ReleaseManager()
@@ -65,10 +71,6 @@ namespace Ballance2.Managers
         private bool IsGameInitUILoaded() { return loadedGameInitUI; }
         private bool IsGameInitAnimPlayend() { return IntroAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f; }
 
-        private void LoadGameInitUIProgressValue(float val)
-        {
-            UIProgressValue.sizeDelta = new Vector2(val * UIProgress.sizeDelta.x, UIProgressValue.sizeDelta.y);
-        }
         private void LoadGameInitBase()
         {
             ModManager = (IModManager)GameManager.GetManager("ModManager");
@@ -76,20 +78,12 @@ namespace Ballance2.Managers
             DebugManager = (IDebugManager)GameManager.GetManager("DebugManager");
 
             IntroAudio = SoundManager.RegisterSoundPlayer(GameSoundType.UI, GameManager.FindStaticAssets<AudioClip>("IntroMusic"));
-
-            GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_GAME_INIT_FINISH);
         }
         private IEnumerator LoadGameInitUI()
         {
-            int modUid = ModManager.LoadGameMod(GamePathManager.GetResRealPath("core", "core.gameinit.ballance"), false);
-            if(modUid == 0)
-            {
-                GameErrorManager.ThrowGameError(GameError.GameInitPartLoadFailed, "加载 GameInit 资源包失败 ");
-                StopAllCoroutines();
-            }
-
-            gameInitMod = ModManager.FindGameMod(modUid);
+            gameInitMod = ModManager.LoadGameMod(GamePathManager.GetResRealPath("core", "core.gameinit.ballance"), false);
             gameInitMod.IsModInitByGameinit = true;
+            
             yield return StartCoroutine(gameInitMod.LoadInternal());
 
             if (gameInitMod.LoadStatus != GameModStatus.InitializeSuccess)
@@ -116,6 +110,8 @@ namespace Ballance2.Managers
         //加载主函数
         private IEnumerator GameInitCore()
         {
+            GameLogger.Log(TAG, "Gameinit start");
+
             yield return new WaitUntil(IsGameInitUILoaded);
 
             //播放音乐和动画
@@ -196,14 +192,21 @@ namespace Ballance2.Managers
 
             //正常情况下，等待动画播放完成
             if (GameManager.Mode == GameMode.Game)
+            {
                 yield return new WaitUntil(IsGameInitAnimPlayend);
 
-            yield return new WaitUntil(GameManager.IsManagerInitFinished);
+                IntroAnimator.Play("IntroAnimationHide");
+                IntroAudio.Stop();
+
+                yield return new WaitForSeconds(0.8f);
+            }
+
+            yield return new WaitUntil(GameManager.IsManagersInitFinished);
 
             //初始化模组启动代码（游戏初始化完成）
             ModManager.ExecuteModEntry(GameModEntryCodeExecutionAt.AtStart);
 
-            yield return new WaitUntil(GameManager.IsManagerInitFinished);
+            yield return new WaitUntil(GameManager.IsManagersInitFinished);
 
             //分发接管事件
             int hC = GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_TAKE_OVER_CONTROL, "*", (VoidDelegate)GameInitContinueInit);
@@ -230,36 +233,35 @@ namespace Ballance2.Managers
                     LoadMask mask = LoadMask.Game;
                     args = ar.Split(':');
 
-                    if(args.Length >= 3) {
+                    if (args.Length >= 3)
+                    {
                         required = args[2] == "Required";
                         packageName = args[0];
                         System.Enum.TryParse(args[1], out mask);
                     }
 
                     //跳过不需要加载的模块
-                    if((mask & currentLoadMask) == LoadMask.None)
-                        continue;
+                    if ((mask & currentLoadMask) == LoadMask.None) continue;
 
                     //状态
                     loadedCount++;
-                    LoadGameInitUIProgressValue(loadedCount / (float)sp.Count / 2);
+                    GameInitSetUIProgressValue(loadedCount / (float)sp.Count * 0.8f);
                     UIProgressText.text = "Loading " + packageName;
 
                     //加载
-                    int modUid = ModManager.LoadGameModByPackageName(packageName, false);
-                    GameMod mod = ModManager.FindGameMod(modUid);
-                    mod.IsModInitByGameinit = true;
-                    //等待加载
-                    yield return StartCoroutine(mod.LoadInternal());
+                    GameMod mod = ModManager.LoadGameModByPackageName(packageName);
+                    if (mod != null)
+                    {
+                        mod.IsModInitByGameinit = true;
 
-                    if (mod.LoadStatus == GameModStatus.InitializeSuccess)
-                        continue;
-                    else if (required)
+                        yield return new WaitUntil(mod.IsLoadComplete);
+                    }
+
+                    if ((mod == null || mod.LoadStatus != GameModStatus.InitializeSuccess) && required)
                         GameErrorManager.ThrowGameError(GameError.GameInitPartLoadFailed, "加载模块  " + packageName + " 时发生错误");
-                    else GameLogger.Warning(TAG, "加载模块  {0} 时发生错误", packageName);
                 }
 
-                LoadGameInitUIProgressValue(1);
+                GameInitSetUIProgressValue(1);
                 UIProgressText.text = "Loading";
             }
         }
@@ -268,18 +270,31 @@ namespace Ballance2.Managers
         {
             //加载mod文件夹下所有模组
             string modFolderPath = GamePathManager.GetResRealPath("mod", "");
-            if(Directory.Exists(modFolderPath))
+            if (Directory.Exists(modFolderPath))
             {
                 DirectoryInfo direction = new DirectoryInfo(modFolderPath);
                 FileInfo[] files = direction.GetFiles("*.ballance", SearchOption.AllDirectories);
-                for (int i = 0; i < files.Length; i++)
-                    ModManager.LoadGameMod(GamePathManager.GetResRealPath("mod", files[i].Name));
+                for (int i = 0, c = files.Length; i < c; i++)
+                {
+                    ModManager.LoadGameMod(GamePathManager.GetResRealPath("mod", files[i].Name), false);
+
+                    GameInitSetUIProgressValue(0.8f + i / (float)c * 0.2f);
+                    UIProgressText.text = "Loading " + files[i].Name;
+                }
             }
 
             //根据用户设置启用对应模组
             string[] enableMods = ModManager.GetModEnableStatusList();
-            foreach(string packageName in enableMods)
-                ModManager.InitializeLoadGameMod(packageName);
+            foreach (string packageName in enableMods) 
+            {
+                GameMod m = ModManager.FindGameMod(packageName);
+                if (m != null)
+                {
+                    ModManager.InitializeLoadGameMod(m);
+
+                    yield return new WaitUntil(m.IsLoadComplete);
+                }
+            }
 
             yield break;
         }
@@ -325,6 +340,10 @@ namespace Ballance2.Managers
                 GameLogger.Warning(TAG, "None EVENT_GAME_INIT_FINISH handler was found, the game will not continue.");
             }
             else GameInitHideGameInitUi(true);
+        }
+        private void GameInitSetUIProgressValue(float val)
+        {
+            UIProgressValue.sizeDelta = new Vector2(val * UIProgress.sizeDelta.x, UIProgressValue.sizeDelta.y);
         }
 
         #endregion

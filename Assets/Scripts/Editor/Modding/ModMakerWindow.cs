@@ -1,11 +1,8 @@
-﻿using Ballance2.ModBase;
+﻿using Ballance2.Config;
+using Ballance2.ModBase;
 using Ballance2.Utils;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml;
 using UnityEditor;
 using UnityEngine;
 
@@ -32,9 +29,13 @@ namespace Ballance2.Editor.Modding
         private GUIStyle groupBox = null;
         private bool error = false;
 
+        private TextAsset template_ModDef;
+
         private void OnEnable()
         {
             serializedObject = new SerializedObject(this);
+
+            template_ModDef = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Mods/template_ModDef.xml");
         }
 
         private void OnGUI()
@@ -70,7 +71,6 @@ namespace Ballance2.Editor.Modding
             modAuthor = EditorGUILayout.TextField("模组作者名字", modAuthor);
             modIntroduction = EditorGUILayout.TextField("模组简介文字", modIntroduction, GUILayout.Height(60));
             modVersion = EditorGUILayout.TextField("模组版本（默认1.0）", modVersion);
-            modName = EditorGUILayout.TextField("模组包名", modName);
 
             ModType = (GameModType)EditorGUILayout.EnumPopup("模组类型", ModType);
             if (ModType == GameModType.NotSet)
@@ -127,7 +127,46 @@ namespace Ballance2.Editor.Modding
                 return;
             }
 
+            XmlDocument xml = new XmlDocument();
+            xml.LoadXml(template_ModDef.text);
 
+            XmlNode BaseInfo = xml.SelectSingleNode("Mod/BaseInfo");
+            XmlNode Name = BaseInfo.SelectSingleNode("Name");
+            XmlNode Author = BaseInfo.SelectSingleNode("Author");
+            XmlNode Introduction = BaseInfo.SelectSingleNode("Introduction");
+            XmlNode Version = BaseInfo.SelectSingleNode("Version");
+
+            BaseInfo.Attributes["packageName"].InnerText = modPackageName;
+            Name.InnerText = modName;
+            Author.InnerText = modAuthor;
+            Introduction.InnerText = modIntroduction;
+            Version.InnerText = modVersion;
+
+            XmlNode MinVersion = xml.SelectSingleNode("Mod/Compatibility/MinVersion");
+            XmlNode TargetVersion = xml.SelectSingleNode("Mod/Compatibility/TargetVersion");
+
+            MinVersion.InnerText = GameConst.GameBulidVersion.ToString();
+            TargetVersion.InnerText = GameConst.GameBulidVersion.ToString();
+
+            XmlNode EntryCode = xml.SelectSingleNode("Mod/EntryCode");
+            XmlNode ModType = xml.SelectSingleNode("Mod/ModType");
+
+            if (!this.EntryCode.Contains("."))
+                this.EntryCode += ".lua.txt";
+            if (!this.EntryCode.EndsWith(".txt"))
+                this.EntryCode += ".txt";
+
+            EntryCode.InnerText = this.EntryCode;
+            ModType.InnerText = this.ModType.ToString();
+
+            xml.Save(folderPath + "ModDef.xml");
+
+            if(GenEntryCodeTemplate)
+                File.Copy("Assets/Mods/template_Entry.lua.txt", folderPath + "/" + this.EntryCode);
+
+            File.Copy("Assets/Mods/template_ModLogo.png", folderPath + "/ModLogo.png");
+
+            EditorUtility.DisplayDialog("提示", "生成模板成功！", "好的");
         }
     }
 }

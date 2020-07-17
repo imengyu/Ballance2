@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mod>
+  <!--
+    模组基础信息
+    [必填] packageName: 模组的包名，这个名字用来区分模组，在代码中也只能使用包名来访问你的模组，必
+      须是 com.xxx.xxx 这种格式，不能与别人的模组重复，因此推荐使用 com.你的英文名字.模组名字 作为包名。
+    
+    Name：模组名称
+    Author：作者姓名
+    Introduction：模组介绍
+    Logo：模组的logo图片，这个图片必须放在 ModDef.xml 相同目录下
+    Version：模组版本，必须是数字和.组成例如 1.0.2
+    
+  -->
+  <BaseInfo packageName="com.yourname.modname">
+    <Name>bvnvnv</Name>
+    <Author>cvvbcxb</Author>
+    <Introduction>errgededb fedseht</Introduction>
+    <Logo>ModLogo.png</Logo>
+    <Version>1.0</Version>
+    <!--模组依赖-->
+    <Dependencies>
+      <!--
+        如果你的模组分成多个模块，你可以在这里写明每个模块的依赖信息，加载器会自动处理并按次序依次加载依赖。
+        name ：依赖的包名
+        minVer ：依赖的模块最低版本，如果模块低于你设置的版本，将会抛出错误。可不写
+        mustLoad：表示这个包是否是必须要加载的，如果为true，依赖加载失败将会抛出错误
+      -->
+      <!--
+      <Package name="core.scenes.menulevel.ui" minVer="1.0" mustLoad="true" ></Package>
+      -->
+    </Dependencies>
+  </BaseInfo>
+  <!--
+    模组兼容性信息
+    MinVersion：表示模组可以正常使用的最低游戏内核版本
+    TargetVersion：表示模组目标游戏内核版本（可不填，此值用于游戏内核做API优化）
+  -->
+  <Compatibility>
+    <MinVersion>1</MinVersion>
+    <TargetVersion>1</TargetVersion>
+  </Compatibility>
+  <!--
+    模组入口代码
+    ★ Lua ：入口Lua代码，文本文件（例如 Entry.lua.txt），下面是一个示例：
+        gameModThis = nil
+
+        function ModEntry(thisGameMod)
+	        gameModThis = thisGameMod
+	        你的代码...
+	        return true
+        end
+
+        function ModBeforeUnLoad(thisGameMod)
+          gameModThis = thisGameMod
+          你的代码...
+	        return true
+        end
+        
+        以上两个函数是模组的整个入口，分别是 ModEntry 模组进入时，ModBeforeUnLoad 模组卸载时的函数。
+        你可以在这里进行模组的初始化。gameModThis 代表你的模组实例（GameMod），
+        可参考开发文档有关于 Ballance2.ModBase.GameMod 类的详细说明
+        
+    ☆ CSharp：你的模组DLL文件名（例如 xx.dll.bytes）
+  -->
+  <EntryCode>Entry.lua.txt</EntryCode>
+  <!--
+    模组类型 ModulePack 或 AssetPack 
+    仅有 ModulePack 才能运行代码
+  -->
+  <ModType>ModulePack</ModType>
+  <!--
+    模组代码类型 Lua 或 CSharp 
+    提示：CSharp 代码必须在非AOT平台才能加载。
+    因此推荐使用 Lua（游戏API基本支持）
+  -->
+  <ModCodeType>Lua</ModCodeType>
+  <!--
+    模组共享lua虚拟机，如果你的模组分成多个模块，你可以仅用一个模块来运行代码，其他的模块作为附属模块，
+    填写 ModShareLuaState 为主模块包名，这样子模块可以和主模块共享运行环境。
+    （默认情况下每个模块相互独立不能互相访问）
+    如果填写 core 表示共享模块到全局Lua虚拟机
+  -->
+  <ModShareLuaState>core</ModShareLuaState>
+</Mod>

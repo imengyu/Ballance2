@@ -1123,13 +1123,16 @@
     <None Include="Assets\Shaders\ObjectOutline.shader" />
     <None Include="Assets\Mods\core.scenes.menulevel.ui\PageHighscore.xml" />
     <None Include="Assets\Mods\core.gameui\PageSettingsVideo.xml" />
+    <None Include="Assets\Mods\com.yourname.modnameModDef.xml" />
     <None Include="Assets\Shaders\UltimateOutline.shader" />
+    <None Include="Assets\Mods\template_Entry.lua.txt" />
     <None Include="Assets\Shaders\OutLinePostEffectX.shader" />
     <None Include="Assets\ThirdPart\QuickOutline\Resources\Shaders\OutlineMask.shader" />
     <None Include="Assets\Version.txt" />
     <None Include="Assets\Prefabs\UI\Layouts\PageGlobalConfirm.xml" />
     <None Include="Assets\Mods\core.gameinit\ModDef.xml" />
     <None Include="Assets\Mods\com.imengyu.test\ModDef.xml" />
+    <None Include="Assets\Mods\template_ModDef.xml" />
     <None Include="Assets\Sounds\Sounds\ModDef.xml" />
     <None Include="Assets\Mods\core.gameui\PageSettingsVoice.xml" />
     <None Include="Assets\Mods\core.scenes.menulevel.ui\PageStart.xml" />

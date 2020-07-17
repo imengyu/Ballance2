@@ -677,6 +677,72 @@ public class Lua_Ballance2_CoreBridge_LuaVarObjectInfo : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int UpdateToLua(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreBridge.LuaVarObjectInfo self=(Ballance2.CoreBridge.LuaVarObjectInfo)checkSelf(l);
+			SLua.LuaTable a1;
+			checkType(l,2,out a1);
+			self.UpdateToLua(a1);
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int UpdateFromLua(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreBridge.LuaVarObjectInfo self=(Ballance2.CoreBridge.LuaVarObjectInfo)checkSelf(l);
+			SLua.LuaTable a1;
+			checkType(l,2,out a1);
+			self.UpdateFromLua(a1);
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int get_Type(IntPtr l) {
 		try {
 			#if DEBUG
@@ -826,6 +892,8 @@ public class Lua_Ballance2_CoreBridge_LuaVarObjectInfo : LuaObject {
 		addMember(l,Int);
 		addMember(l,Double);
 		addMember(l,Bool);
+		addMember(l,UpdateToLua);
+		addMember(l,UpdateFromLua);
 		addMember(l,"Type",get_Type,set_Type,true);
 		addMember(l,"Name",get_Name,set_Name,true);
 		createTypeMetatable(l,constructor, typeof(Ballance2.CoreBridge.LuaVarObjectInfo));

@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Ballance2.CoreBridge
 {
     /// <summary>
-    /// 简易 Lua 脚本承载组件
+    /// 简易 Lua 脚本承载组件（感觉很像 Lua 的 MonoBehaviour）
     /// </summary>
     /// <remarks>
     /// ✧使用方法：
@@ -155,7 +155,7 @@ namespace Ballance2.CoreBridge
         {
             if (onDestory != null) onDestory(self);
             StopLuaEvents();
-            GameMod.RemoveLuaObject(this);
+            if (GameMod != null) GameMod.RemoveLuaObject(this);
         }
         private void OnDisable()
         {
@@ -185,7 +185,7 @@ namespace Ballance2.CoreBridge
                     return false;
                 }
 
-                GameMod = ModManager.FindGameModByName(LuaModName); 
+                GameMod = ModManager.FindGameMod(LuaModName); 
 
                 if (GameMod == null)
                 {
@@ -208,8 +208,8 @@ namespace Ballance2.CoreBridge
             LuaFunction classInit = GameMod.RequireLuaClass(LuaClassName);
             if (classInit == null)
             {
-                GameLogger.Error(TAG + ":" + Name, "LuaObject {0} load error :  class not found : {1}", Name, LuaClassName);
-                GameErrorManager.LastError = GameError.FunctionNotFound;
+                GameLogger.Error(TAG + ":" + Name, "LuaObject {0} load error : class not found : {1}", Name, LuaClassName);
+                GameErrorManager.LastError = GameError.ClassNotFound;
                 return false;
             }
 

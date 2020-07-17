@@ -1,4 +1,5 @@
-﻿using Ballance2.Managers;
+﻿using Ballance2.Interfaces;
+using Ballance2.Managers;
 using Ballance2.ModBase;
 using UnityEngine;
 
@@ -8,9 +9,12 @@ namespace Ballance2.Utils
     /// <summary>
     /// 天空盒生成器
     /// </summary>
-    public class SkyBoxUtils
+    public static class SkyBoxUtils
     {
         private const string TAG = "SkyBoxUtils";
+
+        private static GameMod skyAssetPack = null;
+        private static IModManager ModManager = null;
 
         /// <summary>
         /// 创建预制的天空盒
@@ -18,10 +22,10 @@ namespace Ballance2.Utils
         /// <param name="s">天空盒名字，（必须是 A~K ，对应原版游戏12个关卡的天空）</param>
         /// <returns>返回创建好的天空盒</returns>
         public static Material MakeSkyBox(string s)
-        {
-            ModManager manager = (ModManager)GameManager.GetManager(ModManager.TAG);
-            GameMod skyAssetPack = manager.FindGameModByName("core.assets.skys");
-            if(skyAssetPack == null)
+        { 
+            if (ModManager == null) ModManager = (IModManager)GameManager.GetManager("ModManager");
+            if (skyAssetPack == null) skyAssetPack = ModManager.FindGameMod("core.assets.skys");
+            if (skyAssetPack == null)
             {
                 GameLogger.Error(TAG, "MakeSkyBox failed because skybase pack core.assets.skys not load !");
                 return null;

@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3441629812
+CRC: 2381135272
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 75f900ec0b77c8573b4eb3c8f223ac6e
+    Hash: a234cf20163de5b8db1d78a46f88ae0e
   TypeTreeHash:
     serializedVersion: 2
     Hash: b774a284ba0d17f1b31b979a6eb2211d
@@ -40,6 +40,7 @@ ClassTypes:
 - Class: 224
   Script: {instanceID: 0}
 Assets:
+- Assets/Mods/core.gameinit/IntroAnimationHide.anim
 - Assets/Mods/core.gameinit/ModLogo.png
 - Assets/Mods/core.gameinit/UIGameInit.prefab
 - Assets/Mods/core.gameinit/IntroAnimator.controller

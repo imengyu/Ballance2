@@ -59,6 +59,10 @@ namespace Ballance2.CoreGame.GamePlay
         public Rigidbody Rigidbody;
         public float PushForce = 3f;
         public ForceMode ForceMode = ForceMode.Force;
+        public float FallForce = 0;
+        public float MaxSpeedXZ = 0;
+        public float MaxSpeedY = 0;
+
         public float ThrowPiecesForce = 5f;
         public float CollectPiecesSec = 15f;
 
@@ -256,6 +260,8 @@ namespace Ballance2.CoreGame.GamePlay
             }
         }
 
+        private Vector3 pushVechorReverse = new Vector3();
+
         /// <summary>
         /// 推动
         /// </summary>
@@ -263,6 +269,31 @@ namespace Ballance2.CoreGame.GamePlay
         {
             if (IsControlling.BoolData())
             {
+                if(FallForce > 0)
+                    Rigidbody.AddForce(Vector3.down * FallForce, ForceMode);
+
+                if (MaxSpeedY > 0)
+                {
+                    float speedOut = Mathf.Abs(Rigidbody.velocity.y) - Mathf.Abs(MaxSpeedY);
+                    if (speedOut > 0)
+                    {
+                        Rigidbody.AddForce((Rigidbody.velocity.y < 0 ? (Vector3.up) : Vector3.down) *
+                            (speedOut + (Rigidbody.velocity.y < 0 ? FallForce : 0)), ForceMode);
+                    }
+                }
+
+                if (MaxSpeedXZ > 0)
+                {
+                    float speedOutXZ = Mathf.Sqrt(Mathf.Pow(Rigidbody.velocity.x, 2) +
+                    Mathf.Pow(Rigidbody.velocity.z, 2)) - Mathf.Abs(MaxSpeedXZ);
+                    if (speedOutXZ > 0)
+                    {
+                        pushVechorReverse.x = -Rigidbody.velocity.x;
+                        pushVechorReverse.z = -Rigidbody.velocity.z;
+                        Rigidbody.AddForce(pushVechorReverse * speedOutXZ, ForceMode);
+                    }
+                }
+
                 //获取 ballsManager 的球推动类型。
                 BallPushType currentBallPushType = PushType.Data<BallPushType>();
                 if (currentBallPushType != BallPushType.None)
@@ -280,7 +311,7 @@ namespace Ballance2.CoreGame.GamePlay
                     if (IsBallDebug.BoolData())
                     {
                         if ((currentBallPushType & BallPushType.Up) == BallPushType.Up) //上
-                            Rigidbody.AddForce(Vector3.up * PushForce * 1.5f, ForceMode);
+                            Rigidbody.AddForce(Vector3.up * (PushForce + FallForce + Rigidbody.mass) * 1.5f, ForceMode);
                         else if ((currentBallPushType & BallPushType.Down) == BallPushType.Down)    //下
                             Rigidbody.AddForce(Vector3.down * PushForce * 0.5f, ForceMode);
                     }

@@ -107,7 +107,7 @@ namespace Ballance2.CoreBridge
         /// </summary>
         /// <remarks>
         /// 事件参数：
-        /// 【0】对应模组 UID
+        /// 【0】对应模组包名
         /// 【1】对应模组对象
         /// </remarks>
         public const string EVENT_MOD_LOAD_SUCCESS = "e:mod:mod_load_success";
@@ -117,7 +117,7 @@ namespace Ballance2.CoreBridge
         /// </summary>
         /// <remarks>
         /// 事件参数：
-        /// 【0】对应模组 UID
+        /// 【0】对应模组包名
         /// 【1】对应模组对象
         /// 【2】错误信息
         /// </remarks>
@@ -128,7 +128,7 @@ namespace Ballance2.CoreBridge
         /// </summary>
         /// <remarks>
         /// 事件参数：
-        /// 【0】对应模组 UID
+        /// 【0】对应模组包名
         /// 【1】对应模组对象
         /// </remarks>
         public const string EVENT_MOD_REGISTERED = "e:mod:mod_registered";
@@ -138,7 +138,7 @@ namespace Ballance2.CoreBridge
         /// </summary>
         /// <remarks>
         /// 事件参数：
-        /// 【0】对应模组 UID
+        /// 【0】对应模组包名
         /// 【1】对应模组对象
         /// </remarks>
         public const string EVENT_MOD_UNLOAD = "e:mod:mod_unload";

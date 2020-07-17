@@ -44,12 +44,12 @@ namespace Ballance2.Utils
         }
         public static MemoryStream ReadZipFileToMemory(ZipInputStream zip)
         {
-            int size = 1024;
+            int size;
             MemoryStream ms = new MemoryStream();
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[4096];
             while (true)
             {
-                size = zip.Read(buffer, 0, 1024);
+                size = zip.Read(buffer, 0, 4096);
                 if (size > 0)
                     ms.Write(buffer, 0, size);
                 else break;
@@ -59,12 +59,12 @@ namespace Ballance2.Utils
         public static async Task<MemoryStream> ReadZipFileToMemoryAsync(ZipInputStream zip)
         {
             MemoryStream ms = new MemoryStream();
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[1048576];
             while (true)
             {
-                int i = await zip.ReadAsync(buffer, 0, 1024);
+                int i = await zip.ReadAsync(buffer, 0, 1048576);
                 if (i > 0)
-                    ms.Write(buffer, 0, 1024);
+                    ms.Write(buffer, 0, 1048576);
                 else break;
             }
             return ms;

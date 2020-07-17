@@ -258,7 +258,7 @@ public class Lua_Ballance2_GameManager : LuaObject {
 			Profiler.BeginSample(methodName);
 			#endif
 			#endif
-			var ret=Ballance2.GameManager.IsManagerInitFinished();
+			var ret=Ballance2.GameManager.IsManagersInitFinished();
 			pushValue(l,true);
 			pushValue(l,ret);
 			return 2;
@@ -969,8 +969,6 @@ public class Lua_Ballance2_GameManager : LuaObject {
 		}
 		#endif
 	}
-
-
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
 	static public int get_PrefabEmpty(IntPtr l) {
@@ -1016,6 +1014,36 @@ public class Lua_Ballance2_GameManager : LuaObject {
 			#endif
 			pushValue(l,true);
 			pushValue(l,Ballance2.GameManager.PrefabUIEmpty);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_ModManager(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			pushValue(l,true);
+			pushInterface(l,Ballance2.GameManager.ModManager, typeof(Ballance2.Interfaces.IModManager));
 			return 2;
 		}
 		catch(Exception e) {
@@ -1123,6 +1151,7 @@ public class Lua_Ballance2_GameManager : LuaObject {
 		addMember(l,"GameAssets",get_GameAssets,null,false);
 		addMember(l,"PrefabEmpty",get_PrefabEmpty,null,false);
 		addMember(l,"PrefabUIEmpty",get_PrefabUIEmpty,null,false);
+		addMember(l,"ModManager",get_ModManager,null,false);
 		addMember(l,"UIManager",get_UIManager,null,false);
 		addMember(l,"GameMediator",get_GameMediator,null,false);
 		createTypeMetatable(l,null, typeof(Ballance2.GameManager));

@@ -105,20 +105,20 @@ namespace Ballance2.Managers
         /// <param name="packagePath">模组包路径</param>
         /// <param name="initialize">是否立即初始化模组包</param>
         /// <returns>返回模组包UID</returns>
-        public int LoadGameMod(string packagePath, bool initialize = true)
+        public GameMod LoadGameMod(string packagePath, bool initialize = true)
         {
             GameMod mod = FindGameModByPath(packagePath);
             if (mod != null)
             {
                 GameLogger.Warning(TAG, "Mod \"{0}\" already registered, skip", packagePath);
-                return mod.Uid;
+                return mod;
             }
 
             //路径处理
             if (StringUtils.IsUrl(packagePath))
             {
                 GameLogger.Error(TAG, "不支持从 URL 加载模组包 \"{0}\" ，请将其先下载至 streamingAssetsPath 后再加载。", packagePath);
-                return mod.Uid;
+                return null;
             }
             //处理路径至mod文件夹路径
             if (!File.Exists(packagePath) && !GamePathManager.IsAbsolutePath(packagePath))
@@ -126,22 +126,22 @@ namespace Ballance2.Managers
             if (!File.Exists(packagePath))
             {
                 GameLogger.Error(TAG, "Mod file \"{0}\" not exists", packagePath);
-                return 0;
+                return null;
             }
  
             mod = new GameMod(packagePath, this);
             if (!mod.Init()) 
-                return 0;
+                return null;
             if (!gameMods.Contains(mod))
                 gameMods.Add(mod);
 
-            GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_MOD_REGISTERED, "*", mod.Uid, mod);
+            GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_MOD_REGISTERED, "*", mod.PackageName, mod);
             GameLogger.Log(TAG, "Register mod \"{0}\"", packagePath);
 
             if (initialize)
                 mod.Load(this);
 
-            return mod.Uid;
+            return mod;
         }
         /// <summary>
         /// 通过包名加载模组包
@@ -149,13 +149,13 @@ namespace Ballance2.Managers
         /// <param name="packageName">模组包包名</param>
         /// <param name="initialize">是否立即初始化模组包</param>
         /// <returns>返回模组包UID</returns>
-        public int LoadGameModByPackageName(string packageName, bool initialize = true)
+        public GameMod LoadGameModByPackageName(string packageName, bool initialize = true)
         {
-            GameMod mod = FindGameModByName(packageName);
+            GameMod mod = FindGameMod(packageName);
             if (mod != null)
             {
                 GameLogger.Warning(TAG, "Mod \"{0}\" already registered, skip", packageName);
-                return mod.Uid;
+                return mod;
             }
 
             string pathInMods = GamePathManager.GetResRealPath("mod", packageName + ".ballance");
@@ -178,19 +178,19 @@ namespace Ballance2.Managers
             {
                 GameLogger.Warning(TAG, "无法通过包名加载模组包 {0} ，未找到文件", packageName);
                 GameErrorManager.LastError = GameError.FileNotFound;
-                return 0;
+                return null;
             }
 
-            if (!mod.Init()) return 0;
+            if (!mod.Init()) return null;
             if (!gameMods.Contains(mod))
                 gameMods.Add(mod);
 
-            GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_MOD_REGISTERED, "*", mod.Uid, mod);
+            GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_MOD_REGISTERED, "*", mod.PackageName, mod);
             GameLogger.Log(TAG, "Register mod \"{0}\" {1}", packageName, (mod.IsEditorPack ? "(Editor Pack)" : ""));
 
             if (initialize) mod.Load(this);
 
-            return mod.Uid;
+            return mod;
         }
         /// <summary>
         /// 通过路径查找模组包
@@ -209,38 +209,14 @@ namespace Ballance2.Managers
         /// </summary>
         /// <param name="packagePath">路径</param>
         /// <returns>模组包</returns>
-        public GameMod FindGameModByName(string packageName)
+        public GameMod FindGameMod(string packageName)
         {
             foreach (GameMod m in gameMods)
                 if (m.PackageName == packageName)
                     return m;
             return null;
         }
-        /// <summary>
-        /// 通过包名查找模组包
-        /// </summary>
-        /// <param name="packagePath">路径</param>
-        /// <returns>模组包</returns>
-        public GameMod[] FindAllGameModByName(string packageName)
-        {
-            List<GameMod> list = new List<GameMod>();
-            foreach (GameMod m in gameMods)
-                if (m.PackageName == packageName)
-                    list.Add(m);
-            return list.ToArray() ;
-        }
-        /// <summary>
-        /// 通过UID查找模组包
-        /// </summary>
-        /// <param name="modUid">模组包UID</param>
-        /// <returns></returns>
-        public GameMod FindGameMod(int modUid)
-        {
-            foreach (GameMod m in gameMods)
-                if (m.Uid == modUid)
-                    return m;
-            return null;
-        }
+
         /// <summary>
         /// 通过资源定义字符串查找模组包
         /// </summary>
@@ -250,13 +226,9 @@ namespace Ballance2.Managers
         {
             if (modStrIndef.Contains(":") && !modStrIndef.StartsWith(":"))
                 modStrIndef = modStrIndef.Substring(0, modStrIndef.IndexOf(':') - 1);
-
-            int modUid = 0;
-            if(int.TryParse(modStrIndef, out modUid))
-                return FindGameMod(modUid);
              
             if(StringUtils.IsPackageName(modStrIndef))
-                return FindGameModByName(modStrIndef);
+                return FindGameMod(modStrIndef);
 
             return FindGameModByPath(modStrIndef);
         }
@@ -265,19 +237,19 @@ namespace Ballance2.Managers
         /// </summary>
         /// <param name="modUid">模组包UID</param>
         /// <returns>返回操作是否成功</returns>
-        public bool UnLoadGameMod(int modUid)
+        public bool UnLoadGameMod(string packageName)
         {
-            GameMod mod = FindGameMod(modUid);
+            GameMod mod = FindGameMod(packageName);
             if (mod == null)
             {
-                GameLogger.Warning(TAG, "无法卸载模组 (UID: {0}) ，因为没有加载", modUid);
+                GameLogger.Warning(TAG, "无法卸载模组 {0}，因为没有加载", packageName);
                 GameErrorManager.LastError = GameError.NotRegister;
                 return false;
             }
 
             mod.Destroy();
             gameMods.Remove(mod);
-            GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_MOD_UNLOAD, "*", mod.Uid, mod);
+            GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_MOD_UNLOAD, "*", mod.PackageName, mod);
 
             return true;
         }
@@ -288,7 +260,7 @@ namespace Ballance2.Managers
         /// <returns>返回操作是否成功</returns>
         public bool IsGameModLoading(string packageName)
         {
-            GameMod mod = FindGameModByName(packageName);
+            GameMod mod = FindGameMod(packageName);
             if (mod == null)
             {
                 GameLogger.Warning(TAG, "无法卸载模组 (UID: {0}) ，因为没有加载", packageName);
@@ -306,52 +278,17 @@ namespace Ballance2.Managers
         {
             mod.Destroy();
             gameMods.Remove(mod);
-            GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_MOD_UNLOAD, "*", mod.Uid, mod);
+            GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_MOD_UNLOAD, "*", mod.PackageName, mod);
             return true;
         }
 
         /// <summary>
-        /// 卸载模组包
+        /// 加载模组包
         /// </summary>
-        /// <param name="modUid"></param>
-        /// <returns></returns>
-        public bool UnInitializeLoadGameMod(int modUid)
-        {
-            GameMod m = FindGameMod(modUid);
-            if (m == null)
-            {
-                GameLogger.Warning(TAG, "无法卸载模组包 (UID: {0}) ，因为没有注册", modUid);
-                GameErrorManager.LastError = GameError.NotRegister;
-                return false;
-            }
-
-            if (m.LoadStatus == GameModStatus.InitializeSuccess)
-            {
-                m.UnLoad();
-                return true;
-            }
-            else
-            {
-                GameLogger.Warning(TAG, "无法卸载模组包 (UID: {0}) ，因为没有加载", modUid);
-                GameErrorManager.LastError = GameError.NotInitialize;
-                return false;
-            }
-        }
-        /// <summary>
-        /// 初始化模组包
-        /// </summary>
-        /// <param name="modUid">模组包UID</param>
+        /// <param name="m">模组包</param>
         /// <returns>返回操作是否成功</returns>
-        public bool InitializeLoadGameMod(int modUid)
+        public bool InitializeLoadGameMod(GameMod m)
         {
-            GameMod m = FindGameMod(modUid);
-            if (m == null)
-            {
-                GameLogger.Warning(TAG, "无法初始化模组包 (UID: {0}) ，因为没有注册", modUid);
-                GameErrorManager.LastError = GameError.NotRegister;
-                return false;
-            }
-
             if (m.LoadStatus != GameModStatus.InitializeSuccess)
                 m.Load(this);
             return true;
@@ -363,17 +300,14 @@ namespace Ballance2.Managers
         /// <returns>返回操作是否成功</returns>
         public bool InitializeLoadGameMod(string modPackageName)
         {
-            GameMod m = FindGameModByName(modPackageName);
+            GameMod m = FindGameMod(modPackageName);
             if (m == null)
             {
                 GameLogger.Warning(TAG, "无法初始化模组包 {0}，因为没有注册", modPackageName);
                 GameErrorManager.LastError = GameError.NotRegister;
                 return false;
             }
-
-            if (m.LoadStatus != GameModStatus.InitializeSuccess)
-                m.Load(this);
-            return true;
+            return InitializeLoadGameMod(m);
         }
         /// <summary>
         /// 卸载模组包
@@ -382,14 +316,22 @@ namespace Ballance2.Managers
         /// <returns></returns>
         public bool UnInitializeLoadGameMod(string modPackageName)
         {
-            GameMod m = FindGameModByName(modPackageName);
+            GameMod m = FindGameMod(modPackageName);
             if (m == null)
             {
                 GameLogger.Warning(TAG, "无法卸载模组包 {0} ，因为没有注册", modPackageName);
                 GameErrorManager.LastError = GameError.NotRegister;
                 return false;
             }
-
+            return UnInitializeLoadGameMod(m);
+        }
+        /// <summary>
+        /// 卸载模组包
+        /// </summary>
+        /// <param name="modUid"></param>
+        /// <returns></returns>
+        public bool UnInitializeLoadGameMod(GameMod m)
+        {
             if (m.LoadStatus == GameModStatus.InitializeSuccess)
             {
                 m.UnLoad();
@@ -397,7 +339,7 @@ namespace Ballance2.Managers
             }
             else
             {
-                GameLogger.Warning(TAG, "无法卸载模组包 {0} ，因为没有加载", modPackageName);
+                GameLogger.Warning(TAG, "无法卸载模组包 {0} ，因为没有加载", m.PackageName);
                 GameErrorManager.LastError = GameError.NotInitialize;
                 return false;
             }
@@ -408,20 +350,33 @@ namespace Ballance2.Managers
         /// </summary>
         /// <param name="modUid">模组包UID</param>
         /// <returns>返回操作是否成功</returns>
-        public bool RunLoadGameMod(int modUid)
+        public bool RunGameMod(string packageName)
         {
-            GameMod m = FindGameMod(modUid);
+            GameMod m = FindGameMod(packageName);
             if (m == null)
             {
-                GameLogger.Warning(TAG, "无法执行化模组包 (UID: {0}) ，因为没有加载", modUid);
+                GameLogger.Warning(TAG, "无法执行化模组包 {0} ，因为没有加载", packageName);
                 GameErrorManager.LastError = GameError.NotRegister;
                 return false;
             }
-
+            return RunGameMod(m);
+        }
+        /// <summary>
+        /// 执行模组包代码
+        /// </summary>
+        /// <param name="modUid">模组包UID</param>
+        /// <returns>返回操作是否成功</returns>
+        public bool RunGameMod(GameMod m)
+        {
+            if (m == null)
+            {
+                GameErrorManager.LastError = GameError.ParamNotProvide;
+                return false;
+            }
             if (m.LoadStatus == GameModStatus.InitializeSuccess)
                 return m.Run();
 
-            GameLogger.Warning(TAG, "无法执行化模组包 (UID: {0}) ，因为没有初始化", modUid);
+            GameLogger.Warning(TAG, "无法执行化模组包 {0}，因为没有初始化", m.PackageName);
             GameErrorManager.LastError = GameError.NotInitialize;
             return false;
         }
@@ -447,12 +402,12 @@ namespace Ballance2.Managers
             throw new System.Exception("LoadModInEditor can only use in editor mode!");
 #endif
         }
-        internal void OnModLoadFinished(GameMod m)
+        public void OnModLoadFinished(GameMod m)
         {
             if (m.LoadStatus == GameModStatus.InitializeSuccess)
-                GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_MOD_LOAD_SUCCESS, "*", m.Uid, m);
+                GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_MOD_LOAD_SUCCESS, "*", m.PackageName, m);
             else
-                GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_MOD_LOAD_FAILED, "*", m.Uid, m, m.LoadFriendlyErrorExplain);
+                GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_MOD_LOAD_FAILED, "*", m.PackageName, m, m.LoadFriendlyErrorExplain);
         }
 
         public void ExecuteModEntry(GameModEntryCodeExecutionAt at)
@@ -630,7 +585,7 @@ namespace Ballance2.Managers
             modManageWindow.onShow += (windowId) => { FlushModList(); };
             modList = modManagerView.transform.Find("UIScrollView/Viewport/Content").gameObject.GetComponent<UICommonList>();
             TextModCount = modManagerView.transform.Find("TextModCount").GetComponent<Text>();
-            hideCoreMod = 
+            hideCoreMod = settings.GetBool("modmgr.hideCoreMod", true);
             UIToggleHideCoreMod = modManagerView.transform.Find("UIToggleHideCoreMod").GetComponent<Toggle>();
             UIToggleHideCoreMod.isOn = hideCoreMod;
             UIToggleHideCoreMod.onValueChanged.AddListener((b) =>
@@ -651,12 +606,14 @@ namespace Ballance2.Managers
             });
             GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_MOD_LOAD_FAILED, "ModDebug", (evtName, param) =>
             {
-                UpdateModListItemInfos(modList.GetItemById((int)param[0]), (GameMod)param[1]);
+                GameMod m = (GameMod)param[1];
+                UpdateModListItemInfos(modList.GetItemById(m.Uid), m);
                 return false;
             });
             GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_MOD_LOAD_SUCCESS, "ModDebug", (evtName, param) =>
             {
-                UpdateModListItemInfos(modList.GetItemById((int)param[0]), (GameMod)param[1]);
+                GameMod m = (GameMod)param[1];
+                UpdateModListItemInfos(modList.GetItemById(m.Uid), m);
                 return false;
             });
             GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_GLOBAL_ALERT_CLOSE, "ModDebug", (evtName, param) =>
@@ -719,7 +676,7 @@ namespace Ballance2.Managers
             modListItemData.EnableStatus.isOn = IsModEnabled(mod);
             modListItemData.Text.text = mod.ModInfo.Introduction + "\n作者：" + mod.ModInfo.Author + "   版本：" +
                         mod.ModInfo.Version;
-            modListItemData.Title.text = mod.ModInfo.Name + "\n( " + mod.PackageName + "/" + mod.Uid + "/" + mod.ModType + ")";
+            modListItemData.Title.text = mod.ModInfo.Name + "\n( " + mod.PackageName + "/" + mod.ModType + ")";
             modListItemData.Image.sprite = mod.ModLogo == null ? mod_icon_default : mod.ModLogo;
 
             if (mod.IsModInitByGameinit)
@@ -818,7 +775,7 @@ namespace Ballance2.Managers
 
             UICommonList.CommonListItem newItem = modList.AddItem();
             newItem.id = mod.Uid;
-            newItem.itemObject.name = mod.Uid.ToString();
+            newItem.itemObject.name = mod.PackageName;
             newItem.data = modListItemData;
 
             modListItemData.Mod = mod;
@@ -868,51 +825,49 @@ namespace Ballance2.Managers
         }
         private bool OnCommandLoadMod(string keyword, string fullCmd, string[] args)
         {
-            int newId = LoadGameMod(args[0], args.Length >= 2 ? args[1] == "true" : false);
-            GameLogger.Log(TAG, "模组 UID : {0}", newId.ToString());
+            GameMod mod = LoadGameMod(args[0], args.Length >= 2 ? args[1] == "true" : false);
+            if(mod == null)
+            {
+                GameLogger.Warning(TAG, "模组 {0} 加载失败", args[0]);
+                return false;
+            }
+            GameLogger.Log(TAG, "模组已加载 {0} ({1})", mod.PackageName, mod.Uid);
             return true;
         }
         private bool OnCommandUnLoadMod(string keyword, string fullCmd, string[] args)
         {
-            int id = 0;
-            if (!int.TryParse(args[0], out id))
+            GameMod mod = FindGameModByAssetStr(args[0]);
+            if (mod == null)
             {
-                GameLogger.Error(TAG, "Bad param 0 : {0}", args[0]);
+                GameLogger.Error(TAG, "未找到模组 {0} ", args[0]);
                 return false;
             }
-            return UnLoadGameMod(id);
+            return UnLoadGameMod(mod);
         }
         private bool OnCommandInitializeMod(string keyword, string fullCmd, string[] args)
         {
-            int id = 0;
-            if(!int.TryParse(args[0], out id))
+            GameMod mod = FindGameModByAssetStr(args[0]);
+            if (mod == null)
             {
-                GameLogger.Error(TAG, "Bad param 0 : {0}", args[0]);
+                GameLogger.Error(TAG, "未找到模组 {0} ", args[0]);
                 return false;
             }
-            return InitializeLoadGameMod(id);
+            return InitializeLoadGameMod(mod);
         }
         private bool OnCommandShowModAssets(string keyword, string fullCmd, string[] args)
         {
-            int id = 0;
-            if (!int.TryParse(args[0], out id))
+            GameMod mod = FindGameModByAssetStr(args[0]);
+            if (mod == null)
             {
-                GameLogger.Error(TAG, "Bad param 0 : {0}", args[0]);
+                GameLogger.Error(TAG, "未找到模组 {0} ", args[0]);
                 return false;
             }
 
-            GameMod m = FindGameMod(id);
-            if (m == null)
-            {
-                GameLogger.Error(TAG, "未找到模组 : {0}", id);
-                return true;
-            }
-
-            if (m.LoadStatus == GameModStatus.InitializeSuccess && m.AssetBundle != null)
+            if (mod.LoadStatus == GameModStatus.InitializeSuccess && mod.AssetBundle != null)
             {
                 StringBuilder sb = new StringBuilder();
-                string[] paths = m.AssetBundle.GetAllAssetNames();
-                string[] scensePaths = m.AssetBundle.GetAllScenePaths();
+                string[] paths = mod.AssetBundle.GetAllAssetNames();
+                string[] scensePaths = mod.AssetBundle.GetAllScenePaths();
                 sb.Append("\n<size=16>Asset Names:  </size>(" + paths .Length + ")\n");
                 foreach (string s in paths)
                 {
@@ -937,9 +892,6 @@ namespace Ballance2.Managers
             sb.Append("<size=16>All mods:</size>(" + gameMods.Count + ")\n");
             foreach (GameMod m in gameMods)
             {
-                sb.Append("(");
-                sb.Append(m.Uid);
-                sb.Append(") ");
                 sb.Append(m.PackageName);
                 sb.Append("\n<color=#808080>");
                 sb.Append(m.PackagePath);

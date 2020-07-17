@@ -19,15 +19,21 @@ namespace Ballance2.Managers.Base
             {
                 nextInitManagerTick--;
                 if (nextInitManagerTick == 0)
-                    ReqInitManagers();
+                    InitManagers();
+            }
+            if (initManagers)
+            {
+                DoInitManagers();
             }
             if (nextGameQuitTick >= 0)
             {
                 nextGameQuitTick--;
+                if (nextGameQuitTick == 10)
+                    GameManager.ClearScense();
                 if (nextGameQuitTick == 0)
                     QuitGame();
             }
-            if(nextDestroyTick >= 0)
+            if (nextDestroyTick >= 0)
             {
                 nextDestroyTick--;
                 if (nextDestroyTick == 0)
@@ -51,19 +57,28 @@ namespace Ballance2.Managers.Base
         // 全局管理器单例数组
         public List<BaseManager> managers = new List<BaseManager>();
 
-        public bool IsManagerInitFinished() { return nextInitManagerTick <= 0; }
-        private void ReqInitManagers()
+        public bool IsManagersInitFinished() { return nextInitManagerTick <= 0 && !initManagers; }
+
+        private bool initManagers = false;
+
+        private void DoInitManagers()
         {
+            if(nextInitManages.Count > 0)
+            {
+                BaseManager m = nextInitManages[0];
+                if (!m.initialized)
+                    InitManager(m);
+                nextInitManages.RemoveAt(0);
+            }
+            else initManagers = false;
+        }
+        private void InitManagers()
+        {
+            initManagers = true;
             foreach (BaseManager m in nextInitManages)
             {
-                if (!m.preIinitialized)
-                    m.DoPreInit();
+                if (!m.preIinitialized) m.DoPreInit();
             }
-            foreach (BaseManager m in nextInitManages)
-            {
-                InitManager(m);
-            }
-            nextInitManages.Clear();
         }
 
         private int nextGameQuitTick = 0;

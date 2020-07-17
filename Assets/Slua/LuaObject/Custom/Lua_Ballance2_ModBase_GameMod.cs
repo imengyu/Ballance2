@@ -19,13 +19,77 @@ public class Lua_Ballance2_ModBase_GameMod : LuaObject {
 			Ballance2.ModBase.GameMod o;
 			System.String a1;
 			checkType(l,2,out a1);
-			Ballance2.Managers.ModManager a2;
+			Ballance2.Interfaces.IModManager a2;
 			checkType(l,3,out a2);
 			System.String a3;
 			checkType(l,4,out a3);
 			o=new Ballance2.ModBase.GameMod(a1,a2,a3);
 			pushValue(l,true);
 			pushValue(l,o);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int IsLoadComplete(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.ModBase.GameMod self=(Ballance2.ModBase.GameMod)checkSelf(l);
+			var ret=self.IsLoadComplete();
+			pushValue(l,true);
+			pushValue(l,ret);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int IsInitSuccess(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.ModBase.GameMod self=(Ballance2.ModBase.GameMod)checkSelf(l);
+			var ret=self.IsInitSuccess();
+			pushValue(l,true);
+			pushValue(l,ret);
 			return 2;
 		}
 		catch(Exception e) {
@@ -1591,6 +1655,8 @@ public class Lua_Ballance2_ModBase_GameMod : LuaObject {
 	[UnityEngine.Scripting.Preserve]
 	static public void reg(IntPtr l) {
 		getTypeTable(l,"Ballance2.ModBase.GameMod");
+		addMember(l,IsLoadComplete);
+		addMember(l,IsInitSuccess);
 		addMember(l,Load);
 		addMember(l,LoadInternal);
 		addMember(l,UnLoad);

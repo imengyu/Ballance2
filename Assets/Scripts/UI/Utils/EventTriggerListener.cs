@@ -35,30 +35,37 @@ namespace Ballance2.UI.Utils
         public override void OnPointerClick(PointerEventData eventData)
         {
             if (onClick != null) onClick(gameObject);
+            else base.OnPointerClick(eventData);
         }
         public override void OnPointerDown(PointerEventData eventData)
         {
             if (onDown != null) onDown(gameObject);
+            else base.OnPointerDown(eventData);
         }
         public override void OnPointerEnter(PointerEventData eventData)
         {
             if (onEnter != null) onEnter(gameObject);
+            else base.OnPointerEnter(eventData);
         }
         public override void OnPointerExit(PointerEventData eventData)
         {
             if (onExit != null) onExit(gameObject);
+            else base.OnPointerExit(eventData);
         }
         public override void OnPointerUp(PointerEventData eventData)
         {
             if (onUp != null) onUp(gameObject);
+            else base.OnPointerUp(eventData);
         }
         public override void OnSelect(BaseEventData eventData)
         {
             if (onSelect != null) onSelect(gameObject);
+            else base.OnSelect(eventData);
         }
         public override void OnUpdateSelected(BaseEventData eventData)
         {
             if (onUpdateSelect != null) onUpdateSelect(gameObject);
+            else base.OnUpdateSelected(eventData);
         }
     }
 }

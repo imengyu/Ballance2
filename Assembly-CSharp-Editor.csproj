@@ -70,6 +70,7 @@
     <Compile Include="Assets\Scripts\Editor\EditorIcons.cs" />
     <Compile Include="Assets\Scripts\Editor\EditorStyleViewer.cs" />
     <Compile Include="Assets\Scripts\Editor\Game\GameLuaObjectHostInspector.cs" />
+    <Compile Include="Assets\Scripts\Editor\Modding\AboutWindow.cs" />
     <Compile Include="Assets\Scripts\Editor\Modding\LevelMaker.cs" />
     <Compile Include="Assets\Scripts\Editor\Modding\ModMaker.cs" />
     <Compile Include="Assets\Scripts\Editor\Modding\ModMakerWindow.cs" />

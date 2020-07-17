@@ -22,7 +22,7 @@ function ModEntry(thisGameMod)
   
   GameManager.GameMediator:RegisterEventHandler(GameEventNames.EVENT_GAME_INIT_FINISH, TAG, TAG..":OnEnterMenuLevel")
   
-  gameModBase = ModManager:FindGameModByName("core.scenes.menulevel")
+  gameModBase = ModManager:FindGameMod("core.scenes.menulevel")
 
 	return true
 end

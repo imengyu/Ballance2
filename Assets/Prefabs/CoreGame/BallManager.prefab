@@ -1686,6 +1686,9 @@ MonoBehaviour:
   Rigidbody: {fileID: 1199595254845188273}
   PushForce: 12.5
   ForceMode: 0
+  FallForce: 0
+  MaxSpeedXZ: 0
+  MaxSpeedY: 0
   ThrowPiecesForce: 0.3
   CollectPiecesSec: 30
 --- !u!1 &1199595254885999771
@@ -2797,9 +2800,12 @@ MonoBehaviour:
   Pieces: {fileID: 1199595254885999771}
   TypeName: BallWood
   Rigidbody: {fileID: 2343699480779008541}
-  PushForce: 25
+  PushForce: 31.6
   ForceMode: 0
-  ThrowPiecesForce: 15
+  FallForce: 28.7
+  MaxSpeedXZ: 21
+  MaxSpeedY: 16.8
+  ThrowPiecesForce: 18
   CollectPiecesSec: 20
 --- !u!1 &2663626849411544597
 GameObject:
@@ -6759,8 +6765,11 @@ MonoBehaviour:
   Pieces: {fileID: 1199595255419123941}
   TypeName: BallStone
   Rigidbody: {fileID: 8618135650371243677}
-  PushForce: 60
+  PushForce: 68
   ForceMode: 0
+  FallForce: 0
+  MaxSpeedXZ: 0
+  MaxSpeedY: 0
   ThrowPiecesForce: 5
   CollectPiecesSec: 15
 --- !u!1 &9084482953774425299

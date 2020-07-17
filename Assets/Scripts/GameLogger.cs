@@ -51,6 +51,23 @@ namespace Ballance2
             logDatas = null;
         }
 
+        public static void Log(string tag, string message)
+        {
+            WriteLog(LogType.Text, tag, message);
+        }
+        public static void Warning(string tag, string message)
+        {
+            WriteLog(LogType.Warning, tag, message);
+        }
+        public static void Error(string tag, string message)
+        {
+            WriteLog(LogType.Error, tag, message);
+        }
+        public static void Info(string tag, string message)
+        {
+            WriteLog(LogType.Info, tag, message);
+        }
+
         public static void Log(string tag, object message)
         {
             WriteLog(LogType.Text, tag, message.ToString());

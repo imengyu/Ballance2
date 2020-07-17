@@ -13,6 +13,9 @@ using System.Reflection;
 using System.IO;
 using ICSharpCode.SharpZipLib.Zip;
 using System.Text;
+using Ballance2.Interfaces;
+using System.Threading;
+using System.Threading.Tasks;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -20,17 +23,16 @@ using UnityEditor;
 namespace Ballance2.ModBase
 {
     /// <summary>
-    /// 模组结构
+    /// 模组基础承载结构
     /// </summary>
     [CustomLuaClass]
     public class GameMod
     {
         private string _TAG = "";
 
-        public GameMod(string packagePath, ModManager modManager, string packageName = null)
+        public GameMod(string packagePath, IModManager modManager, string packageName = null)
         {
             ModManager = modManager;
-            Uid = CommonUtils.GenNonDuplicateID();
             PackagePath = packagePath;
 
             if (string.IsNullOrEmpty(packageName))
@@ -40,16 +42,14 @@ namespace Ballance2.ModBase
                 else PackageName = "com.asset." + fName;
             }
             else PackageName = packageName;
-              
-            _TAG = ModManager.TAG + ":" + PackageName;
+
+            _TAG = "GameMod:" + PackageName;
 
             modInfo = new GameModInfo(GamePathManager.GetFileNameWithoutExt(PackagePath));
         }
 
-        /// <summary>
-        /// 模组 UID
-        /// </summary>
-        public int Uid { get; private set; }
+        public int Uid { get; } = CommonUtils.GenAutoIncrementID();
+
         /// <summary>
         /// 路径
         /// </summary>
@@ -59,35 +59,44 @@ namespace Ballance2.ModBase
         /// </summary>
         public string PackageName { get; private set; }
 
-        private ModManager ModManager;
+        private IModManager ModManager;
         private bool hasMustDependenciesLoadFailed = false;
         private bool inited = false;
+
+        public bool IsLoadComplete()
+        {
+            return LoadStatus != GameModStatus.Loading;
+        }
+        public bool IsInitSuccess()
+        {
+            return inited;
+        }
 
         //初始化
         internal bool Init()
         {
-            if (IsEditorPack) return true;
+            if (IsEditorPack) inited = true;
             if (inited) return true;
-            if (FileUtils.TestFileIsAssetBundle(PackagePath))
+
+            if (FileUtils.TestFileIsZip(PackagePath))
+            {
+                inited = true;
+                ModFileType = GameModFileType.BallanceZipPack;
+                return LoadBaseInfo(); 
+            }
+            else if (FileUtils.TestFileIsAssetBundle(PackagePath))
             {
                 ModType = GameModType.AssetPack;
                 ModFileType = GameModFileType.AssetBundle;
                 inited = true;
                 return true;
             }
-            else if (FileUtils.TestFileIsZip(PackagePath))
-            {
-                inited = true;
-                ModFileType = GameModFileType.BallanceZipPack;
-                return LoadBaseInfo();
-            }
 
             //文件格式不支持
             GameErrorManager.LastError = GameError.BadFileType;
-            GameLogger.Error(ModManager.TAG, "Mod package not support {0}", PackagePath);
+            GameLogger.Error(TAG, "Mod package not support {0}", PackagePath);
             return false;
         }
-
 
         /// <summary>
         /// 加载模组包
@@ -95,6 +104,8 @@ namespace Ballance2.ModBase
         /// <param name="monoBehaviour">调用脚本</param>
         public void Load(MonoBehaviour monoBehaviour)
         {
+            if (LoadStatus == GameModStatus.Loading || LoadStatus == GameModStatus.InitializeSuccess)
+                return;
             monoBehaviour.StartCoroutine(LoadInternal());
         }
         /// <summary>
@@ -108,7 +119,7 @@ namespace Ballance2.ModBase
 
             LoadStatus = GameModStatus.Loading;
 
-            GameLogger.Log(ModManager.TAG, "Load mod {0}", PackageName);
+            GameLogger.Log(TAG, "Load mod {0}", PackageName);
 
             if (ModFileType == GameModFileType.AssetBundle)
             {
@@ -124,10 +135,7 @@ namespace Ballance2.ModBase
 
                     if (AssetBundle == null)
                     {
-                        GameErrorManager.SetLastErrorAndLog(GameError.BadAssetBundle, TAG, "加载 AssetBundle 失败 无效的资源包", PackagePath);
-                        LoadFriendlyErrorExplain = "无效的资源包";
-                        LoadStatus = GameModStatus.InitializeFailed;
-                        ModManager.OnModLoadFinished(this);
+                        LoadErrorAndFinish("无效的资源包，加载 AssetBundle 失败", GameError.BadAssetBundle);
                         yield break;
                     }
                     else
@@ -147,25 +155,35 @@ namespace Ballance2.ModBase
                     else
                         LoadFriendlyErrorExplain = "HTTP 请求错误 " + request.responseCode;
 
-                    GameLogger.Error(ModManager.TAG, "加载模组包 {0} 失败\n错误信息：{1}", PackageName, request.error);
-                    GameErrorManager.LastError = GameError.NetworkError;
-                    LoadStatus = GameModStatus.InitializeFailed;
-
-                    ModManager.OnModLoadFinished(this);
+                    LoadErrorAndFinish("加载 AssetBundle 失败：" + LoadFriendlyErrorExplain + "\n" + request.error, 
+                        GameError.NetworkError);
                     yield break;
                 }
             }
             else if (ModFileType == GameModFileType.BallanceZipPack)
             {
                 //从zip读取AssetBundle
-                LoadAssetBundleInZip();
+                Task<MemoryStream> t = LoadAssetBundleToMemoryInZipAsync();
+                yield return new WaitUntil(() => t.IsCompleted);
+
+                MemoryStream ms = t.Result;
+                if(ms == null)
+                {
+                    LoadErrorAndFinish("加载失败： AssetBundle 未找到 (1)", GameError.BrokenMod);
+                    yield break;
+                }
+                //加载 AssetBundle
+                AssetBundleCreateRequest createRequest = AssetBundle.LoadFromMemoryAsync(ms.ToArray());
+                yield return createRequest;
+
+                AssetBundle = createRequest.assetBundle;
+
+                ms.Close();
+                ms.Dispose();
 
                 if (AssetBundle == null)
                 {
-                    GameErrorManager.SetLastErrorAndLog(GameError.BadAssetBundle, TAG, "加载 AssetBundle {0} 失败 无效的资源包", PackagePath);
-                    LoadFriendlyErrorExplain = "无效的资源包";
-                    LoadStatus = GameModStatus.InitializeFailed;
-                    ModManager.OnModLoadFinished(this);
+                    LoadErrorAndFinish("加载失败： AssetBundle 未找到 (2)", GameError.BrokenMod);
                     yield break;
                 }
                 else
@@ -173,30 +191,24 @@ namespace Ballance2.ModBase
                     TextAsset modDefTextAsset = AssetBundle.LoadAsset<TextAsset>("ModDef.xml");
                     if (modDefTextAsset == null)
                     {
-                        GameErrorManager.SetLastErrorAndLog(GameError.BadAssetBundle, TAG, "加载 AssetBundle {0} 失败 ModDef.xml 未找到 (2)", PackagePath);
-                        LoadFriendlyErrorExplain = "无效的资源包";
-                        LoadStatus = GameModStatus.InitializeFailed;
-                        ModManager.OnModLoadFinished(this);
+                        LoadErrorAndFinish("加载失败： ModDef.xml 未找到 (2)", GameError.BrokenMod);
+                        yield break;
                     }
-                    else if (!Md5Helper.VerifyMd5Hash(modDefTextAsset.text, ModDefInZip))
+                    else if (string.Compare(modDefTextAsset.text, ModDefInZip, true) != 0)
                     {
-                        GameErrorManager.SetLastErrorAndLog(GameError.BadMod, TAG, "模组校验失败，文件可能被损坏", PackagePath);
-                        LoadFriendlyErrorExplain = "模组校验失败，文件可能被损坏";
-                        LoadStatus = GameModStatus.InitializeFailed;
-                        ModManager.OnModLoadFinished(this);
+                        LoadErrorAndFinish("模组校验失败，文件可能被损坏", GameError.BrokenMod);
+                        yield break;
                     }
                 }
             }
             else
             {
                 LoadFriendlyErrorExplain = "无效的资源包 模式未设置";
-                GameErrorManager.SetLastErrorAndLog(GameError.BadAssetBundle, TAG, "加载 AssetBundle {0} 失败 无效的资源包 模式未设置", PackagePath);
-                LoadStatus = GameModStatus.InitializeFailed;
-                ModManager.OnModLoadFinished(this);
+                LoadErrorAndFinish("无效的资源包, 模式未设置", GameError.BrokenMod);
                 yield break;
             }
 
-            yield return ModManager.StartCoroutine(InitModBase());
+            yield return ((MonoBehaviour)ModManager).StartCoroutine(InitModBase());
         }
         /// <summary>
         /// 卸载
@@ -237,7 +249,7 @@ namespace Ballance2.ModBase
         /// </summary>
         public void Destroy()
         {
-            GameLogger.Log(ModManager.TAG, "Destroy mod package {0} uid: {1}", PackageName, Uid);
+            GameLogger.Log(TAG, "Destroy mod package {0}", PackageName);
             
             UnLoad();
 
@@ -272,10 +284,21 @@ namespace Ballance2.ModBase
             zip.Close();
             zip.Dispose();
 
+            if(!ModHasDefFile)
+            {
+                GameLogger.Error(TAG, "加载模组包失败，未找到 ModDef.xml");
+                GameErrorManager.LastError = GameError.InitializationFailed;
+
+                LoadStatus = GameModStatus.InitializeFailed;
+                LoadFriendlyErrorExplain = "未找到 ModDef.xml";
+
+                return false;
+            }
+
             //检查兼容性
             if (modCompatibilityInfo.MinVersion > GameConst.GameBulidVersion)
             {
-                GameLogger.Error(ModManager.TAG, "加载模组包 {0} 失败，模组包版本不兼容", PackageName);
+                GameLogger.Error(TAG, "加载模组包失败，模组包版本不兼容");
                 GameErrorManager.LastError = GameError.BadMod;
 
                 LoadStatus = GameModStatus.BadMod;
@@ -287,19 +310,11 @@ namespace Ballance2.ModBase
             //判断包名是否重复
             if (ModHasDefFile)
             {
-                GameMod otherNod = null;
-                GameMod[] allNameMod = ModManager.FindAllGameModByName(PackageName);
-                if (allNameMod.Length > 1)
+                GameMod otherNod = ModManager.FindGameMod(PackageName);
+                if (otherNod != null)
                 {
-                    foreach (GameMod m in allNameMod)
-                        if (m != this)
-                        {
-                            otherNod = m;
-                            break;
-                        }
-
-                    GameLogger.Warning(ModManager.TAG, "模组包 {0} ({1} )，包名与  {0} ({1}) 冲突", PackageName,
-                        Uid, otherNod.PackagePath, otherNod.Uid);
+                    GameLogger.Warning(TAG, "模组包 {0} ({1} )，包名与  {0} ({1}) 冲突", PackageName,
+                        PackagePath, otherNod.PackagePath, otherNod.PackagePath);
 
                     GameErrorManager.LastError = GameError.ModConflict;
 
@@ -313,23 +328,21 @@ namespace Ballance2.ModBase
             return true;
         }
         //在zip中加载AssetBundle
-        private void LoadAssetBundleInZip()
+        private async Task<MemoryStream> LoadAssetBundleToMemoryInZipAsync()
         {
             ZipInputStream zip = ZipUtils.OpenZipFile(PackagePath);
             ZipEntry theEntry;
             while ((theEntry = zip.GetNextEntry()) != null)
             {
-                if (theEntry.Name == PackageName + ".assetbundle" 
+                if (theEntry.Name == PackageName + ".assetbundle"
                     || theEntry.Name == "/" + PackageName + ".assetbundle")
                 {
-                    MemoryStream ms = ZipUtils.ReadZipFileToMemory(zip);
-                    AssetBundle = AssetBundle.LoadFromMemory(ms.ToArray());
-
-                    ms.Close();
-                    ms.Dispose();
-                    break;
+                    MemoryStream ms = await ZipUtils.ReadZipFileToMemoryAsync(zip);
+                    return ms;
                 }
             }
+            return null;
+
         }
         //模组初始化
         private IEnumerator InitModBase()
@@ -337,7 +350,7 @@ namespace Ballance2.ModBase
             //加载依赖
             if (ModDependencyInfo.Count > 0)
             {
-                yield return ModManager.StartCoroutine(CheckAndLoadModDependencies());
+                yield return ((MonoBehaviour)ModManager).StartCoroutine(CheckAndLoadModDependencies());
 
                 if (hasMustDependenciesLoadFailed)
                 {
@@ -363,7 +376,7 @@ namespace Ballance2.ModBase
                 {
                     //依赖需要全部加载
                     if (ModDependencyAllLoaded) InitLuaState();
-                    else GameLogger.Warning(TAG, "模组包 {0} 的依赖项没有全部加载，因此模组包不能运行", PackageName);
+                    else GameLogger.Warning(TAG, "模组包的依赖项没有全部加载，因此模组包不能运行");
                 }
                 else if (ModCodeType == GameModCodeType.CSharp)
                 {
@@ -382,9 +395,9 @@ namespace Ballance2.ModBase
                             GameLogger.Warning(TAG, (object)("模组包 " + PackageName + " ModEntryCode " + ModEntryCode + " 加载失败 : " + e.Message));
                         }
                     }
-                    else GameLogger.Warning(TAG, "模组包 {0} ModEntryCode {1} 未找到", PackageName, ModEntryCode);
+                    else GameLogger.Warning(TAG, "模组包 ModEntryCode {0} 未找到", ModEntryCode);
 #else
-                    GameLogger.Error(TAG, "当前使用 IL2CPP 模式，因此 C# DLL 不能加载，在模组包 {0} ", PackageName);
+                    GameLogger.Error(TAG, "模组包 {0} 加载代码错误：当前使用 IL2CPP 模式，因此 C# DLL 不能加载", PackageName);
 #endif
                 }
             }
@@ -396,7 +409,14 @@ namespace Ballance2.ModBase
             ModManager.OnModLoadFinished(this);
             yield break;
         }
-
+        //错误返回
+        private void LoadErrorAndFinish(string err, GameError gameError)
+        {
+            GameErrorManager.SetLastErrorAndLog(gameError, TAG, err);
+            LoadFriendlyErrorExplain = err;
+            LoadStatus = GameModStatus.InitializeFailed;
+            ModManager.OnModLoadFinished(this);
+        }
 
         #region 公共属性
 
@@ -458,6 +478,15 @@ namespace Ballance2.ModBase
         /// </summary>
         public GameModCodeType ModCodeType { get; private set; } = GameModCodeType.Lua;
         /// <summary>
+        /// 模组共享lua虚拟机
+        /// </summary>
+        /// <remarks>
+        /// 如果你的模组分成多个模块，你可以仅用一个模块来运行代码，其他的模块作为附属模块，
+        /// 填写 ModShareLuaState 为主模块包名，这样子模块可以和主模块共享运行环境。
+        /// （默认情况下每个模块相互独立不能互相访问）
+        /// </remarks>
+        public string ModShareLuaState { get; private set; } = "";
+        /// <summary>
         /// 模组适配信息
         /// </summary>
         public GameCompatibilityInfo ModCompatibilityInfo { get { return modCompatibilityInfo; } }
@@ -475,7 +504,7 @@ namespace Ballance2.ModBase
         public GameModEntryCodeExecutionAt ModEntryCodeExecutionAt { get; private set; } = GameModEntryCodeExecutionAt.Manual;
 
         /// <summary>
-        /// 模组的 c# dll （仅Standalone模式有效）
+        /// 模组的 c# dll （仅Standalone 和 非AOT 模式有效）
         /// </summary>
         public Assembly ModCSharpAssembly { get; private set; }
         /// <summary>
@@ -522,8 +551,7 @@ namespace Ballance2.ModBase
             catch (Exception e)
             {
                 ModLogo = null;
-                GameLogger.Error(ModManager.TAG, "在加载模组包 {0} 的 Logo {1} 失败\n错误信息：{2}",
-                    PackageName, modInfo.Logo, e.ToString());
+                GameLogger.Error(TAG, "在加载模组包的 Logo {0} 失败\n错误信息：{1}", modInfo.Logo, e.ToString());
             }
         }
 
@@ -562,6 +590,20 @@ namespace Ballance2.ModBase
                                 else GameLogger.Warning(TAG, "Bad ModCodeType : {0}", node.InnerText);
                                 break;
                             }
+                        case "ModShareLuaState":
+                            {
+                                if (!StringUtils.IsPackageName(node.InnerText))
+                                {
+                                    GameLogger.Warning(TAG, "Bad ModShareLuaState : {0}", node.InnerText);
+                                    break;
+                                }
+                                ModShareLuaState = node.InnerText;
+                                GameDependencyInfo dependencyInfo = new GameDependencyInfo();
+                                dependencyInfo.PackageName = ModShareLuaState;
+                                dependencyInfo.MustLoad = false;
+                                ModDependencyInfo.Add(dependencyInfo);
+                                break;
+                            }
                         case "EntryCode":
                             {
                                 ModEntryCode = node.InnerText;
@@ -583,6 +625,8 @@ namespace Ballance2.ModBase
                         case "Data": break;
                     }
                 }
+
+                ModHasDefFile = true;
             }
             catch(Exception e)
             {
@@ -619,7 +663,7 @@ namespace Ballance2.ModBase
                 {
                     case "packageName":
                         PackageName = attribute.Value;
-                        _TAG = ModManager.TAG + ":" + PackageName;
+                        _TAG = "GameMod:" + PackageName;
                         break;
                 }
             }
@@ -710,7 +754,7 @@ namespace Ballance2.ModBase
         /// </summary>
         private IEnumerator CheckAndLoadModDependencies()
         {
-            GameLogger.Log(ModManager.TAG, "Load mod package {0} dependencies : {1}", PackageName, ModDependencyInfo.Count);
+            GameLogger.Log(TAG, "Load mod package {0} dependencies : {1}", PackageName, ModDependencyInfo.Count);
 
             ModDependencyAllLoaded = true;
             hasMustDependenciesLoadFailed = false;
@@ -718,15 +762,14 @@ namespace Ballance2.ModBase
             foreach (GameDependencyInfo d in ModDependencyInfo)
             {
                 i++;
-                GameLogger.Log(ModManager.TAG, "Load mod dependency : {0} ({1}/{2})", d.PackageName, i, ModDependencyInfo.Count);
+                GameLogger.Log(TAG, "Load mod dependency : {0} ({1}/{2})", d.PackageName, i, ModDependencyInfo.Count);
                 if (!d.Loaded)
                 {
-                    GameMod m = ModManager.FindGameModByName(d.PackageName);
+                    GameMod m = ModManager.FindGameMod(d.PackageName);
                     if (m == null)
                     {
                         //如果没有注册，则尝试从包名直接加载
-                        int uid = ModManager.LoadGameModByPackageName(d.PackageName, false);
-                        m = ModManager.FindGameMod(uid);
+                        m = ModManager.LoadGameModByPackageName(d.PackageName, false);
                         if (m == null)
                         {
                             ModDependencyAllLoaded = false;
@@ -740,10 +783,10 @@ namespace Ballance2.ModBase
                             continue;
                         }
                         else
-                            yield return ModManager.StartCoroutine(m.LoadInternal());
+                            yield return ((MonoBehaviour)ModManager).StartCoroutine(m.LoadInternal());
                     }
                     else if (m != null && m.LoadStatus == GameModStatus.NotInitialize)//如果没有初始化则初始化
-                        yield return ModManager.StartCoroutine(m.LoadInternal());
+                        yield return ((MonoBehaviour)ModManager).StartCoroutine(m.LoadInternal());
 
                     if (m.LoadStatus != GameModStatus.InitializeSuccess
                         && m.LoadStatus != GameModStatus.Loading)
@@ -778,7 +821,7 @@ namespace Ballance2.ModBase
         internal void ForceLoadEditorPack(TextAsset modDef)
         {
             ReadModDef(modDef.text);
-            ModManager.StartCoroutine(InitModBase());
+            ((MonoBehaviour)ModManager).StartCoroutine(InitModBase());
         }
 
         #endregion
@@ -847,13 +890,28 @@ namespace Ballance2.ModBase
         private void InitLuaState()
         {
             mainLuaCodeLoaded = false;
-            luaStateInited = false;
             requiredLuaFiles = new List<string>();
             requiredLuaClasses = new Dictionary<string, LuaFunction>();
+
+            if (!string.IsNullOrEmpty(ModShareLuaState))
+            {
+                GameMod m = ModManager.FindGameMod(ModShareLuaState);
+                if(m != null && m.ModLuaState != null && m.luaStateInited)
+                {
+                    ModLuaState = m.ModLuaState;
+                    LuaStateInitFinished();
+                    return;
+                }
+                else GameLogger.Warning(TAG, "ModShareLuaState {0} can not be load because " +
+                    "the target mod lua environment is not ready or not load. now use independent LuaServer", 
+                    ModShareLuaState);
+            }
+
             ModLuaServer = new LuaServer(PackageName);
             ModLuaState = ModLuaServer.getLuaState();
-            ModLuaServer.init(null, LuaStateInitFinished);
+            ModLuaServer.init((i) => { }, LuaStateInitFinished);
         }
+
         private void LuaStateInitFinished()
         {
             luaStateInited = true;
@@ -933,12 +991,26 @@ namespace Ballance2.ModBase
                 if(ModCSharpAssembly != null)
                 {
                     Type type = ModCSharpAssembly.GetType("BallanceModEntry");
+                    if(type == null)
+                    {
+                        GameLogger.Warning(TAG, "未找到 BallanceModEntry ");
+                        GameErrorManager.LastError = GameError.ClassNotFound;
+                        return false;
+                    }
+
                     ModCSharpModEntry = Activator.CreateInstance(type);
                     MethodInfo methodInfo = type.GetMethod("ModEntry");  //根据方法名获取MethodInfo对象
+                    if (type == null)
+                    {
+                        GameLogger.Warning(TAG, "未找到 ModEntry()");
+                        GameErrorManager.LastError = GameError.FunctionNotFound;
+                        return false;
+                    }
+
                     object b = methodInfo.Invoke(ModCSharpModEntry, null);
                     if (b is bool && !((bool)b))
                     {
-                        GameLogger.Warning(TAG, "模组 {0} ModEntry 返回了错误", PackageName);
+                        GameLogger.Warning(TAG, "模组 ModEntry 返回了错误");
                         GameErrorManager.LastError = GameError.ModExecutionCodeRunFailed;
                         return (bool)b;
                     }
@@ -996,9 +1068,16 @@ namespace Ballance2.ModBase
         /// <returns>类创建函数</returns>
         public LuaFunction RequireLuaClass(string className)
         {
-            LuaFunction classInit = null;
+            LuaFunction classInit;
             if (requiredLuaClasses.TryGetValue(className, out classInit))
                 return classInit;
+
+            classInit = ModLuaState.getFunction("class_" + className);
+            if (classInit != null)
+            {
+                requiredLuaClasses.Add(className, classInit);
+                return classInit;
+            }
 
             TextAsset lua = GetTextAsset(className);
             if (lua == null) lua = GetTextAsset(className + ".lua.txt");

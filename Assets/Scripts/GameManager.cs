@@ -192,7 +192,7 @@ namespace Ballance2
             GameManagerWorker.UnRegisterManagerRedayCallback(id);
         }
 
-        public static bool IsManagerInitFinished() { return GameManagerWorker.IsManagerInitFinished(); }
+        public static bool IsManagersInitFinished() { return GameManagerWorker.IsManagersInitFinished(); }
 
         /// <summary>
         /// 请求所有管理器初始化
@@ -213,7 +213,6 @@ namespace Ballance2
         /// 请求管理器初始化
         /// </summary>
         /// <param name="manager">目标管理器</param>
-        /// <param name="isPre">是否是预初始化</param>
         public static void RequestManagerInitialization(BaseManager manager)
         {
             GameManagerWorker.nextInitManages.Add(manager);
@@ -387,7 +386,7 @@ namespace Ballance2
                     GameMainLuaState = new LuaSvr.MainState();
                 }
 
-                yield return new WaitUntil(IsManagerInitFinished);
+                yield return new WaitUntil(IsManagersInitFinished);
 
                 //初始化完成
                 gameBaseInitFinished = true;
@@ -485,6 +484,18 @@ namespace Ballance2
         public static void ForceInterruptGame()
         {
             GameLogger.Log(TAG, "Force interrupt game");
+            ClearScense();
+        }
+        /// <summary>
+        /// 关闭 GameManager 产生的全局对话框（调试用）
+        /// </summary>
+        public static void CloseGameManagerAlert()
+        {
+            UIManager.CloseWindow(UIManager.FindWindowById(gameManagerAlertDialogId));
+        }
+
+        internal static void ClearScense()
+        {
             foreach (Camera c in Camera.allCameras)
                 c.gameObject.SetActive(false);
             for (int i = 0, c = GameCanvas.transform.childCount; i < c; i++)
@@ -496,23 +507,20 @@ namespace Ballance2
                     for (int j = 0, c1 = go.transform.childCount; j < c1; j++)
                     {
                         go1 = go.transform.GetChild(j).gameObject;
-                        if(go1.name != "GameUIWindow_Debug Window")
+                        if (go1.name != "GameUIWindow_Debug Window")
                             go1.SetActive(false);
                     }
                 }
-                else if(go.name != "GameUIDebugToolBar" && go.name != "GameUIWindow_Debug Window")
+                else if (go.name != "GameUIDebugToolBar" && go.name != "GameUIWindow_Debug Window")
                     go.SetActive(false);
             }
             for (int i = 0, c = GameRoot.transform.childCount; i < c; i++)
-                GameRoot.transform.GetChild(i).gameObject.SetActive(false);
+            {
+                GameObject go = GameRoot.transform.GetChild(i).gameObject;
+                if(go.name != "GameManager")
+                    go.SetActive(false);
+            }
             GameBaseCamera.gameObject.SetActive(true);
-        }
-        /// <summary>
-        /// 关闭 GameManager 产生的全局对话框（调试用）
-        /// </summary>
-        public static void CloseGameManagerAlert()
-        {
-            UIManager.CloseWindow(UIManager.FindWindowById(gameManagerAlertDialogId));
         }
 
         #endregion

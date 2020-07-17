@@ -896,7 +896,7 @@ namespace Ballance2.Managers
                     DebugManager.RegisterCommand("actions", OnCommandShowActions, 0, "显示全局操作");
                     DebugManager.RegisterCommand("events", OnCommandShowEvents, 0, "[showHandlers:true/false] 显示全局事件 [是否显示事件接收器]");
                     DebugManager.RegisterCommand("showstore", OnCommandShowStores, 0, "[showParams:true/false] 显示全局数据共享池 [是否显示共享池内所有参数]");
-                    DebugManager.RegisterCommand("storedata", OnCommandShowStores, 1, "[storeName:string] [paramName:string] 显示全局数据共享池内的参数 [池名称] [要显示的参数名称，如果为空则显示全部] ");
+                    DebugManager.RegisterCommand("storedata", OnCommandShowStoreData, 1, "[storeName:string] [paramName:string] 显示全局数据共享池内的参数 [池名称] [要显示的参数名称，如果为空则显示全部] ");
 
                 }
                 return false;

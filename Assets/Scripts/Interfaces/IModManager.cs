@@ -29,15 +29,15 @@ namespace Ballance2.Interfaces
         /// </summary>
         /// <param name="packagePath">模组包路径</param>
         /// <param name="initialize">是否立即初始化模组包</param>
-        /// <returns>返回模组包UID，如果加载失败或找不到文件，返回0</returns>
-        int LoadGameMod(string packagePath, bool initialize = true);
+        /// <returns>返回模组包实例，如果加载失败或找不到文件，返回null</returns>
+        GameMod LoadGameMod(string packagePath, bool initialize = true);
         /// <summary>
         /// 通过包名加载模组包
         /// </summary>
         /// <param name="packageName">模组包包名</param>
         /// <param name="initialize">是否立即初始化模组包</param>
-        /// <returns>返回模组包UID，如果加载失败或找不到文件，返回0</returns>
-        int LoadGameModByPackageName(string packageName, bool initialize = true);
+        /// <returns>返回模组包实例，如果加载失败或找不到文件，返回null</returns>
+        GameMod LoadGameModByPackageName(string packageName, bool initialize = true);
         /// <summary>
         /// 通过路径查找模组包
         /// </summary>
@@ -47,21 +47,9 @@ namespace Ballance2.Interfaces
         /// <summary>
         /// 通过包名查找模组包
         /// </summary>
-        /// <param name="packagePath">路径</param>
-        /// <returns>模组包</returns>
-        GameMod FindGameModByName(string packageName);
-        /// <summary>
-        /// 通过包名查找模组包
-        /// </summary>
-        /// <param name="packagePath">路径</param>
-        /// <returns>模组包</returns>
-        GameMod[] FindAllGameModByName(string packageName);
-        /// <summary>
-        /// 通过UID查找模组包
-        /// </summary>
-        /// <param name="modUid">模组包UID</param>
+        /// <param name="packageName">包名</param>
         /// <returns></returns>
-        GameMod FindGameMod(int modUid);
+        GameMod FindGameMod(string packageName);
         /// <summary>
         /// 通过资源定义字符串查找模组包
         /// </summary>
@@ -71,9 +59,9 @@ namespace Ballance2.Interfaces
         /// <summary>
         /// 卸载模组包
         /// </summary>
-        /// <param name="modUid">模组包UID</param>
+        /// <param name="packageName">模组包包名</param>
         /// <returns>返回操作是否成功</returns>
-        bool UnLoadGameMod(int modUid);
+        bool UnLoadGameMod(string packageName);
         /// <summary>
         /// 获取模组包是否正在加载
         /// </summary>
@@ -89,34 +77,40 @@ namespace Ballance2.Interfaces
         /// <summary>
         /// 加载模组包
         /// </summary>
-        /// <param name="modUid">模组包UID</param>
+        /// <param name="mod">模组包实例</param>
         /// <returns>返回操作是否成功</returns>
-        bool InitializeLoadGameMod(int modUid);
+        bool InitializeLoadGameMod(GameMod mod);
         /// <summary>
         /// 加载模组包
         /// </summary>
-        /// <param name="modUid">模组包包名</param>
+        /// <param name="modPackageName">模组包包名</param>
         /// <returns>返回操作是否成功</returns>
         bool InitializeLoadGameMod(string modPackageName);
         /// <summary>
         /// 卸载模组包
         /// </summary>
-        /// <param name="modUid">模组包UID</param>
+        /// <param name="mod">模组包实例</param>
         /// <returns>返回操作是否成功</returns>
-        bool UnInitializeLoadGameMod(int modUid);
+        bool UnInitializeLoadGameMod(GameMod mod);
         /// <summary>
         /// 卸载模组包
         /// </summary>
-        /// <param name="modUid">模组包包名</param>
+        /// <param name="modPackageName">模组包包名</param>
         /// <returns>返回操作是否成功</returns>
         bool UnInitializeLoadGameMod(string modPackageName);
 
         /// <summary>
         /// 执行模组包代码
         /// </summary>
-        /// <param name="modUid">模组包UID</param>
+        /// <param name="packageName">模组包包名</param>
         /// <returns>返回操作是否成功</returns>
-        bool RunLoadGameMod(int modUid);
+        bool RunGameMod(string packageName);
+        /// <summary>
+        /// 执行模组包代码
+        /// </summary>
+        /// <param name="mod">模组包实例</param>
+        /// <returns>返回操作是否成功</returns>
+        bool RunGameMod(GameMod mod);
 
         /// <summary>
         /// 获取模组是否被用户启用
@@ -134,5 +128,6 @@ namespace Ballance2.Interfaces
         void ExecuteModEntry(GameModEntryCodeExecutionAt at);
         string[] GetModEnableStatusList();
         void UnLoadNotUsedMod();
+        void OnModLoadFinished(GameMod m);
     }
 }

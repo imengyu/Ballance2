@@ -293,6 +293,70 @@ public class Lua_Ballance2_UI_UICommonList_CommonListItem : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int get_visible(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.UI.UICommonList.CommonListItem self=(Ballance2.UI.UICommonList.CommonListItem)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.visible);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_visible(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.UI.UICommonList.CommonListItem self=(Ballance2.UI.UICommonList.CommonListItem)checkSelf(l);
+			System.Boolean v;
+			checkType(l,2,out v);
+			self.visible=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int get_data(IntPtr l) {
 		try {
 			#if DEBUG
@@ -490,6 +554,7 @@ public class Lua_Ballance2_UI_UICommonList_CommonListItem : LuaObject {
 		addMember(l,"itemRectTransform",get_itemRectTransform,set_itemRectTransform,true);
 		addMember(l,"id",get_id,set_id,true);
 		addMember(l,"selected",get_selected,set_selected,true);
+		addMember(l,"visible",get_visible,set_visible,true);
 		addMember(l,"data",get_data,set_data,true);
 		addMember(l,"backgroundImage",get_backgroundImage,set_backgroundImage,true);
 		addMember(l,"backgroundImageButton",get_backgroundImageButton,set_backgroundImageButton,true);

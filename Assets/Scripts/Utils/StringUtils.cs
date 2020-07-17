@@ -66,6 +66,7 @@ namespace Ballance2.Utils
         /// <returns></returns>
         public static bool IsPackageName(string text)
         {
+            if (isNullOrEmpty(text)) return false;
             return Regex.IsMatch(text, "^([a-zA-Z]+[.][a-zA-Z]+)[.]*.*");
         }
         /// <summary>

@@ -30,12 +30,12 @@ namespace Ballance2.Utils
         public static void SetLastErrorAndLog(GameError code, string tag, string message, params object[] param)
         {
             LastError = code;
-            GameLogger.Warning(tag, message, param);
+            GameLogger.Error(tag, message, param);
         }
         public static void SetLastErrorAndLog(GameError code, string tag, string message)
         {
             LastError = code;
-            GameLogger.Warning(tag, message);
+            GameLogger.Error(tag, message);
         }
 
         /// <summary>
@@ -166,6 +166,10 @@ namespace Ballance2.Utils
         /// </summary>
         FunctionNotFound,
         /// <summary>
+        /// 目标类未找到
+        /// </summary>
+        ClassNotFound,
+        /// <summary>
         /// 函数未返回
         /// </summary>
         NotReturn,
@@ -173,6 +177,10 @@ namespace Ballance2.Utils
         /// 模组包版本不兼容
         /// </summary>
         BadMod,
+        /// <summary>
+        /// 坏的模组包
+        /// </summary>
+        BrokenMod,
         /// <summary>
         /// 网络错误
         /// </summary>

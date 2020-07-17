@@ -348,18 +348,6 @@ namespace SLua
             return list;
         }
 
-        static internal void doBind(IntPtr L)
-        {
-            var list = collectBindInfo();
-
-            int count = list.Count;
-            for (int n = 0; n < count; n++)
-            {
-                Action<IntPtr> action = list[n];
-                action(L);
-            }
-        }
-
         static internal IEnumerator doBind(IntPtr L, Action<int> _tick, Action complete)
         {
             Action<int> tick = (int p) => {
@@ -391,14 +379,6 @@ namespace SLua
             complete();
         }
 
-        Action<IntPtr>[] getBindList(Assembly assembly, string ns)
-        {
-            Type t = assembly.GetType(ns);
-            if (t != null)
-                return (Action<IntPtr>[])t.GetMethod("GetBindList").Invoke(null, null);
-            return new Action<IntPtr>[0];
-        }
-
         protected void doinit(LuaState L, LuaSvrFlag flag)
         {
             L.openSluaLib();
@@ -412,44 +392,19 @@ namespace SLua
                 Lua3rdDLL.open(L.L);
         }
 
-        public void init(Action<int> tick, Action complete, LuaSvrFlag flag = LuaSvrFlag.LSF_BASIC | LuaSvrFlag.LSF_EXTLIB)
-        {
+		public void init(Action<int> tick, Action complete, LuaSvrFlag flag = LuaSvrFlag.LSF_BASIC | LuaSvrFlag.LSF_EXTLIB)
+		{
+			IntPtr L = luaState.L;
+			LuaObject.init(L);
+			luaState.lgo.StartCoroutine(doBind(L, tick, () =>
+			{
+				doinit(luaState, flag);
+				complete();
+				luaState.checkTop();
+			}));
+		}
 
-            IntPtr L = luaState.L;
-            LuaObject.init(L);
-
-#if SLUA_STANDALONE
-			doBind(L);
-			doinit(mainState, flag);
-			complete();
-			mainState.checkTop();
-#else
-
-
-#if UNITY_EDITOR
-            if (!UnityEditor.EditorApplication.isPlaying)
-            {
-                doBind(L);
-                doinit(luaState, flag);
-                complete();
-                luaState.checkTop();
-            }
-            else
-            {
-#endif
-                luaState.lgo.StartCoroutine(doBind(L, tick, () =>
-                {
-                    doinit(luaState, flag);
-                    complete();
-                    luaState.checkTop();
-                }));
-#if UNITY_EDITOR
-            }
-#endif
-#endif
-        }
-
-        public object start(string main)
+		public object start(string main)
         {
             if (main != null)
             {
