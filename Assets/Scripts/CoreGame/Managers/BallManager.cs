@@ -55,9 +55,6 @@ namespace Ballance2.CoreGame.Managers
             return true;
         }
 
-        public GameObject Ball_Wood_piece;
-        public GameObject Ball_Stone_piece;
-        public GameObject Ball_Paper_piece;
         public GameObject Ball_LightningSphere;
         public GameObject Ball_LightningSphere2;
         public GameObject Ball_Lightning;
@@ -116,9 +113,9 @@ namespace Ballance2.CoreGame.Managers
 
             pushType = BallPushType.None;
 
-            RegisterBall("BallWood", BallWood, Ball_Wood_piece);
-            RegisterBall("BallStone", BallStone, Ball_Stone_piece);
-            RegisterBall("BallPaper", BallPaper, Ball_Paper_piece);
+            RegisterBall("BallWood", BallWood);
+            RegisterBall("BallStone", BallStone);
+            RegisterBall("BallPaper", BallPaper);
 
             Ball_LightningSphere.SetActive(false);
             Ball_LightningSphere2.SetActive(false);
@@ -273,7 +270,7 @@ namespace Ballance2.CoreGame.Managers
                     new string[] { "UnityEngine.Vector3" },
                     new string[] { "System.String/Ballance2.CoreGame.GamePlay.BallPushType" },
                     new string[] { "System.String/Ballance2.CoreGame.GamePlay.BallPushType"  },
-                    new string[] { "System.String", "Ballance2.CoreGame.GamePlay.BallPushType", "UnityEngine.GameObject"   },
+                    new string[] { "System.String", "Ballance2.CoreGame.GamePlay.BallPushType", "UnityEngine.GameObject/null"   },
                     new string[] { "System.String" },
                     new string[] { "System.String" },
                 }
@@ -528,12 +525,30 @@ namespace Ballance2.CoreGame.Managers
                 GUI.Label(new Rect(10, line.y, 300, 32), "[ColObj]: [" + currentBallType.CurrentColObjectLayout + "] "
                     + currentBallType.CurrentColObject); line.y += 36;
                 GUI.Label(line, "FinalPushForce : " + pushType + " Force: " + currentBallType.PushForce); line.y += 16;
+                GUI.Label(line, "FallForce :" + currentBallType.FallForce); line.y += 16;
+                GUI.Label(line, "FinalPushForceVectorFB :" + currentBallType.FinalPushForceVectorFB); line.y += 16;
+                GUI.Label(line, "FinalPushForceVectorLR :" + currentBallType.FinalPushForceVectorLR); line.y += 16;
             }
         }
 
         //球管理
         //============================
 
+        /// <summary>
+        /// 注册球
+        /// </summary>
+        /// <param name="name">球类型名称</param>
+        /// <param name="ball">附加了GameBall组件的球实例</param>
+        private bool RegisterBall(string name, GameBall ball)
+        {
+            if (ball == null)
+            {
+                GameLogger.Warning(TAG, "要注册的球 {0} 为空", name);
+                GameErrorManager.LastError = GameError.ParamNotProvide;
+                return false;
+            }
+            return RegisterBall(name, ball, ball.Pieces);
+        }
         /// <summary>
         /// 注册球
         /// </summary>
@@ -556,18 +571,22 @@ namespace Ballance2.CoreGame.Managers
             }
 
             ball.TypeName = name;
-            ball.Pieces = pieces;
+            if (pieces != null)
+                ball.Pieces = pieces;
             ballTypes.Add(ball);
 
-            GameBallPiecesControl ballPiecesControl = pieces.GetComponent<GameBallPiecesControl>();
-            if(ballPiecesControl != null)
+            if (pieces != null)
             {
-                ballPiecesControl.Ball = ball;
-                ball.BallPiecesControl = ballPiecesControl;
+                GameBallPiecesControl ballPiecesControl = pieces.GetComponent<GameBallPiecesControl>();
+                if (ballPiecesControl != null)
+                {
+                    ballPiecesControl.Ball = ball;
+                    ball.BallPiecesControl = ballPiecesControl;
+                }
+                if (pieces.activeSelf) pieces.SetActive(false);
             }
 
             if (ball.gameObject.activeSelf) ball.gameObject.SetActive(false);
-            if (pieces.activeSelf) pieces.SetActive(false);
 
             return ball.Init();
         }
@@ -842,7 +861,6 @@ namespace Ballance2.CoreGame.Managers
         //当前球
         private GameObject currentBall;
         private GameBall currentBallType;
-        private Rigidbody rigidbodyCurrent;
 
         //下一次恢复球的位置
         private Vector3 nextRecoverBallPos = Vector3.zero;
@@ -934,7 +952,6 @@ namespace Ballance2.CoreGame.Managers
                 currentBallType = ball;
                 currentBallType.Active(nextRecoverBallPos);
                 currentBall = ball.gameObject;
-                rigidbodyCurrent = currentBall.GetComponent<Rigidbody>();
 
                 CamFollowTarget.SetData(currentContext, currentBall.transform);
                 IsFollowCam.SetData(currentContext, true);

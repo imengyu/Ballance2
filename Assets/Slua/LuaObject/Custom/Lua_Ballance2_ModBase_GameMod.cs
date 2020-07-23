@@ -1375,6 +1375,37 @@ public class Lua_Ballance2_ModBase_GameMod : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int get_ModShareLuaState(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.ModBase.GameMod self=(Ballance2.ModBase.GameMod)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.ModShareLuaState);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int get_ModCompatibilityInfo(IntPtr l) {
 		try {
 			#if DEBUG
@@ -1695,6 +1726,7 @@ public class Lua_Ballance2_ModBase_GameMod : LuaObject {
 		addMember(l,"ModType",get_ModType,null,true);
 		addMember(l,"ModFileType",get_ModFileType,null,true);
 		addMember(l,"ModCodeType",get_ModCodeType,null,true);
+		addMember(l,"ModShareLuaState",get_ModShareLuaState,null,true);
 		addMember(l,"ModCompatibilityInfo",get_ModCompatibilityInfo,null,true);
 		addMember(l,"ModDependencyInfo",get_ModDependencyInfo,null,true);
 		addMember(l,"ModDependencyAllLoaded",get_ModDependencyAllLoaded,null,true);

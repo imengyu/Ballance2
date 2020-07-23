@@ -1,7 +1,12 @@
 ﻿using SubjectNerd.Utilities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_ANDROID
+using UnityEngine.Android;
+#endif
+
 
 namespace Ballance2.Main
 {
@@ -23,6 +28,10 @@ namespace Ballance2.Main
         /// </summary>
         public GameObject GameCanvas = null;
         /// <summary>
+        /// 游戏UI根
+        /// </summary>
+        public GameObject UIRoot = null;
+        /// <summary>
         /// 启动时暂停游戏，在控制台中继续（通常用于调试）
         /// </summary>
         public bool BreakAtStart = false;
@@ -43,7 +52,7 @@ namespace Ballance2.Main
         /// 内核调试基础元件
         /// </summary>
         public GameObject CoreDebugBase = null;
-        
+
         /// <summary>
         /// 静态 Prefab 资源引入
         /// </summary>
@@ -55,19 +64,63 @@ namespace Ballance2.Main
         [Reorderable("GameAssets", true, "Name")]
         public List<GameManager.GameAssetsInfo> GameAssets = null;
 
+        public GameObject GlobalGamePermissionTipDialog;
+        public GameObject GlobalGameUserAgreementTipDialog;
+
+        private bool GlobalGamePermissionTipDialogClosed;
+        private bool GlobalGameUserAgreementTipDialogClosed;
+
         void Start()
         {
+            if (SetFrameRate) Application.targetFrameRate = TargetFrameRate;
+
             Instance = this;
             InitCommandLine();
-            if(SetFrameRate) Application.targetFrameRate = TargetFrameRate;
-            GameLogger.InitLogger();
-            GameManager.BreakAtStart = BreakAtStart;
-            StartCoroutine(GameManager.Init(GameMode, GameRoot, GameCanvas, GamePrefab, GameAssets));
+
+            StartCoroutine(InitMain());
         }
         private void OnDestroy()
         {
             GameManager.Destroy();
             GameLogger.DestroyLogger();
+        }
+
+        private bool ShowUserArgeement()
+        {
+            if (PlayerPrefs.GetInt("UserAgreementAgreed", 0) == 0)
+            {
+                GlobalGameUserAgreementTipDialog.SetActive(true);
+                return true;
+            }
+            return false;
+        }
+        private bool TestAndroidPermission()
+        {
+#if UNITY_ANDROID
+            if (!Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite))
+                return true;
+#endif
+            return false;
+        }
+
+        public void ArgeedUserArgeement()
+        {
+            PlayerPrefs.SetInt("UserAgreementAgreed", 1);
+            GlobalGameUserAgreementTipDialogClosed = true;
+            GlobalGameUserAgreementTipDialog.SetActive(false);
+        }
+        public void RequestAndroidPermission()
+        {
+#if UNITY_ANDROID
+            Permission.RequestUserPermission(Permission.ExternalStorageWrite);
+#endif
+            GlobalGamePermissionTipDialogClosed = true;
+            GlobalGamePermissionTipDialog.SetActive(false);
+        }
+        public void QuitGame()
+        {
+            StopAllCoroutines();
+            Application.Quit();
         }
 
         private void InitCommandLine()
@@ -86,6 +139,32 @@ namespace Ballance2.Main
                         PlayerPrefs.SetString("core.debug", "true");
                 }
             }
+        }
+
+        private IEnumerator InitMain()
+        {
+            if (TestAndroidPermission())
+            {
+                GlobalGamePermissionTipDialog.SetActive(true);
+
+                yield return new WaitUntil(() => GlobalGamePermissionTipDialogClosed);
+            }
+
+            if (ShowUserArgeement())
+            {
+                yield return new WaitUntil(() => GlobalGameUserAgreementTipDialogClosed);
+            }
+
+            GameLogger.InitLogger();
+            GameManager.Mode = GameMode;
+            GameManager.GameRoot = GameRoot;
+            GameManager.GameCanvas = GameCanvas;
+            GameManager.GamePrefab = GamePrefab;
+            GameManager.GameAssets = GameAssets;
+            GameManager.BreakAtStart = BreakAtStart;
+            GameManager.UIRoot = UIRoot;
+
+            StartCoroutine(GameManager.Init());
         }
     }
 }

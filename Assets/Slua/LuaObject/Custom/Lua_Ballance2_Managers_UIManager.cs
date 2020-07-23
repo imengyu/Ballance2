@@ -582,7 +582,7 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 			checkType(l,2,out a1);
 			var ret=self.FindWindowById(a1);
 			pushValue(l,true);
-			pushInterface(l,ret, typeof(Ballance2.UI.BallanceUI.IWindow));
+			pushValue(l,ret);
 			return 2;
 		}
 		catch(Exception e) {
@@ -612,7 +612,7 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 			#endif
 			#endif
 			Ballance2.Managers.UIManager self=(Ballance2.Managers.UIManager)checkSelf(l);
-			Ballance2.UI.BallanceUI.IWindow a1;
+			Ballance2.UI.BallanceUI.UIWindow a1;
 			checkType(l,2,out a1);
 			self.ShowWindow(a1);
 			pushValue(l,true);
@@ -645,7 +645,7 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 			#endif
 			#endif
 			Ballance2.Managers.UIManager self=(Ballance2.Managers.UIManager)checkSelf(l);
-			Ballance2.UI.BallanceUI.IWindow a1;
+			Ballance2.UI.BallanceUI.UIWindow a1;
 			checkType(l,2,out a1);
 			self.HideWindow(a1);
 			pushValue(l,true);
@@ -678,7 +678,7 @@ public class Lua_Ballance2_Managers_UIManager : LuaObject {
 			#endif
 			#endif
 			Ballance2.Managers.UIManager self=(Ballance2.Managers.UIManager)checkSelf(l);
-			Ballance2.UI.BallanceUI.IWindow a1;
+			Ballance2.UI.BallanceUI.UIWindow a1;
 			checkType(l,2,out a1);
 			self.CloseWindow(a1);
 			pushValue(l,true);

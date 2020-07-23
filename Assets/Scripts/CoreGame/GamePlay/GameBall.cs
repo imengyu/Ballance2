@@ -47,6 +47,7 @@ namespace Ballance2.CoreGame.GamePlay
     /// </summary>
     [SLua.CustomLuaClass]
     [AddComponentMenu("Ballance/Game/GameBall")]
+    [RequireComponent(typeof(Rigidbody))]
     public class GameBall : MonoBehaviour
     {
         /// <summary>
@@ -54,16 +55,41 @@ namespace Ballance2.CoreGame.GamePlay
         /// </summary>
         public GameBallPiecesControl BallPiecesControl { get; set; }
 
+        [Tooltip("球的碎片")]
         public GameObject Pieces;
+        [Tooltip("球类型名字")]
         public string TypeName;
+        [Tooltip("刚体")]
         public Rigidbody Rigidbody;
-        public float PushForce = 3f;
-        public ForceMode ForceMode = ForceMode.Force;
-        public float FallForce = 0;
-        public float MaxSpeedXZ = 0;
-        public float MaxSpeedY = 0;
 
+        [Tooltip("球的推力类型")]
+        public ForceMode ForceMode = ForceMode.Force;
+
+        [Tooltip("球的推力大小")]
+        public float PushForce = 3f;
+        [Tooltip("球的推力位置")]
+        public Vector3 PushForcePosition = new Vector3(0, 0, 0);
+        [Tooltip("球的推力下偏角度(0-45)")]
+        [Range(0.0f, 45f)]
+        public float PushForceDownAngle = 0;
+        [Tooltip("球的向上推力大小")]
+        public float PushUpForce = 13f;
+        [Tooltip("球的自动下落力")]
+        public float FallForce = 0;
+
+        [Tooltip("球的XZ轴移动最大速度（这个用来模拟移动空气阻力）")]
+        public float MaxSpeedXZ = 0;
+        public float MaxSpeedXZCurrctRatio = 1;
+        public float MaxSpeedXZForceMax = 1;
+
+        [Tooltip("球的Y轴移动最大速度（这个用来模拟下落空气阻力）")]
+        public float MaxSpeedY = 0;
+        public float MaxSpeedYCurrctRatio = 1;
+        public float MaxSpeedYForceMax = 1;
+
+        [Tooltip("抛出碎片的力大小")]
         public float ThrowPiecesForce = 5f;
+        [Tooltip("自动回收碎片时间（秒）")]
         public float CollectPiecesSec = 15f;
 
         internal float CollectPiecesSecTick = 5f;
@@ -78,7 +104,8 @@ namespace Ballance2.CoreGame.GamePlay
         {
             CurrentColObject = collision.gameObject.name;
             CurrentColObjectLayout = collision.gameObject.layer;
-            if (collision.gameObject.layer >= GameLayers.LAYER_PHY_FLOOR && collision.gameObject.layer <= GameLayers.LAYER_PHY_RAIL/*Floor and ail*/)
+            if (collision.gameObject.layer == GameLayers.LAYER_PHY_FLOOR
+                || collision.gameObject.layer == GameLayers.LAYER_PHY_RAIL/*Floor and ail*/)
                 isOnFloor = true;
         }
         protected void OnCollisionExit(Collision collision)
@@ -86,7 +113,10 @@ namespace Ballance2.CoreGame.GamePlay
             if (CurrentColObjectLayout == collision.gameObject.layer)
                 CurrentColObjectLayout = 0;
             if (CurrentColObject == collision.gameObject.name)
+            {
                 CurrentColObject = "";
+                isOnFloor = false;
+            }
             if (collision.gameObject.layer == GameLayers.LAYER_PHY_FLOOR 
                 || collision.gameObject.layer == GameLayers.LAYER_PHY_RAIL/*Floor and rail*/)
                 isOnFloor = false;
@@ -153,9 +183,17 @@ namespace Ballance2.CoreGame.GamePlay
         /// </summary>
         public int CurrentColObjectLayout { get; private set; }
         /// <summary>
-        /// 球最终的推力
+        /// 获取球最终的推力
         /// </summary>
         public float FinalPushForce { get; private set; }
+        /// <summary>
+        /// 获取当前球最终的推力方向
+        /// </summary>
+        public Vector3 FinalPushForceVectorFB = Vector3.zero;
+        /// <summary>
+        /// 获取当前球最终的推力方向
+        /// </summary>
+        public Vector3 FinalPushForceVectorLR = Vector3.zero;
 
         //控制
 
@@ -260,7 +298,8 @@ namespace Ballance2.CoreGame.GamePlay
             }
         }
 
-        private Vector3 pushVechorReverse = new Vector3();
+        private Vector3 pushVectorReverse = new Vector3();
+        private Vector3 pushPositionLocal = new Vector3();
 
         /// <summary>
         /// 推动
@@ -269,53 +308,88 @@ namespace Ballance2.CoreGame.GamePlay
         {
             if (IsControlling.BoolData())
             {
-                if(FallForce > 0)
-                    Rigidbody.AddForce(Vector3.down * FallForce, ForceMode);
-
-                if (MaxSpeedY > 0)
-                {
-                    float speedOut = Mathf.Abs(Rigidbody.velocity.y) - Mathf.Abs(MaxSpeedY);
-                    if (speedOut > 0)
-                    {
-                        Rigidbody.AddForce((Rigidbody.velocity.y < 0 ? (Vector3.up) : Vector3.down) *
-                            (speedOut + (Rigidbody.velocity.y < 0 ? FallForce : 0)), ForceMode);
-                    }
-                }
-
-                if (MaxSpeedXZ > 0)
-                {
-                    float speedOutXZ = Mathf.Sqrt(Mathf.Pow(Rigidbody.velocity.x, 2) +
-                    Mathf.Pow(Rigidbody.velocity.z, 2)) - Mathf.Abs(MaxSpeedXZ);
-                    if (speedOutXZ > 0)
-                    {
-                        pushVechorReverse.x = -Rigidbody.velocity.x;
-                        pushVechorReverse.z = -Rigidbody.velocity.z;
-                        Rigidbody.AddForce(pushVechorReverse * speedOutXZ, ForceMode);
-                    }
-                }
+                FinalPushForceVectorFB = Vector3.zero;
+                FinalPushForceVectorLR = Vector3.zero;
+                pushPositionLocal.x = transform.position.x + PushForcePosition.x;
+                pushPositionLocal.y = transform.position.y + PushForcePosition.y;
+                pushPositionLocal.z = transform.position.z + PushForcePosition.z;
 
                 //获取 ballsManager 的球推动类型。
                 BallPushType currentBallPushType = PushType.Data<BallPushType>();
                 if (currentBallPushType != BallPushType.None)
                 {
                     if ((currentBallPushType & BallPushType.Forward) == BallPushType.Forward)
-                        Rigidbody.AddForce(thisVector3Forward.Vector3Data() * PushForce, ForceMode);
+                    {
+                        if (PushForceDownAngle > 0)
+                            FinalPushForceVectorFB = Quaternion.AngleAxis(-PushForceDownAngle, thisVector3Left.Vector3Data()) *
+                                thisVector3Forward.Vector3Data() * PushForce;
+                        else FinalPushForceVectorFB = thisVector3Forward.Vector3Data() * PushForce;
+                    }
                     else if ((currentBallPushType & BallPushType.Back) == BallPushType.Back)
-                        Rigidbody.AddForce(thisVector3Back.Vector3Data() * PushForce, ForceMode);
+                    {
+                        if (PushForceDownAngle > 0)
+                            FinalPushForceVectorFB = Quaternion.AngleAxis(PushForceDownAngle, thisVector3Left.Vector3Data()) *
+                                thisVector3Back.Vector3Data() * PushForce;
+                        else FinalPushForceVectorFB = thisVector3Back.Vector3Data() * PushForce;
+                    }
                     if ((currentBallPushType & BallPushType.Left) == BallPushType.Left)
-                        Rigidbody.AddForce(thisVector3Left.Vector3Data() * PushForce, ForceMode);
+                    {
+                        if (PushForceDownAngle > 0)
+                            FinalPushForceVectorLR = Quaternion.AngleAxis(PushForceDownAngle, thisVector3Forward.Vector3Data()) *
+                                thisVector3Left.Vector3Data() * PushForce;
+                        else FinalPushForceVectorLR = thisVector3Left.Vector3Data() * PushForce;
+                    }
                     else if ((currentBallPushType & BallPushType.Right) == BallPushType.Right)
-                        Rigidbody.AddForce(thisVector3Right.Vector3Data() * PushForce, ForceMode);
+                    {
+                        if (PushForceDownAngle > 0)
+                            FinalPushForceVectorLR = Quaternion.AngleAxis(-PushForceDownAngle, thisVector3Forward.Vector3Data()) *
+                                thisVector3Right.Vector3Data() * PushForce;
+                        else FinalPushForceVectorLR = thisVector3Right.Vector3Data() * PushForce;
+                    }
+
+                    if (FinalPushForceVectorFB != Vector3.zero) Rigidbody.AddForceAtPosition(FinalPushForceVectorFB, pushPositionLocal, ForceMode); 
+                    if (FinalPushForceVectorLR != Vector3.zero) Rigidbody.AddForceAtPosition(FinalPushForceVectorLR, pushPositionLocal, ForceMode);
 
                     //调试模式可以上下飞行
                     if (IsBallDebug.BoolData())
                     {
                         if ((currentBallPushType & BallPushType.Up) == BallPushType.Up) //上
-                            Rigidbody.AddForce(Vector3.up * (PushForce + FallForce + Rigidbody.mass) * 1.5f, ForceMode);
+                            Rigidbody.AddForce(Vector3.up * PushUpForce, ForceMode);
                         else if ((currentBallPushType & BallPushType.Down) == BallPushType.Down)    //下
                             Rigidbody.AddForce(Vector3.down * PushForce * 0.5f, ForceMode);
                     }
                 }
+
+                if (FallForce > 0 && (currentBallPushType & BallPushType.Up) != BallPushType.Up)
+                    Rigidbody.AddForce(Vector3.down * FallForce, ForceMode);
+
+                //Y轴移动最大速度（这个用来模拟下落空气阻力）
+                if (MaxSpeedY > 0)
+                {
+                    float speedOut = Mathf.Abs(Rigidbody.velocity.y) - Mathf.Abs(MaxSpeedY);
+                    if (speedOut > 0)
+                    {
+                        float force = (speedOut / MaxSpeedYCurrctRatio) * MaxSpeedYForceMax;
+                        Rigidbody.AddForce((Rigidbody.velocity.y < 0 ? (Vector3.up) : Vector3.down) *
+                            (force + (Rigidbody.velocity.y < 0 ? FallForce : 0)),
+                            ForceMode);
+                    }
+                }
+
+                //XZ轴移动最大速度（这个用来模拟移动空气阻力）
+                if (MaxSpeedXZ > 0)
+                {
+                    float speedOutXZ = Mathf.Sqrt(Mathf.Pow(Rigidbody.velocity.x, 2) +
+                        Mathf.Pow(Rigidbody.velocity.z, 2)) - Mathf.Abs(MaxSpeedXZ);
+                    if (speedOutXZ > 0)
+                    {
+                        float force = (speedOutXZ / MaxSpeedXZCurrctRatio) * MaxSpeedXZForceMax;
+                        pushVectorReverse.x = -Rigidbody.velocity.x;
+                        pushVectorReverse.z = -Rigidbody.velocity.z;
+                        Rigidbody.AddForce(pushVectorReverse * force, ForceMode);
+                    }
+                }
+
             }
         }
     }

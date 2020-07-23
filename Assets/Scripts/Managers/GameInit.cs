@@ -21,8 +21,8 @@ namespace Ballance2.Managers
 
         public GameInit() : base("core.gameinit", TAG, "Singleton")
         {
+            initStore = false; 
         }
-
 
         protected override void InitPre()
         {
@@ -114,6 +114,7 @@ namespace Ballance2.Managers
 
             yield return new WaitUntil(IsGameInitUILoaded);
 
+            
             //播放音乐和动画
             if (GameManager.Mode == GameMode.Game)
             {
@@ -171,6 +172,9 @@ namespace Ballance2.Managers
             yield return StartCoroutine(GameInitUserMods());
 
             UIProgressText.text = "Loading";
+
+            //hide cp
+            GameManager.UIManager.UIFadeManager.AddFadeOut(GameObject.Find("GlobalCopyrightText").GetComponent<Text>(), 0.7f, true);
 
             //加载游戏内核管理器
             GameManager.RegisterManager(typeof(LevelLoader), false);
@@ -356,7 +360,7 @@ namespace Ballance2.Managers
 
         private void InitSettings()
         {
-            DebugManager.RegisterCommand("restsettings", (string keyword, string fullCmd, string[] args) =>
+            DebugManager.RegisterCommand("resetsettings", (string keyword, string fullCmd, string[] args) =>
          {
              GameSettingsManager.ResetDefaultSettings();
              GameLogger.Log(TAG, "设置已还原默认");

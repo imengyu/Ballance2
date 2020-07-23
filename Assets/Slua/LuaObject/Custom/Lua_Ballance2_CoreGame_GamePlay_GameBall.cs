@@ -483,6 +483,70 @@ public class Lua_Ballance2_CoreGame_GamePlay_GameBall : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int get_ForceMode(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			pushValue(l,true);
+			pushEnum(l,(int)self.ForceMode);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_ForceMode(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			UnityEngine.ForceMode v;
+			v = (UnityEngine.ForceMode)LuaDLL.luaL_checkinteger(l, 2);
+			self.ForceMode=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int get_PushForce(IntPtr l) {
 		try {
 			#if DEBUG
@@ -547,7 +611,7 @@ public class Lua_Ballance2_CoreGame_GamePlay_GameBall : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int get_ForceMode(IntPtr l) {
+	static public int get_PushForcePosition(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -560,7 +624,7 @@ public class Lua_Ballance2_CoreGame_GamePlay_GameBall : LuaObject {
 			#endif
 			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
 			pushValue(l,true);
-			pushEnum(l,(int)self.ForceMode);
+			pushValue(l,self.PushForcePosition);
 			return 2;
 		}
 		catch(Exception e) {
@@ -578,7 +642,7 @@ public class Lua_Ballance2_CoreGame_GamePlay_GameBall : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int set_ForceMode(IntPtr l) {
+	static public int set_PushForcePosition(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -590,9 +654,585 @@ public class Lua_Ballance2_CoreGame_GamePlay_GameBall : LuaObject {
 			#endif
 			#endif
 			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
-			UnityEngine.ForceMode v;
-			v = (UnityEngine.ForceMode)LuaDLL.luaL_checkinteger(l, 2);
-			self.ForceMode=v;
+			UnityEngine.Vector3 v;
+			checkType(l,2,out v);
+			self.PushForcePosition=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_PushForceDownAngle(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.PushForceDownAngle);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_PushForceDownAngle(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			System.Single v;
+			checkType(l,2,out v);
+			self.PushForceDownAngle=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_PushUpForce(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.PushUpForce);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_PushUpForce(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			System.Single v;
+			checkType(l,2,out v);
+			self.PushUpForce=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_FallForce(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.FallForce);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_FallForce(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			System.Single v;
+			checkType(l,2,out v);
+			self.FallForce=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_MaxSpeedXZ(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.MaxSpeedXZ);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_MaxSpeedXZ(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			System.Single v;
+			checkType(l,2,out v);
+			self.MaxSpeedXZ=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_MaxSpeedXZCurrctRatio(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.MaxSpeedXZCurrctRatio);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_MaxSpeedXZCurrctRatio(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			System.Single v;
+			checkType(l,2,out v);
+			self.MaxSpeedXZCurrctRatio=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_MaxSpeedXZForceMax(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.MaxSpeedXZForceMax);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_MaxSpeedXZForceMax(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			System.Single v;
+			checkType(l,2,out v);
+			self.MaxSpeedXZForceMax=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_MaxSpeedY(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.MaxSpeedY);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_MaxSpeedY(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			System.Single v;
+			checkType(l,2,out v);
+			self.MaxSpeedY=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_MaxSpeedYCurrctRatio(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.MaxSpeedYCurrctRatio);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_MaxSpeedYCurrctRatio(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			System.Single v;
+			checkType(l,2,out v);
+			self.MaxSpeedYCurrctRatio=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_MaxSpeedYForceMax(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.MaxSpeedYForceMax);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_MaxSpeedYForceMax(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			System.Single v;
+			checkType(l,2,out v);
+			self.MaxSpeedYForceMax=v;
 			pushValue(l,true);
 			return 1;
 		}
@@ -721,6 +1361,134 @@ public class Lua_Ballance2_CoreGame_GamePlay_GameBall : LuaObject {
 			System.Single v;
 			checkType(l,2,out v);
 			self.CollectPiecesSec=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_FinalPushForceVectorFB(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.FinalPushForceVectorFB);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_FinalPushForceVectorFB(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			UnityEngine.Vector3 v;
+			checkType(l,2,out v);
+			self.FinalPushForceVectorFB=v;
+			pushValue(l,true);
+			return 1;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int get_FinalPushForceVectorLR(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			pushValue(l,true);
+			pushValue(l,self.FinalPushForceVectorLR);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int set_FinalPushForceVectorLR(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			Ballance2.CoreGame.GamePlay.GameBall self=(Ballance2.CoreGame.GamePlay.GameBall)checkSelf(l);
+			UnityEngine.Vector3 v;
+			checkType(l,2,out v);
+			self.FinalPushForceVectorLR=v;
 			pushValue(l,true);
 			return 1;
 		}
@@ -1002,10 +1770,22 @@ public class Lua_Ballance2_CoreGame_GamePlay_GameBall : LuaObject {
 		addMember(l,"Pieces",get_Pieces,set_Pieces,true);
 		addMember(l,"TypeName",get_TypeName,set_TypeName,true);
 		addMember(l,"Rigidbody",get_Rigidbody,set_Rigidbody,true);
-		addMember(l,"PushForce",get_PushForce,set_PushForce,true);
 		addMember(l,"ForceMode",get_ForceMode,set_ForceMode,true);
+		addMember(l,"PushForce",get_PushForce,set_PushForce,true);
+		addMember(l,"PushForcePosition",get_PushForcePosition,set_PushForcePosition,true);
+		addMember(l,"PushForceDownAngle",get_PushForceDownAngle,set_PushForceDownAngle,true);
+		addMember(l,"PushUpForce",get_PushUpForce,set_PushUpForce,true);
+		addMember(l,"FallForce",get_FallForce,set_FallForce,true);
+		addMember(l,"MaxSpeedXZ",get_MaxSpeedXZ,set_MaxSpeedXZ,true);
+		addMember(l,"MaxSpeedXZCurrctRatio",get_MaxSpeedXZCurrctRatio,set_MaxSpeedXZCurrctRatio,true);
+		addMember(l,"MaxSpeedXZForceMax",get_MaxSpeedXZForceMax,set_MaxSpeedXZForceMax,true);
+		addMember(l,"MaxSpeedY",get_MaxSpeedY,set_MaxSpeedY,true);
+		addMember(l,"MaxSpeedYCurrctRatio",get_MaxSpeedYCurrctRatio,set_MaxSpeedYCurrctRatio,true);
+		addMember(l,"MaxSpeedYForceMax",get_MaxSpeedYForceMax,set_MaxSpeedYForceMax,true);
 		addMember(l,"ThrowPiecesForce",get_ThrowPiecesForce,set_ThrowPiecesForce,true);
 		addMember(l,"CollectPiecesSec",get_CollectPiecesSec,set_CollectPiecesSec,true);
+		addMember(l,"FinalPushForceVectorFB",get_FinalPushForceVectorFB,set_FinalPushForceVectorFB,true);
+		addMember(l,"FinalPushForceVectorLR",get_FinalPushForceVectorLR,set_FinalPushForceVectorLR,true);
 		addMember(l,"BallPiecesControl",get_BallPiecesControl,set_BallPiecesControl,true);
 		addMember(l,"PiecesRigidbody",get_PiecesRigidbody,null,true);
 		addMember(l,"PiecesMaterial",get_PiecesMaterial,null,true);

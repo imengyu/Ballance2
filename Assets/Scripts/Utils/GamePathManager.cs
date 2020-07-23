@@ -102,6 +102,16 @@ namespace Ballance2.Utils
                     return Application.streamingAssetsPath + "/core/core.gameinit.txt";
 #endif
             }
+            else if (type == "logfile")
+            {
+#if UNITY_EDITOR
+                return DEBUG_PATH + "/output.log";
+#elif UNITY_STANDALONE || UNITY_ANDROID
+                    return Application.dataPath + "/output.log";
+#elif UNITY_IOS
+                    return Application.persistentDataPath + "/output.log";
+#endif
+            }
             else if (type == "level") return GetLevelRealPath(pathbuf);
             else if (type == "mod")
             {

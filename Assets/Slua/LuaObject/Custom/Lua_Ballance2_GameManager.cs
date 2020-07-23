@@ -247,7 +247,7 @@ public class Lua_Ballance2_GameManager : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int IsManagerInitFinished_s(IntPtr l) {
+	static public int IsManagersInitFinished_s(IntPtr l) {
 		try {
 			#if DEBUG
 			var method = System.Reflection.MethodBase.GetCurrentMethod();
@@ -971,6 +971,36 @@ public class Lua_Ballance2_GameManager : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
+	static public int get_UIRoot(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			pushValue(l,true);
+			pushValue(l,Ballance2.GameManager.UIRoot);
+			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
 	static public int get_PrefabEmpty(IntPtr l) {
 		try {
 			#if DEBUG
@@ -1127,7 +1157,7 @@ public class Lua_Ballance2_GameManager : LuaObject {
 		addMember(l,ReplaceManager_s);
 		addMember(l,RegisterManagerRedayCallback_s);
 		addMember(l,UnRegisterManagerRedayCallback_s);
-		addMember(l,IsManagerInitFinished_s);
+		addMember(l,IsManagersInitFinished_s);
 		addMember(l,RequestAllManagerInitialization_s);
 		addMember(l,RequestManagerInitialization_s);
 		addMember(l,RequestManagerInitializationImmediately_s);
@@ -1149,6 +1179,7 @@ public class Lua_Ballance2_GameManager : LuaObject {
 		addMember(l,"GamePrefab",get_GamePrefab,null,false);
 		addMember(l,"GameMainLuaState",get_GameMainLuaState,set_GameMainLuaState,false);
 		addMember(l,"GameAssets",get_GameAssets,null,false);
+		addMember(l,"UIRoot",get_UIRoot,null,false);
 		addMember(l,"PrefabEmpty",get_PrefabEmpty,null,false);
 		addMember(l,"PrefabUIEmpty",get_PrefabUIEmpty,null,false);
 		addMember(l,"ModManager",get_ModManager,null,false);

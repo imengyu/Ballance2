@@ -1,5 +1,4 @@
 ﻿using Ballance2.Interfaces;
-using Ballance2.Managers;
 using Ballance2.ModBase;
 using UnityEngine;
 
@@ -19,8 +18,8 @@ namespace Ballance2.Utils
         /// <summary>
         /// 创建预制的天空盒
         /// </summary>
-        /// <param name="s">天空盒名字，（必须是 A~K ，对应原版游戏12个关卡的天空）</param>
-        /// <returns>返回创建好的天空盒</returns>
+        /// <param name="s">天空盒名字，（必须是 A~K ，对应原版游戏11个天空）</param>
+        /// <returns>返回创建好的天空盒材质</returns>
         public static Material MakeSkyBox(string s)
         { 
             if (ModManager == null) ModManager = (IModManager)GameManager.GetManager("ModManager");
@@ -47,7 +46,7 @@ namespace Ballance2.Utils
         /// <param name="SkyFront">前边的图像</param>
         /// <param name="SkyBack">后边的图像</param>
         /// <param name="SkyDown">下边的图像</param>
-        /// <returns>返回创建好的天空盒</returns>
+        /// <returns>返回创建好的天空盒材质</returns>
         public static Material MakeCustomSkyBox(Texture SkyLeft, Texture SkyRight, Texture SkyFront, Texture SkyBack, Texture SkyDown, Texture SkyTop)
         {
             Material m = new Material(Shader.Find("Skybox/6 Sided"));

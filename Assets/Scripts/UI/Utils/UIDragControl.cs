@@ -17,16 +17,14 @@ namespace Ballance2.UI.Utils
     /// </summary>
     public class UIDragControl : UIBehaviour
     {
-        public Transform dragTransform;
-
-
+        public RectTransform dragTransform;
         private Vector2 mouseOffest = Vector2.zero;
 
         protected override void Awake()
         {
             base.Awake();
 
-            if (dragTransform == null) dragTransform = GetComponent<Transform>();
+            if (dragTransform == null) dragTransform = GetComponent<RectTransform>();
 
             EventTrigger trigger = gameObject.AddComponent<EventTrigger>();
 
@@ -57,6 +55,11 @@ namespace Ballance2.UI.Utils
         public void OnPointerUp(BaseEventData data)
         {
             mouseOffest = Vector2.zero;
+          
+            if (dragTransform.position.x < -dragTransform.sizeDelta.x + 30) dragTransform.position = new Vector3(-dragTransform.sizeDelta.x + 30, dragTransform.position.y, dragTransform.position.z);
+            if (dragTransform.position.x > Screen.width - 30) dragTransform.position = new Vector3(Screen.width - 30, dragTransform.position.y, dragTransform.position.z);
+            if (dragTransform.position.y < 30) dragTransform.position = new Vector3(dragTransform.position.x, 30, dragTransform.position.z);
+            if (dragTransform.position.y > Screen.height - 10) dragTransform.position = new Vector3(dragTransform.position.x, Screen.height - 10, dragTransform.position.z);
         }
         public void OnDrag(BaseEventData data)
         {

@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Ballance2.GameCore
 {
     /// <summary>
-    /// 关卡加载器
+    /// 关卡主管理器
     /// </summary>
     public class LevelManager : BaseManager
     {
@@ -17,15 +17,38 @@ namespace Ballance2.GameCore
 
         }
 
+        protected override bool InitStore(Store store)
+        {
+            InitGlobaShareAndStore(store);
+            return base.InitStore(store);
+        }
         protected override void InitPre()
         {
             InitActions();
             base.InitPre();
         }
 
+        #region 全局数据共享
+
+        //私有控制数据
+        private StoreData sd_life = null;
+        private StoreData sd_score = null;
+
+        private void InitGlobaShareAndStore(Store store)
+        {
+            sd_life = store.AddParameter("life", StoreDataAccess.Get, StoreDataType.Integer);
+            sd_score = store.AddParameter("score", StoreDataAccess.Get, StoreDataType.Integer);
+
+            //Get
+            sd_life.SetDataProvider(currentContext, () => life);
+            sd_score.SetDataProvider(currentContext, () => score);
+        }
+
+        #endregion
+
         public override bool InitManager()
         {
-            
+
             return true;
         }
         public override bool ReleaseManager()
@@ -55,6 +78,20 @@ namespace Ballance2.GameCore
             GameManager.SetGameBaseCameraVisible(false);
             GameCloneUtils.CloneNewObjectWithParent(basePrefab, GameManager.GameRoot.transform, "DebugFloor");
             GameManager.GameMediator.CallAction(GameActionNames.CamManager["CamStart"]);
+            ResetEnergy();
+        }
+
+        private int life = 3;
+        private int score = 1000;
+
+        private void ResetEnergy()
+        {
+            life = 3;
+            score = 1000;
+        }
+        private void StartCounter()
+        {
+            
         }
     }
 }

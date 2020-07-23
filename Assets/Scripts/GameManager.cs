@@ -259,7 +259,7 @@ namespace Ballance2
         /// <summary>
         /// 获取当前游戏状态模式
         /// </summary>
-        public static GameMode Mode { get; private set; }
+        public static GameMode Mode { get; internal set; }
         /// <summary>
         /// 获取当前游戏工作场景
         /// </summary>
@@ -267,7 +267,7 @@ namespace Ballance2
         /// <summary>
         /// 游戏根，所有游戏部件在这里托管
         /// </summary>
-        public static GameObject GameRoot { get; private set; }
+        public static GameObject GameRoot { get; internal set; }
         /// <summary>
         /// GameManager 元素
         /// </summary>
@@ -275,7 +275,7 @@ namespace Ballance2
         /// <summary>
         /// 游戏UI根
         /// </summary>
-        public static GameObject GameCanvas { get; private set; }
+        public static GameObject GameCanvas { get; internal set; }
         /// <summary>
         /// 根相机
         /// </summary>
@@ -283,7 +283,7 @@ namespace Ballance2
         /// <summary>
         /// 静态引入资源
         /// </summary>
-        public static List<GameObjectInfo> GamePrefab { get; private set; }
+        public static List<GameObjectInfo> GamePrefab { get; internal set; }
         /// <summary>
         /// 游戏全局 Lua 虚拟机
         /// </summary>
@@ -291,7 +291,11 @@ namespace Ballance2
         /// <summary>
         /// 静态资源引入
         /// </summary>
-        public static List<GameAssetsInfo> GameAssets { get; private set; }
+        public static List<GameAssetsInfo> GameAssets { get; internal set; }
+        /// <summary>
+        /// 游戏UI根
+        /// </summary>
+        public static GameObject UIRoot { get; internal set; }
         [DoNotToLua]
         /// <summary>
         /// 在开始时暂停（通常用于调试）
@@ -339,16 +343,10 @@ namespace Ballance2
             return gameMediatorInitFinished;
         }
 
-        internal static IEnumerator Init(GameMode mode, GameObject gameRoot, GameObject gameCanvas, List<GameObjectInfo> gamePrefab, List<GameAssetsInfo> gameAssets)
-        {
-            CurrentScense = GameCurrentScense.None;
-            Mode = mode;
-            GameRoot = gameRoot;
-            GameCanvas = gameCanvas;
-            GamePrefab = gamePrefab;
-            GameAssets = gameAssets;
-
+        internal static IEnumerator Init()
+        {    
             InitStaticPrefab();
+            CurrentScense = GameCurrentScense.None;
             GameBaseCamera = GameObject.Find("GameBaseCamera").GetComponent<Camera>();
             GameManagerObject = GameCloneUtils.CreateEmptyObjectWithParent(GameRoot.transform, TAG);
             GameManagerWorker = GameManagerObject.AddComponent<GameManagerWorker>();

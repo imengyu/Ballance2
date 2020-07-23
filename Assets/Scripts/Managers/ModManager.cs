@@ -581,6 +581,7 @@ namespace Ballance2.Managers
             modManageWindow.SetMinSize(400, 250);
             modManageWindow.CloseAsHide = true;
             modManageWindow.Hide();
+            modManageWindow.MoveToCenter();
             modManageWindow.onHide += (windowId) => { SaveModEnableStatusList(); };
             modManageWindow.onShow += (windowId) => { FlushModList(); };
             modList = modManagerView.transform.Find("UIScrollView/Viewport/Content").gameObject.GetComponent<UICommonList>();

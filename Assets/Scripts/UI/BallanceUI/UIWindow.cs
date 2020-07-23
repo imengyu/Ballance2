@@ -9,7 +9,7 @@ namespace Ballance2.UI.BallanceUI
     /// 基础 UI 窗口
     /// </summary>
     [SLua.CustomLuaClass]
-    public class UIWindow : MonoBehaviour, IWindow
+    public class UIWindow : MonoBehaviour
     {
         private int windowId = 0;
 
@@ -218,6 +218,14 @@ namespace Ballance2.UI.BallanceUI
         {
             UIManager.HideWindow(this);
         }
+        /// <summary>
+        /// 窗口剧中
+        /// </summary>
+        public void MoveToCenter()
+        {
+            SetPos(-UIWindowRectTransform.sizeDelta.x / 2, UIWindowRectTransform.sizeDelta.y / 2);
+        }
+
 
         private WindowType windowType = WindowType.Normal;
 
@@ -275,32 +283,5 @@ namespace Ballance2.UI.BallanceUI
         /// 页
         /// </summary>
         Page
-    }
-
-    [SLua.CustomLuaClass]
-    /// <summary>
-    /// 基础窗口接口
-    /// </summary>
-    public interface IWindow
-    {
-        int GetWindowId();
-        WindowType GetWindowType();
-        void SetWindowType(WindowType type);
-        bool GetVisible();
-        void SetVisible(bool visible);
-        void Destroy();
-        void SetSize(float w, float h);
-        void SetMinSize(float w, float h);
-        void SetPos(float x, float y);
-        Vector2 GetSize();
-        Vector2 GetMinSize();
-        Vector2 GetPos();
-        RectTransform SetView(RectTransform view);
-        RectTransform GetView();
-        RectTransform GetRectTransform();
-
-        void Close();
-        void Show();
-        void Hide();
     }
 }

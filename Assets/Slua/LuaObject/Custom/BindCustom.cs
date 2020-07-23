@@ -44,7 +44,6 @@ namespace SLua {
 				Lua_Ballance2_UI_BallanceUI_UIPage.reg,
 				Lua_Ballance2_UI_BallanceUI_UIWindow.reg,
 				Lua_Ballance2_UI_BallanceUI_WindowType.reg,
-				Lua_Ballance2_UI_BallanceUI_IWindow.reg,
 				Lua_Ballance2_UI_BallanceUI_Layout_UIRelativeLayout.reg,
 				Lua_Ballance2_UI_BallanceUI_Element_UIButton.reg,
 				Lua_Ballance2_UI_BallanceUI_Element_UIDropdown.reg,

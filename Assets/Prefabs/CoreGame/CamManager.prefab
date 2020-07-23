@@ -189,9 +189,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57b9693fecaf4d1478a94af2a3b2b73f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  initStore: 1
   _thisVector3Right: {x: 1, y: 0, z: 0}
   _thisVector3Left: {x: -1, y: 0, z: 0}
-  _thisVector3Fornt: {x: 0, y: 0, z: 1}
+  _thisVector3Forward: {x: 0, y: 0, z: 1}
   _thisVector3Back: {x: 0, y: 0, z: -1}
   animationCurveCamera:
     serializedVersion: 2
@@ -335,15 +336,15 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   cameraRoteValue: 0
-  cameraHeight: 17.5
-  cameraLeaveFarMaxOffest: 11.5
+  cameraHeight: 23.4
+  cameraLeaveFarMaxOffest: 11.6
   cameraLeaveNearMaxOffestZ: -5
   cameraLeaveFarMaxOffestZ: -11.5
   cameraMaxRoteingOffest: 5
   cameraSpaceMaxOffest: 26
   cameraSpaceOffest: 5
-  camFollowSpeed: 0.2
-  camFollowSpeed2: 0.1
+  camFollowSpeed: 0.19
+  camFollowSpeed2: 0.15
   camMoveSpeedZ: 1
   ballCamMoveHost: {fileID: 6483853945354760610}
   ballCamera: {fileID: 6483853943425503255}

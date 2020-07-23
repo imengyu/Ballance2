@@ -77,7 +77,16 @@ public class Lua_Ballance2_GameLogger : LuaObject {
 			#endif
 			#endif
 			int argc = LuaDLL.lua_gettop(l);
-			if(argc==2){
+			if(matchType(l,argc,1,typeof(string),typeof(string))){
+				System.String a1;
+				checkType(l,1,out a1);
+				System.String a2;
+				checkType(l,2,out a2);
+				Ballance2.GameLogger.Log(a1,a2);
+				pushValue(l,true);
+				return 1;
+			}
+			else if(matchType(l,argc,1,typeof(string),typeof(System.Object))){
 				System.String a1;
 				checkType(l,1,out a1);
 				System.Object a2;
@@ -128,7 +137,16 @@ public class Lua_Ballance2_GameLogger : LuaObject {
 			#endif
 			#endif
 			int argc = LuaDLL.lua_gettop(l);
-			if(argc==2){
+			if(matchType(l,argc,1,typeof(string),typeof(string))){
+				System.String a1;
+				checkType(l,1,out a1);
+				System.String a2;
+				checkType(l,2,out a2);
+				Ballance2.GameLogger.Warning(a1,a2);
+				pushValue(l,true);
+				return 1;
+			}
+			else if(matchType(l,argc,1,typeof(string),typeof(System.Object))){
 				System.String a1;
 				checkType(l,1,out a1);
 				System.Object a2;
@@ -179,7 +197,16 @@ public class Lua_Ballance2_GameLogger : LuaObject {
 			#endif
 			#endif
 			int argc = LuaDLL.lua_gettop(l);
-			if(argc==2){
+			if(matchType(l,argc,1,typeof(string),typeof(string))){
+				System.String a1;
+				checkType(l,1,out a1);
+				System.String a2;
+				checkType(l,2,out a2);
+				Ballance2.GameLogger.Error(a1,a2);
+				pushValue(l,true);
+				return 1;
+			}
+			else if(matchType(l,argc,1,typeof(string),typeof(System.Object))){
 				System.String a1;
 				checkType(l,1,out a1);
 				System.Object a2;
@@ -218,38 +245,6 @@ public class Lua_Ballance2_GameLogger : LuaObject {
 	}
 	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	[UnityEngine.Scripting.Preserve]
-	static public int Exception_s(IntPtr l) {
-		try {
-			#if DEBUG
-			var method = System.Reflection.MethodBase.GetCurrentMethod();
-			string methodName = GetMethodName(method);
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.BeginSample(methodName);
-			#else
-			Profiler.BeginSample(methodName);
-			#endif
-			#endif
-			System.Exception a1;
-			checkType(l,1,out a1);
-			Ballance2.GameLogger.Exception(a1);
-			pushValue(l,true);
-			return 1;
-		}
-		catch(Exception e) {
-			return error(l,e);
-		}
-		#if DEBUG
-		finally {
-			#if UNITY_5_5_OR_NEWER
-			UnityEngine.Profiling.Profiler.EndSample();
-			#else
-			Profiler.EndSample();
-			#endif
-		}
-		#endif
-	}
-	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	[UnityEngine.Scripting.Preserve]
 	static public int Info_s(IntPtr l) {
 		try {
 			#if DEBUG
@@ -262,7 +257,16 @@ public class Lua_Ballance2_GameLogger : LuaObject {
 			#endif
 			#endif
 			int argc = LuaDLL.lua_gettop(l);
-			if(argc==2){
+			if(matchType(l,argc,1,typeof(string),typeof(string))){
+				System.String a1;
+				checkType(l,1,out a1);
+				System.String a2;
+				checkType(l,2,out a2);
+				Ballance2.GameLogger.Info(a1,a2);
+				pushValue(l,true);
+				return 1;
+			}
+			else if(matchType(l,argc,1,typeof(string),typeof(System.Object))){
 				System.String a1;
 				checkType(l,1,out a1);
 				System.Object a2;
@@ -285,6 +289,38 @@ public class Lua_Ballance2_GameLogger : LuaObject {
 			pushValue(l,false);
 			LuaDLL.lua_pushstring(l,"No matched override function Info to call");
 			return 2;
+		}
+		catch(Exception e) {
+			return error(l,e);
+		}
+		#if DEBUG
+		finally {
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.EndSample();
+			#else
+			Profiler.EndSample();
+			#endif
+		}
+		#endif
+	}
+	[SLua.MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	[UnityEngine.Scripting.Preserve]
+	static public int Exception_s(IntPtr l) {
+		try {
+			#if DEBUG
+			var method = System.Reflection.MethodBase.GetCurrentMethod();
+			string methodName = GetMethodName(method);
+			#if UNITY_5_5_OR_NEWER
+			UnityEngine.Profiling.Profiler.BeginSample(methodName);
+			#else
+			Profiler.BeginSample(methodName);
+			#endif
+			#endif
+			System.Exception a1;
+			checkType(l,1,out a1);
+			Ballance2.GameLogger.Exception(a1);
+			pushValue(l,true);
+			return 1;
 		}
 		catch(Exception e) {
 			return error(l,e);
@@ -395,8 +431,8 @@ public class Lua_Ballance2_GameLogger : LuaObject {
 		addMember(l,Log_s);
 		addMember(l,Warning_s);
 		addMember(l,Error_s);
-		addMember(l,Exception_s);
 		addMember(l,Info_s);
+		addMember(l,Exception_s);
 		addMember(l,GetLogCount_s);
 		addMember(l,WriteLog_s);
 		createTypeMetatable(l,null, typeof(Ballance2.GameLogger));

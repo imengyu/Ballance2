@@ -52,7 +52,7 @@ namespace Ballance2.Utils
             stringBuilder.Append("\n");
 
             //打印堆栈
-            var stacktrace = new StackTrace(1);
+            var stacktrace = new StackTrace(1, true);
             for (var i = 0; i < stacktrace.FrameCount; i++)
             {
                 var frame = stacktrace.GetFrame(i);
@@ -72,6 +72,25 @@ namespace Ballance2.Utils
 
             GameManager.ForceInterruptGame();
             gameGlobalErrorUI.ShowErrorUI(stringBuilder.ToString());
+        }
+
+        /// <summary>
+        /// 提交错误报告到梦欤的服务器上，以便我可以修复游戏主体错误与问题。
+        /// 注意：此方法仅提交游戏内核错误，个人制作的MOD的错误不要提交（我也不会看的）.
+        /// 如果你对游戏内核存在疑问或问题，可以前往项目Github提交issue：
+        /// https://github.com/imengyu/Ballance2
+        /// </summary>
+        public static void ReportErrorToServer()
+        {
+            // 服务器开销太大，这里就把代码删掉了...
+            // 如果游戏出现了问题，请你前往项目Github提交issue吧，我会尽快处理的（＞人＜；）
+        }
+        /// <summary>
+        /// 获取游戏日志文件路径
+        /// </summary>
+        public static string GetGameLogFilePath()
+        {
+            return GamePathManager.GetResRealPath("logfile", null);
         }
     }
 

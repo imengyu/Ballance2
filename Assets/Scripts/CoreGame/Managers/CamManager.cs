@@ -394,8 +394,10 @@ namespace Ballance2.CoreGame.Managers
             {
                 if (!CurrentBall.IsNull())
                 {
-                    ballCamFollowTarget.transform.position = Vector3.SmoothDamp(ballCamFollowTarget.transform.position, ((GameBall)CurrentBall.Data()).transform.position, ref camVelocityTarget2, camFollowSpeed2);
-                    ballCamFollowHost.transform.position = Vector3.SmoothDamp(ballCamFollowHost.transform.position, ((GameBall)CurrentBall.Data()).transform.position, ref camVelocityTarget, camFollowSpeed);
+                    GameBall ball = ((GameBall)CurrentBall.Data());
+                    ballCamFollowTarget.transform.position = Vector3.SmoothDamp(ballCamFollowTarget.transform.position, ball.transform.position, ref camVelocityTarget2, camFollowSpeed2);
+                    ballCamFollowTarget.transform.position = new Vector3(ballCamFollowTarget.transform.position.x, ball.transform.position.y, ballCamFollowTarget.transform.position.z);
+                    ballCamFollowHost.transform.position = Vector3.SmoothDamp(ballCamFollowHost.transform.position, ball.transform.position, ref camVelocityTarget, camFollowSpeed);
                 }
             }
         }

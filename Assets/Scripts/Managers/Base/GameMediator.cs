@@ -735,16 +735,28 @@ namespace Ballance2.Managers
                     GameLogger.Warning(TAG, "操作 {0} 至少需要 {1} 个参数", action.Name, argCount);
                     return result;
                 }
-                string allowType = "", typeName = "";
+                string allowType, typeName;
                 for (int i = 0; i < argCount; i++)
                 {
-                    typeName = param[i].GetType().Name;
                     allowType = action.CallTypeCheck[i];
-                    if (allowType == typeName ||
-                        (allowType.Contains("/") && allowType.Contains(typeName)))
+                    if (param[i] == null)
                     {
-                        GameLogger.Warning(TAG, "操作 {0} 参数 {1} 类型必须是 {2}", name, i, action.CallTypeCheck[i]);
-                        return result;
+                        if (allowType != "null" &&
+                           (!allowType.Contains("/") && !allowType.Contains("null")))
+                        {
+                            GameLogger.Warning(TAG, "操作 {0} 参数 {1} 不能为null", name, i);
+                            return result;
+                        }
+                    }
+                    else
+                    {
+                        typeName = param[i].GetType().Name;
+                        if (allowType != typeName &&
+                            (!allowType.Contains("/") && !allowType.Contains(typeName)))
+                        {
+                            GameLogger.Warning(TAG, "操作 {0} 参数 {1} 类型必须是 {2}", name, i, action.CallTypeCheck[i]);
+                            return result;
+                        }
                     }
                }
             }

@@ -27,11 +27,12 @@ namespace Ballance2.Managers
 
         public override bool InitManager()
         {
-            UIRoot = GameManager.GameCanvas;
+            GameCanvas = GameManager.GameCanvas;
+            UIRoot = GameManager.UIRoot;
             UIFadeManager = UIRoot.AddComponent<UIFadeManager>();
 
-            GlobalFadeMaskWhite = UIRoot.transform.Find("GlobalFadeMaskWhite").gameObject.GetComponent<Image>();
-            GlobalFadeMaskBlack = UIRoot.transform.Find("GlobalFadeMaskBlack").gameObject.GetComponent<Image>();
+            GlobalFadeMaskWhite = GameCanvas.transform.Find("GlobalFadeMaskWhite").gameObject.GetComponent<Image>();
+            GlobalFadeMaskBlack = GameCanvas.transform.Find("GlobalFadeMaskBlack").gameObject.GetComponent<Image>();
             GlobalFadeMaskBlack.gameObject.SetActive(true);
 
             //退出时的黑
@@ -60,6 +61,7 @@ namespace Ballance2.Managers
             return true;
         }
 
+        public GameObject GameCanvas;
         /// <summary>
         /// UI 根
         /// </summary>
@@ -416,7 +418,7 @@ namespace Ballance2.Managers
 
         private void InitWindowManagement()
         {
-            managedWindows = new List<IWindow>();
+            managedWindows = new List<UIWindow>();
 
             PrefabUIAlertWindow = GameManager.FindStaticPrefabs("UIAlertWindow");
             PrefabUIConfirmWindow = GameManager.FindStaticPrefabs("UIConfirmWindow");
@@ -430,7 +432,7 @@ namespace Ballance2.Managers
 
             if (managedWindows != null)
             {
-                foreach (IWindow w in managedWindows)
+                foreach (UIWindow w in managedWindows)
                     w.Destroy();
                 managedWindows.Clear();
                 managedWindows = null;
@@ -438,7 +440,8 @@ namespace Ballance2.Managers
         }
 
         //窗口
-        private List<IWindow> managedWindows = null;
+
+        private List<UIWindow> managedWindows = null;
 
         /// <summary>
         /// 创建自定义窗口（默认不显示）
@@ -482,6 +485,7 @@ namespace Ballance2.Managers
             if (w != 0 && h != 0) window.SetSize(w, h);
             if (show) window.Show();
             RegisterWindow(window);
+            window.MoveToCenter();
             return window;
         }
         /// <summary>
@@ -500,17 +504,17 @@ namespace Ballance2.Managers
         /// </summary>
         /// <param name="windowId">窗口ID</param>
         /// <returns></returns>
-        public IWindow FindWindowById(int windowId)
+        public UIWindow FindWindowById(int windowId)
         {
-            foreach (IWindow w in managedWindows)
+            foreach (UIWindow w in managedWindows)
                 if (w.GetWindowId() == windowId)
                     return w;
             return null;
         }
 
-        private IWindow currentVisibleWindowAlert = null;
+        private UIWindow currentVisibleWindowAlert = null;
 
-        public void ShowWindow(IWindow window)
+        public void ShowWindow(UIWindow window)
         {
             switch (window.GetWindowType())
             {
@@ -532,13 +536,14 @@ namespace Ballance2.Managers
             }
             window.SetVisible(true);
         }
-        public void HideWindow(IWindow window) { window.SetVisible(false); }
-        public void CloseWindow(IWindow window) { window.Destroy(); managedWindows.Remove(window); }
+        public void HideWindow(UIWindow window) { window.SetVisible(false); }
+        public void CloseWindow(UIWindow window) { window.Destroy(); managedWindows.Remove(window); }
 
         private int windowId = 0;
         public int GenWindowId()
         {
             if (windowId < 2048) windowId++;
+            else windowId = 0;
             return windowId;
         }
 
@@ -547,11 +552,8 @@ namespace Ballance2.Managers
         #region 页管理
 
         //页
-        //[SerializeField, SetProperty("ManagedPages")]
         public List<UIPage> managedPages = null;
-        //[SerializeField, SetProperty("PagePrefabs")]
         public List<UIPrefab> pagePrefabs = null;
-        //[SerializeField, SetProperty("ElementPrefabs")]
         public List<UIPrefab> elementPrefabs = null;
 
         public List<UIPage> ManagedPages { get { return managedPages; } set { } }
@@ -1197,7 +1199,7 @@ namespace Ballance2.Managers
                 return false;
             }
 
-            IWindow w = FindWindowById(id);
+            UIWindow w = FindWindowById(id);
             if (w == null)
             {
                 GameLogger.Error(TAG, "未找到 ID 为 {0} 的窗口", id);

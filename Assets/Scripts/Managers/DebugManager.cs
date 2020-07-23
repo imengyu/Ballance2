@@ -95,6 +95,7 @@ namespace Ballance2.Managers
             debugWindow.CloseAsHide = true;
             debugWindow.SetSize(450, 330);
             debugWindow.SetMinSize(420, 270);
+            debugWindow.MoveToCenter();
             debugWindow.Hide();
 
             ico_warning2_big = GameManager.FindStaticAssets<Sprite>("ico_warning2_big");

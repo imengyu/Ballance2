@@ -26,17 +26,19 @@ public class Lua_Ballance2_Utils_GameError : LuaObject {
 		addMember(l,18,"ModExecutionCodeRunFailed");
 		addMember(l,19,"ModCanNotRun");
 		addMember(l,20,"FunctionNotFound");
-		addMember(l,21,"NotReturn");
-		addMember(l,22,"BadMod");
-		addMember(l,23,"NetworkError");
-		addMember(l,24,"NotInitialize");
-		addMember(l,25,"NotLoad");
-		addMember(l,26,"InProgress");
-		addMember(l,27,"AlredayLoaded");
-		addMember(l,28,"MustBeContainer");
-		addMember(l,29,"LayoutBuildFailed");
-		addMember(l,30,"ContextMismatch");
-		addMember(l,31,"BaseModuleCannotReplace");
+		addMember(l,21,"ClassNotFound");
+		addMember(l,22,"NotReturn");
+		addMember(l,23,"BadMod");
+		addMember(l,24,"BrokenMod");
+		addMember(l,25,"NetworkError");
+		addMember(l,26,"NotInitialize");
+		addMember(l,27,"NotLoad");
+		addMember(l,28,"InProgress");
+		addMember(l,29,"AlredayLoaded");
+		addMember(l,30,"MustBeContainer");
+		addMember(l,31,"LayoutBuildFailed");
+		addMember(l,32,"ContextMismatch");
+		addMember(l,33,"BaseModuleCannotReplace");
 		LuaDLL.lua_pop(l, 1);
 	}
 }

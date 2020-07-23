@@ -157,6 +157,7 @@
     <Compile Include="Assets\Scripts\Utils\LuaUtils.cs" />
     <Compile Include="Assets\Scripts\Utils\Md5Helper.cs" />
     <Compile Include="Assets\Scripts\Utils\SkyBoxUtils.cs" />
+    <Compile Include="Assets\Scripts\Utils\SpeedTestUtils.cs" />
     <Compile Include="Assets\Scripts\Utils\StringSpliter.cs" />
     <Compile Include="Assets\Scripts\Utils\StringUtils.cs" />
     <Compile Include="Assets\Scripts\Utils\ZipUtils.cs" />
@@ -251,7 +252,6 @@
     <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_UI_BallanceUI_Element_UISpace.cs" />
     <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_UI_BallanceUI_Element_UIText.cs" />
     <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_UI_BallanceUI_Element_UIToggleButton.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_UI_BallanceUI_IWindow.cs" />
     <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_UI_BallanceUI_LayoutAxis.cs" />
     <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_UI_BallanceUI_LayoutGravity.cs" />
     <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_UI_BallanceUI_LayoutType.cs" />

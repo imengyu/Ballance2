@@ -1054,9 +1054,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   initStore: 1
-  Ball_Wood_piece: {fileID: 1199595254885999771}
-  Ball_Stone_piece: {fileID: 1199595255419123941}
-  Ball_Paper_piece: {fileID: 1199595254817708727}
   Ball_LightningSphere: {fileID: 8322054640977957069}
   Ball_LightningSphere2: {fileID: 1199595254242677582}
   Ball_Lightning: {fileID: 1199595254648216296}
@@ -1636,7 +1633,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1199595254845188272
 Transform:
   m_ObjectHideFlags: 0
@@ -1662,8 +1659,8 @@ Rigidbody:
   m_GameObject: {fileID: 1199595254845188275}
   serializedVersion: 2
   m_Mass: 0.2
-  m_Drag: 0.36
-  m_AngularDrag: 0.1
+  m_Drag: 0.5
+  m_AngularDrag: 0.2
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -1684,13 +1681,22 @@ MonoBehaviour:
   Pieces: {fileID: 1199595254817708727}
   TypeName: BallPaper
   Rigidbody: {fileID: 1199595254845188273}
-  PushForce: 12.5
   ForceMode: 0
+  PushForce: 13.34
+  PushForcePosition: {x: 0, y: 0, z: 0}
+  PushForceDownAngle: 0
+  PushUpForce: 14.8
   FallForce: 0
-  MaxSpeedXZ: 0
-  MaxSpeedY: 0
+  MaxSpeedXZ: 25
+  MaxSpeedXZCurrctRatio: 1
+  MaxSpeedXZForceMax: 1
+  MaxSpeedY: 15
+  MaxSpeedYCurrctRatio: 1
+  MaxSpeedYForceMax: 1
   ThrowPiecesForce: 0.3
   CollectPiecesSec: 30
+  FinalPushForceVectorFB: {x: 0, y: 0, z: 0}
+  FinalPushForceVectorLR: {x: 0, y: 0, z: 0}
 --- !u!1 &1199595254885999771
 GameObject:
   m_ObjectHideFlags: 0
@@ -2686,15 +2692,15 @@ GameObject:
   - component: {fileID: 6299301365850289150}
   - component: {fileID: 3092801752895071745}
   - component: {fileID: 2343699480779008541}
-  - component: {fileID: 2343699480779008540}
   - component: {fileID: 2343699480779008538}
+  - component: {fileID: 8294051181235507144}
   m_Layer: 10
   m_Name: Ball_Wood
   m_TagString: BallWood
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5242533957759204575
 Transform:
   m_ObjectHideFlags: 0
@@ -2764,27 +2770,14 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2343699480779008543}
   serializedVersion: 2
-  m_Mass: 0.9
-  m_Drag: 0.02
-  m_AngularDrag: 0.008
+  m_Mass: 1.9
+  m_Drag: 0.5
+  m_AngularDrag: 0.06
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!135 &2343699480779008540
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2343699480779008543}
-  m_Material: {fileID: 13400000, guid: 0786cc2c5183b9a4eb6762869b91a963, type: 2}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 2
-  m_Center: {x: 0, y: 0.000015020374, z: -0.000010013583}
 --- !u!114 &2343699480779008538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2800,13 +2793,35 @@ MonoBehaviour:
   Pieces: {fileID: 1199595254885999771}
   TypeName: BallWood
   Rigidbody: {fileID: 2343699480779008541}
-  PushForce: 31.6
   ForceMode: 0
-  FallForce: 28.7
-  MaxSpeedXZ: 21
-  MaxSpeedY: 16.8
+  PushForce: 71.1
+  PushForcePosition: {x: 0, y: 0, z: 0}
+  PushForceDownAngle: 20
+  PushUpForce: 150
+  FallForce: 0
+  MaxSpeedXZ: 32.5
+  MaxSpeedXZCurrctRatio: 9.3
+  MaxSpeedXZForceMax: 25.22
+  MaxSpeedY: 30
+  MaxSpeedYCurrctRatio: 15
+  MaxSpeedYForceMax: 10
   ThrowPiecesForce: 18
   CollectPiecesSec: 20
+  FinalPushForceVectorFB: {x: 0, y: 0, z: 0}
+  FinalPushForceVectorLR: {x: 0, y: 0, z: 0}
+--- !u!135 &8294051181235507144
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2343699480779008543}
+  m_Material: {fileID: 13400000, guid: 0786cc2c5183b9a4eb6762869b91a963, type: 2}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 2
+  m_Center: {x: 0, y: 0.000015020374, z: -0.000010013583}
 --- !u!1 &2663626849411544597
 GameObject:
   m_ObjectHideFlags: 0
@@ -6659,7 +6674,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2261120869248796290
 Transform:
   m_ObjectHideFlags: 0
@@ -6729,7 +6744,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8618135650371243679}
   serializedVersion: 2
-  m_Mass: 10
+  m_Mass: 6
   m_Drag: 0.02
   m_AngularDrag: 0.01
   m_UseGravity: 1
@@ -6765,13 +6780,22 @@ MonoBehaviour:
   Pieces: {fileID: 1199595255419123941}
   TypeName: BallStone
   Rigidbody: {fileID: 8618135650371243677}
-  PushForce: 68
   ForceMode: 0
+  PushForce: 90
+  PushForcePosition: {x: 0, y: 0, z: 0}
+  PushForceDownAngle: 6
+  PushUpForce: 131.7
   FallForce: 0
-  MaxSpeedXZ: 0
-  MaxSpeedY: 0
+  MaxSpeedXZ: 33
+  MaxSpeedXZCurrctRatio: 1
+  MaxSpeedXZForceMax: 1
+  MaxSpeedY: 20
+  MaxSpeedYCurrctRatio: 1
+  MaxSpeedYForceMax: 1
   ThrowPiecesForce: 5
   CollectPiecesSec: 15
+  FinalPushForceVectorFB: {x: 0, y: 0, z: 0}
+  FinalPushForceVectorLR: {x: 0, y: 0, z: 0}
 --- !u!1 &9084482953774425299
 GameObject:
   m_ObjectHideFlags: 0
