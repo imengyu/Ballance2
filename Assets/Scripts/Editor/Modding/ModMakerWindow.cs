@@ -159,14 +159,17 @@ namespace Ballance2.Editor.Modding
             EntryCode.InnerText = this.EntryCode;
             ModType.InnerText = this.ModType.ToString();
 
-            xml.Save(folderPath + "ModDef.xml");
+            xml.Save(folderPath + "/ModDef.xml");
 
             if(GenEntryCodeTemplate)
                 File.Copy("Assets/Mods/template_Entry.lua.txt", folderPath + "/" + this.EntryCode);
 
             File.Copy("Assets/Mods/template_ModLogo.png", folderPath + "/ModLogo.png");
 
+            AssetDatabase.Refresh();
             EditorUtility.DisplayDialog("提示", "生成模板成功！", "好的");
+
+            Close();
         }
     }
 }

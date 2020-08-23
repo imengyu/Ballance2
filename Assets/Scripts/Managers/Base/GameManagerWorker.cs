@@ -3,6 +3,7 @@ using Ballance2.CoreBridge;
 using Ballance2.Utils;
 using SLua;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -91,6 +92,17 @@ namespace Ballance2.Managers.Base
         public void ReqDestroyManagers()
         {
             nextDestroyTick = 35;
+        }
+        public void ReqNotifyScenseChanged()
+        {
+            StartCoroutine(NotifyScenseChanged());
+        }
+
+        private IEnumerator NotifyScenseChanged()
+        {
+            yield return new WaitUntil(GameManager.ModManager.IsNoneModLoading);
+
+            GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_ENTER_SCENSE, "*", GameManager.CurrentScense);
         }
 
         private void QuitGame()
@@ -191,7 +203,7 @@ namespace Ballance2.Managers.Base
         {
             foreach (ManagerRedayCallback c in redayCallbacks)
                 if (c.name == name)
-                    c.redayDelegate(c.self, manager.Store, manager);
+                    c.redayDelegate(c.self, manager.Store, manager.ActionStore, manager);
         }
     }
 }

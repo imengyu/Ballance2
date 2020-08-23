@@ -1,24 +1,12 @@
 ﻿using Ballance2.Managers;
 using SLua;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Ballance2.CoreBridge
 {
-    class GameLuaWapper
-    {
-    }
-
-    [CustomLuaClass]
-    public delegate void VoidDelegate();
-
     [CustomLuaClass]
     public delegate void LuaManagerRedayDelegate(LuaTable self, 
-        Store store, BaseManager baseManager);
+        Store store, GameActionStore actionStore, BaseManager baseManager);
 
     [CustomLuaClass]
     public delegate void LuaStartDelegate(LuaTable self, GameObject gameObject);
@@ -43,10 +31,12 @@ namespace Ballance2.CoreBridge
     [CustomLuaClass]
     public delegate void LuaVoidDelegate(LuaTable self);
 
-
-
     [CustomLuaClass]
     public delegate bool LuaReturnBoolDelegate(LuaTable self);
     [CustomLuaClass]
     public delegate bool LuaStoreReturnBoolDelegate(LuaTable self, Store store);
+    [CustomLuaClass]
+    public delegate bool LuaActionStoreReturnBoolDelegate(LuaTable self, GameActionStore store);
+
+
 }

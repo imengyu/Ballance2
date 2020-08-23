@@ -69,6 +69,10 @@ namespace Ballance2.CoreBridge
         [Tooltip("设置 LUA 脚本执行顺序，这个值越大，脚本越晚被执行。")]
         [SerializeField]
         public int ExecuteOrder = 0;
+        [Tooltip("是否创建 GlobalStore，勾选后会创建此Lua脚本的共享数据仓库(仓库名字是 包名:Name)，可以使用 self.store 或 GameLuaObjectHost.Store 访问 ")]
+        public bool CreateStore = false;
+        [Tooltip("是否自动创建共享操作仓库，勾选后会创建此Lua脚本的操作仓库(仓库名字是 包名:Name)，可以使用 self.actionStore 或 GameLuaObjectHost.ActionStore 访问 ")]
+        public bool CreateActionStore = false;
 
         /// <summary>
         /// lua self
@@ -82,8 +86,21 @@ namespace Ballance2.CoreBridge
         /// 获取对应 模组包
         /// </summary>
         public GameMod GameMod { get; set; }
+        /// <summary>
+        /// 获取此Lua脚本的共享数据仓库
+        /// </summary>
+        public Store Store { get; set; }
+        /// <summary>
+        /// 获取此Lua脚本的共享操作仓库
+        /// </summary>
+        public GameActionStore ActionStore { get; set; }
+        /// <summary>
+        /// 获取该 Lua 脚本所属包包名
+        /// </summary>
+        public string PackageName { get { return _PackageName; } }
 
         private IModManager ModManager;
+        private string _PackageName = null;
 
         private LuaTable self = null;
         private LuaVoidDelegate update = null;
@@ -196,6 +213,17 @@ namespace Ballance2.CoreBridge
 
                 GameMod.AddeLuaObject(this);
 
+                _PackageName = GameMod.PackageName;
+
+                if (CreateStore)
+                {
+                    Store = GameManager.GameMediator.RegisterGlobalDataStore(PackageName + ":" + Name);
+                }
+                if (CreateActionStore)
+                {
+                    ActionStore = GameManager.GameMediator.RegisterActionStore(PackageName + ":" + Name);
+                }
+
                 LuaState = GameMod.ModLuaState;
                 if(LuaState == null)
                 {
@@ -264,6 +292,8 @@ namespace Ballance2.CoreBridge
         {
             LuaSelf["transform"] = transform;
             LuaSelf["gameObject"] = gameObject;
+            LuaSelf["store"] = Store;
+            LuaSelf["actionStore"] = ActionStore;
         }
         private void InitLuaVars()
         {

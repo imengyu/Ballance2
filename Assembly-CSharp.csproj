@@ -67,6 +67,8 @@
     <Compile Include="Assets\Scripts\Config\GameConst.cs" />
     <Compile Include="Assets\Scripts\Config\GameSettingsManager.cs" />
     <Compile Include="Assets\Scripts\CoreBridge\GameAction.cs" />
+    <Compile Include="Assets\Scripts\CoreBridge\GameActionStore.cs" />
+    <Compile Include="Assets\Scripts\CoreBridge\GameDelegates.cs" />
     <Compile Include="Assets\Scripts\CoreBridge\GameEvent.cs" />
     <Compile Include="Assets\Scripts\CoreBridge\GameGlobalStore.cs" />
     <Compile Include="Assets\Scripts\CoreBridge\GameHandler.cs" />
@@ -87,6 +89,8 @@
     <Compile Include="Assets\Scripts\CoreGame\GamePlay\GameBall.cs" />
     <Compile Include="Assets\Scripts\CoreGame\GamePlay\GameBallPiecesControl.cs" />
     <Compile Include="Assets\Scripts\CoreGame\GamePlay\GameLayers.cs" />
+    <Compile Include="Assets\Scripts\CoreGame\GamePlay\GameLevel.cs" />
+    <Compile Include="Assets\Scripts\CoreGame\GamePlay\GameLevelInfo.cs" />
     <Compile Include="Assets\Scripts\CoreGame\GamePlay\LuaWapper\GameBallLuaWapper.cs" />
     <Compile Include="Assets\Scripts\CoreGame\GamePlay\LuaWapper\GameBallPiecesControlLuaWapper.cs.cs" />
     <Compile Include="Assets\Scripts\CoreGame\LevelEditor\LevelEditor.cs" />
@@ -99,6 +103,7 @@
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IDebugManager.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IICManager.cs" />
+    <Compile Include="Assets\Scripts\Interfaces\ILevelLoader.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IModManager.cs" />
     <Compile Include="Assets\Scripts\Interfaces\ISoundManager.cs" />
     <Compile Include="Assets\Scripts\Main.cs" />
@@ -161,96 +166,6 @@
     <Compile Include="Assets\Scripts\Utils\StringSpliter.cs" />
     <Compile Include="Assets\Scripts\Utils\StringUtils.cs" />
     <Compile Include="Assets\Scripts\Utils\ZipUtils.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\BindCustom.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_GameActionHandlerDelegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_GameEventHandlerDelegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_LuaBoolDelegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_LuaCollider2DDelegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_LuaColliderDelegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_LuaCollision2DDelegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_LuaCollisionDelegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_LuaGameObjectDelegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_LuaIntDelegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_LuaManagerRedayDelegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_LuaReturnBoolDelegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_LuaStartDelegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_LuaStoreReturnBoolDelegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_LuaVector3Delegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_LuaVoidDelegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_StoreDataProvider.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_StoreOnDataChanged.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_CoreBridge_VoidDelegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_Interfaces_CommandDelegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_UI_BallanceUI_UIWindow_WindowEventDelegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_UI_Utils_EventTriggerListener_VoidDelegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaDelegate_Ballance2_UI_Utils_KeyListener_KeyDelegate.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaSystem_Action_1_int.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaSystem_Action_2_int_Dictionary_System_Int32_object_.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaSystem_Action_2_int_string.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaSystem_Comparison_1_int.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaSystem_Func_1_int.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\LuaSystem_Predicate_1_int.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_Config_GameConst.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_Config_GameSettingsActuator.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_Config_GameSettingsManager.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_GameAction.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_GameActionCallResult.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_GameActionNames.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_GameEvent.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_GameEventNames.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_GameHandler.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_GameHandlerList.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_GameHandlerType.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_GameLuaObjectHost.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_GameLuaWapperEvents_GameLuaObjectAnimatorEventCaller.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_GameLuaWapperEvents_GameLuaObjectMouseEventCaller.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_GameLuaWapperEvents_GameLuaObjectOtherEventCaller.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_GameLuaWapperEvents_GameLuaObjectParticleEventCaller.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_GameLuaWapperEvents_GameLuaObjectPhysics2DEventCaller.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_GameLuaWapperEvents_GameLuaObjectPhysicsEventCaller.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_GamePartName.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_LuaVarObjectInfo.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_LuaVarObjectType.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_Store.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_StoreData.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_StoreDataAccess.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreBridge_StoreDataType.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreGame_GamePlay_GameBall.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreGame_GamePlay_GameBallLuaWapper.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreGame_GamePlay_GameBallPiecesControl.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreGame_GamePlay_GameBallPiecesControlLuaWapper.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreGame_GamePlay_GameLayers.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_CoreGame_Managers_DirectionType.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_GameCore_LevelLoadStatus.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_GameCurrentScense.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_GameLogger.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_GameLogger_LogType.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_GameManager.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_GameMode.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_Interfaces_GameSoundType.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_Interfaces_IDebugManager.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_Interfaces_IICManager.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_Interfaces_IModManager.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_Interfaces_ISoundManager.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_Managers_BaseManager.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_Managers_BaseManagerLuaWapper.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_Managers_GameMediator.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_Managers_UIManager.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_ModBase_GameCompatibilityInfo.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_ModBase_GameDependencyInfo.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_ModBase_GameMod.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_ModBase_GameModCodeType.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_ModBase_GameModEntryCodeExecutionAt.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_ModBase_GameModFileType.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_ModBase_GameModInfo.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_ModBase_GameModStatus.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_ModBase_GameModType.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_UI_BallanceUI_Element_UIButton.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_UI_BallanceUI_Element_UIDropdown.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_UI_BallanceUI_Element_UIKeyChooseButton.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_UI_BallanceUI_Element_UISlider.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_UI_BallanceUI_Element_UISpace.cs" />
-    <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_UI_BallanceUI_Element_UIText.cs" />
     <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_UI_BallanceUI_Element_UIToggleButton.cs" />
     <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_UI_BallanceUI_LayoutAxis.cs" />
     <Compile Include="Assets\Slua\LuaObject\Custom\Lua_Ballance2_UI_BallanceUI_LayoutGravity.cs" />
@@ -1123,7 +1038,6 @@
     <None Include="Assets\Shaders\ObjectOutline.shader" />
     <None Include="Assets\Mods\core.scenes.menulevel.ui\PageHighscore.xml" />
     <None Include="Assets\Mods\core.gameui\PageSettingsVideo.xml" />
-    <None Include="Assets\Mods\com.yourname.modnameModDef.xml" />
     <None Include="Assets\Shaders\UltimateOutline.shader" />
     <None Include="Assets\Mods\template_Entry.lua.txt" />
     <None Include="Assets\Shaders\OutLinePostEffectX.shader" />
@@ -1134,10 +1048,12 @@
     <None Include="Assets\Mods\com.imengyu.test\ModDef.xml" />
     <None Include="Assets\Mods\template_ModDef.xml" />
     <None Include="Assets\Sounds\Sounds\ModDef.xml" />
+    <None Include="Assets\Mods\com.ballance.modul.simple\ModDef.xml" />
     <None Include="Assets\Mods\core.gameui\PageSettingsVoice.xml" />
     <None Include="Assets\Mods\core.scenes.menulevel.ui\PageStart.xml" />
     <None Include="Assets\Mods\core.gameui\PageSettings.xml" />
     <None Include="Assets\Mods\core.scenes.menulevel.ui\PageMain.xml" />
+    <None Include="Assets\Levels\Level1\LevelDef.xml" />
     <None Include="Assets\ThirdPart\QuickOutline\Readme.txt" />
     <None Include="Assets\Mods\core.scenes.menulevel.ui\MenuLevel.lua.txt" />
     <None Include="Assets\Mods\core.scenes.menulevel.ui\ModDef.xml" />
@@ -1155,6 +1071,7 @@
     <None Include="Assets\Mods\core.gameui\PageSettingsContol.xml" />
     <None Include="Assets\Mods\core.gameui\GameSettingsUI.lua.txt" />
     <None Include="Assets\Mods\core.scenes.menulevel.ui\PageAbout.xml" />
+    <None Include="Assets\Levels\template_LevelDef.xml" />
     <Reference Include="UnityEngine">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.2f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
@@ -1339,13 +1256,13 @@
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.2f1/Editor/Data/Managed/UnityEditor.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>D:/Programming/Ballance2/Assets/Plugins/ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>D:/Programming/GameProjects/Ballance2/Assets/Plugins/ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>D:/Programming/Ballance2/Assets/Plugins/Newtonsoft.Json.dll</HintPath>
+      <HintPath>D:/Programming/GameProjects/Ballance2/Assets/Plugins/Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="BytesHelper">
-      <HintPath>D:/Programming/Ballance2/Assets/Plugins/Slua_Managed/BytesHelper.dll</HintPath>
+      <HintPath>D:/Programming/GameProjects/Ballance2/Assets/Plugins/Slua_Managed/BytesHelper.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.2f1/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
@@ -1708,40 +1625,40 @@
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.2f1/Editor/Data/MonoBleedingEdge/lib/mono/unityscript/Boo.Lang.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Timeline.Editor">
-      <HintPath>D:/Programming/Ballance2/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
+      <HintPath>D:/Programming/GameProjects/Ballance2/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VSCode.Editor">
-      <HintPath>D:/Programming/Ballance2/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
+      <HintPath>D:/Programming/GameProjects/Ballance2/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
-      <HintPath>D:/Programming/Ballance2/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+      <HintPath>D:/Programming/GameProjects/Ballance2/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>D:/Programming/Ballance2/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
+      <HintPath>D:/Programming/GameProjects/Ballance2/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Timeline">
-      <HintPath>D:/Programming/Ballance2/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
+      <HintPath>D:/Programming/GameProjects/Ballance2/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
     </Reference>
     <Reference Include="Unity.CollabProxy.Editor">
-      <HintPath>D:/Programming/Ballance2/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
+      <HintPath>D:/Programming/GameProjects/Ballance2/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Postprocessing.Editor">
-      <HintPath>D:/Programming/Ballance2/Library/ScriptAssemblies/Unity.Postprocessing.Editor.dll</HintPath>
+      <HintPath>D:/Programming/GameProjects/Ballance2/Library/ScriptAssemblies/Unity.Postprocessing.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Rider.Editor">
-      <HintPath>D:/Programming/Ballance2/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
+      <HintPath>D:/Programming/GameProjects/Ballance2/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.2D.Sprite.Editor">
-      <HintPath>D:/Programming/Ballance2/Library/ScriptAssemblies/Unity.2D.Sprite.Editor.dll</HintPath>
+      <HintPath>D:/Programming/GameProjects/Ballance2/Library/ScriptAssemblies/Unity.2D.Sprite.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Postprocessing.Runtime">
-      <HintPath>D:/Programming/Ballance2/Library/ScriptAssemblies/Unity.Postprocessing.Runtime.dll</HintPath>
+      <HintPath>D:/Programming/GameProjects/Ballance2/Library/ScriptAssemblies/Unity.Postprocessing.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>D:/Programming/Ballance2/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+      <HintPath>D:/Programming/GameProjects/Ballance2/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.UI">
-      <HintPath>D:/Programming/Ballance2/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
+      <HintPath>D:/Programming/GameProjects/Ballance2/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

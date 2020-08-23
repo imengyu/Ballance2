@@ -5,6 +5,7 @@ GameManager = Ballance2.GameManager
 GameLogger = Ballance2.GameLogger
 GameEventNames = Ballance2.CoreBridge.GameEventNames
 GameCloneUtils = Ballance2.Utils.GameCloneUtils
+GameCurrentScense = Ballance2.GameCurrentScense
 
 local TAG = "core.scenes.menulevel.ui:Main"
 
@@ -20,8 +21,10 @@ function ModEntry(thisGameMod)
 
   gameModThis = thisGameMod
   
-  GameManager.GameMediator:RegisterEventHandler(GameEventNames.EVENT_GAME_INIT_FINISH, TAG, TAG..":OnEnterMenuLevel")
-  
+  GameManager.GameMediator:RegisterEventHandler(GameEventNames.EVENT_ENTER_MENULEVEL, TAG, TAG..":OnEnterMenuLevel")
+  GameManager.GameMediator:RegisterEventHandler(GameEventNames.EVENT_ENTER_SCENSE, TAG, TAG..":OnEnterScense")
+  GameManager.GameMediator:RegisterEventHandler(GameEventNames.EVENT_BEFORE_LEAVE_SCENSE, TAG, TAG..":OnLeaveScense")
+
   gameModBase = ModManager:FindGameMod("core.scenes.menulevel")
 
 	return true
@@ -29,23 +32,41 @@ end
 
 -- 模块卸载前函数
 function ModBeforeUnLoad(thisGameMod)
-	gameModThis = thisGameMod
-	UnityEngine.Object.Destroy(goMenuLevel)
-	GameLogger.Log(TAG, "ModBeforeUnLoad !")
+  gameModThis = thisGameMod
+
+  if(not Slua.IsNull(goMenuLevel)) then 
+    UnityEngine.Object.Destroy(goMenuLevel)
+  end 
+
 	return true
 end
 
 function OnEnterMenuLevel()
-
-  -- 初始化 MenuLevel 资源
-  local prefab = gameModBase:GetPrefabAsset("MenuLevel.prefab")
-  if(prefab == nil)
-  then
-    GameLogger.Error(TAG, "MenuLevel.prefab not found !")
-  else 
-    GameCloneUtils.CloneNewObject(prefab, "MenuLevel")
-  end
-  
-  GameLogger.Log(TAG, "MenuLevel init OK !")
 	return true
+end
+
+function OnEnterScense(evtName, scense)
+  if(scense == GameCurrentScense.MenuLevel) then
+    -- 初始化 MenuLevel 资源
+    if(Slua.IsNull(goMenuLevel) then
+      local prefab = gameModBase:GetPrefabAsset("MenuLevel.prefab")
+      if(prefab == nil)
+      then
+        GameLogger.Error(TAG, "MenuLevel.prefab not found !")
+      else 
+        goMenuLevel = GameCloneUtils.CloneNewObject(prefab, "MenuLevel")
+      end
+    end
+
+    GameManager.UIManager:MaskBlackFadeOut(0.8)
+    goMenuLevel:SetActive(true);
+  end
+end
+
+function OnLeaveScense(evtName, scense)
+  if(scense == GameCurrentScense.MenuLevel) then
+    if(not Slua.IsNull(goMenuLevel)) then 
+      goMenuLevel:SetActive(false);
+    end 
+  end
 end

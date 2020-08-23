@@ -1435,6 +1435,9 @@ MonoBehaviour:
   - Object: {fileID: 2165626818818230809, guid: 627f4d1c169898349a34fbbcaae00c11,
       type: 3}
     Name: UIToast
+  - Object: {fileID: 3793067186236857632, guid: 601139cee5dea9f4d9008a6374b4cee5,
+      type: 3}
+    Name: UILevelLoader
   - Object: {fileID: 0}
     Name: 
   GameAssets:

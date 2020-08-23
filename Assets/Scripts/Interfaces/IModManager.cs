@@ -1,4 +1,8 @@
-﻿using Ballance2.ModBase;
+﻿using Ballance2.CoreBridge;
+using Ballance2.CoreGame.GamePlay;
+using Ballance2.ModBase;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Ballance2.Interfaces
 {
@@ -22,7 +26,7 @@ namespace Ballance2.Interfaces
         /// <summary>
         /// 获取当前正在加载的模组
         /// </summary>
-        GameMod CurrentLoadingMod { get; }
+        List<GameMod> CurrentLoadingMod { get; }
 
         /// <summary>
         /// 加载模组包
@@ -127,7 +131,37 @@ namespace Ballance2.Interfaces
 
         void ExecuteModEntry(GameModEntryCodeExecutionAt at);
         string[] GetModEnableStatusList();
-        void UnLoadNotUsedMod();
+        IEnumerator FlushModEnableStatus(bool unloadNotInMask);
+        void UnLoadNotUsedMod(bool unloadNotInMask);
         void OnModLoadFinished(GameMod m);
+        bool IsModNotInCurrentRunningMask(GameMod mod);
+        bool IsAnyModLoading();
+        bool IsNoneModLoading();
+
+        Dictionary<string, ModDefCustomPropSolveDelegate> ModDefCustomPropertySolver { get; }
+        Dictionary<string, LevelDefCustomPropSolveDelegate> LevelDefCustomPropertySolver { get; }
+
+        /// <summary>
+        /// 获取所有已注册模组数
+        /// </summary>
+        /// <returns></returns>
+        int GetAllLevelCount();
+        /// <summary>
+        /// 注册一个关卡文件
+        /// </summary>
+        /// <param name="path">文件路径</param>
+        /// <returns></returns>
+        GameLevel RegisterLevel(string path);
+        /// <summary>
+        /// 查找已注册的关卡
+        /// </summary>
+        /// <param name="path">文件路径</param>
+        /// <returns></returns>
+        GameLevel FindLevel(string path);
+        /// <summary>
+        /// 移除已注册的关卡
+        /// </summary>
+        /// <param name="path">文件路径</param>
+        void RemoveLevel(string path);
     }
 }

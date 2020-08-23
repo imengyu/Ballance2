@@ -1,7 +1,0 @@
-ManifestFileVersion: 0
-CRC: 3675433737
-AssetBundleManifest:
-  AssetBundleInfos:
-    Info_0:
-      Name: core.gameinit.assetbundle
-      Dependencies: {}

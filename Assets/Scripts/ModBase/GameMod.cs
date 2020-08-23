@@ -77,7 +77,6 @@ namespace Ballance2.ModBase
         {
             if (IsEditorPack) inited = true;
             if (inited) return true;
-
             if (FileUtils.TestFileIsZip(PackagePath))
             {
                 inited = true;
@@ -118,6 +117,7 @@ namespace Ballance2.ModBase
                 yield break;
 
             LoadStatus = GameModStatus.Loading;
+            ModManager.CurrentLoadingMod.Add(this);
 
             GameLogger.Log(TAG, "Load mod {0}", PackageName);
 
@@ -216,6 +216,8 @@ namespace Ballance2.ModBase
         public void UnLoad()
         {
             RunModBeforeUnLoadCode();
+
+            GameManager.DestroyManagersInMod(PackageName);
 
             if (AssetBundle != null)
             {
@@ -338,11 +340,15 @@ namespace Ballance2.ModBase
                     || theEntry.Name == "/" + PackageName + ".assetbundle")
                 {
                     MemoryStream ms = await ZipUtils.ReadZipFileToMemoryAsync(zip);
+                    zip.Close();
+                    zip.Dispose();
                     return ms;
                 }
             }
-            return null;
 
+            zip.Close();
+            zip.Dispose();
+            return null;
         }
         //模组初始化
         private IEnumerator InitModBase()
@@ -406,7 +412,7 @@ namespace Ballance2.ModBase
             FixBundleShader();
 
             LoadStatus = GameModStatus.InitializeSuccess;
-            ModManager.OnModLoadFinished(this);
+            LoadFinish();
             yield break;
         }
         //错误返回
@@ -415,7 +421,12 @@ namespace Ballance2.ModBase
             GameErrorManager.SetLastErrorAndLog(gameError, TAG, err);
             LoadFriendlyErrorExplain = err;
             LoadStatus = GameModStatus.InitializeFailed;
+            LoadFinish();
+        }
+        private void LoadFinish()
+        {
             ModManager.OnModLoadFinished(this);
+            ModManager.CurrentLoadingMod.Remove(this);
         }
 
         #region 公共属性
@@ -478,6 +489,10 @@ namespace Ballance2.ModBase
         /// </summary>
         public GameModCodeType ModCodeType { get; private set; } = GameModCodeType.Lua;
         /// <summary>
+        /// 模组运行范围
+        /// </summary>
+        public GameModRunMask ModRunType { get; private set; } = GameModRunMask.GameBase;
+        /// <summary>
         /// 模组共享lua虚拟机
         /// </summary>
         /// <remarks>
@@ -520,7 +535,47 @@ namespace Ballance2.ModBase
         /// <summary>
         /// 模组 LUA 虚拟机
         /// </summary>
-        public LuaServer.ModState ModLuaState { get; private set; }
+        public LuaState ModLuaState { get; private set; }
+
+        //自定义数据
+
+        private Dictionary<string, object> modCustomData = new Dictionary<string, object>();
+
+        public object AddCustomProp(string name, object data)
+        {
+            if (modCustomData.ContainsKey(name))
+            {
+                modCustomData[name] = data;
+                return data;
+            }
+            modCustomData.Add(name, data);
+            return data;
+        }
+        public object GetCustomProp(string name)
+        {
+            if (modCustomData.ContainsKey(name))
+                return modCustomData[name];
+            return null;
+        }
+        public object SetCustomProp(string name, object data)
+        {
+            if (modCustomData.ContainsKey(name))
+            {
+                object old =  modCustomData[name];
+                modCustomData[name] = data;
+                return old;
+            }
+            return null;
+        }
+        public bool RemoveCustomProp(string name)
+        {
+            if (modCustomData.ContainsKey(name))
+            {
+                modCustomData.Remove(name);
+                return true;
+            }
+            return false;
+        }
 
         #endregion
 
@@ -621,8 +676,20 @@ namespace Ballance2.ModBase
 
                                 break;
                             }
-                        case "Define": break;
-                        case "Data": break;
+                        case "ModRunType":
+                            {
+                                GameModRunMask type = GameModRunMask.GameBase;
+                                if (Enum.TryParse(node.InnerText, true, out type)) ModRunType = type;
+                                else GameLogger.Warning(TAG, "Bad ModRunType : {0}", node.InnerText);
+                                break;
+                            }
+                        case "Define": 
+
+                            break;
+                        default:
+                            if (ModManager.ModDefCustomPropertySolver.ContainsKey(node.Name))
+                                ModManager.ModDefCustomPropertySolver[node.Name](node, this);
+                            break;
                     }
                 }
 
@@ -895,7 +962,15 @@ namespace Ballance2.ModBase
 
             if (!string.IsNullOrEmpty(ModShareLuaState))
             {
+                if(ModShareLuaState == "core")
+                {
+                    ModLuaState = GameManager.GameMainLuaState;
+                    LuaStateInitFinished();
+                    return;
+                }
+
                 GameMod m = ModManager.FindGameMod(ModShareLuaState);
+
                 if(m != null && m.ModLuaState != null && m.luaStateInited)
                 {
                     ModLuaState = m.ModLuaState;

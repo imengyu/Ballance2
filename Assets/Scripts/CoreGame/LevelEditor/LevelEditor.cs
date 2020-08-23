@@ -6,6 +6,7 @@ namespace Ballance2.GameCore
 {
     /// <summary>
     /// 关卡编辑器
+    /// 【待完成，看看后期有没有时间做，如果没有的话，这一块就算了吧（毕竟用Unity直接做关卡更方便）】    
     /// </summary>
     public class LevelEditor : BaseManager
     {
@@ -16,10 +17,14 @@ namespace Ballance2.GameCore
 
         }
 
+        protected override bool InitActions(GameActionStore actionStore)
+        {
+            actionStore.RegisterAction("EditLevel", TAG, OnCallLoadLevel, new string[] { "System.String" });
+            return base.InitActions(actionStore);
+        }
         protected override void InitPre()
         {
-            GameManager.GameMediator.RegisterAction(GameActionNames.CoreActions["EditLevel"],
-                   TAG, OnCallLoadLevel, new string[] { "System.String" });
+            
             base.InitPre();
         }
         public override bool InitManager()
@@ -29,19 +34,17 @@ namespace Ballance2.GameCore
         }
         public override bool ReleaseManager()
         {
-            GameManager.GameMediator.UnRegisterAction(GameActionNames.CoreActions["EditLevel"]);
             return true;
         }
 
         private GameActionCallResult OnCallLoadLevel(params object[] param)
         {
-           
-            return GameActionCallResult.CreateActionCallResult(true);
+            GameErrorManager.LastError = GameError.NotFinished;
+            return GameActionCallResult.FailResult;
         }
 
         internal void StartDebugLevelEditor(string targetFileName)
         {
-
         }
     }
 }

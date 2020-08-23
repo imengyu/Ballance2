@@ -21,9 +21,17 @@ namespace Ballance2.Managers
 
         public GameInit() : base("core.gameinit", TAG, "Singleton")
         {
-            initStore = false; 
+            initStore = false;
         }
 
+        protected override bool InitActions(GameActionStore actionStore)
+        {
+            actionStore.RegisterAction("ACTION_GAME_INIT", TAG, (param) => {
+                StartCoroutine(GameInitCore());
+                return GameActionCallResult.SuccessResult;
+            }, null);
+            return base.InitActions(actionStore);
+        }
         protected override void InitPre()
         {
             GameManager.GameMediator.RegisterEventHandler(GameEventNames.EVENT_BASE_INIT_FINISHED, TAG, (e, p) =>
@@ -34,12 +42,8 @@ namespace Ballance2.Managers
                 InitVideoSettings();
                 return false;
             });
-            GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_GAME_INIT_FINISH);
+            GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_ENTER_MENULEVEL);
             GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_GAME_INIT_TAKE_OVER_CONTROL);
-            GameManager.GameMediator.RegisterAction(GameActionNames.CoreActions["ACTION_GAME_INIT"], TAG, (param) => {
-                StartCoroutine(GameInitCore());
-                return GameActionCallResult.SuccessResult;
-            }, null);
             base.InitPre();
         }
         public override bool InitManager()
@@ -105,7 +109,7 @@ namespace Ballance2.Managers
             loadedGameInitUI = true;
         }
 
-        private LoadMask currentLoadMask = LoadMask.None;
+        private GameModRunMask currentLoadMask = GameModRunMask.None;
 
         //加载主函数
         private IEnumerator GameInitCore()
@@ -114,7 +118,7 @@ namespace Ballance2.Managers
 
             yield return new WaitUntil(IsGameInitUILoaded);
 
-            
+
             //播放音乐和动画
             if (GameManager.Mode == GameMode.Game)
             {
@@ -125,12 +129,12 @@ namespace Ballance2.Managers
             //选择加载包模式
             switch (GameManager.Mode)
             {
-                case GameMode.Game: currentLoadMask = LoadMask.Game;  break;
-                case GameMode.Level: currentLoadMask = LoadMask.Level | LoadMask.LevelLoader;  break;
-                case GameMode.LevelEditor: currentLoadMask = LoadMask.LevelEditor | LoadMask.Level;  break;
-                case GameMode.MinimumDebug: currentLoadMask = LoadMask.GameBase; break;
-                case GameMode.LoaderDebug: currentLoadMask = LoadMask.Level | LoadMask.LevelLoader; break;
-                case GameMode.CoreDebug: currentLoadMask = LoadMask.GameCore;  break;
+                case GameMode.Game: currentLoadMask = GameModRunMask.GameBase; break;
+                case GameMode.Level: currentLoadMask = GameModRunMask.Level | GameModRunMask.LevelLoader; break;
+                case GameMode.LevelEditor: currentLoadMask = GameModRunMask.LevelEditor | GameModRunMask.Level; break;
+                case GameMode.MinimumDebug: currentLoadMask = GameModRunMask.GameBase; break;
+                case GameMode.LoaderDebug: currentLoadMask = GameModRunMask.Level | GameModRunMask.LevelLoader; break;
+                case GameMode.CoreDebug: currentLoadMask = GameModRunMask.GameCore; break;
             }
 
             UIProgressText.text = "Loading";
@@ -170,22 +174,21 @@ namespace Ballance2.Managers
             yield return StartCoroutine(GameInitPackages(gameInitTxt));
             //加载模组
             yield return StartCoroutine(GameInitUserMods());
+            //加载关卡信息
+            yield return StartCoroutine(GameInitLevels());
 
             UIProgressText.text = "Loading";
-
-            //hide cp
-            GameManager.UIManager.UIFadeManager.AddFadeOut(GameObject.Find("GlobalCopyrightText").GetComponent<Text>(), 0.7f, true);
 
             //加载游戏内核管理器
             GameManager.RegisterManager(typeof(LevelLoader), false);
             GameManager.RegisterManager(typeof(LevelManager), false);
-            GameManager.RegisterManager(typeof(ICManager), false);
+            GameManager.ICManager = (ICManager)GameManager.RegisterManager(typeof(ICManager), false);
 
             BaseManager ballManager = GameCloneUtils.CloneNewObjectWithParent(
-                GameManager.FindStaticPrefabs("BallManager"), 
+                GameManager.FindStaticPrefabs("BallManager"),
                 GameManager.GameRoot.transform).GetComponent<BaseManager>();
             BaseManager camManager = GameCloneUtils.CloneNewObjectWithParent(
-                GameManager.FindStaticPrefabs("CamManager"), 
+                GameManager.FindStaticPrefabs("CamManager"),
                 GameManager.GameRoot.transform).GetComponent<BaseManager>();
 
             GameManager.RegisterManager(ballManager, false);
@@ -198,6 +201,9 @@ namespace Ballance2.Managers
             if (GameManager.Mode == GameMode.Game)
             {
                 yield return new WaitUntil(IsGameInitAnimPlayend);
+
+                //hide cp
+                GameManager.UIManager.UIFadeManager.AddFadeOut(GameObject.Find("GlobalCopyrightText").GetComponent<Text>(), 1.3f, true);
 
                 IntroAnimator.Play("IntroAnimationHide");
                 IntroAudio.Stop();
@@ -213,9 +219,27 @@ namespace Ballance2.Managers
             yield return new WaitUntil(GameManager.IsManagersInitFinished);
 
             //分发接管事件
-            int hC = GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_TAKE_OVER_CONTROL, "*", (VoidDelegate)GameInitContinueInit);
-            if (hC == 0) //无接管
-                GameInitContinueInit();
+            int hC = GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_TAKE_OVER_CONTROL, "*", (BooleanDelegate)GameInitContinueInit);
+            if (hC == 0)//无接管
+            {
+                if(GameInitContinueInit())
+                {
+                    //正常模式，加载menulevel
+                    GameManager.NotifyGameCurrentScenseChanged(GameCurrentScense.MenuLevel);
+
+                    yield return new WaitUntil(ModManager.IsNoneModLoading);
+
+                    int initEventHandledCount = GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_ENTER_MENULEVEL, "*");
+                    GameManager.GameMediator.UnRegisterGlobalEvent(GameEventNames.EVENT_ENTER_MENULEVEL);
+
+                    if (initEventHandledCount == 0)
+                    {
+                        GameErrorManager.ThrowGameError(GameError.HandlerLost, "未找到 EVENT_ENTER_MENULEVEL 的下一步事件接收器\n此错误出现原因可能是配置不正确");
+                        GameLogger.Warning(TAG, "None EVENT_GAME_INIT_FINISH handler was found, the game will not continue.");
+                    }
+                    else GameInitHideGameInitUi(true);
+                }
+            }
         }
         //加载GameInit模块
         private IEnumerator GameInitPackages(string GameInitTable)
@@ -234,7 +258,7 @@ namespace Ballance2.Managers
 
                     bool required = false;
                     string packageName = "";
-                    LoadMask mask = LoadMask.Game;
+                    GameModRunMask mask = GameModRunMask.GameBase;
                     args = ar.Split(':');
 
                     if (args.Length >= 3)
@@ -244,16 +268,15 @@ namespace Ballance2.Managers
                         System.Enum.TryParse(args[1], out mask);
                     }
 
-                    //跳过不需要加载的模块
-                    if ((mask & currentLoadMask) == LoadMask.None) continue;
+                    bool modNeedRun = (mask & currentLoadMask) != GameModRunMask.None;
 
                     //状态
                     loadedCount++;
-                    GameInitSetUIProgressValue(loadedCount / (float)sp.Count * 0.8f);
+                    GameInitSetUIProgressValue(loadedCount / (float)sp.Count * 0.6f);
                     UIProgressText.text = "Loading " + packageName;
 
                     //加载
-                    GameMod mod = ModManager.LoadGameModByPackageName(packageName);
+                    GameMod mod = ModManager.LoadGameModByPackageName(packageName, modNeedRun);
                     if (mod != null)
                     {
                         mod.IsModInitByGameinit = true;
@@ -261,13 +284,13 @@ namespace Ballance2.Managers
                         yield return new WaitUntil(mod.IsLoadComplete);
                     }
 
-                    if ((mod == null || mod.LoadStatus != GameModStatus.InitializeSuccess) && required)
+                    if ((mod == null || (modNeedRun && mod.LoadStatus != GameModStatus.InitializeSuccess)) && required)
                         GameErrorManager.ThrowGameError(GameError.GameInitPartLoadFailed, "加载模块  " + packageName + " 时发生错误");
                 }
-
-                GameInitSetUIProgressValue(1);
-                UIProgressText.text = "Loading";
             }
+
+            UIProgressText.text = "Loading";
+            GameInitSetUIProgressValue(0.6f);
         }
         //加载用户模组
         private IEnumerator GameInitUserMods()
@@ -277,12 +300,12 @@ namespace Ballance2.Managers
             if (Directory.Exists(modFolderPath))
             {
                 DirectoryInfo direction = new DirectoryInfo(modFolderPath);
-                FileInfo[] files = direction.GetFiles("*.ballance", SearchOption.AllDirectories);
+                FileInfo[] files = direction.GetFiles("*.ballance", SearchOption.TopDirectoryOnly);
                 for (int i = 0, c = files.Length; i < c; i++)
                 {
                     ModManager.LoadGameMod(GamePathManager.GetResRealPath("mod", files[i].Name), false);
 
-                    GameInitSetUIProgressValue(0.8f + i / (float)c * 0.2f);
+                    GameInitSetUIProgressValue(0.6f + i / (float)c * 0.2f);
                     UIProgressText.text = "Loading " + files[i].Name;
                 }
             }
@@ -300,25 +323,49 @@ namespace Ballance2.Managers
                 }
             }
 
+            UIProgressText.text = "Loading";
+            GameInitSetUIProgressValue(0.8f);
+            yield break;
+        }
+        //加载所有关卡信息
+        private IEnumerator GameInitLevels()
+        {
+            //加载levels文件夹下所有模组
+            string levelFolderPath = GamePathManager.GetResRealPath("level", "");
+            if (Directory.Exists(levelFolderPath))
+            {
+                DirectoryInfo direction = new DirectoryInfo(levelFolderPath);
+                FileInfo[] files = direction.GetFiles("*.ballance", SearchOption.AllDirectories);
+                for (int i = 0, c = files.Length; i < c; i++)
+                {
+                    ModManager.RegisterLevel(files[i].FullName);
+
+                    GameInitSetUIProgressValue(0.8f + i / (float)c * 0.2f);
+                    UIProgressText.text = "Loading " + files[i].Name;
+                }
+            }
+
+            UIProgressText.text = "Loading";
+            GameInitSetUIProgressValue(1);
             yield break;
         }
 
-        private void GameInitContinueInit()
+        private bool GameInitContinueInit()
         {
             //模式
             switch (GameManager.Mode)
             {
-                case GameMode.Game: GameInitContinueGoGame(); break;
+                case GameMode.Game: return true;
                 case GameMode.LoaderDebug:
-                    GameManager.GameMediator.CallAction(GameActionNames.CoreActions["ACTION_DEBUG_LEVEL_LOADER"], Main.Main.Instance.LevelDebugTarget);
+                    GameManager.GameMediator.CallAction(GamePartName.LevelLoader, "ACTION_DEBUG_LEVEL_LOADER", Main.Main.Instance.LevelDebugTarget);
                     GameInitHideGameInitUi(false);
                     break;
                 case GameMode.CoreDebug:
-                    GameManager.GameMediator.CallAction(GameActionNames.CoreActions["ACTION_DEBUG_CORE"], Main.Main.Instance.CoreDebugBase);
+                    GameManager.GameMediator.CallAction(GamePartName.LevelManager, "ACTION_DEBUG_CORE", Main.Main.Instance.CoreDebugBase);
                     GameInitHideGameInitUi(false);
                     break;
                 case GameMode.Level:
-                    GameManager.GameMediator.CallAction(GameActionNames.LevelLoader["LoadLevel"], Main.Main.Instance.LevelDebugTarget);
+                    GameManager.GameMediator.CallAction(GamePartName.LevelLoader, "LoadLevel", Main.Main.Instance.LevelDebugTarget);
                     GameInitHideGameInitUi(true);
                     break;
                 case GameMode.LevelEditor:
@@ -327,23 +374,12 @@ namespace Ballance2.Managers
                     GameInitHideGameInitUi(true);
                     break;
             }
+            return false;
         }
         private void GameInitHideGameInitUi(bool showBlack)
         {
             GameManager.UIManager.MaskBlackSet(showBlack);
             gameInitUI.SetActive(false);
-        }
-        private void GameInitContinueGoGame()
-        {
-            int initEventHandledCount = GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_INIT_FINISH, "*");
-            GameManager.GameMediator.UnRegisterGlobalEvent(GameEventNames.EVENT_GAME_INIT_FINISH);
-
-            if (initEventHandledCount == 0)
-            {
-                GameErrorManager.ThrowGameError(GameError.HandlerLost, "未找到 EVENT_GAME_INIT_FINISH 的下一步事件接收器\n此错误出现原因可能是配置不正确");
-                GameLogger.Warning(TAG, "None EVENT_GAME_INIT_FINISH handler was found, the game will not continue.");
-            }
-            else GameInitHideGameInitUi(true);
         }
         private void GameInitSetUIProgressValue(float val)
         {
@@ -412,16 +448,40 @@ namespace Ballance2.Managers
 
         #endregion
 
-        private enum LoadMask
-        {
-            None = 0,
-            GameBase = 0x1,
-            MenuLevel = 0x2,
-            Level = 0x4,
-            LevelLoader = 0x8,
-            LevelEditor = 0x10,
-            GameCore = 0x20,
-            Game = GameBase | MenuLevel| Level| LevelLoader | LevelEditor | GameCore,
-        }
+        
+    }
+
+    [SLua.CustomLuaClass]
+    public enum GameModRunMask
+    {
+        None = 0,
+        /// <summary>
+        /// 仅在MenuLevel运行
+        /// </summary>
+        MenuLevel = 0x2,
+        /// <summary>
+        /// 仅在关卡加载器和关卡运行
+        /// </summary>
+        Level = 0x4,
+        /// <summary>
+        /// 仅在关卡加载器运行，加载完毕后卸载
+        /// </summary>
+        LevelLoader = 0x8,
+        /// <summary>
+        /// 仅在关卡编辑器运行
+        /// </summary>
+        LevelEditor = 0x10,
+        /// <summary>
+        /// 仅在关卡查看器运行
+        /// </summary>
+        LevelViewer = 0x20,
+        /// <summary>
+        /// 仅在内核运行
+        /// </summary>
+        GameCore = 0x40,
+        /// <summary>
+        /// 整个游戏都运行
+        /// </summary>
+        GameBase = MenuLevel | Level | LevelLoader | LevelEditor | GameCore | LevelViewer,
     }
 }

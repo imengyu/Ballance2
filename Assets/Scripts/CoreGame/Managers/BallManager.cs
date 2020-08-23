@@ -25,7 +25,6 @@ namespace Ballance2.CoreGame.Managers
 
         protected override void InitPre()
         {
-            InitActions();
             InitShareDataStores();
             base.InitPre();
         }
@@ -34,121 +33,18 @@ namespace Ballance2.CoreGame.Managers
             InitGlobaShareAndStore(store);
             return base.InitStore(store);
         }
-        public override bool InitManager()
+        protected override bool InitActions(GameActionStore actionStore)
         {
-            keyListener = gameObject.AddComponent<KeyListener>();
-
-            InitSettings();
-            InitMisc();
-            InitBalls();
-            return true;
-        }
-        public override bool ReleaseManager()
-        {
-            UnInitActions();
-            ClearActiveBall();
-            if (ballTypes != null)
-            {
-                ballTypes.Clear();
-                ballTypes = null;
-            }
-            return true;
-        }
-
-        public GameObject Ball_LightningSphere;
-        public GameObject Ball_LightningSphere2;
-        public GameObject Ball_Lightning;
-        public ParticleSystem Ball_Smoke;
-        public GameBall BallWood;
-        public GameBall BallStone;
-        public GameBall BallPaper;
-
-        private List<GameBall> ballTypes = new List<GameBall>();
-
-        #region 设置变量
-
-        private bool debug = false;
-        private KeyCode keyFront = KeyCode.UpArrow;
-        private KeyCode keyBack = KeyCode.DownArrow;
-        private KeyCode keyLeft = KeyCode.LeftArrow;
-        private KeyCode keyRight = KeyCode.RightArrow;
-        private KeyCode keyUpCamera = KeyCode.Space;
-        private KeyCode keyRoateCamera = KeyCode.LeftShift;
-        private KeyCode keyFront2 = KeyCode.W;
-        private KeyCode keyBack2 = KeyCode.S;
-        private KeyCode keyLeft2 = KeyCode.A;
-        private KeyCode keyRight2 = KeyCode.D;
-        private KeyCode keyRoateCamera2 = KeyCode.RightShift;
-        private KeyCode keyUp = KeyCode.Q;
-        private KeyCode keyDown = KeyCode.E;
-        private bool reverseControl = false;
-
-        private GameSettingsActuator GameSettings;
-
-        #endregion
-
-        #region 声音变量
-
-        private AudioSource Misc_Lightning;
-
-        #endregion
-
-        private ISoundManager SoundManager;
-        private IICManager ICManager;
-
-        private void InitSettings()
-        {
-            GameSettings = GameSettingsManager.GetSettings("core");
-#if UNITY_EDITOR
-            debug = true;
-#else
-            debug = GameSettings.GetBool("debug");
-#endif
-            GameSettings.RegisterSettingsUpdateCallback("control", new GameHandler(TAG, OnControlSettingsChanged));
-            GameSettings.RequireSettingsLoad("control");
-        }
-        private void InitBalls()
-        {
-            ICManager = (IICManager)GameManager.GetManager("ICManager");
-
-            pushType = BallPushType.None;
-
-            RegisterBall("BallWood", BallWood);
-            RegisterBall("BallStone", BallStone);
-            RegisterBall("BallPaper", BallPaper);
-
-            Ball_LightningSphere.SetActive(false);
-            Ball_LightningSphere2.SetActive(false);
-            Ball_Lightning.SetActive(false);
-
-            Ball_Light = Ball_Lightning.GetComponent<Light>();
-        }
-        private void InitKeyEvents()
-        {
-            //添加按键事件
-            keyListener.ClearKeyListen();
-            keyListener.AddKeyListen(keyFront, keyFront2, new KeyListener.KeyDelegate(UpArrow_Key));
-            keyListener.AddKeyListen(keyBack, keyBack2, new KeyListener.KeyDelegate(DownArrow_Key));
-            keyListener.AddKeyListen(keyLeft, keyLeft2, new KeyListener.KeyDelegate(LeftArrow_Key));
-            keyListener.AddKeyListen(keyRight, keyRight2, new KeyListener.KeyDelegate(RightArrow_Key));
-            keyListener.AddKeyListen(keyUp, new KeyListener.KeyDelegate(Up_Key));
-            keyListener.AddKeyListen(keyDown, new KeyListener.KeyDelegate(Down_Key));
-            keyListener.AddKeyListen(keyUpCamera, new KeyListener.KeyDelegate(Space_Key));
-            keyListener.AddKeyListen(keyRoateCamera, keyRoateCamera2, new KeyListener.KeyDelegate(Shift_Key));
-        }
-        private void InitMisc()
-        {
-            SoundManager = (ISoundManager)GameManager.GetManager("SoundManager");
-            Misc_Lightning = SoundManager.RegisterSoundPlayer(GameSoundType.BallEffect, "core.assets.sounds:Misc_Lightning.wav");
-        }
-        private void InitActions()
-        {
-            GameManager.GameMediator.RegisterActions(GameActionNames.BallManager, 
+            actionStore.RegisterActions(
+                new string[] {
+                    "StartControll","EndControll","PlaySmoke","PlayLighting","RemoveBallSpeed",
+                    "AddBallPush","RemoveBallPush","RecoverSetPos","RecoverBallDef","RecoverBallAtPos","ActiveBall","ActiveBallDef",
+                    "ClearActiveBall","SmoothMoveBallToPos","ThrowPieces","RecoverPieces","RegisterBall","UnRegisterBall","GetRegisteredBall",
+                },
                 TAG, new GameActionHandlerDelegate[] {
                     (param) =>
                     {
                         StartControll();
-              
                         return GameActionCallResult.SuccessResult;
                     },
                     (param) =>
@@ -275,10 +171,113 @@ namespace Ballance2.CoreGame.Managers
                     new string[] { "System.String" },
                 }
             );
+            return base.InitActions(actionStore);
         }
-        private void UnInitActions()
+        public override bool InitManager()
         {
-            GameManager.GameMediator.UnRegisterActions(GameActionNames.BallManager);
+            keyListener = gameObject.AddComponent<KeyListener>();
+
+            InitSettings();
+            InitMisc();
+            InitBalls();
+            return true;
+        }
+        public override bool ReleaseManager()
+        {
+            ClearActiveBall();
+            if (ballTypes != null)
+            {
+                ballTypes.Clear();
+                ballTypes = null;
+            }
+            return true;
+        }
+
+        public GameObject Ball_LightningSphere;
+        public GameObject Ball_LightningSphere2;
+        public GameObject Ball_Lightning;
+        public ParticleSystem Ball_Smoke;
+        public GameBall BallWood;
+        public GameBall BallStone;
+        public GameBall BallPaper;
+
+        private List<GameBall> ballTypes = new List<GameBall>();
+
+        #region 设置变量
+
+        private bool debug = false;
+        private KeyCode keyFront = KeyCode.UpArrow;
+        private KeyCode keyBack = KeyCode.DownArrow;
+        private KeyCode keyLeft = KeyCode.LeftArrow;
+        private KeyCode keyRight = KeyCode.RightArrow;
+        private KeyCode keyUpCamera = KeyCode.Space;
+        private KeyCode keyRoateCamera = KeyCode.LeftShift;
+        private KeyCode keyFront2 = KeyCode.W;
+        private KeyCode keyBack2 = KeyCode.S;
+        private KeyCode keyLeft2 = KeyCode.A;
+        private KeyCode keyRight2 = KeyCode.D;
+        private KeyCode keyRoateCamera2 = KeyCode.RightShift;
+        private KeyCode keyUp = KeyCode.Q;
+        private KeyCode keyDown = KeyCode.E;
+        private bool reverseControl = false;
+
+        private GameSettingsActuator GameSettings;
+
+        #endregion
+
+        #region 声音变量
+
+        private AudioSource Misc_Lightning;
+
+        #endregion
+
+        private ISoundManager SoundManager;
+        private IICManager ICManager;
+
+        private void InitSettings()
+        {
+            GameSettings = GameSettingsManager.GetSettings("core");
+#if UNITY_EDITOR
+            debug = true;
+#else
+            debug = GameSettings.GetBool("debug");
+#endif
+            GameSettings.RegisterSettingsUpdateCallback("control", new GameHandler(TAG, OnControlSettingsChanged));
+            GameSettings.RequireSettingsLoad("control");
+        }
+        private void InitBalls()
+        {
+            ICManager = (IICManager)GameManager.GetManager("ICManager");
+
+            pushType = BallPushType.None;
+
+            RegisterBall("BallWood", BallWood);
+            RegisterBall("BallStone", BallStone);
+            RegisterBall("BallPaper", BallPaper);
+
+            Ball_LightningSphere.SetActive(false);
+            Ball_LightningSphere2.SetActive(false);
+            Ball_Lightning.SetActive(false);
+
+            Ball_Light = Ball_Lightning.GetComponent<Light>();
+        }
+        private void InitKeyEvents()
+        {
+            //添加按键事件
+            keyListener.ClearKeyListen();
+            keyListener.AddKeyListen(keyFront, keyFront2, new KeyListener.KeyDelegate(UpArrow_Key));
+            keyListener.AddKeyListen(keyBack, keyBack2, new KeyListener.KeyDelegate(DownArrow_Key));
+            keyListener.AddKeyListen(keyLeft, keyLeft2, new KeyListener.KeyDelegate(LeftArrow_Key));
+            keyListener.AddKeyListen(keyRight, keyRight2, new KeyListener.KeyDelegate(RightArrow_Key));
+            keyListener.AddKeyListen(keyUp, new KeyListener.KeyDelegate(Up_Key));
+            keyListener.AddKeyListen(keyDown, new KeyListener.KeyDelegate(Down_Key));
+            keyListener.AddKeyListen(keyUpCamera, new KeyListener.KeyDelegate(Space_Key));
+            keyListener.AddKeyListen(keyRoateCamera, keyRoateCamera2, new KeyListener.KeyDelegate(Shift_Key));
+        }
+        private void InitMisc()
+        {
+            SoundManager = (ISoundManager)GameManager.GetManager("SoundManager");
+            Misc_Lightning = SoundManager.RegisterSoundPlayer(GameSoundType.BallEffect, "core.assets.sounds:Misc_Lightning.wav");
         }
 
         #region 全局数据共享
@@ -347,16 +346,16 @@ namespace Ballance2.CoreGame.Managers
         }
         private void InitShareDataStores()
         {
-            GameManager.RegisterManagerRedayCallback("CamManager", (self, store, manager) =>
+            GameManager.RegisterManagerRedayCallback("CamManager", (self, store, actionStore , manager) =>
             {
                 IsFollowCam = store.GetParameter("IsFollowCam");
                 IsLookingBall = store.GetParameter("IsLookingBall");
                 CamFollowTarget = store.GetParameter("CamFollowTarget");
 
-                CamRoteRight = GameManager.GameMediator.GetRegisteredAction(GameActionNames.CamManager["CamRoteRight"]);
-                CamRoteLeft = GameManager.GameMediator.GetRegisteredAction(GameActionNames.CamManager["CamRoteLeft"]);
-                CamRoteSpace = GameManager.GameMediator.GetRegisteredAction(GameActionNames.CamManager["CamRoteSpace"]);
-                CamRoteSpaceBack = GameManager.GameMediator.GetRegisteredAction(GameActionNames.CamManager["CamRoteSpaceBack"]);
+                CamRoteRight = actionStore.GetRegisteredAction("CamRoteRight");
+                CamRoteLeft = actionStore.GetRegisteredAction("CamRoteLeft");
+                CamRoteSpace = actionStore.GetRegisteredAction("CamRoteSpace");
+                CamRoteSpaceBack = actionStore.GetRegisteredAction("CamRoteSpaceBack");
 
             });
         }

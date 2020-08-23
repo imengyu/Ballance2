@@ -27,6 +27,7 @@ namespace Ballance2.Managers
         {
             replaceable = false;
             initStore = false;
+            initActionStore = false;
         }
 
         public override bool InitManager()
@@ -222,6 +223,8 @@ namespace Ballance2.Managers
             RegisterGlobalEvent(GameEventNames.EVENT_BEFORE_GAME_QUIT);
             RegisterGlobalEvent(GameEventNames.EVENT_GAME_INIT_ENTRY);
             RegisterGlobalEvent(GameEventNames.EVENT_BASE_MANAGER_INIT_FINISHED);
+            RegisterGlobalEvent(GameEventNames.EVENT_ENTER_SCENSE);
+            RegisterGlobalEvent(GameEventNames.EVENT_BEFORE_LEAVE_SCENSE);
         }
 
         /// <summary>
@@ -349,368 +352,101 @@ namespace Ballance2.Managers
         #region 全局操作控制器
 
         [SerializeField, SetProperty("Actions")]
-        private Dictionary<string, GameAction> actions = null;
-
-        public Dictionary<string, GameAction> Actions { get { return actions; } }
+        private Dictionary<string, GameActionStore> actionStores = null;
 
         /// <summary>
-        /// 注册多个操作
+        /// 注册全局共享数据存储池
         /// </summary>
-        /// <param name="names">操作名称数组</param>
-        /// <param name="handlerNames">接收器名称数组</param>
-        /// <param name="handlers">接收函数数组</param>
-        /// <param name="callTypeChecks">函数参数检查，如果不需要，也可以为null</param>
-        /// <returns>返回注册成功的操作个数</returns>
-        public int RegisterActions(string[] names, string[] handlerNames, GameActionHandlerDelegate[] handlers, string[][] callTypeChecks)
+        /// <param name="name">池名称</param>
+        /// <returns>如果注册成功，返回池对象；如果已经注册，则返回已经注册的池对象</returns>
+        public GameActionStore RegisterActionStore(string packageName)
         {
-            int succCount = 0;
-
-            if (CommonUtils.IsArrayNullOrEmpty(names))
-            {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 names 数组为空");
-                return succCount;
-            }
-            if (CommonUtils.IsArrayNullOrEmpty(handlerNames))
-            {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 handlerNames 数组为空");
-                return succCount;
-            }
-            if (CommonUtils.IsArrayNullOrEmpty(handlers))
-            {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 handlers 数组为空");
-                return succCount;
-            }
-            if (names.Length != handlerNames.Length || handlerNames.Length != handlers.Length
-                || (callTypeChecks != null && callTypeChecks.Length != handlers.Length))
+            GameActionStore store;
+            if (string.IsNullOrEmpty(packageName))
             {
                 GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG,
-                    "RegisterActions 参数数组长度不符\n{0}=={1}=={2}=={3}", 
-                    names.Length, 
-                    handlerNames.Length,
-                    handlers.Length,
-                    callTypeChecks.Length);
-                return succCount;
+                    "RegisterGlobalDataStore name 参数未提供");
+                return null;
             }
-
-            for (int i = 0, c = names.Length; i < c; i++)
+            if (actionStores.ContainsKey(packageName))
             {
-                if (RegisterAction(names[i], new GameHandler(handlerNames[i], handlers[i]),
-                    callTypeChecks == null ? null : callTypeChecks[i]) != null)
-                    succCount++;
+                GameErrorManager.SetLastErrorAndLog(GameError.AlredayRegistered, TAG,
+                    "共享操作仓库 {0} 已经注册", packageName);
+                store = actionStores[packageName];
+                return store;
             }
 
-            return succCount;
+            store = new GameActionStore(packageName);
+            actionStores.Add(packageName, store);
+            return store;
         }
         /// <summary>
-        /// 注册多个操作
+        /// 获取全局共享数据存储池
         /// </summary>
-        /// <param name="names">操作名称数组</param>
-        /// <param name="handlerName">接收器名称（多个接收器名字一样）</param>
-        /// <param name="handlers">接收函数数组</param>
-        /// <param name="callTypeChecks">函数参数检查，如果不需要，也可以为null</param>
-        /// <returns>返回注册成功的操作个数</returns>
-        public int RegisterActions(Dictionary<string, string> names, string handlerName, GameActionHandlerDelegate[] handlers, string[][] callTypeChecks)
-        {
-            int succCount = 0;
-
-            if (CommonUtils.IsDictionaryNullOrEmpty(names))
-            {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 names 数组为空");
-                return succCount;
-            }
-            if (string.IsNullOrEmpty(handlerName))
-            {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 handlerName 为空");
-                return succCount;
-            }
-            if (CommonUtils.IsArrayNullOrEmpty(handlers))
-            {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 handlers 数组为空");
-                return succCount;
-            }
-            if (names.Keys.Count != handlers.Length
-                 || (callTypeChecks != null && callTypeChecks.Length != handlers.Length))
-            {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG,
-                    "RegisterActions 参数数组长度不符\n{0}=={1}=={2}",
-                    names.Count,
-                    handlers.Length,
-                    callTypeChecks.Length);
-                return succCount;
-            }
-
-            int i = 0;
-            foreach (string k in names.Keys)
-            {
-                if (RegisterAction(names[k], new GameHandler(handlerName, handlers[i]),
-                    callTypeChecks == null ? null : callTypeChecks[i]) != null)
-                    succCount++;
-                i++;
-            }
-            return succCount;
-        }
-        /// <summary>
-        /// 注册多个操作
-        /// </summary>
-        /// <param name="names">操作名称数组</param>
-        /// <param name="handlerNames">接收器名称数组</param>
-        /// <param name="luaFunctionHandlers">LUA接收函数数组</param>
-        /// <param name="self">LUA self （当前类，LuaTable），如无可填null</param>
-        /// <param name="callTypeChecks">函数参数检查，如果不需要，也可以为null</param>
-        /// <returns>返回注册成功的操作个数</returns>
-        public int RegisterActions(string[] names, string[] handlerNames, LuaFunction[] luaFunctionHandlers, LuaTable self, string[][] callTypeChecks)
-        {
-            int succCount = 0;
-
-            if (CommonUtils.IsArrayNullOrEmpty(names))
-            {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 names 数组为空");
-                return succCount;
-            }
-            if (CommonUtils.IsArrayNullOrEmpty(handlerNames))
-            {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 handlerNames 数组为空");
-                return succCount;
-            }
-            if (CommonUtils.IsArrayNullOrEmpty(luaFunctionHandlers))
-            {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 luaFunctionHandlers 数组为空");
-                return succCount;
-            }
-            if (names.Length != handlerNames.Length || handlerNames.Length != luaFunctionHandlers.Length
-                 || (callTypeChecks != null && callTypeChecks.Length != luaFunctionHandlers.Length))
-            {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG,
-                    "RegisterActions 参数数组长度不符\n{0}=={1}=={2}=={3}",
-                    names.Length,
-                    handlerNames.Length,
-                    luaFunctionHandlers.Length,
-                    callTypeChecks.Length);
-                return succCount;
-            }
-
-            for (int i = 0, c = names.Length; i < c; i++)
-                if (RegisterAction(names[i], new GameHandler(handlerNames[i], luaFunctionHandlers[i], self),
-                    callTypeChecks == null ? null : callTypeChecks[i]) != null)
-                    succCount++;
-
-            return succCount;
-        }
-        /// <summary>
-        /// 注册多个操作
-        /// </summary>
-        /// <param name="names">操作名称数组</param>
-        /// <param name="handlerName">接收器名（多个接收器名字一样）</param>
-        /// <param name="luaFunctionHandlers">LUA接收函数数组</param>
-        /// <param name="self">LUA self （当前类，LuaTable），如无可填null</param>
-        /// <param name="callTypeChecks">函数参数检查，如果不需要，也可以为null</param>
-        /// <returns>返回注册成功的操作个数</returns>
-        public int RegisterActions(string[] names, string handlerName, LuaFunction[] luaFunctionHandlers, LuaTable self, string[][] callTypeChecks)
-        {
-            int succCount = 0;
-
-            if (CommonUtils.IsArrayNullOrEmpty(names))
-            {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 names 数组为空");
-                return succCount;
-            }
-            if (string.IsNullOrEmpty(handlerName))
-            {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 handlerName 为空");
-                return succCount;
-            }
-            if (CommonUtils.IsArrayNullOrEmpty(luaFunctionHandlers))
-            {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterActions 参数 luaFunctionHandlers 数组为空");
-                return succCount;
-            }
-            if (names.Length != luaFunctionHandlers.Length
-                 || (callTypeChecks != null && callTypeChecks.Length != luaFunctionHandlers.Length))
-            {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG,
-                    "RegisterActions 参数数组长度不符\n{0}=={1}=={2}",
-                    names.Length,
-                    luaFunctionHandlers.Length,
-                    callTypeChecks.Length);
-                return succCount;
-            }
-
-            for (int i = 0, c = names.Length; i < c; i++)
-                if (RegisterAction(names[i], new GameHandler(handlerName, luaFunctionHandlers[i], self),
-                    callTypeChecks == null ? null : callTypeChecks[i]) != null)
-                    succCount++;
-
-            return succCount;
-        }
-
-        /// <summary>
-        /// 注册操作
-        /// </summary>
-        /// <param name="name">操作名称</param>
-        /// <param name="handlerName">接收器名称</param>
-        /// <param name="handler">接收函数</param>
-        /// <param name="callTypeCheck">函数参数检查，数组长度规定了操作需要的参数，
-        /// 数组值是一个或多个允许的类型名字，例如 UnityEngine.GameObject System.String 。
-        /// 如果一个参数允许多种类型，可使用/分隔。
-        /// 如果不需要，也可以为null，当前操作将不会进行类型检查
-        /// </param>
+        /// <param name="name">池名称</param>
         /// <returns></returns>
-        public GameAction RegisterAction(string name, string handlerName, GameActionHandlerDelegate handler, string[] callTypeCheck)
+        public GameActionStore GetActionStore(string packageName)
         {
-            return RegisterAction(name, new GameHandler(handlerName, handler), callTypeCheck);
+            GameActionStore s;
+            actionStores.TryGetValue(packageName, out s);
+            return s;
         }
         /// <summary>
-        /// 注册操作(LUA)
+        /// 释放已注册的全局共享数据存储池
         /// </summary>
-        /// <param name="name">操作名称</param>
-        /// <param name="handlerName">接收器名称</param>
-        /// <param name="luaFunction">LUA接收函数</param>
-        /// <param name="self">LUA self （当前类，LuaTable），如无可填null</param>
-        /// <param name="callTypeCheck">函数参数检查，数组长度规定了操作需要的参数，
-        /// 数组值是一个或多个允许的类型名字，例如 UnityEngine.GameObject System.String 。
-        /// 如果一个参数允许多种类型，可使用/分隔。
-        /// 如果不需要，也可以为null，当前操作将不会进行类型检查
-        /// </param>
+        /// <param name="name">池名称</param>
         /// <returns></returns>
-        public GameAction RegisterAction(string name, string handlerName, LuaFunction luaFunction, LuaTable self, string[] callTypeCheck)
+        public bool UnRegisterActionStore(string packageName)
         {
-            return RegisterAction(name, new GameHandler(handlerName, luaFunction, self), callTypeCheck);
-        }
-        public GameAction RegisterAction(string name, GameHandler handler, string[] callTypeCheck)
-        {
-            if (string.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(packageName))
             {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterAction name 参数未提供");
-                return null;
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG,
+                    "UnRegisterActionStore name 参数未提供");
+                return false;
             }
-            if (handler == null)
+            if (!actionStores.ContainsKey(packageName))
             {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "RegisterAction handler 参数未提供");
-                return null;
-            }
-            if (IsActionRegistered(name))
-            {
-                GameLogger.Warning(TAG, "操作 {0} 已注册", name);
-                GameErrorManager.LastError = GameError.AlredayRegistered;
-                return null;
+                GameErrorManager.SetLastErrorAndLog(GameError.NotRegister, TAG,
+                    "共享操作仓库 {0} 未注册", packageName);
+                return false;
             }
 
-            GameAction gameAction = new GameAction(name, handler, callTypeCheck);
-            actions.Add(name, gameAction);
-            return gameAction;
-        }
-
-        /// <summary>
-        /// 取消注册操作
-        /// </summary>
-        /// <param name="name">操作名称</param>
-        public void UnRegisterAction(string name)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "UnRegisterAction name 参数未提供");
-                return;
-            }
-            GameAction gameAction = null;
-            if (IsActionRegistered(name, out gameAction))
-            {
-                gameAction.Dispose();
-                actions.Remove(name);
-            }
-            else
-            {
-                GameLogger.Warning(TAG, "操作 {0} 未注册", name);
-                GameErrorManager.LastError = GameError.NotRegister;
-            }
-        }
-        /// <summary>
-        /// 取消注册多个操作
-        /// </summary>
-        /// <param name="name">操作名称</param>
-        public void UnRegisterActions(string[] names)
-        {
-            if (CommonUtils.IsArrayNullOrEmpty(names))
-            {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "UnRegisterActions names 参数未提供或数组为空");
-                return;
-            }
-            foreach (string s in names)
-                UnRegisterAction(s);
-        }
-        /// <summary>
-        /// 取消注册多个操作
-        /// </summary>
-        /// <param name="name">操作名称</param>
-        public void UnRegisterActions(Dictionary<string, string> names)
-        {
-            if (CommonUtils.IsDictionaryNullOrEmpty(names))
-            {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "UnRegisterActions names 参数未提供或数组为空");
-                return;
-            }
-            foreach (string s in names.Keys)
-                UnRegisterAction(names[s]);
-        }
-        /// <summary>
-        /// 获取操作是否注册
-        /// </summary>
-        /// <param name="name">操作名称</param>
-        /// <returns>是否注册</returns>
-        public bool IsActionRegistered(string name)
-        {
-            return actions.ContainsKey(name);
-        }
-        /// <summary>
-        /// 获取操作是否注册，如果已注册，则返回实例
-        /// </summary>
-        /// <param name="name">操作名称</param>
-        /// <param name="e">返回的操作实例</param>
-        /// <returns>是否注册</returns>
-        public bool IsActionRegistered(string name, out GameAction e)
-        {
-            if(actions.TryGetValue(name, out e))
-                return true;
-            e = null;
+            actionStores[packageName].Destroy();
+            actionStores.Remove(packageName);
             return false;
         }
         /// <summary>
-        /// 获取操作实例
+        /// 释放已注册的全局共享数据存储池
         /// </summary>
-        /// <param name="name">操作名称</param>
-        /// <returns>返回的操作实例</returns>
-        public GameAction GetRegisteredAction(string name)
+        /// <param name="name">池名称</param>
+        /// <returns></returns>
+        public bool UnRegisterActionStore(GameActionStore store)
         {
-            GameAction a;
-            if (actions.TryGetValue(name, out a))
-                return a;
-            return null;
+            if (!actionStores.ContainsKey(store.PackageName))
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.NotRegister, TAG,
+                    "actionStores {0} 未注册", store.PackageName);
+                return false;
+            }
+            actionStores[store.PackageName].Destroy();
+            globalStore.Remove(store.PackageName);
+            return false;
         }
 
-        /// <summary>
-        /// 调用操作
-        /// </summary>
-        /// <param name="name">目标操作名称</param>
-        /// <param name="param">调用参数</param>
-        /// <returns></returns>
-        public GameActionCallResult CallAction(string name, params object[] param)
+        public GameActionCallResult CallAction(string storeName, string name, params object[] param)
         {
-            GameActionCallResult result = null;
-            GameAction gameAction = null;
-            if (string.IsNullOrEmpty(name))
+            if (!actionStores.ContainsKey(storeName))
             {
-                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "CallAction name 参数未提供");
-                return result;
+                GameErrorManager.SetLastErrorAndLog(GameError.NotRegister, TAG,
+                    "共享操作仓库 {0} 未注册", storeName);
+                return GameActionCallResult.FailResult;
             }
-            if (IsActionRegistered(name, out gameAction)) return CallAction(gameAction, param);
-            else GameErrorManager.SetLastErrorAndLog(GameError.NotRegister, TAG, "操作 {0} 未注册", name);
-            return result;
+            return CallAction(actionStores[storeName], name, param);
         }
-        /// <summary>
-        /// 调用操作
-        /// </summary>
-        /// <param name="action">目标操作实例</param>
-        /// <param name="param">调用参数</param>
-        /// <returns></returns>
+        public GameActionCallResult CallAction(GameActionStore store, string name, params object[] param)
+        {
+            return store.CallAction(name, param);
+        }
         public GameActionCallResult CallAction(GameAction action, params object[] param)
         {
             GameErrorManager.LastError = GameError.None;
@@ -772,25 +508,28 @@ namespace Ballance2.Managers
             return result;
         }
 
+        public GameActionStore CoreActinoStore { get; private set; }
+
         private void UnLoadAllActions()
         {
-            if (actions != null)
+            if (actionStores != null)
             {
-                foreach (var action in actions)
-                    action.Value.Dispose();
-                actions.Clear();
-                actions = null;
+                foreach (var action in actionStores)
+                    action.Value.Destroy();
+                actionStores.Clear();
+                actionStores = null;
             }
         }
         private void InitAllActions()
         {
-            actions = new Dictionary<string, GameAction>();
+            actionStores = new Dictionary<string, GameActionStore>();
 
             //注册内置事件
-            RegisterAction(GameActionNames.CoreActions["QuitGame"], "GameManager", (param) =>
+            CoreActinoStore = RegisterActionStore(GamePartName.Core);
+            CoreActinoStore.RegisterAction("QuitGame", "GameManager", (param) =>
             {
                 GameManager.QuitGame();
-                return GameActionCallResult.CreateActionCallResult(true);
+                return GameActionCallResult.SuccessResult;
             }, null);
         }
 
@@ -865,13 +604,17 @@ namespace Ballance2.Managers
                     "UnRegisterGlobalDataStore name 参数未提供");
                 return false;
             }
+
             if (!globalStore.ContainsKey(name))
             {
                 GameErrorManager.SetLastErrorAndLog(GameError.NotRegister, TAG,
                     "数据共享存储池 {0} 未注册", name);
                 return false;
             }
+
+            globalStore[name].Destroy();
             globalStore.Remove(name);
+
             return false;
         }
         /// <summary>
@@ -887,7 +630,10 @@ namespace Ballance2.Managers
                     "数据共享存储池 {0} 未注册", name);
                 return false;
             }
-            globalStore.Remove(name);
+           
+            globalStore.Remove(store.PoolName);
+            store.Destroy();
+
             return false;
         }
 
@@ -904,8 +650,8 @@ namespace Ballance2.Managers
                 if (param[0].ToString() == "DebugManager")
                 {
                     DebugManager = (IDebugManager)GameManager.GetManager("DebugManager");
-                    DebugManager.RegisterCommand("callaction", OnCommandCallAction, 1, "调用操作 [操作名称] [参数...]");
-                    DebugManager.RegisterCommand("actions", OnCommandShowActions, 0, "显示全局操作");
+                    DebugManager.RegisterCommand("callaction", OnCommandCallAction, 2, "调用操作 [操作所在仓库] [操作名称] [参数...]");
+                    DebugManager.RegisterCommand("actions", OnCommandShowActions, 0, "[showName:string] 显示全局操作 [要显示的仓库,为空则显示所有仓库名称]");
                     DebugManager.RegisterCommand("events", OnCommandShowEvents, 0, "[showHandlers:true/false] 显示全局事件 [是否显示事件接收器]");
                     DebugManager.RegisterCommand("showstore", OnCommandShowStores, 0, "[showParams:true/false] 显示全局数据共享池 [是否显示共享池内所有参数]");
                     DebugManager.RegisterCommand("storedata", OnCommandShowStoreData, 1, "[storeName:string] [paramName:string] 显示全局数据共享池内的参数 [池名称] [要显示的参数名称，如果为空则显示全部] ");
@@ -917,9 +663,9 @@ namespace Ballance2.Managers
 
         private bool OnCommandCallAction(string keyword, string fullCmd, string[] args)
         {
-            string[] arrParams = new string[args.Length - 1];
-            for (int i = 1; i < args.Length; i++) arrParams[i - 1] = args[i];
-            GameActionCallResult rs = CallAction(args[0], 
+            string[] arrParams = new string[args.Length - 2];
+            for (int i = 2; i < args.Length; i++) arrParams[i - 2] = args[i];
+            GameActionCallResult rs = CallAction(args[0], args[1],
                 StringUtils.TryConvertStringArrayToValueArray(arrParams));
             if(rs != null)
             {
@@ -930,15 +676,43 @@ namespace Ballance2.Managers
         }
         private bool OnCommandShowActions(string keyword, string fullCmd, string[] args)
         {
-            StringBuilder s = new StringBuilder();
-            foreach (var a in actions)
+            string showStore = "";
+            if (args != null && args.Length > 0)
+                showStore = args[0];
+
+            if (showStore == "")
             {
-                s.Append('\n');
-                s.Append(a.Key);
-                s.Append(' ');
-                s.Append(a.Value.GameHandler.Name);
+                StringBuilder s = new StringBuilder("Action Stores: ");
+                foreach (var a in actionStores)
+                {
+                    s.Append('\n');
+                    s.Append(a.Key);
+                    s.Append(' ');
+                }
+                GameLogger.Log(TAG, "\nCount {0} : \n{1}", actionStores.Count, s.ToString());
             }
-            GameLogger.Log(TAG, "GameActions count {0} : \n{1}", actions.Count, s.ToString());
+            else
+            {
+                GameActionStore store = GetActionStore(showStore);
+                if(store == null)
+                {
+                    GameLogger.Error(TAG, "Not found store {0}", showStore);
+                    return false;
+                }
+
+                StringBuilder s = new StringBuilder("Action in store: ");
+                s.Append(showStore);
+                foreach (var a in store.Actions)
+                {
+                    s.Append('\n');
+                    s.Append(a.Key);
+                    s.Append(' ');
+                    s.Append(a.Value.GameHandler.Name);
+                }
+
+                GameLogger.Log(TAG, "\nCount {0} : \n{1}", actionStores.Count, s.ToString());
+            }
+
             return true;
         }
         private bool OnCommandShowEvents(string keyword, string fullCmd, string[] args)

@@ -77,17 +77,27 @@ namespace Ballance2.CoreGame.Managers
         }
         private void InitShareGlobalStore()
         {
-            GameManager.RegisterManagerRedayCallback("BallManager", (self, store, manager) =>
+            GameManager.RegisterManagerRedayCallback("BallManager", (self, store, actionStore, manager) =>
             {
                 CurrentBall = store.GetParameter("CurrentBall");
                 IsControlling = store.GetParameter("IsControlling");
             });
         }
-        private void InitActions()
+        private void InitCamActions(GameActionStore actionStore)
         {
             //注册操作
-            GameManager.GameMediator.RegisterActions(
-                GameActionNames.CamManager,
+            actionStore.RegisterActions(
+                new string[] {
+                    "CamStart",
+                    "CamClose",
+                    "CamSetNoLookAtBall",
+                    "CamSetLookAtBall",
+                    "CamSetJustLookAtBall",
+                    "CamRoteLeft",
+                    "CamRoteRight",
+                    "CamRoteSpace",
+                    "CamRoteSpaceBack",
+                },
                 TAG,
                 new GameActionHandlerDelegate[]
                 {
@@ -131,16 +141,11 @@ namespace Ballance2.CoreGame.Managers
                 null
              );
         }
-        private void UnInitActions()
-        {
-            GameManager.GameMediator.UnRegisterActions(GameActionNames.CamManager);
-        }
 
         #endregion
 
         protected override void InitPre()
         {
-            InitActions();
             InitShareGlobalStore();
             base.InitPre();
         }
@@ -149,7 +154,11 @@ namespace Ballance2.CoreGame.Managers
             InitGlobaShareAndStore(store);
             return base.InitStore(store);
         }
-
+        protected override bool InitActions(GameActionStore actionStore)
+        {
+            InitCamActions(actionStore);
+            return base.InitActions(actionStore);
+        }
         public override bool InitManager()
         {
             ballCamera.gameObject.SetActive(false);
@@ -158,7 +167,6 @@ namespace Ballance2.CoreGame.Managers
         public override bool ReleaseManager()
         {
             CamClose();
-            UnInitActions();
             return true;
         }
 

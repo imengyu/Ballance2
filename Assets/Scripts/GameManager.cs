@@ -251,6 +251,27 @@ namespace Ballance2
             GameErrorManager.LastError = GameError.NotRegister;
             return false;
         }
+        /// <summary>
+        /// 手动释放模组包内注册的管理器
+        /// </summary>
+        /// <param name="name">模组包包名</param>
+        public static void DestroyManagersInMod(string modPackageName)
+        {
+            for (int i = GameManagerWorker.managers.Count - 1; i >= 0; i--)
+            {
+                BaseManager m = GameManagerWorker.managers[i];
+                if (m.IsLuaModul && ((BaseManagerLuaWapper)m).LuaObjectHost.LuaModName == modPackageName)
+                {
+                    if (m.OldManager != null)
+                        GameManagerWorker.managers.Add(m.OldManager);
+
+                    m.ReleaseManager();
+                    GameManagerWorker.managers.Remove(m);
+                    UnityEngine.Object.Destroy(m);
+                    GameLogger.Log(TAG, "Manager destroyed : {0}:{1}", m.GetName(), m.GetSubName());
+                }
+            }
+        }
 
         #endregion
 
@@ -374,7 +395,7 @@ namespace Ballance2
                 UIManager = (UIManager)RegisterManager(typeof(UIManager));
                 RegisterManager(typeof(DebugManager));
                 ModManager = (ModManager)RegisterManager(typeof(ModManager)); 
-                RegisterManager(typeof(SoundManager));
+                SoundManager = (SoundManager)RegisterManager(typeof(SoundManager));
 
                 if (Mode != GameMode.MinimumDebug)
                 {
@@ -425,10 +446,7 @@ namespace Ballance2
         private static void Application_lowMemory()
         {
             GameLogger.Log(TAG, "lowMemory !");
-            if (ModManager != null)
-            {
-                ModManager.UnLoadNotUsedMod();
-            }
+            if (ModManager != null) ModManager.UnLoadNotUsedMod(true);
         }
         private static bool Application_wantsToQuit()
         {
@@ -445,7 +463,7 @@ namespace Ballance2
         //通知进行下一步内核加载
         private static void CallGameInit()
         {
-            GameActionCallResult rs = GameMediator.CallAction(GameActionNames.CoreActions["ACTION_GAME_INIT"]);
+            GameActionCallResult rs = GameMediator.CallAction("core.gameinit", "ACTION_GAME_INIT");
             if (rs == null)
             {
                 GameLogger.Error(TAG, "Not found handler for ACTION_GAME_INIT!");
@@ -490,6 +508,24 @@ namespace Ballance2
         public static void CloseGameManagerAlert()
         {
             UIManager.CloseWindow(UIManager.FindWindowById(gameManagerAlertDialogId));
+        }
+        /// <summary>
+        /// 通知场景变更
+        /// </summary>
+        /// <param name="scense">新场景</param>
+        public static void NotifyGameCurrentScenseChanged(GameCurrentScense scense)
+        {
+            if (scense != CurrentScense)
+            {
+                GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_BEFORE_LEAVE_SCENSE, "*", CurrentScense);
+                
+                CurrentScense = scense;
+               
+                if (ModManager != null)
+                    ModManager.FlushModEnableStatus(false);
+                
+                GameManagerWorker.ReqNotifyScenseChanged();
+            }
         }
 
         internal static void ClearScense()
@@ -581,6 +617,8 @@ namespace Ballance2
 
         #region  游戏基础管理器快速索引
 
+        public static IICManager ICManager { get; set; }
+        public static ISoundManager SoundManager { get; private set; }
         public static IModManager ModManager { get; private set; }
         public static UIManager UIManager { get; private set; }
         public static GameMediator GameMediator { get; private set; }
@@ -633,10 +671,10 @@ namespace Ballance2
     {
         None,
         Intro,
-        Level,
-        LevelLoader,
-        LevelEditor,
-        LevelViewer,
-        MenuLevel,
+        Level = 0x4,
+        LevelLoader = 0x8,
+        LevelEditor = 0x10,
+        LevelViewer = 0x20,
+        MenuLevel = 0x2,
     }
 }

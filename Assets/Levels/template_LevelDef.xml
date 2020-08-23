@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Level>
+  <!--
+  
+    提示，这是一个关卡的定义文件模板，你可以进行修改
+    改好后可删除绿色的注释，以减小文件体积
+  
+    关卡基础信息
+
+    Name：关卡名称
+    Author：作者的名字
+    Introduction：关卡介绍
+    Logo：关卡的logo图片，这个图片必须放在 LevelDef.xml 相同目录下
+    Version：关卡版本，必须是数字和.组成例如 1.0.2
+    Sectors：关卡节数
+    Difficulty：关卡难度，1-10，总共显示为五颗星, 例如 1为 0.5颗星、5 为 2.5 颗星、10 为 5 颗星
+    HelperLink：一个向用户提供帮助的链接，这个链接会显示在关卡信息界面，用户点击后可以打开你的网页。
+            你可以在这里放关卡介绍网址、关卡视频教程等等。
+  -->
+  <BaseInfo>
+    <Name>Test Level</Name>
+    <Author>mengyu</Author>
+    <Introduction>一个测试关卡</Introduction>
+    <Logo>LevelLogo.png</Logo>
+    <Version>1.0</Version>
+    <Difficulty>10</Difficulty>
+    <Sectors>4</Sectors>
+    <HelperLink>https://imengyu.top/ballance2/help/MakeLevel</HelperLink>
+    <!--模组依赖-->
+    <Dependencies>
+      <!--
+        如果你的关卡依赖某些模组，可在这里写明。（如果用户没有模组，会提示用户）
+        name ：依赖的包名
+        minVer ：依赖的模块最低版本，如果模块低于你设置的版本，将会抛出错误。可不写
+        mustLoad：表示这个模组包是否是必须要加载的，如果为true，依赖加载失败将会抛出错误
+      -->
+      <!--
+      <Package name="core.scenes.menulevel.ui" minVer="1.0" mustLoad="true" ></Package>
+      -->
+    </Dependencies>
+  </BaseInfo>
+
+  <!--
+  关卡基本参数
+  
+  BasePrefab：关卡的基础Prefab文件名，可放在LevelDef.xml 相同目录下
+  Sky: 关卡的天空，如果写 A-K 则使用Ballance原版关卡的天空，写Custom则可以使用自定义天空
+  SkyLayer: 云层，可选 Flat（平面）/ Votex（漩涡）/
+          Custom（自定义，不会替换你的SkyLayer，而是会直接复制材质到你的SkyLayer上面）/None（不显示）。默认为 Flat
+  Light：关卡光照参数,分为两个灯，中间是光照颜色参数（RGBA），hideLight如果为True则隐藏该光照（可以做暗黑关卡）
+  Energy：关卡分的参数
+          StartLife：关卡开始的生命值 默认3
+          StartScore：关卡开始的分数 默认1000
+          LevelScore：关卡完成得到的分数 默认1000
+  MusicTheme：背景音乐，可选原版的 1-5 个种类，为 None 则没有背景音乐，为 Custom 使用MusicCustom 中您自定义的音乐
+  ErrorSolve: 当关卡发生加载错误时（比如模组不兼容，机关丢失等等）如何继续处理，可选 
+        Continue     忽略错误继续加载
+        Break            报告用户发生了错误，停止加载
+        AskForUser   询问用户发生了错误，是否要继续游戏（默认）
+  -->
+  <Game>
+    <BasePrefab>LevelTest.prefab</BasePrefab>
+    <Sky>A</Sky>
+    <!--
+    使用自定义天空，须将5个面的贴图写进去
+    <SkyCustom>
+        <SkyL>左.bmp</SkyL>
+        <SkyR>右.bmp</SkyR>
+        <SkyU>上.bmp</SkyU>
+        <SkyD>下.bmp</SkyD>
+        <SkyF>前.bmp</SkyF>
+        <SkyB>后.bmp</SkyB>
+    </Sky>
+    -->
+    <SkyLayer>Flat</SkyLayer>
+    <Light>
+      <L hideLight="False" intensity="0.3">255,255,255,255</L>
+      <R hideLight="False" intensity="0.3">255,255,255,255</R>
+      <Shadow hideLight="False" intensity="0.4">255,255,255,255</Shadow>
+    </Light>
+    <Energy>
+      <StartLife>3</StartLife>
+      <StartScore></StartScore>
+      <LevelScore></LevelScore>
+    </Energy>
+    <MusicTheme>5</MusicTheme>
+    <!--
+    自定义音乐：
+    <MusicCustom>
+      <Music>音乐1.wav</Music>
+      <Music>音乐2.wav</Music>
+      <Music>音乐3.wav</Music>
+    </MusicCustom> 
+    -->
+    <ErrorSolve>AskForUser</ErrorSolve>
+  </Game>
+  
+  <!--
+  关卡归组参数
+  
+  Moduls: 机关归组
+          
+          添加xml节点写机关组的名称，如果有重复的机关，请添加 packageName 限定机关所在包。
+          在节点中写属于此组的物体名称, 使用 ; 分隔
+          例如： 
+              <MyModul packageName="core.xx.xx">MyModul_01;MyModul_02;MyModul_03;</MyModul>
+              <P_Box>P_Box_01;P_Box_02;P_Box_03;</P_Box>
+              
+  Floors:    路面归组
+  
+          路面组，如果要添加自定义路面类型，请开发模组包。详情请参考模组包开发。
+  
+  ColSounds:  声音归组
+  
+        路面声音组，如果要添加自定义路面声音类型，请开发模组包。详情请参考模组包开发。
+  
+  LevelStart：PS_FourFlames_01   开始的四个火焰定位器（只能有一个）
+  LevelEnd：PE_Balloon_01            结束的飞艇定位器（只能有一个）
+  ResetPoints：出生点。数量必须和小节数相同
+  Sectors：小节，
+          在每个小节中写在本小节激活的机关。
+          sectorStart：激活这个小节的火焰定位器。
+          
+          注：LevelEnd默认在最后一个小节激活、LevelStart默认在第一个小节激活，你可以不用在小节中写明。
+          你也可以将LevelEnd设置在其他小节激活。
+  
+  -->
+  <Groups>
+    <Moduls>
+      <P_Box></P_Box>
+      <P_Modul_34></P_Modul_34>
+      <P_Tranfo_Wood></P_Tranfo_Wood>
+      <MyModul packageName="com.myname.mymod"></MyModul>
+      
+    </Moduls>
+    <Floors>
+      <Floor></Floor>
+      <FloorWood></FloorWood>
+      <Rail></Rail>
+    </Floors>
+    <ColSounds>
+      <Floor></Floor>
+      <FloorWood></FloorWood>
+      <Rail></Rail>
+    </ColSounds>
+
+    <LevelStart>PS_FourFlames_01</LevelStart>
+    <LevelEnd>PE_Balloon_01</LevelEnd>
+    <ResetPoints>
+      <ResetPoint>PR_ResetPoint_01</ResetPoint>
+      <ResetPoint>PR_ResetPoint_02</ResetPoint>
+      <ResetPoint>PR_ResetPoint_03</ResetPoint>
+      <ResetPoint>PR_ResetPoint_04</ResetPoint>
+    </ResetPoints>
+    
+    <Sectors>
+      <Sector>
+        <Object>P_Box_01</Object>
+      </Sector>
+      <Sector sectorStart="PC_TwoFlames_01">
+        <Object>P_Box_02</Object>
+        <Object>P_Box_03</Object>
+      </Sector>
+      <Sector sectorStart="PC_TwoFlames_02"></Sector>
+      <Sector sectorStart="PC_TwoFlames_03"></Sector>
+    </Sectors>
+    
+  </Groups>
+   
+</Level>

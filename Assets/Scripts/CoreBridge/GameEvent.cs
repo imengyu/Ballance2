@@ -95,12 +95,30 @@ namespace Ballance2.CoreBridge
         public const string EVENT_GAME_INIT_TAKE_OVER_CONTROL = "e:base_game_init_take_over_control";
 
         /// <summary>
+        /// 当离开场景时发生事件。
+        /// </summary>
+        /// <remarks>
+        /// 事件参数：
+        /// [0] string ：将要离开的场景
+        /// </remarks>
+        public const string EVENT_BEFORE_LEAVE_SCENSE = "e:BEFORE_LEAVE_SCENSE";
+
+        /// <summary>
+        /// 当进入一个场景时发生事件。
+        /// </summary>
+        /// <remarks>
+        /// 事件参数：
+        /// [0] string ：将要进入的场景
+        /// </remarks>
+        public const string EVENT_ENTER_SCENSE = "e:EVENT_ENTER_SCENSE";
+
+        /// <summary>
         /// gameinit 完成
         /// </summary>
         /// <remarks>
         /// 事件参数：无
         /// </remarks>
-        public const string EVENT_GAME_INIT_FINISH = "e:init:gameinit_finish";
+        public const string EVENT_ENTER_MENULEVEL = "e:init:enter_menulevel";
 
         /// <summary>
         /// 模组加载成功
@@ -153,6 +171,14 @@ namespace Ballance2.CoreBridge
         public const string EVENT_SCREEN_SIZE_CHANGED = "e:core:screen_size_changed";
 
 
-
+        /// <summary>
+        /// 进入关卡加载器
+        /// 在此事件中可以对关卡加载器进行扩展注册
+        /// </summary>
+        /// <remarks>
+        /// 事件参数：
+        /// 【0】ILevelLoader 关卡加载器实例
+        /// </remarks>
+        public const string EVENT_ENTER_LEVEL_LOADER = "e:core:enter_level_loader";
     }
 }

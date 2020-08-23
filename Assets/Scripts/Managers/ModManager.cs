@@ -13,6 +13,7 @@ using Ballance2.Interfaces;
 using System.Xml;
 using System.Collections;
 using Ballance2.Config;
+using Ballance2.CoreGame.GamePlay;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -34,6 +35,9 @@ namespace Ballance2.Managers
         public override bool InitManager()
         {
             gameMods = new List<GameMod>();
+            gameLevels = new List<GameLevel>();
+            ModDefCustomPropertySolver = new Dictionary<string, ModDefCustomPropSolveDelegate>();
+            LevelDefCustomPropertySolver = new Dictionary<string, LevelDefCustomPropSolveDelegate>();
             LoadModEnableStatusList();
 
             GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_MOD_LOAD_FAILED);
@@ -49,6 +53,7 @@ namespace Ballance2.Managers
             SaveModSettings();
             SaveModEnableStatusList();
             DestroyModEnableStatusList();
+
             if (gameMods != null)
             {
                 foreach (GameMod gameMod in gameMods)
@@ -56,6 +61,24 @@ namespace Ballance2.Managers
                 gameMods.Clear();
                 gameMods = null;
             }
+            if (gameLevels != null)
+            {
+                foreach (GameLevel gameLevel in gameLevels)
+                    gameLevel.Destroy();
+                gameLevels.Clear();
+                gameLevels = null;
+            }
+            if (ModDefCustomPropertySolver != null)
+            {
+                ModDefCustomPropertySolver.Clear();
+                ModDefCustomPropertySolver = null;
+            }
+            if (LevelDefCustomPropertySolver != null)
+            {
+                LevelDefCustomPropertySolver.Clear();
+                LevelDefCustomPropertySolver = null;
+            }
+
             return true;
         }
 
@@ -69,11 +92,62 @@ namespace Ballance2.Managers
             }
         }
 
+        #region 关卡管理
+
+        private List<GameLevel> gameLevels = null;
+
+        /// <summary>
+        /// 获取所有已注册模组数
+        /// </summary>
+        /// <returns></returns>
+        public int GetAllLevelCount() { return gameLevels.Count; }
+        /// <summary>
+        /// 注册一个关卡文件
+        /// </summary>
+        /// <param name="path">文件路径</param>
+        /// <returns></returns>
+        public GameLevel RegisterLevel(string path)
+        {
+            GameLevel level = FindLevel(path);
+            if (level != null)
+                return level;
+            level = new GameLevel(path, this);
+            if (!level.Init())
+                return null;
+
+            GameLogger.Log(TAG, "Register level \"{0}\"", level);
+            return level;
+        }
+        /// <summary>
+        /// 查找已注册的关卡
+        /// </summary>
+        /// <param name="path">文件路径</param>
+        /// <returns></returns>
+        public GameLevel FindLevel(string path)
+        {
+            foreach (GameLevel l in gameLevels)
+                if (l.FilePath == path)
+                    return l;
+            return null;
+        }
+        /// <summary>
+        /// 移除已注册的关卡
+        /// </summary>
+        /// <param name="path">文件路径</param>
+        public void RemoveLevel(string path)
+        {
+            GameLevel level = FindLevel(path);
+            if (level != null)
+                gameLevels.Remove(level);
+        }
+
+        #endregion
+
         #region 模组包管理
 
         // 所有模组包
         private List<GameMod> gameMods = null;
-        private GameMod _CurrentLoadingMod = null;
+        private List<GameMod> _CurrentLoadingMod = new List<GameMod>();
         private bool _NoModMode = false;
 
         /// <summary>
@@ -97,7 +171,7 @@ namespace Ballance2.Managers
         /// <summary>
         /// 获取当前正在加载的模组
         /// </summary>
-        public GameMod CurrentLoadingMod { get { return _CurrentLoadingMod; }  }
+        public List<GameMod> CurrentLoadingMod { get { return _CurrentLoadingMod; }  }
 
         /// <summary>
         /// 加载模组包
@@ -421,6 +495,31 @@ namespace Ballance2.Managers
             }
         }
 
+        public Dictionary<string, ModDefCustomPropSolveDelegate> ModDefCustomPropertySolver { get; private set; } = null;
+        public Dictionary<string, LevelDefCustomPropSolveDelegate> LevelDefCustomPropertySolver { get; private set; } = null;
+
+        public void RegisterModDefCustomPropertySolver(string propName, ModDefCustomPropSolveDelegate modDefCustomPropSolveDelegate)
+        {
+            if (!ModDefCustomPropertySolver.ContainsKey(propName))
+                ModDefCustomPropertySolver.Add(propName, modDefCustomPropSolveDelegate);
+        }
+        public void UnRegisterModDefCustomPropertySolver(string propName)
+        {
+            if (!ModDefCustomPropertySolver.ContainsKey(propName))
+                ModDefCustomPropertySolver.Remove(propName);
+        }
+        public void RegisterLevelDefCustomPropertySolver(string propName, LevelDefCustomPropSolveDelegate levelDefCustomPropSolveDelegate)
+        {
+            if (!LevelDefCustomPropertySolver.ContainsKey(propName))
+                LevelDefCustomPropertySolver.Add(propName, levelDefCustomPropSolveDelegate);
+        }
+        public void UnRegisterLevelDefCustomPropertySolver(string propName)
+        {
+            if (!LevelDefCustomPropertySolver.ContainsKey(propName))
+                LevelDefCustomPropertySolver.Remove(propName);
+        }
+
+
         #region 模组包启用管理
 
         private List<string> modEnableStatusList = null;
@@ -430,6 +529,18 @@ namespace Ballance2.Managers
         public string[] GetModEnableStatusList() { return modEnableStatusList.ToArray(); }
         public bool IsModEnabled(GameMod mod) { return IsModEnabled(mod.PackageName); }
         public bool IsModEnabled(string packageName) { return modEnableStatusList.Contains(packageName); }
+        public bool IsModNotInCurrentRunningMask(GameMod mod)
+        {
+            return (((int)mod.ModRunType & (int)GameManager.CurrentScense) != 0);
+        }
+        public bool IsAnyModLoading()
+        {
+            return _CurrentLoadingMod.Count > 0;
+        }
+        public bool IsNoneModLoading()
+        {
+            return _CurrentLoadingMod.Count == 0;
+        }
 
         private void LoadModEnableStatusList()
         {
@@ -503,26 +614,29 @@ namespace Ballance2.Managers
         }
 
         //释放已经禁用的模组，加载启用的模组
-        internal IEnumerator FlushModEnableStatus()
+        public IEnumerator FlushModEnableStatus(bool unloadNotInMask)
         {
             foreach(GameMod m in gameMods)
             {
                 if(!m.IsModInitByGameinit)
                 {
-                    if (IsModEnabled(m.PackageName) && m.LoadStatus == GameModStatus.NotInitialize)
+                    if ((IsModEnabled(m.PackageName) || IsModNotInCurrentRunningMask(m))
+                        && m.LoadStatus == GameModStatus.NotInitialize)
                         yield return StartCoroutine(m.LoadInternal());
                 }
             }
-            UnLoadNotUsedMod();
+            UnLoadNotUsedMod(unloadNotInMask);
             yield break;
         }
-        public void UnLoadNotUsedMod()
+        public void UnLoadNotUsedMod(bool unloadNotInMask)
         {
             foreach (GameMod m in gameMods)
             {
                 if (!m.IsModInitByGameinit)
                 {
-                    if (!IsModEnabled(m.PackageName) && m.LoadStatus == GameModStatus.InitializeSuccess)
+                    if ((!IsModEnabled(m.PackageName)
+                        || (unloadNotInMask && !IsModNotInCurrentRunningMask(m)))
+                        && m.LoadStatus == GameModStatus.InitializeSuccess)
                         m.UnLoad();
                 }
             }

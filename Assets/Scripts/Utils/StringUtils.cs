@@ -129,6 +129,22 @@ namespace Ballance2.Utils
                     Color nowColor;
                     if (ColorUtility.TryParseHtmlString(color, out nowColor))
                         return nowColor;
+                    else if(color.Contains(","))
+                    {
+                        string[] s = color.Split(',');
+                        if (s.Length >= 3)
+                        {
+                            int r = 0, g = 0, b = 0, a = 255;
+                            int.TryParse(s[0], out r);
+                            int.TryParse(s[1], out g);
+                            int.TryParse(s[2], out b);
+
+                            if (s.Length >= 4) int.TryParse(s[2], out a);
+
+                            nowColor = new Color((float)r / 255, (float)g / 255, (float)b / 255, (float)a / 255);
+                            return nowColor;
+                        }
+                    }
                     break;
             }
             return Color.black;

@@ -13,7 +13,6 @@ TagManager:
   - FloorCustom2
   - FloorCustom3
   - FloorCustom4
-  - Rail
   - CustomTag1
   - CustomTag2
   - CustomTag3
@@ -39,11 +38,6 @@ TagManager:
   - FloorCustom8
   - FloorCustom9
   - FloorCustom10
-  - RailCustom1
-  - RailCustom2
-  - RailCustom3
-  - RailCustom4
-  - RailCustom5
   - BallPiecesPaper
   - BallPiecesWood
   - BallPiecesStone
@@ -52,6 +46,7 @@ TagManager:
   - BallPiecesCustom3
   - BallPiecesCustom4
   - BallPiecesCustom5
+  - FloorRail
   layers:
   - Default
   - TransparentFX

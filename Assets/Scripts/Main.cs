@@ -64,11 +64,11 @@ namespace Ballance2.Main
         [Reorderable("GameAssets", true, "Name")]
         public List<GameManager.GameAssetsInfo> GameAssets = null;
 
-        public GameObject GlobalGamePermissionTipDialog;
-        public GameObject GlobalGameUserAgreementTipDialog;
+        public GameObject GlobalGamePermissionTipDialog = null;
+        public GameObject GlobalGameUserAgreementTipDialog = null;
 
-        private bool GlobalGamePermissionTipDialogClosed;
-        private bool GlobalGameUserAgreementTipDialogClosed;
+        private bool GlobalGamePermissionTipDialogClosed = false;
+        private bool GlobalGameUserAgreementTipDialogClosed = false;
 
         void Start()
         {

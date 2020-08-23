@@ -129,6 +129,10 @@ namespace Ballance2.Utils
         /// </summary>
         AlredayRegistered,
         /// <summary>
+        /// 功能还没有完成
+        /// </summary>
+        NotFinished,
+        /// <summary>
         /// 部件、模组、模块未注册
         /// </summary>
         NotRegister,

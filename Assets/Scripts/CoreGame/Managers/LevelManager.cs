@@ -17,6 +17,15 @@ namespace Ballance2.GameCore
 
         }
 
+        protected override bool InitActions(GameActionStore actionStore)
+        {
+            actionStore.RegisterAction("ACTION_DEBUG_CORE",  TAG, (param) =>
+            {
+                StartDebugCore((GameObject)param[0]);
+                return GameActionCallResult.CreateActionCallResult(true);
+            }, new string[] { "UnityEngine.GameObject" });
+            return base.InitActions(actionStore);
+        }
         protected override bool InitStore(Store store)
         {
             InitGlobaShareAndStore(store);
@@ -24,7 +33,6 @@ namespace Ballance2.GameCore
         }
         protected override void InitPre()
         {
-            InitActions();
             base.InitPre();
         }
 
@@ -53,36 +61,25 @@ namespace Ballance2.GameCore
         }
         public override bool ReleaseManager()
         {
-            UnInitActions();
             return true;
         }
 
-        private GameActionCallResult OnCallStartDebugCore(params object[] param)
-        {
-            StartDebugCore((GameObject)param[0]);
-            return GameActionCallResult.CreateActionCallResult(true);
-        }
 
-        private void InitActions()
-        {
-            GameManager.GameMediator.RegisterAction(GameActionNames.CoreActions["ACTION_DEBUG_CORE"],
-                   TAG, OnCallStartDebugCore, new string[] { "UnityEngine.GameObject" });
-        }
-        private void UnInitActions()
-        {
-            GameManager.GameMediator.UnRegisterAction(GameActionNames.CoreActions["ACTION_DEBUG_CORE"]);
-        }
+
+
+
 
         private void StartDebugCore(GameObject basePrefab)
         {
             GameManager.SetGameBaseCameraVisible(false);
             GameCloneUtils.CloneNewObjectWithParent(basePrefab, GameManager.GameRoot.transform, "DebugFloor");
-            GameManager.GameMediator.CallAction(GameActionNames.CamManager["CamStart"]);
+            GameManager.GameMediator.CallAction(GamePartName.CamManager, "CamStart");
             ResetEnergy();
         }
 
         private int life = 3;
         private int score = 1000;
+        private bool gameCounter = false;
 
         private void ResetEnergy()
         {
@@ -90,6 +87,18 @@ namespace Ballance2.GameCore
             score = 1000;
         }
         private void StartCounter()
+        {
+            gameCounter = true;
+        }
+        private void StopCounter()
+        {
+            gameCounter = false;
+        }
+
+
+
+
+        private void Update()
         {
             
         }

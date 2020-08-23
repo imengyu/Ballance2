@@ -1,7 +1,7 @@
 GameManager = Ballance2.GameManager
 GameLogger = Ballance2.GameLogger
 GameEventNames = Ballance2.CoreBridge.GameEventNames
-GameActionNames = Ballance2.CoreBridge.GameActionNames
+GamePartName = Ballance2.CoreBridge.GamePartName
 StringUtils = Ballance2.Utils.StringUtils
 GameSettingsManager = Ballance2.Config.GameSettingsManager
 GameActionCallResult = Ballance2.CoreBridge.GameActionCallResult
@@ -165,7 +165,7 @@ function LoadGameSettingsUI()
   ------------------
 
   -- 注册操作
-  GameManager.GameMediator:RegisterAction(GameActionNames.CoreActions["ShowSettings"], "core.ui", function(p)
+  GameManager.GameMediator:RegisterAction(GamePartName.Core, "ShowSettings", "core.ui", function(p)
     pageOld = p
     UIManager:GotoUIPage(pageSettings.PagePath)
     return GameActionCallResult.CreateActionCallResult(true, nil)
