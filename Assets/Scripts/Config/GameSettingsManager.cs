@@ -2,6 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+* Copyright (c) 2020  mengyu
+* 
+* 模块名：     
+* GameSettingsManager.cs
+* 
+* 用途：
+* 游戏设置管理器，管理整个游戏的设置
+* 
+* 通过 GameSettingsManager.GetSettings("com.your.packagename") 获取设置执行器
+* 设置执行器可调用 RegisterSettingsUpdateCallback 注册设置更改信息
+* UI通过 NotifySettingsUpdate 通知设置更改信息
+* 
+* 作者：
+* mengyu
+* 
+* 更改历史：
+* 2020-1-12 创建
+* 
+*/
+
 namespace Ballance2.Config
 {
     /// <summary>
@@ -12,12 +33,12 @@ namespace Ballance2.Config
     {
         private const string TAG = "GameSettingsManager";
 
-        private static Dictionary<string, GameSettingsActuator> settingsActuators = new Dictionary<string, GameSettingsActuator>();
+        private static Dictionary<string, GameSettingsActuator> settingsActuators = null;
 
         /// <summary>
-        /// 获取设置
+        /// 获取设置执行器
         /// </summary>
-        /// <param name="packageName">当前包名</param>
+        /// <param name="packageName">设置所使用包名</param>
         /// <returns></returns>
         public static GameSettingsActuator GetSettings(string packageName)
         {
@@ -39,7 +60,7 @@ namespace Ballance2.Config
 
         internal static void Init()
         {
-
+            settingsActuators = new Dictionary<string, GameSettingsActuator>();
         }
         internal static void Destroy()
         {
@@ -50,55 +71,61 @@ namespace Ballance2.Config
         }
     }
 
+    /// <summary>
+    /// 设置执行器
+    /// </summary>
     [SLua.CustomLuaClass]
     public class GameSettingsActuator
     {
         private const string TAG = "GameSettingsActuator";
         private string basePackName = "unknow";
 
+        /// <summary>
+        /// 创建设置执行器
+        /// </summary>
+        /// <param name="packageName">设置所在包名</param>
         public GameSettingsActuator(string packageName)
         {
             basePackName = packageName;
         }
 
-        public void SetInt(string key, int value)
+        public virtual void SetInt(string key, int value)
         {
             PlayerPrefs.SetInt(basePackName + "." + key, value);
         }
-        public int GetInt(string key, int defaultValue)
+        public virtual int GetInt(string key, int defaultValue)
         {
             return PlayerPrefs.GetInt(basePackName + "." + key, defaultValue);
         }
 
-        public void SetString(string key, string value)
+        public virtual void SetString(string key, string value)
         {
             PlayerPrefs.SetString(basePackName + "." + key, value);
         }
-        public string GetString(string key, string defaultValue)
+        public virtual string GetString(string key, string defaultValue)
         {
             return PlayerPrefs.GetString(basePackName + "." + key, defaultValue);
         }
 
-        public void SetFloat(string key, float value)
+        public virtual void SetFloat(string key, float value)
         {
             PlayerPrefs.SetFloat(basePackName + "." + key, value);
         }
-        public float GetFloat(string key, float defaultValue)
+        public virtual float GetFloat(string key, float defaultValue)
         {
             return PlayerPrefs.GetFloat(basePackName + "." + key, defaultValue);
         }
 
-        public void SetBool(string key, bool value)
+        public virtual void SetBool(string key, bool value)
         {
             PlayerPrefs.SetString(basePackName + "." + key, value.ToString());
         }
-        public bool GetBool(string key, bool defaultValue = false)
+        public virtual bool GetBool(string key, bool defaultValue = false)
         {
             return bool.Parse(PlayerPrefs.GetString(basePackName + "." + key, defaultValue.ToString()));
         }
 
         private List<SettingUpdateCallbackData> settingUpdateCallbacks = new List<SettingUpdateCallbackData>();
-
         private struct SettingUpdateCallbackData
         {
             public string groupName;

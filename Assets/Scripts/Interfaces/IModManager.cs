@@ -6,10 +6,10 @@ using System.Collections.Generic;
 
 namespace Ballance2.Interfaces
 {
-    [SLua.CustomLuaClass]
     /// <summary>
     /// 模组管理器
     /// </summary>
+    [SLua.CustomLuaClass]
     public interface IModManager
     {
         /// <summary>

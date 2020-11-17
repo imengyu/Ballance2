@@ -5,10 +5,29 @@ using System.Diagnostics;
 using System.IO;
 using UnityEngine;
 
+/*
+* Copyright (c) 2020  mengyu
+* 
+* 模块名：   
+* GameLogger.cs
+* 
+* 用途：
+* 全局日志类
+* 用于输出日志至控制台或文件。
+* 
+* 作者：
+* mengyu
+* 
+* 更改历史：
+* 2020-4-12 创建
+* 
+*/
+
 namespace Ballance2
 {
     /// <summary>
-    /// 日志和输出
+    /// 全局日志类。
+    /// 此类可以将日志写入控制台或是文件
     /// </summary>
     [SLua.CustomLuaClass]
     public static class GameLogger
@@ -17,6 +36,10 @@ namespace Ballance2
         private static bool logToFile = false;
         private static StreamWriter logFile = null;
 
+        /// <summary>
+        /// 初始化日志记录器。
+        /// 请勿调用，此方法由 GameManager 调用。
+        /// </summary>
         public static void InitLogger()
         {
             logDatas = new List<LogData>();
@@ -38,6 +61,10 @@ namespace Ballance2
                 }
             }
         }
+        /// <summary>
+        /// 销毁日志记录器。
+        /// 请勿调用，此方法由 GameManager 调用。
+        /// </summary>
         public static void DestroyLogger()
         {
             on = false;
@@ -51,75 +78,167 @@ namespace Ballance2
             logDatas = null;
         }
 
+        /// <summary>
+        /// 写入日志
+        /// </summary>
+        /// <param name="tag">标签</param>
+        /// <param name="message">信息字符串</param>
         public static void Log(string tag, string message)
         {
             WriteLog(LogType.Text, tag, message);
         }
+        /// <summary>
+        /// 写入警告日志
+        /// </summary>
+        /// <param name="tag">标签</param>
+        /// <param name="message">信息字符串</param>
         public static void Warning(string tag, string message)
         {
             WriteLog(LogType.Warning, tag, message);
         }
+        /// <summary>
+        /// 写入错误日志
+        /// </summary>
+        /// <param name="tag">标签</param>
+        /// <param name="message">信息字符串</param>
         public static void Error(string tag, string message)
         {
             WriteLog(LogType.Error, tag, message);
         }
+        /// <summary>
+        /// 写入信息日志
+        /// </summary>
+        /// <param name="tag">标签</param>
+        /// <param name="message">信息字符串</param>
         public static void Info(string tag, string message)
         {
             WriteLog(LogType.Info, tag, message);
         }
 
+        /// <summary>
+        /// 写入日志
+        /// </summary>
+        /// <param name="tag">标签</param>
+        /// <param name="message">信息字符串</param>
         public static void Log(string tag, object message)
         {
             WriteLog(LogType.Text, tag, message.ToString());
         }
+        /// <summary>
+        /// 写入警告日志
+        /// </summary>
+        /// <param name="tag">标签</param>
+        /// <param name="message">信息字符串</param>
         public static void Warning(string tag, object message)
         {
             WriteLog(LogType.Warning, tag, message.ToString());
         }
+        /// <summary>
+        /// 写入错误日志
+        /// </summary>
+        /// <param name="tag">标签</param>
+        /// <param name="message">信息字符串</param>
         public static void Error(string tag, object message)
         {
             WriteLog(LogType.Error, tag, message.ToString());
         }
+        /// <summary>
+        /// 写入异常日志
+        /// </summary>
+        /// <param name="e"></param>
         public static void Exception(Exception e)
         {
             WriteLog(LogType.Assert, "", e.ToString());
         }
+        /// <summary>
+        /// 写入信息日志
+        /// </summary>
+        /// <param name="tag">标签</param>
+        /// <param name="message">信息字符串</param>
         public static void Info(string tag, object message)
         {
             WriteLog(LogType.Info, tag, message.ToString());
         }
 
+        /// <summary>
+        /// 写入日志（格式化字符串）
+        /// </summary>
+        /// <param name="tag">标签</param>
+        /// <param name="message">信息格式化字符串</param>
+        /// <param name="param"></param>
         public static void Log(string tag, string message, params object []param)
         {
             message = string.Format(message, param);
             WriteLog(LogType.Text, tag, message, param);
         }
+        /// <summary>
+        /// 写入警告日志（格式化字符串）
+        /// </summary>
+        /// <param name="tag">标签</param>
+        /// <param name="message">信息格式化字符串</param>
+        /// <param name="param"></param>
         public static void Warning(string tag, string message, params object[] param)
         {
             message = string.Format(message, param);
             WriteLog(LogType.Warning, tag, message, param);
         }
+        /// <summary>
+        /// 写入错误日志（格式化字符串）
+        /// </summary>
+        /// <param name="tag">标签</param>
+        /// <param name="message">信息格式化字符串</param>
+        /// <param name="param"></param>
         public static void Error(string tag, string message, params object[] param)
         {
             message = string.Format(message, param);
             WriteLog(LogType.Error, tag, message, param);
         }
+        /// <summary>
+        /// 写入信息日志（格式化字符串）
+        /// </summary>
+        /// <param name="tag">标签</param>
+        /// <param name="message">信息格式化字符串</param>
+        /// <param name="param"></param>
         public static void Info(string tag, string message, params object[] param)
         {
             message = string.Format(message, param);
             WriteLog(LogType.Info, tag, message, param);
         }
 
-        [SLua.CustomLuaClass]
+        /// <summary>
+        /// 设置日志记录器是否启用
+        /// </summary>
+        /// <param name="enabled">是否启用</param>
+        public static void SetLoggerEnabled(bool enabled)
+        {
+            on = enabled;
+        }
+
         /// <summary>
         /// 日志类型
         /// </summary>
+        [SLua.CustomLuaClass]
         public enum LogType
         {
+            /// <summary>
+            /// 文本
+            /// </summary>
             Text = 3,
+            /// <summary>
+            /// 信息
+            /// </summary>
             Info = 5,
+            /// <summary>
+            /// 警告
+            /// </summary>
             Warning = 2,
+            /// <summary>
+            /// 错误
+            /// </summary>
             Error = 0,
+            /// <summary>
+            /// 断言错误
+            /// </summary>
             Assert = 1,
             Max = 6,
         }
@@ -141,6 +260,11 @@ namespace Ballance2
         private static int countInfo = 0;
         private static bool unityLogLock = false;
 
+        /// <summary>
+        /// 获取某种类型的日志记录条数
+        /// </summary>
+        /// <param name="type">日志类型</param>
+        /// <returns>返回条数</returns>
         public static int GetLogCount(LogType type)
         {
             switch (type)
@@ -157,7 +281,6 @@ namespace Ballance2
         internal delegate void LogCallback(LogData data);
         internal static List<LogData> GetLogData()  { return logDatas;  }
 
-        private static void SetUnityLogLock() { unityLogLock = true; }
         internal static bool GetUnityLogLock()
         {
             if (unityLogLock)
@@ -194,7 +317,7 @@ namespace Ballance2
             {
                 LogData data = new LogData();
                 data.Type = type;
-                data.Data = string.Format("[{0}] [{1}] {2}", GetNowDateString(), tag, message);
+                data.Data = string.Format("[{0}] [{1}] {2}", GetNowDateString(), tag, message);//追加时间和tag
                 data.StackTrace = new StackTrace(true).ToString();
 
                 if (logToFile)
@@ -216,7 +339,7 @@ namespace Ballance2
                 }
 
 #if UNITY_EDITOR
-                SetUnityLogLock();
+                unityLogLock = true;
                 string unityOutPutLog = string.Format("[{0}] {1}", tag, message);
                 switch (type)
                 {
@@ -241,6 +364,7 @@ namespace Ballance2
             WriteLog(type, tag, string.Format(message, param));
         }
 
+        //删除超出最大条数的日志
         private static void DeleteExcessLogs()
         {
             var amountToRemove = Mathf.Max(logDatas.Count -

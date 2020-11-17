@@ -4,6 +4,24 @@ using UnityEditor;
 #endif
 using UnityEngine;
 
+/*
+* Copyright (c) 2020  mengyu
+* 
+* 模块名： 
+* DebugSettings.cs
+* 
+* 用途：
+* 获取调试设置。
+* 你可以在Unity编辑器中点击 Ballance/开发设置/Debug Settings 菜单来配置自己的开发设置。
+* 
+* 作者：
+* mengyu
+* 
+* 更改历史：
+* 2020-6-12 创建
+* 
+*/
+
 namespace Ballance2.Config
 {
 	/// <summary>
@@ -19,6 +37,10 @@ namespace Ballance2.Config
 		public bool GameInitLoadInEditor = false;
 
 		private static DebugSettings _instance = null;
+
+		/// <summary>
+		/// 获取调试设置实例
+		/// </summary>
 		public static DebugSettings Instance
 		{
 			get

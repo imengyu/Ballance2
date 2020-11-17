@@ -10,6 +10,22 @@ using Ballance2.GameCore;
 using Ballance2.Interfaces;
 using System.IO;
 
+/*
+ * Copyright (c) 2020  mengyu
+ * 
+ * 模块名：     
+ * GameInit.cs
+ * 用途：
+ * 初始化整个游戏基础层
+ * 
+ * 作者：
+ * mengyu
+ * 
+ * 更改历史：
+ * 2020-1-1 创建
+ *
+ */
+
 namespace Ballance2.Managers
 {
     /// <summary>
@@ -75,6 +91,7 @@ namespace Ballance2.Managers
         private bool IsGameInitUILoaded() { return loadedGameInitUI; }
         private bool IsGameInitAnimPlayend() { return IntroAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f; }
 
+        //加载GameInit基础
         private void LoadGameInitBase()
         {
             ModManager = (IModManager)GameManager.GetManager("ModManager");
@@ -117,7 +134,6 @@ namespace Ballance2.Managers
             GameLogger.Log(TAG, "Gameinit start");
 
             yield return new WaitUntil(IsGameInitUILoaded);
-
 
             //播放音乐和动画
             if (GameManager.Mode == GameMode.Game)
@@ -240,6 +256,10 @@ namespace Ballance2.Managers
                     else GameInitHideGameInitUi(true);
                 }
             }
+            else
+            {
+                GameInitHideGameInitUi(true);
+            }
         }
         //加载GameInit模块
         private IEnumerator GameInitPackages(string GameInitTable)
@@ -350,6 +370,10 @@ namespace Ballance2.Managers
             yield break;
         }
 
+        /// <summary>
+        /// 继续GameInit最后一个步骤
+        /// </summary>
+        /// <returns></returns>
         private bool GameInitContinueInit()
         {
             //模式
@@ -376,11 +400,19 @@ namespace Ballance2.Managers
             }
             return false;
         }
+        /// <summary>
+        /// 隐藏GameInitUI
+        /// </summary>
+        /// <param name="showBlack">是否显示黑色遮罩</param>
         private void GameInitHideGameInitUi(bool showBlack)
         {
             GameManager.UIManager.MaskBlackSet(showBlack);
             gameInitUI.SetActive(false);
         }
+        /// <summary>
+        /// 设置 GameInit 加载进度条数值
+        /// </summary>
+        /// <param name="val">数值</param>
         private void GameInitSetUIProgressValue(float val)
         {
             UIProgressValue.sizeDelta = new Vector2(val * UIProgress.sizeDelta.x, UIProgressValue.sizeDelta.y);
@@ -448,7 +480,7 @@ namespace Ballance2.Managers
 
         #endregion
 
-        
+
     }
 
     [SLua.CustomLuaClass]

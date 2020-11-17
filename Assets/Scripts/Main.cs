@@ -7,6 +7,23 @@ using UnityEngine;
 using UnityEngine.Android;
 #endif
 
+/*
+* Copyright (c) 2020  mengyu
+* 
+* 模块名：  
+* Main.cs
+*          
+* 用途：
+* 游戏主入口
+* 用于传递静态资源和启动信息至 GameManager中
+*
+* 作者：
+* mengyu 
+* 
+* 更改历史：
+* 2020-1-12 创建
+* 
+*/
 
 namespace Ballance2.Main
 {

@@ -2,10 +2,10 @@
 
 namespace Ballance2.Interfaces
 {
-    [SLua.CustomLuaClass]
     /// <summary>
     /// 声音管理器
     /// </summary>
+    [SLua.CustomLuaClass]
     public interface ISoundManager
     {
         /// <summary>
@@ -53,10 +53,10 @@ namespace Ballance2.Interfaces
         /// <returns></returns>
         bool PlayFastVoice(string soundName, GameSoundType type);
     }
-    [SLua.CustomLuaClass]
     /// <summary>
     /// 指定声音类型
     /// </summary>
+    [SLua.CustomLuaClass]
     public enum GameSoundType
     {
         /// <summary>
@@ -68,7 +68,7 @@ namespace Ballance2.Interfaces
         /// </summary>
         BallEffect,
         /// <summary>
-        /// 游戏音效 关于模组的
+        /// 游戏音效 关于机关的
         /// </summary>
         ModulEffect,
         /// <summary>

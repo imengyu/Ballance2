@@ -2,6 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * Copyright (c) 2020  mengyu
+ * 
+ * 模块名：     
+ * GameEvent.cs
+ * 用途：
+ * 游戏全局事件的说明与存储类。
+ * 
+ * 作者：
+ * mengyu
+ * 
+ * 更改历史：
+ * 2020-1-1 创建
+ *
+ */
+
 namespace Ballance2.CoreBridge
 {
     [SLua.CustomLuaClass]
@@ -11,12 +27,19 @@ namespace Ballance2.CoreBridge
     /// </summary>
     public class GameEvent
     {
+        /// <summary>
+        /// 全局事件存储类的构造函数
+        /// </summary>
+        /// <param name="evtName">事件名称</param>
         public GameEvent(string evtName)
         {
             _EventName = evtName; 
             _EventHandlers = new List<GameHandler>();
         }
 
+        /// <summary>
+        /// 释放
+        /// </summary>
         public void Dispose()
         {
             _EventHandlers.Clear();
@@ -28,7 +51,13 @@ namespace Ballance2.CoreBridge
         [SerializeField, SetProperty("EventHandlers")]
         private List<GameHandler> _EventHandlers;
 
+        /// <summary>
+        /// 获取事件名称
+        /// </summary>
         public string EventName { get { return _EventName; } }
+        /// <summary>
+        /// 获取事件接收器
+        /// </summary>
         public List<GameHandler> EventHandlers { get { return _EventHandlers; } }
     }
 
@@ -169,7 +198,6 @@ namespace Ballance2.CoreBridge
         /// 【0】Vector2 屏幕大小
         /// </remarks>
         public const string EVENT_SCREEN_SIZE_CHANGED = "e:core:screen_size_changed";
-
 
         /// <summary>
         /// 进入关卡加载器

@@ -3,6 +3,22 @@ using Ballance2.Interfaces;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * Copyright (c) 2020  mengyu
+ * 
+ * 模块名：     
+ * ICManager.cs
+ * 用途：
+ * IC 管理器
+ * 
+ * 作者：
+ * mengyu
+ * 
+ * 更改历史：
+ * 2020-1-1 创建
+ *
+ */
+
 namespace Ballance2.Managers
 {
     /// <summary>

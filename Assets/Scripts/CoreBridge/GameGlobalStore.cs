@@ -7,6 +7,21 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
+/*
+ * Copyright (c) 2020  mengyu
+ * 
+ * 模块名：     
+ * GameGlobalStore.cs
+ * 用途：
+ * 用于提供全局数据共享功能。
+ * 
+ * 作者：
+ * mengyu
+ * 
+ * 更改历史：
+ * 2020-1-1 创建
+ *
+ */
 
 namespace Ballance2.CoreBridge
 {
@@ -18,7 +33,7 @@ namespace Ballance2.CoreBridge
     public class StoreData
     {
         /// <summary>
-        /// 空
+        /// 空数据
         /// </summary>
         public static StoreData Empty { get; } = new StoreData("Empty", StoreDataAccess.GetAndSet, StoreDataType.NotSet);
 
@@ -115,14 +130,27 @@ namespace Ballance2.CoreBridge
 
         private StoreOnDataChanged DataObserver;
 
+        /// <summary>
+        /// 注册数据更新观察者
+        /// </summary>
+        /// <param name="observer">观察者</param>
         public void RegisterDataObserver(StoreOnDataChanged observer)
         {
             DataObserver += observer;
         }
+        /// <summary>
+        /// 移除已经注册的数据更新观察者
+        /// </summary>
+        /// <param name="observer">观察者</param>
         public void UnRegisterDataObserver(StoreOnDataChanged observer)
         {
             DataObserver -= observer;
         }
+        /// <summary>
+        /// 通知数据更新观察者数据已经更改
+        /// </summary>
+        /// <param name="oldV">旧的值</param>
+        /// <param name="newV">新的值</param>
         public void NotificationDataObserver(object oldV, object newV)
         {
             if (DataObserver != null)
@@ -131,6 +159,12 @@ namespace Ballance2.CoreBridge
 
         private StoreDataProvider StoreDataProvider = null;
 
+        /// <summary>
+        /// 设置数据提供者
+        /// </summary>
+        /// <param name="context">数据安全上下文（注册成功后须使用此上下文才能进行私有数据更新）</param>
+        /// <param name="provider">数据提供者</param>
+        /// <returns></returns>
         public int SetDataProvider(int context, StoreDataProvider provider)
         {
             if(StoreDataProvider == null)
@@ -151,6 +185,10 @@ namespace Ballance2.CoreBridge
                 return context;
             }
         }
+        /// <summary>
+        /// 取消设置数据提供者
+        /// </summary>
+        /// <param name="context">数据安全上下文</param>
         public void RemoveRegisterProvider(int context)
         {
             if (StoreDataProvider != null)
@@ -169,6 +207,12 @@ namespace Ballance2.CoreBridge
         // 设置数据
         // ====================================
 
+        /// <summary>
+        /// 设置数据的值
+        /// </summary>
+        /// <param name="context">数据安全上下文</param>
+        /// <param name="data">新值</param>
+        /// <returns></returns>
         public bool SetData(int context, object data)
         {
             if (_StoreDataAccess != StoreDataAccess.GetAndSet && context != currentHolderContext)
@@ -270,6 +314,10 @@ namespace Ballance2.CoreBridge
         public MonoBehaviour MonoBehaviourData() { return DataRaw == null ? null : (MonoBehaviour)DataRaw; }
         public GameMod GameModData() { return DataRaw == null ? null : (GameMod)DataRaw; }
 
+        /// <summary>
+        /// 将当前数据转为字符串表达形式
+        /// </summary>
+        /// <returns>字符串</returns>
         public override string ToString()
         {
             if (DataType == StoreDataType.NotSet)
@@ -282,8 +330,18 @@ namespace Ballance2.CoreBridge
         }
     }
 
+    /// <summary>
+    /// 数据改变回调
+    /// </summary>
+    /// <param name="data">当前数据类</param>
+    /// <param name="oldV">旧值</param>
+    /// <param name="newV">新值</param>
     [CustomLuaClass]
     public delegate void StoreOnDataChanged(StoreData data, object oldV, object newV);
+    /// <summary>
+    /// 用于自己提供数据的回调
+    /// </summary>
+    /// <returns>请返回当前数据的值</returns>
     [CustomLuaClass]
     public delegate object StoreDataProvider();
 
@@ -384,10 +442,10 @@ namespace Ballance2.CoreBridge
         }
 
         /// <summary>
-        /// 添加参数
+        /// 添加数据
         /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>添加成功，则返回参数，如果参数已经存在，则返回存在的实例</returns>
+        /// <param name="name">数据名称</param>
+        /// <returns>添加成功，则返回数据，如果数据已经存在，则返回存在的实例</returns>
         public StoreData AddParameter(string name, StoreDataAccess access, StoreDataType storeDataType)
         {
             StoreData old;
@@ -399,10 +457,10 @@ namespace Ballance2.CoreBridge
             return old;
         }
         /// <summary>
-        /// 移除参数
+        /// 移除数据
         /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>如果移除成功，返回true，如果参数不存在，返回false</returns>
+        /// <param name="name">数据名称</param>
+        /// <returns>如果移除成功，返回true，如果数据不存在，返回false</returns>
         public bool RemoveAddParameter(string name)
         {
             if (PoolDatas.ContainsKey(name))
@@ -413,10 +471,10 @@ namespace Ballance2.CoreBridge
             return false;
         }
         /// <summary>
-        /// 获取池中的参数
+        /// 获取池中的数据
         /// </summary>
-        /// <param name="name">参数名称</param>
-        /// <returns>返回参数实例</returns>
+        /// <param name="name">数据名称</param>
+        /// <returns>返回数据实例</returns>
         public StoreData GetParameter(string name)
         {
             StoreData old;

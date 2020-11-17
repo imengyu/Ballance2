@@ -5,6 +5,22 @@ using SLua;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * Copyright (c) 2020  mengyu
+ * 
+ * 模块名：     
+ * GameLuaObjectHost.cs
+ * 用途：
+ * MonoBehaviour 的 Lua 包装类
+ * 
+ * 作者：
+ * mengyu
+ * 
+ * 更改历史：
+ * 2020-1-1 创建
+ *
+ */
+
 namespace Ballance2.CoreBridge
 {
     /// <summary>
@@ -27,7 +43,7 @@ namespace Ballance2.CoreBridge
     ///     承载组件会自动调用这些方法，Lua使用起来就像在C#中使用MonoBehaviour一样, 无需你写其他代码。
     ///     ★ GameLuaObjectHost默认实现 Awake Start Update FixedUpdate LateUpdate 
     ///     GUI Destory Enable Disable 这几个事件，如果需要更多事件，在编辑器中 “Lua 类 On * 事件接收器”
-    ///     这个设置中添加你需要的事件类别，下方会显示可用的事件。
+    ///     这个设置中添加你需要的事件类别，编辑器中下方会显示可用的事件。
     /// 
     /// </remarks>
     [CustomLuaClass]
@@ -325,6 +341,21 @@ namespace Ballance2.CoreBridge
         public void UpdateVarFromLua(LuaVarObjectInfo v)
         {
             v.UpdateFromLua(LuaSelf);
+        }
+        /// <summary>
+        /// 将指定名字的 lua 变量更新至 LuaVarObjectInfo 
+        /// </summary>
+        /// <param name="paramName">变量名称</param>
+        /// <returns>如果没有找到变量，则返回false，否则返回true。</returns>
+        public bool UpdateVarFromLua(string paramName)
+        {
+            foreach (LuaVarObjectInfo v in LuaInitialVars)
+                if (v.Name == paramName)
+                {
+                    v.UpdateFromLua(LuaSelf);
+                    return true;
+                }
+            return false;
         }
 
         /// <summary>

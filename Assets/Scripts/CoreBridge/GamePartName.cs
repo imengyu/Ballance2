@@ -1,8 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿/*
+ * Copyright (c) 2020  mengyu
+ * 
+ * 模块名：     
+ * GamePartName.cs
+ * 用途：
+ * 游戏内核模块包名
+ * 
+ * 作者：
+ * mengyu
+ * 
+ * 更改历史：
+ * 2020-1-1 创建
+ *
+ */
 
 namespace Ballance2.CoreBridge
 {

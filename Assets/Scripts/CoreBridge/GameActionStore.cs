@@ -2,6 +2,22 @@
 using SLua;
 using System.Collections.Generic;
 
+/*
+ * Copyright (c) 2020  mengyu
+ * 
+ * 模块名：     
+ * GameActionStore.cs
+ * 用途：
+ * 存储操作的类。向每个模块提供统一的操作接口。
+ * 
+ * 作者：
+ * mengyu
+ * 
+ * 更改历史：
+ * 2020-1-1 创建
+ *
+ */
+
 namespace Ballance2.CoreBridge
 {
     /// <summary>
@@ -9,6 +25,10 @@ namespace Ballance2.CoreBridge
     /// </summary>
     public class GameActionStore
     {
+        /// <summary>
+        /// 创建操作存储库
+        /// </summary>
+        /// <param name="packageName">所属包名</param>
         public GameActionStore(string packageName)
         {
             _PackageName = packageName;
@@ -29,9 +49,17 @@ namespace Ballance2.CoreBridge
         private string _PackageName;
         private Dictionary<string, GameAction> actions = null;
 
+        /// <summary>
+        /// 标签
+        /// </summary>
         public string TAG { get { return _PackageName + ":GameActionStore"; } }
-
+        /// <summary>
+        /// 获取此存储库的所有操作
+        /// </summary>
         public Dictionary<string, GameAction> Actions { get { return actions; } }
+        /// <summary>
+        /// 获取此存储库的包名
+        /// </summary>
         public string PackageName { get { return _PackageName; } }
 
         /// <summary>
@@ -41,11 +69,11 @@ namespace Ballance2.CoreBridge
         /// <param name="handlerName">接收器名称</param>
         /// <param name="handler">接收函数</param>
         /// <param name="callTypeCheck">函数参数检查，数组长度规定了操作需要的参数，
-        /// 数组值是一个或多个允许的类型名字，例如 UnityEngine.GameObject System.String 。
+        /// 组值是一个或多个允许的类型名字，例如 UnityEngine.GameObject System.String 。
         /// 如果一个参数允许多种类型，可使用/分隔。
-        /// 如果不需要，也可以为null，当前操作将不会进行类型检查
+        /// 如果不需要参数检查，也可以为null，则当前操作将不会进行类型检查
         /// </param>
-        /// <returns></returns>
+        /// <returns>返回注册的操作实例，如果注册失败则返回 null ，请查看 LastError 的值</returns>
         public GameAction RegisterAction(string name, string handlerName, GameActionHandlerDelegate handler, string[] callTypeCheck)
         {
             return RegisterAction(name, new GameHandler(handlerName, handler), callTypeCheck);
@@ -60,13 +88,24 @@ namespace Ballance2.CoreBridge
         /// <param name="callTypeCheck">函数参数检查，数组长度规定了操作需要的参数，
         /// 数组值是一个或多个允许的类型名字，例如 UnityEngine.GameObject System.String 。
         /// 如果一个参数允许多种类型，可使用/分隔。
-        /// 如果不需要，也可以为null，当前操作将不会进行类型检查
+        /// 如果不需要参数检查，也可以为null，则当前操作将不会进行类型检查
         /// </param>
-        /// <returns></returns>
+        /// <returns>返回注册的操作实例，如果注册失败则返回 null ，请查看 LastError 的值</returns>
         public GameAction RegisterAction(string name, string handlerName, LuaFunction luaFunction, LuaTable self, string[] callTypeCheck)
         {
             return RegisterAction(name, new GameHandler(handlerName, luaFunction, self), callTypeCheck);
         }
+        /// <summary>
+        /// 注册操作
+        /// </summary>
+        /// <param name="name">操作名称</param>
+        /// <param name="handler">接收器</param>
+        /// <param name="callTypeCheck">函数参数检查，数组长度规定了操作需要的参数，
+        /// 组值是一个或多个允许的类型名字，例如 UnityEngine.GameObject System.String 。
+        /// 如果一个参数允许多种类型，可使用/分隔。
+        /// 如果不需要参数检查，也可以为null，则当前操作将不会进行类型检查
+        /// </param>
+        /// <returns>返回注册的操作实例，如果注册失败则返回 null ，请查看 LastError 的值</returns>
         public GameAction RegisterAction(string name, GameHandler handler, string[] callTypeCheck)
         {
             if (string.IsNullOrEmpty(name))
@@ -91,6 +130,21 @@ namespace Ballance2.CoreBridge
             return gameAction;
         }
 
+        /// <summary>
+        /// 取消注册操作
+        /// </summary>
+        /// <param name="action">操作实例</param>
+        public void UnRegisterAction(GameAction action)
+        {
+            if (action == null)
+            {
+                GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "UnRegisterAction action 参数未提供");
+                return;
+            }
+
+            action.Dispose();
+            actions.Remove(action.Name);
+        }
         /// <summary>
         /// 取消注册操作
         /// </summary>
@@ -358,16 +412,17 @@ namespace Ballance2.CoreBridge
         /// </summary>
         /// <param name="name">目标操作名称</param>
         /// <param name="param">调用参数</param>
-        /// <returns></returns>
+        /// <returns>返回操作调用结果，如果未找到操作，则返回 GameActionCallResult.FailResult </returns>
         public GameActionCallResult CallAction(string name, params object[] param)
         {
-            GameActionCallResult result = null;
-            GameAction gameAction = null;
+            GameActionCallResult result = GameActionCallResult.FailResult;
             if (string.IsNullOrEmpty(name))
             {
                 GameErrorManager.SetLastErrorAndLog(GameError.ParamNotProvide, TAG, "CallAction name 参数未提供");
                 return result;
             }
+
+            GameAction gameAction;
             if (IsActionRegistered(name, out gameAction)) return CallAction(gameAction, param);
             else GameErrorManager.SetLastErrorAndLog(GameError.NotRegister, TAG, "操作 {0} 未注册", name);
             return result;
@@ -377,7 +432,7 @@ namespace Ballance2.CoreBridge
         /// </summary>
         /// <param name="action">目标操作实例</param>
         /// <param name="param">调用参数</param>
-        /// <returns></returns>
+        /// <returns>返回操作调用结果，如果未找到操作，则返回 GameActionCallResult.FailResult </returns>
         public GameActionCallResult CallAction(GameAction action, params object[] param)
         {
             GameErrorManager.LastError = GameError.None;

@@ -2,6 +2,22 @@
 using Ballance2.ModBase;
 using SLua;
 
+/*
+ * Copyright (c) 2020  mengyu
+ * 
+ * 模块名：     
+ * GameLuaHandler.cs
+ * 用途：
+ * Lua 接收器 Handler，用于为LUA层提供事件与回调的接收能力。
+ * 
+ * 作者：
+ * mengyu
+ * 
+ * 更改历史：
+ * 2020-1-1 创建
+ *
+ */
+
 namespace Ballance2.CoreBridge
 {
     /// <summary>
@@ -17,8 +33,8 @@ namespace Ballance2.CoreBridge
         /// 接收器标识符字符串:
         ///    [格式] 模块标识符:对象名称:函数名称
         ///    
-        ///     [模块标识符] 可选：模组包完整路径/模组包包名/模组包UID
-        ///     [对象名称]   已注册的 GameLuaObjectHost 名称/Main (模组主代码)
+        ///     [模块标识符] 可选：模组包包名 或  模组包UID
+        ///     [对象名称]   已注册的 GameLuaObjectHost 名称  或  Main (模组主代码)
         ///     [函数名称]
         /// </remarks>
         public GameLuaHandler(string luaModulHandlerString)

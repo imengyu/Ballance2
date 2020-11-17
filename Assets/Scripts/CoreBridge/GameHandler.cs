@@ -2,6 +2,23 @@
 using System;
 using UnityEngine;
 
+/*
+ * Copyright (c) 2020  mengyu
+ * 
+ * 模块名：     
+ * GameHandler.cs
+ * 用途：
+ * 用于统一各个层的数据和事件接收。
+ * 为C#和LUA都提供了一个包装类，可以方便的接收事件或是回调。
+ * 
+ * 作者：
+ * mengyu
+ * 
+ * 更改历史：
+ * 2020-1-1 创建
+ *
+ */
+
 namespace Ballance2.CoreBridge
 {
     /// <summary>
@@ -179,10 +196,10 @@ namespace Ballance2.CoreBridge
         }
     }
 
-    [CustomLuaClass]
     /// <summary>
     /// 通用接收器类型
     /// </summary>
+    [CustomLuaClass]
     public enum GameHandlerType
     {
         /// <summary>
@@ -196,20 +213,20 @@ namespace Ballance2.CoreBridge
         LuaFun
     }
 
-    [CustomLuaClass]
     /// <summary>
     /// 事件接收器内核回调
     /// </summary>
     /// <param name="evtName">事件名称</param>
     /// <param name="pararms">参数</param>
     /// <returns>返回是否中断其他事件的分发</returns>
-    public delegate bool GameEventHandlerDelegate(string evtName, params object[] pararms);
     [CustomLuaClass]
+    public delegate bool GameEventHandlerDelegate(string evtName, params object[] pararms);
     /// <summary>
     /// 操作接收器内核回调
     /// </summary>
     /// <param name="pararms">参数</param>
     /// <returns>返回事件数据</returns>
+    [CustomLuaClass]
     public delegate GameActionCallResult GameActionHandlerDelegate(params object[] pararms);
 
 }

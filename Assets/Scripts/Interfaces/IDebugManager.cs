@@ -3,10 +3,10 @@ using UnityEngine;
 
 namespace Ballance2.Interfaces
 {
-    [SLua.CustomLuaClass]
     /// <summary>
     /// 调试管理器接口
     /// </summary>
+    [SLua.CustomLuaClass]
     public interface IDebugManager
     {
         /// <summary>
@@ -69,7 +69,7 @@ namespace Ballance2.Interfaces
         /// 取消注册命令
         /// </summary>
         /// <param name="cmdId">命令ID</param>
-        void UnRegisterCommand(string keyword);
+        void UnRegisterCommand(int cmdId);
         /// <summary>
         /// 获取命令是否注册
         /// </summary>
@@ -84,7 +84,7 @@ namespace Ballance2.Interfaces
     /// <param name="keyword">命令单词</param>
     /// <param name="fullCmd">完整命令</param>
     /// <param name="args">命令参数</param>
-    /// <returns></returns>
+    /// <returns>须返回命令是否执行成功</returns>
     [SLua.CustomLuaClass]
     public delegate bool CommandDelegate(string keyword, string fullCmd, string[] args);
 }

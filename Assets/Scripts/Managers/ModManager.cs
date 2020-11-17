@@ -18,6 +18,22 @@ using Ballance2.CoreGame.GamePlay;
 using UnityEditor;
 #endif
 
+/*
+ * Copyright (c) 2020  mengyu
+ * 
+ * 模块名：     
+ * ModManager.cs
+ * 用途：
+ * 整个游戏的模组与模块关键管理工具
+ * 
+ * 作者：
+ * mengyu
+ * 
+ * 更改历史：
+ * 2020-1-1 创建
+ *
+ */
+
 namespace Ballance2.Managers
 {
     /// <summary>

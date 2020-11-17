@@ -1043,6 +1043,7 @@
     <None Include="Assets\Shaders\OutLinePostEffectX.shader" />
     <None Include="Assets\ThirdPart\QuickOutline\Resources\Shaders\OutlineMask.shader" />
     <None Include="Assets\Version.txt" />
+    <None Include="Assets\Docs\CodeSpecification.txt" />
     <None Include="Assets\Prefabs\UI\Layouts\PageGlobalConfirm.xml" />
     <None Include="Assets\Mods\core.gameinit\ModDef.xml" />
     <None Include="Assets\Mods\com.imengyu.test\ModDef.xml" />
@@ -1065,6 +1066,7 @@
     <None Include="Assets\Textures\Sky\ModDef.xml" />
     <None Include="Assets\Mods\core.gameui\ModDef.xml" />
     <None Include="Assets\Mods\core.scenes.menulevel.ui\Entry.lua.txt" />
+    <None Include="Assets\Docs\LuaClass.txt" />
     <None Include="Assets\Mods\core.gameui\Entry.lua.txt" />
     <None Include="Assets\Mods\core.scenes.menulevel\ModDef.xml" />
     <None Include="Assets\ThirdPart\QuickOutline\Resources\Shaders\OutlineFill.shader" />

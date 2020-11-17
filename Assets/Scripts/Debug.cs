@@ -4,6 +4,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * Copyright (c) 2020  mengyu
+ * 
+ * 模块名：     
+ * Debug.cs
+ * 
+ * 用途：
+ * 全局测试类
+ *
+ * 作者：
+ * mengyu
+ * 
+ * 更改历史：
+ * 2020-1-12 创建
+ * 
+ */
+
 namespace Ballance2.Main
 {
     //调试承载

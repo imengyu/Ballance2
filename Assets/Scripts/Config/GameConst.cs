@@ -1,4 +1,21 @@
-﻿namespace Ballance2.Config
+﻿/*
+* Copyright (c) 2020  mengyu
+* 
+* 模块名：     
+* GameConst.cs
+* 
+* 用途：
+* 配置游戏的静态常量
+* 
+* 作者：
+* mengyu
+* 
+* 更改历史：
+* 2020-1-12 创建
+* 
+*/
+
+namespace Ballance2.Config
 {
     /// <summary>
     /// 静态常量配置
@@ -92,9 +109,21 @@
 
         #region 静态配置
 
+        /// <summary>
+        /// 配置游戏日志记录器是否启动
+        /// </summary>
         public const bool GameLoggerOn = true;
+        /// <summary>
+        /// 配置游戏日志记录器是否记录至文件
+        /// </summary>
         public const bool GameLoggerLogToFile = false;
+        /// <summary>
+        /// 配置游戏日志记录器记录至文件的路径
+        /// </summary>
         public const string GameLoggerLogFile = "./BallanceOutput.log";
+        /// <summary>
+        /// 配置游戏日志记录器缓冲区最大条数
+        /// </summary>
         public const int GameLoggerBufferMax = 1000;
 
         #endregion

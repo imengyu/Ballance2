@@ -20,6 +20,22 @@ using System.Threading.Tasks;
 using UnityEditor;
 #endif
 
+/*
+ * Copyright (c) 2020  mengyu
+ * 
+ * 模块名：     
+ * GameMod.cs
+ * 用途：
+ * 模组基础承载结构
+ * 
+ * 作者：
+ * mengyu
+ * 
+ * 更改历史：
+ * 2020-1-1 创建
+ *
+ */
+
 namespace Ballance2.ModBase
 {
     /// <summary>
@@ -48,6 +64,13 @@ namespace Ballance2.ModBase
             modInfo = new GameModInfo(GamePathManager.GetFileNameWithoutExt(PackagePath));
         }
 
+        /// <summary>
+        /// 名字标签
+        /// </summary>
+        public string TAG { get { return _TAG; } }
+        /// <summary>
+        /// 唯一id，内部使用
+        /// </summary>
         public int Uid { get; } = CommonUtils.GenAutoIncrementID();
 
         /// <summary>
@@ -63,10 +86,18 @@ namespace Ballance2.ModBase
         private bool hasMustDependenciesLoadFailed = false;
         private bool inited = false;
 
+        /// <summary>
+        /// 返回是否加载完成。该函数可用于WaitUntil
+        /// </summary>
+        /// <returns></returns>
         public bool IsLoadComplete()
-        {
+        { 
             return LoadStatus != GameModStatus.Loading;
         }
+        /// <summary>
+        /// 返回是否加载成功
+        /// </summary>
+        /// <returns></returns>
         public bool IsInitSuccess()
         {
             return inited;
@@ -456,10 +487,6 @@ namespace Ballance2.ModBase
         /// </summary>
         public bool IsModInitByGameinit { get; internal set; }
 
-        /// <summary>
-        /// 名字标签
-        /// </summary>
-        public string TAG { get { return _TAG; } }
         /// <summary>
         /// 模组图标
         /// </summary>
@@ -962,6 +989,7 @@ namespace Ballance2.ModBase
 
             if (!string.IsNullOrEmpty(ModShareLuaState))
             {
+                //如果指定了core，则代码载入到全局lua虚拟机中
                 if(ModShareLuaState == "core")
                 {
                     ModLuaState = GameManager.GameMainLuaState;
@@ -1137,10 +1165,18 @@ namespace Ballance2.ModBase
         private Dictionary<string, LuaFunction> requiredLuaClasses = null;
 
         /// <summary>
-        /// 导入 Lua 类
+        /// 导入 Lua 类到当前模组虚拟机中。
+        /// 注意，类函数以 “class_类名” 开头，
+        /// 关于 Lua 类，请参考 Docs/LuaClass 。
         /// </summary>
         /// <param name="className">类名</param>
         /// <returns>类创建函数</returns>
+        /// <exception cref="MissingReferenceException">
+        /// 如果没有在当前模组包中找到类文件或是类创建函数 class_* ，则抛出 MissingReferenceException 异常。
+        /// </exception>
+        /// <exception cref="Exception">
+        /// 如果Lua执行失败，则抛出此异常。
+        /// </exception>
         public LuaFunction RequireLuaClass(string className)
         {
             LuaFunction classInit;
@@ -1175,7 +1211,7 @@ namespace Ballance2.ModBase
             classInit = ModLuaState.getFunction("class_" + className);
             if (classInit == null)
             {
-                throw new Exception(PackageName + " 无法导入 Lua class : " + 
+                throw new MissingReferenceException(PackageName + " 无法导入 Lua class : " + 
                     className + ", 未找到初始类函数: class_" + className);
             }
 
@@ -1186,6 +1222,12 @@ namespace Ballance2.ModBase
         /// 导入Lua文件到当前模组虚拟机中
         /// </summary>
         /// <param name="fileName">LUA文件名</param>
+        /// <exception cref="MissingReferenceException">
+        /// 如果没有在当前模组包中找到类文件或是类创建函数 class_* ，则抛出 MissingReferenceException 异常。
+        /// </exception>
+        /// <exception cref="Exception">
+        /// 如果Lua执行失败，则抛出此异常。
+        /// </exception>
         public bool RequireLuaFile(string fileName)
         {
             if (requiredLuaFiles.Contains(fileName))

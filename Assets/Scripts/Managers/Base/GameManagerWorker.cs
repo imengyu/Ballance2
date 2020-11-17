@@ -7,15 +7,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * Copyright (c) 2020  mengyu
+ * 
+ * 模块名：     
+ * GameManagerWorker.cs
+ * 用途：
+ * GameManager 静态类的辅助工作类
+ * 
+ * 作者：
+ * mengyu
+ * 
+ * 更改历史：
+ * 2020-1-1 创建
+ *
+ */
+
 namespace Ballance2.Managers.Base
 {
     /// <summary>
-    /// 管理器初始化管理
+    /// 管理器初始化管理.
+    /// 这个类是 GameManager 静态类的辅助工作类
     /// </summary>
     class GameManagerWorker : MonoBehaviour
     {
         private void Update()
         {
+            //按时间进行任务执行
             if (nextInitManagerTick >= 0)
             {
                 nextInitManagerTick--;
@@ -51,16 +69,33 @@ namespace Ballance2.Managers.Base
         }
 
         private int loadIndex = 0;
+        private bool initManagers = false;
 
         public int nextInitManagerTick = 0;
+        /// <summary>
+        /// 下一次要加载的管理器
+        /// </summary>
         public List<BaseManager> nextInitManages = new List<BaseManager>();
-
-        // 全局管理器单例数组
+        /// <summary>
+        /// 全局管理器单例数组
+        /// </summary>
         public List<BaseManager> managers = new List<BaseManager>();
 
-        public bool IsManagersInitFinished() { return nextInitManagerTick <= 0 && !initManagers; }
-
-        private bool initManagers = false;
+        /// <summary>
+        /// 获取管理器是否初始化完成（可用于WaitUntil）
+        /// </summary>
+        /// <returns></returns>
+        public bool IsManagersInitFinished() { return nextInitManagerTick <= 0 && !initManagers;  }
+        /// <summary>
+        /// 强制停止加载
+        /// </summary>
+        public void ForceStopLoad()
+        {
+            initManagers = false;
+            nextDestroyTick = -1;
+            nextGameQuitTick = -1;
+            nextInitManages.Clear();
+        }
 
         private void DoInitManagers()
         {
@@ -82,17 +117,26 @@ namespace Ballance2.Managers.Base
             }
         }
 
-        private int nextGameQuitTick = 0;
-        private int nextDestroyTick = 0;
+        private int nextGameQuitTick = -1;
+        private int nextDestroyTick = -1;
 
+        /// <summary>
+        /// 请求游戏退出
+        /// </summary>
         public void ReqGameQuit()
         {
             nextGameQuitTick = 60;
         }
+        /// <summary>
+        /// 请求销毁所有管理器
+        /// </summary>
         public void ReqDestroyManagers()
         {
             nextDestroyTick = 35;
         }
+        /// <summary>
+        /// 请求通知场景更改事件
+        /// </summary>
         public void ReqNotifyScenseChanged()
         {
             StartCoroutine(NotifyScenseChanged());
@@ -104,7 +148,6 @@ namespace Ballance2.Managers.Base
 
             GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_ENTER_SCENSE, "*", GameManager.CurrentScense);
         }
-
         private void QuitGame()
         {
 #if UNITY_EDITOR
@@ -123,6 +166,14 @@ namespace Ballance2.Managers.Base
         }
         public List<ManagerRedayCallback> redayCallbacks = new List<ManagerRedayCallback>();
 
+        /// <summary>
+        /// 注册管理器就绪回调
+        /// </summary>
+        /// <param name="name">管理器名称</param>
+        /// <param name="subName">管理器二级名称</param>
+        /// <param name="managerRedayDelegate">回调</param>
+        /// <param name="self"></param>
+        /// <returns>返回回调ID</returns>
         public int RegisterManagerRedayCallback(string name, string subName, LuaManagerRedayDelegate managerRedayDelegate, LuaTable self = null)
         {
             ManagerRedayCallback callback = new ManagerRedayCallback();
@@ -133,6 +184,10 @@ namespace Ballance2.Managers.Base
             redayCallbacks.Add(callback);
             return callback.id;
         }
+        /// <summary>
+        /// 取消注册管理器就绪回调
+        /// </summary>
+        /// <param name="id">回调ID</param>
         public void UnRegisterManagerRedayCallback(int id)
         {
             for (int i = redayCallbacks.Count - 1; i >= 0; i--)
@@ -144,6 +199,10 @@ namespace Ballance2.Managers.Base
                 }
             }
         }
+        /// <summary>
+        /// 初始化管理器
+        /// </summary>
+        /// <param name="manager">目标管理器</param>
         public void InitManager(BaseManager manager)
         {
             if (!manager.Initialized)
@@ -175,10 +234,12 @@ namespace Ballance2.Managers.Base
                 }
             }
         }
-
+        /// <summary>
+        /// 销毁所有管理器
+        /// </summary>
         public void DestroyManagers()
         {
-            //降序排列销毁
+            //降序排列销毁（加载顺序反过来）
             managers.Sort((m1, m2) => m1.loadIndex.CompareTo(m2.loadIndex));
 
             bool b = false;
@@ -186,11 +247,20 @@ namespace Ballance2.Managers.Base
             {
                 for (int i = managers.Count - 1; i >= 0; i--)
                 {
-                    b = managers[i].ReleaseManager();
-                    Debug.LogFormat("[GameManagerWorker] Destroy manager {0}:{1}",
-                         managers[i].GetName(), managers[i].GetSubName());
-                    if (!b) Debug.LogWarningFormat("[GameManagerWorker] Failed to release manager {0}:{1} . ",
-                         managers[i].GetName(), managers[i].GetSubName());
+                    try
+                    {
+                        b = managers[i].ReleaseManager();
+                        Debug.LogFormat("[GameManagerWorker] Destroy manager {0}:{1}",
+                             managers[i].GetName(), managers[i].GetSubName());
+                        if (!b) Debug.LogWarningFormat("[GameManagerWorker] Failed to release manager {0}:{1} . ",
+                             managers[i].GetName(), managers[i].GetSubName());
+                    }
+                    catch(Exception e)
+                    {
+                        Debug.LogWarningFormat("[GameManagerWorker] Failed to release manager {0}:{1} ." +
+                            " An exception occurred in the release:\n{2}",
+                             managers[i].GetName(), managers[i].GetSubName(), e.ToString());
+                    }
                 }
                 managers.Clear();
                 managers = null;
@@ -199,6 +269,7 @@ namespace Ballance2.Managers.Base
             nextInitManages.Clear();
         }
 
+        //调用就绪回调
         private void CallManagerRedayCallback(BaseManager manager, string name)
         {
             foreach (ManagerRedayCallback c in redayCallbacks)

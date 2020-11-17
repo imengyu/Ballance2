@@ -44,7 +44,7 @@ namespace Ballance2.Utils
         /// <param name="code"></param>
         /// <param name="message"></param>
         public static void ThrowGameError(GameError code, string message)
-        {       
+        {
             StringBuilder stringBuilder = new StringBuilder("错误代码：");
             stringBuilder.Append(code.ToString());
             stringBuilder.Append("\n");
@@ -108,6 +108,10 @@ namespace Ballance2.Utils
         /// 错误的模式
         /// </summary>
         BadMode,
+        /// <summary>
+        /// Lua 绑定检测失败。请先绑定LUA接口
+        /// </summary>
+        LuaBindCheckFailed,
         /// <summary>
         /// 全局模块异常
         /// </summary>

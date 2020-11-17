@@ -9,15 +9,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+ * Copyright (c) 2020  mengyu
+ * 
+ * 模块名：     
+ * DebugManager.cs
+ * 用途：
+ * 用于提供调试管理控制台，和日志记录器
+ * 
+ * 作者：
+ * mengyu
+ * 
+ * 更改历史：
+ * 2020-1-1 创建
+ *
+ */
+
 namespace Ballance2.Managers
 {
+    /// <summary>
+    /// 调试管理器
+    /// </summary>
     public class DebugManager : BaseManager, IDebugManager
     {
         public const string TAG = "DebugManager";
 
-        public DebugManager() : base("core.debugmgr", TAG, "Singleton")
-        {
-        }
+        public DebugManager() : base("core.debugmgr", TAG, "Singleton") {}
 
         protected override void InitPre()
         {
@@ -487,6 +504,7 @@ namespace Ballance2.Managers
             public string HelpText;
             public string Handler;
             public GameLuaHandler HandlerInternal;
+            public int Id;
             public CommandDelegate KernelCallback;
         }
 
@@ -605,9 +623,9 @@ namespace Ballance2.Managers
                 item.Handler = handler;
                 item.KernelCallback = null;
                 item.HandlerInternal = new GameLuaHandler(handler);
-
+                item.Id = CommonUtils.GenNonDuplicateID();
                 commands.Add(item);
-                return commands.Count - 1;
+                return item.Id;
             }
             return -1;
         }
@@ -630,9 +648,10 @@ namespace Ballance2.Managers
                 item.HelpText = helpText;
                 item.Handler = "";
                 item.KernelCallback = kernelCallback;
+                item.Id = CommonUtils.GenNonDuplicateID() ;
 
                 commands.Add(item);
-                return commands.Count - 1;
+                return item.Id;
             }
             return -1;
         }
@@ -640,12 +659,12 @@ namespace Ballance2.Managers
         /// 取消注册命令
         /// </summary>
         /// <param name="cmdId">命令ID</param>
-        public void UnRegisterCommand(string keyword)
+        public void UnRegisterCommand(int cmdId)
         {
             CmdItem removeItem = null;
             foreach (CmdItem cmdItem in commands)
             {
-                if (cmdItem.Keyword == keyword)
+                if (cmdItem.Id == cmdId)
                 {
                     removeItem = cmdItem;
                     break;

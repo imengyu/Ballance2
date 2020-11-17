@@ -2,6 +2,22 @@
 using SLua;
 using UnityEngine;
 
+/*
+ * Copyright (c) 2020  mengyu
+ * 
+ * 模块名：     
+ * GameLuaWapper.cs
+ * 用途：
+ * Lua包装所需的委托。
+ * 
+ * 作者：
+ * mengyu
+ * 
+ * 更改历史：
+ * 2020-1-1 创建
+ *
+ */
+
 namespace Ballance2.CoreBridge
 {
     [CustomLuaClass]

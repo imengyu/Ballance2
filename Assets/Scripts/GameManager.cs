@@ -10,6 +10,23 @@ using Ballance2.Managers.Base;
 using System.Collections;
 using Ballance2.Interfaces;
 
+/*
+ * Copyright (c) 2020  mengyu
+ * 
+ * 模块名：     
+ * GameManager.cs
+ *          
+ * 用途：
+ * 游戏主管理器，整个游戏的入口以及启动管理、静态资源管理。
+ * 包含管理器控制、全局初始化、根元素、静态资源引用。
+ *
+ * 作者：
+ * mengyu
+ * 
+ * 更改历史：
+ * 
+ */
+
 namespace Ballance2
 {
     /// <summary>
@@ -403,6 +420,22 @@ namespace Ballance2
                     RegisterManager(typeof(GameInit));
                     //Lua
                     GameMainLuaState = new LuaSvr.MainState();
+                    //检测lua绑定状态
+                    object o = GameMainLuaState.doString("Ballance2.GameManager.LuaBindingCallback()");
+                    if(o != null && o.GetType() == typeof(int) && (int)o == GameConst.GameBulidVersion)
+                        GameLogger.Log(TAG, "Game Lua bind check ok.");
+                    else
+                    {
+                        GameLogger.Error(TAG, "Game Lua bind check failed, did you bind lua functions?");
+                        GameErrorManager.LastError = GameError.LuaBindCheckFailed;
+#if UNITY_EDITOR // 编辑器中
+                        GameErrorManager.ThrowGameError(GameError.LuaBindCheckFailed, 
+                            "Lua接口没有绑定。请点击“SLua”>“All”>“Make”生成 Lua 接口绑定。");
+#else
+                        GameErrorManager.ThrowGameError(GameError.LuaBindCheckFailed, "错误的发行配置，请检查。");
+#endif
+                        yield break;
+                    }
                 }
 
                 yield return new WaitUntil(IsManagersInitFinished);
@@ -500,6 +533,7 @@ namespace Ballance2
         public static void ForceInterruptGame()
         {
             GameLogger.Log(TAG, "Force interrupt game");
+            GameManagerWorker.ForceStopLoad();
             ClearScense();
         }
         /// <summary>
@@ -556,6 +590,9 @@ namespace Ballance2
             }
             GameBaseCamera.gameObject.SetActive(true);
         }
+
+
+        public static int LuaBindingCallback()  { return GameConst.GameBulidVersion; }
 
         #endregion
 
